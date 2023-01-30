@@ -29,7 +29,7 @@ var (
 	classificationID    = baseIds.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID = baseIds.NewIdentityID(classificationID, immutables)
 	testOwnableID       = baseIds.NewCoinID(baseIds.NewStringID("OwnerID"))
-	splitID             = baseIds.NewSplitID(testOwnerIdentityID, testOwnableID)
+	splitID             = baseIds.NewSplitID(testOwnerIdentityID, testOwnableID).(*baseIds.SplitID)
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -59,9 +59,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want queryRequest
+		want helpers.QueryRequest
 	}{
-		{"+ve", args{newQueryRequest(splitID)}, newQueryRequest(splitID).(queryRequest)},
+		{"+ve", args{newQueryRequest(splitID)}, newQueryRequest(splitID).(*QueryRequest)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -78,7 +78,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeSplitID()))
 	require.NoError(t, err1)
 	type fields struct {
-		SplitID ids.SplitID
+		SplitID *baseIds.SplitID
 	}
 	type args struct {
 		bytes []byte
@@ -91,11 +91,11 @@ func Test_queryRequest_Decode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{splitID}, args{encodedReq}, newQueryRequest(splitID), false},
-		{"+ve", fields{baseIds.PrototypeSplitID()}, args{encodedReq1}, newQueryRequest(baseIds.PrototypeSplitID()), false},
+		{"+ve", fields{baseIds.PrototypeSplitID().(*baseIds.SplitID)}, args{encodedReq1}, newQueryRequest(baseIds.PrototypeSplitID()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				SplitID: tt.fields.SplitID,
 			}
 			got, err := queryRequest.Decode(tt.args.bytes)
@@ -116,7 +116,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeSplitID()))
 	require.NoError(t, err1)
 	type fields struct {
-		SplitID ids.SplitID
+		SplitID *baseIds.SplitID
 	}
 	tests := []struct {
 		name    string
@@ -125,11 +125,11 @@ func Test_queryRequest_Encode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{splitID}, encodedReq, false},
-		{"+ve", fields{baseIds.PrototypeSplitID()}, encodedReq1, false},
+		{"+ve", fields{baseIds.PrototypeSplitID().(*baseIds.SplitID)}, encodedReq1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				SplitID: tt.fields.SplitID,
 			}
 			got, err := queryRequest.Encode()
@@ -148,7 +148,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.SplitID})
 	viper.Set(constants.SplitID.GetName(), splitID.AsString())
 	type fields struct {
-		SplitID ids.SplitID
+		SplitID *baseIds.SplitID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -165,7 +165,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			qu := queryRequest{
+			qu := &QueryRequest{
 				SplitID: tt.fields.SplitID,
 			}
 			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
@@ -184,7 +184,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
 	vars[Query.GetName()] = splitID.AsString()
 	type fields struct {
-		SplitID ids.SplitID
+		SplitID *baseIds.SplitID
 	}
 	type args struct {
 		vars map[string]string
@@ -200,7 +200,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			qu := queryRequest{
+			qu := &QueryRequest{
 				SplitID: tt.fields.SplitID,
 			}
 			got, err := qu.FromMap(tt.args.vars)
@@ -217,7 +217,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		SplitID ids.SplitID
+		SplitID *baseIds.SplitID
 	}
 	tests := []struct {
 		name    string
@@ -228,7 +228,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				SplitID: tt.fields.SplitID,
 			}
 			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
@@ -243,7 +243,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		{"+ve", queryRequest{}},
+		{"+ve", &QueryRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

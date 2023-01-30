@@ -85,7 +85,7 @@ func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	memberAuxiliary = member.AuxiliaryMock.Initialize(Mapper, Parameters)
+	memberAuxiliary = member.Auxiliary.Initialize(Mapper, Parameters)
 	keepers := TestKeepers{
 		DeputizeKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
@@ -95,7 +95,7 @@ func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
 	context, keepers, Mapper, _ := createTestInput(t)
-	keepers.DeputizeKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewMaintainer(testFromID, testClassificationID, maintainedProperties.GetPropertyIDList(), permissions)))
+	keepers.DeputizeKeeper.(auxiliaryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(baseDocuments.NewMaintainer(testFromID, testClassificationID, maintainedProperties.GetPropertyIDList(), permissions)))
 	type fields struct {
 		mapper          helpers.Mapper
 		memberAuxiliary helpers.Auxiliary
@@ -118,7 +118,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 				mapper:          tt.fields.mapper,
 				memberAuxiliary: tt.fields.memberAuxiliary,
 			}
-			if got := auxiliaryKeeper.Help(tt.args.context, tt.args.request); !reflect.DeepEqual(got, tt.want) {
+			if got := auxiliaryKeeper.Help(types.WrapSDKContext(tt.args.context), tt.args.request); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Help() = %v, want %v", got, tt.want)
 			}
 		})

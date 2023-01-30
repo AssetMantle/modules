@@ -4,6 +4,8 @@
 package nub
 
 import (
+	"context"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
 
@@ -35,7 +37,7 @@ type TestKeepers struct {
 	IdentitiesKeeper helpers.TransactionKeeper
 }
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
+func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -67,15 +69,15 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(mapper, Parameters)
-	defineAuxiliary := define.AuxiliaryMock.Initialize(mapper, Parameters)
+	scrubAuxiliary := scrub.Auxiliary.Initialize(mapper, Parameters)
+	defineAuxiliary := define.Auxiliary.Initialize(mapper, Parameters)
 	keepers := TestKeepers{
 		IdentitiesKeeper: keeperPrototype().Initialize(mapper, Parameters,
 			[]interface{}{scrubAuxiliary,
 				defineAuxiliary}).(helpers.TransactionKeeper),
 	}
 
-	return context, keepers
+	return sdkTypes.WrapSDKContext(context), keepers
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
@@ -83,7 +85,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), baseIDs.NewStringID("nubID"))); !reflect.DeepEqual(got, want) {
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), baseIDs.NewStringID("nubID")).(*Message)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -91,7 +93,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase-Duplicate", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(constants.EntityAlreadyExists)
-		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), baseIDs.NewStringID("nubID"))); !reflect.DeepEqual(got, want) {
+		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), baseIDs.NewStringID("nubID")).(*Message)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

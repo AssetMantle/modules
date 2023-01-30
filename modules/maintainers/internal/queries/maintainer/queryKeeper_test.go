@@ -30,7 +30,6 @@ import (
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -41,7 +40,7 @@ type TestKeepers struct {
 	MaintainerKeeper helpers.QueryKeeper
 }
 
-func createTestData() (ids.MaintainerID, documents.Maintainer) {
+func createTestData() (*baseIDs.MaintainerID, documents.Maintainer) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -49,7 +48,7 @@ func createTestData() (ids.MaintainerID, documents.Maintainer) {
 	testMaintainerID := baseIDs.NewMaintainerID(testClassificationID, immutables)
 	testMaintainedPropertyID := baseLists.NewIDList(baseIDs.NewStringID("maintainer"))
 	testMaintainer := base.NewMaintainer(testIdentityID, testClassificationID, testMaintainedPropertyID, testMaintainedPropertyID)
-	return testMaintainerID, testMaintainer
+	return testMaintainerID.(*baseIDs.MaintainerID), testMaintainer
 }
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
@@ -110,7 +109,7 @@ func Test_keeperPrototype(t *testing.T) {
 func Test_queryKeeper_Enquire(t *testing.T) {
 	context, keepers, Mapper, _ := createTestInput(t)
 	testMaintainerID, testMaintainer := createTestData()
-	keepers.MaintainerKeeper.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testMaintainer))
+	keepers.MaintainerKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(testMaintainer))
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -124,14 +123,14 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 		args   args
 		want   helpers.QueryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, newQueryRequest(testMaintainerID)}, newQueryResponse(keepers.MaintainerKeeper.(queryKeeper).mapper.NewCollection(context).Fetch(key.NewKey(testMaintainerID)), nil)},
+		{"+ve", fields{Mapper}, args{context, newQueryRequest(testMaintainerID)}, newQueryResponse(keepers.MaintainerKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Fetch(key.NewKey(testMaintainerID)), nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryKeeper := queryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := queryKeeper.Enquire(tt.args.context, tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
+			if got := queryKeeper.Enquire(sdkTypes.WrapSDKContext(tt.args.context), tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Enquire() = %v, want %v", got, tt.want)
 			}
 		})

@@ -21,11 +21,11 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-func createTestInput() ids.ClassificationID {
+func createTestInput() *baseIDs.ClassificationID {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	return classificationID
+	return classificationID.(*baseIDs.ClassificationID)
 }
 
 func TestNewKey(t *testing.T) {
@@ -37,7 +37,7 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{createTestInput()}, key{createTestInput()}},
+		{"+ve", args{createTestInput()}, &Key{createTestInput()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -53,7 +53,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", key{}},
+		{"+ve", &Key{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -71,11 +71,11 @@ func Test_keyFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    key
+		want    *Key
 		wantErr bool
 	}{
-		{"+ve", args{NewKey(createTestInput())}, key{createTestInput()}, false},
-		{"+ve MetaDataError", args{}, key{}, true},
+		{"+ve", args{NewKey(createTestInput())}, &Key{createTestInput()}, false},
+		{"+ve MetaDataError", args{}, &Key{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -93,7 +93,7 @@ func Test_keyFromInterface(t *testing.T) {
 
 func Test_key_Equals(t *testing.T) {
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	type args struct {
 		compareKey helpers.Key
@@ -104,12 +104,12 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{createTestInput()}, args{key{createTestInput()}}, true},
+		{"+ve", fields{createTestInput()}, args{&Key{createTestInput()}}, true},
 		{"+ve", fields{createTestInput()}, args{baseHelpers.KeyPrototype()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
+			key := &Key{
 				ClassificationID: tt.fields.ClassificationID,
 			}
 			if got := key.Equals(tt.args.compareKey); got != tt.want {
@@ -121,18 +121,18 @@ func Test_key_Equals(t *testing.T) {
 
 func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{createTestInput()}, module.StoreKeyPrefix.GenerateStoreKey(key{createTestInput()}.Bytes())},
+		{"+ve", fields{createTestInput()}, module.StoreKeyPrefix.GenerateStoreKey((&Key{createTestInput()}).GenerateStoreKeyBytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
+			key := &Key{
 				ClassificationID: tt.fields.ClassificationID,
 			}
 			if got := key.GenerateStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
@@ -144,7 +144,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 
 func Test_key_IsPartial(t *testing.T) {
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	tests := []struct {
 		name   string
@@ -152,11 +152,11 @@ func Test_key_IsPartial(t *testing.T) {
 		want   bool
 	}{
 		{"+ve", fields{createTestInput()}, false},
-		{"-ve", fields{baseIDs.PrototypeClassificationID()}, true},
+		{"-ve", fields{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
+			key := &Key{
 				ClassificationID: tt.fields.ClassificationID,
 			}
 			if got := key.IsPartial(); got != tt.want {
@@ -168,7 +168,7 @@ func Test_key_IsPartial(t *testing.T) {
 
 func Test_key_RegisterCodec(t *testing.T) {
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -182,7 +182,7 @@ func Test_key_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ke := key{
+			ke := &Key{
 				ClassificationID: tt.fields.ClassificationID,
 			}
 			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)

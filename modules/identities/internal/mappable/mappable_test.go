@@ -43,9 +43,9 @@ func TestNewMappable(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want mappable
+		want helpers.Mappable
 	}{
-		{"+ve", args{classificationID, immutables, mutables}, mappable{Identity: baseDocuments.NewIdentity(classificationID, immutables, mutables)}},
+		{"+ve", args{classificationID, immutables, mutables}, &Mappable{Identity: baseDocuments.NewIdentity(classificationID, immutables, mutables).Get().(*baseDocuments.Document)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -61,7 +61,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		{"+ve", mappable{}},
+		{"+ve", &Mappable{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -89,8 +89,8 @@ func Test_identity_GetKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			identity := mappable{
-				Identity: tt.fields.Document,
+			identity := &Mappable{
+				Identity: tt.fields.Document.Get().(*baseDocuments.Document),
 			}
 			if tt.wantPanic {
 				require.Panics(t, func() {
@@ -122,8 +122,8 @@ func Test_identity_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			id := mappable{
-				Identity: tt.fields.Document,
+			id := &Mappable{
+				Identity: tt.fields.Document.Get().(*baseDocuments.Document),
 			}
 			id.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})

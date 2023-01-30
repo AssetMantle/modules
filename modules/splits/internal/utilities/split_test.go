@@ -67,7 +67,7 @@ func TestAddSplits(t *testing.T) {
 	testRate := sdkTypes.NewDec(1)
 	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
 	context, testMapper := createTestInput1(t)
-	testSplits := testMapper.NewCollection(context).Add(mappable.NewMappable(split))
+	testSplits := testMapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
 	type args struct {
 		splits    helpers.Collection
 		ownerID   ids.IdentityID
@@ -106,7 +106,7 @@ func TestSubtractSplits(t *testing.T) {
 	testRate := sdkTypes.NewDec(10)
 	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
 	context, testMapper := createTestInput1(t)
-	testSplits := testMapper.NewCollection(context).Add(mappable.NewMappable(split))
+	testSplits := testMapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
 	type args struct {
 		splits    helpers.Collection
 		ownerID   ids.IdentityID

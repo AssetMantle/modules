@@ -92,7 +92,7 @@ func Test_keeperPrototype(t *testing.T) {
 func Test_queryKeeper_Enquire(t *testing.T) {
 	context, keepers, Mapper, _ := CreateTestInputForQueries(t)
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutables, mutables)
-	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testOrder))
+	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(testOrder))
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -106,14 +106,14 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 		args   args
 		want   helpers.QueryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, newQueryRequest(testOrderID)}, newQueryResponse(keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(context).Fetch(key.NewKey(testOrderID)), nil)},
+		{"+ve", fields{Mapper}, args{context, newQueryRequest(testOrderID)}, newQueryResponse(keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Fetch(key.NewKey(testOrderID)), nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryKeeper := queryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := queryKeeper.Enquire(tt.args.context, tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
+			if got := queryKeeper.Enquire(types.WrapSDKContext(tt.args.context), tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Enquire() = %v, want %v", got, tt.want)
 			}
 		})
@@ -123,7 +123,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 func Test_queryKeeper_Initialize(t *testing.T) {
 	context, keepers, Mapper, Parameters := CreateTestInputForQueries(t)
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutables, mutables)
-	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testOrder))
+	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(testOrder))
 	type fields struct {
 		mapper helpers.Mapper
 	}

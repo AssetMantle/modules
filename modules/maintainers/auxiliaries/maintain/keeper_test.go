@@ -91,7 +91,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
 	context, keepers, Mapper, _ := createTestInput(t)
-	keepers.MaintainKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewMaintainer(testFromID, testClassificationID, maintainedProperties.GetPropertyIDList(), permissions)))
+	keepers.MaintainKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(baseDocuments.NewMaintainer(testFromID, testClassificationID, maintainedProperties.GetPropertyIDList(), permissions)))
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -114,7 +114,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			auxiliaryKeeper := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := auxiliaryKeeper.Help(tt.args.context, tt.args.request); !reflect.DeepEqual(got, tt.want) {
+			if got := auxiliaryKeeper.Help(sdkTypes.WrapSDKContext(tt.args.context), tt.args.request); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Help() = %v, want %v", got, tt.want)
 			}
 		})

@@ -72,7 +72,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	supplementAuxiliary = supplement.AuxiliaryMock.Initialize(Mapper, Parameters)
+	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, Parameters)
 	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
@@ -86,8 +86,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
 	context, keepers, Mapper, Parameters := CreateTestInput(t)
-	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
-	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList())))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData()))
 	immutables := baseQualified.NewImmutables(immutableProperties)
 	mutables := baseQualified.NewMutables(mutableProperties)
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -97,7 +97,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	require.Nil(t, err)
 	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutables, mutables)
 	testIdentity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
-	keepers.AuthenticateKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testIdentity))
+	keepers.AuthenticateKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(testIdentity))
 	type fields struct {
 		mapper              helpers.Mapper
 		parameters          helpers.Parameters
@@ -122,7 +122,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 				parameters:          tt.fields.parameters,
 				supplementAuxiliary: tt.fields.supplementAuxiliary,
 			}
-			if got := auxiliaryKeeper.Help(tt.args.context, tt.args.request); !reflect.DeepEqual(got, tt.want) {
+			if got := auxiliaryKeeper.Help(sdkTypes.WrapSDKContext(tt.args.context), tt.args.request); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Help() = %v, want %v", got, tt.want)
 			}
 		})

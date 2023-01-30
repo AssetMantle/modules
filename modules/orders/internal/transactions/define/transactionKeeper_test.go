@@ -75,9 +75,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	authenticateAuxiliary = authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
-	defineAuxiliary = define.AuxiliaryMock.Initialize(Mapper, Parameters)
-	superAuxiliary = super.AuxiliaryMock.Initialize(Mapper, Parameters)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
+	defineAuxiliary = define.Auxiliary.Initialize(Mapper, Parameters)
+	superAuxiliary = super.Auxiliary.Initialize(Mapper, Parameters)
 
 	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
@@ -147,10 +147,10 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, Mapper, Parameters := CreateTestInput(t)
-	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
-	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
-	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList())))
-	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList())))
+	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
+	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData()))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData()))
 	immutablesMeta := baseQualified.NewImmutables(immutableMetaProperties)
 	mutablesMeta := baseQualified.NewMutables(mutableMetaProperties)
 	testClassificationID := baseIDs.NewClassificationID(immutablesMeta, mutablesMeta)
@@ -161,7 +161,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutablesMeta, mutablesMeta)
 	testIdentity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutablesMeta, mutablesMeta)
-	keepers.DefineKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testOrder))
+	keepers.DefineKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(testOrder))
 	type fields struct {
 		mapper                helpers.Mapper
 		parameters            helpers.Parameters
@@ -171,7 +171,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	}
 	type args struct {
 		context sdkTypes.Context
-		msg     sdkTypes.Msg
+		msg     helpers.Message
 	}
 	tests := []struct {
 		name   string
@@ -179,7 +179,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{Mapper, Parameters, defineAuxiliary, superAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)}, newTransactionResponse(nil)},
+		{"+ve", fields{Mapper, Parameters, defineAuxiliary, superAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -190,7 +190,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 				superAuxiliary:        tt.fields.superAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
-			if got := transactionKeeper.Transact(tt.args.context, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
+			if got := transactionKeeper.Transact(sdkTypes.WrapSDKContext(tt.args.context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Transact() = %v, want %v", got, tt.want)
 			}
 		})

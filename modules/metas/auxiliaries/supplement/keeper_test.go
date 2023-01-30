@@ -5,6 +5,7 @@ package supplement
 
 import (
 	"fmt"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 	"reflect"
 	"testing"
 
@@ -94,14 +95,14 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(propertiesList.GetList()...)}, newAuxiliaryResponse(propertiesList, nil)},
+		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(utilities.AnyPropertyListToPropertyList(propertiesList.GetList()...)...)}, newAuxiliaryResponse(propertiesList, nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			auxiliaryKeeper := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := auxiliaryKeeper.Help(tt.args.context, tt.args.request); !reflect.DeepEqual(got, tt.want) {
+			if got := auxiliaryKeeper.Help(sdkTypes.WrapSDKContext(tt.args.context), tt.args.request); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Help() = %v, want %v", got, tt.want)
 			}
 		})

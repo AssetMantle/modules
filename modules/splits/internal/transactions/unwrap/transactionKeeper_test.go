@@ -90,7 +90,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	authenticateAuxiliary = authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
 
 	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
@@ -216,7 +216,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	}
 	type args struct {
 		context sdkTypes.Context
-		msg     sdkTypes.Msg
+		msg     helpers.Message
 	}
 	tests := []struct {
 		name   string
@@ -234,7 +234,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 				bankKeeper:            tt.fields.supplyKeeper,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
-			if got := transactionKeeper.Transact(tt.args.context, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
+			if got := transactionKeeper.Transact(sdkTypes.WrapSDKContext(context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Transact() = %v, want %v", got, tt.want)
 			}
 		})

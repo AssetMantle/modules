@@ -5,6 +5,7 @@ package send
 
 import (
 	"fmt"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
 
@@ -71,7 +72,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	authenticateAuxiliary = authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
 
 	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
@@ -146,7 +147,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 	split := baseTypes.NewSplit(fromID, testOwnableID, testRate)
-	keepers.SendKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
+	keepers.SendKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
 	// keepers.SendKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
 	type fields struct {
 		mapper                helpers.Mapper
@@ -155,7 +156,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	}
 	type args struct {
 		context sdkTypes.Context
-		msg     sdkTypes.Msg
+		msg     helpers.Message
 	}
 	tests := []struct {
 		name   string
@@ -163,7 +164,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{Mapper, Parameters, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, fromID, fromID, testOwnableID, testRate)}, newTransactionResponse(nil)},
+		{"+ve", fields{Mapper, Parameters, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, fromID, fromID, testOwnableID, testRate).(*Message)}, newTransactionResponse(nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -172,7 +173,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 				parameters:            tt.fields.parameters,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
-			if got := transactionKeeper.Transact(tt.args.context, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
+			if got := transactionKeeper.Transact(sdkTypes.WrapSDKContext(tt.args.context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Transact() = %v, want %v", got, tt.want)
 			}
 		})

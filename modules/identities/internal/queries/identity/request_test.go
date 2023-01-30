@@ -26,7 +26,7 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-func createTestInput() (ids.IdentityID, ids.IdentityID) {
+func createTestInput() (*baseIDs.IdentityID, *baseIDs.IdentityID) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	emptyMutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID"), baseData.NewStringData(""))))
@@ -37,7 +37,7 @@ func createTestInput() (ids.IdentityID, ids.IdentityID) {
 	emptyTestClassificationID := baseIDs.NewClassificationID(immutables, emptyMutables)
 	emptyTestIdentity := baseIDs.NewIdentityID(emptyTestClassificationID, immutables)
 
-	return testIdentity, emptyTestIdentity
+	return testIdentity.(*baseIDs.IdentityID), emptyTestIdentity.(*baseIDs.IdentityID)
 }
 
 func Test_newQueryRequest(t *testing.T) {
@@ -57,8 +57,8 @@ func Test_newQueryRequest(t *testing.T) {
 		want helpers.QueryRequest
 	}{
 
-		{"+ve", args{testIdentity}, queryRequest{testIdentity}},
-		{"+ve with empty String", args{emptyTestIdentity}, queryRequest{emptyTestIdentity}},
+		{"+ve", args{testIdentity}, &QueryRequest{testIdentity}},
+		{"+ve with empty String", args{emptyTestIdentity}, &QueryRequest{emptyTestIdentity}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -77,11 +77,11 @@ func Test_queryRequestFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want queryRequest
+		want helpers.QueryRequest
 	}{
 
-		{"+ve", args{newQueryRequest(testIdentity)}, queryRequest{testIdentity}},
-		{"+ve with empty string", args{newQueryRequest(emptyTestIdentity)}, queryRequest{emptyTestIdentity}},
+		{"+ve", args{newQueryRequest(testIdentity)}, &QueryRequest{testIdentity}},
+		{"+ve with empty string", args{newQueryRequest(emptyTestIdentity)}, &QueryRequest{emptyTestIdentity}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,9 +97,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 	testQueryRequest := newQueryRequest(testIdentity)
 	encodedRequest, err := testQueryRequest.Encode()
 	require.Nil(t, err)
-	randomDecode, _ := queryRequest{emptyTestIdentity}.Encode()
+	randomDecode, _ := (&QueryRequest{emptyTestIdentity}).Encode()
 	type fields struct {
-		IdentityID ids.IdentityID
+		IdentityID *baseIDs.IdentityID
 	}
 	type args struct {
 		bytes []byte
@@ -113,11 +113,11 @@ func Test_queryRequest_Decode(t *testing.T) {
 	}{
 
 		{"+ve", fields{testIdentity}, args{encodedRequest}, testQueryRequest, false},
-		{"+ve", fields{emptyTestIdentity}, args{randomDecode}, queryRequest{emptyTestIdentity}, false},
+		{"+ve", fields{emptyTestIdentity}, args{randomDecode}, &QueryRequest{emptyTestIdentity}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				IdentityID: tt.fields.IdentityID,
 			}
 			got, err := queryRequest.Decode(tt.args.bytes)
@@ -138,7 +138,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 	byteArr2, _ := common.LegacyAmino.MarshalJSON(newQueryRequest(emptyTestIdentity))
 
 	type fields struct {
-		IdentityID ids.IdentityID
+		IdentityID *baseIDs.IdentityID
 	}
 	tests := []struct {
 		name    string
@@ -152,7 +152,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				IdentityID: tt.fields.IdentityID,
 			}
 			got, err := queryRequest.Encode()
@@ -172,7 +172,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.IdentityID})
 	viper.Set(constants.IdentityID.GetName(), testIdentity.String())
 	type fields struct {
-		IdentityID ids.IdentityID
+		IdentityID *baseIDs.IdentityID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -189,7 +189,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				IdentityID: tt.fields.IdentityID,
 			}
 			if got, err := queryRequest.FromCLI(tt.args.cliCommand, tt.args.context); !reflect.DeepEqual(got, tt.want) {
@@ -215,7 +215,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	emptyTestIdentity, err := baseIDs.ReadIdentityID(vars2["identities"])
 	require.NoError(t, err)
 	type fields struct {
-		IdentityID ids.IdentityID
+		IdentityID *baseIDs.IdentityID
 	}
 	type args struct {
 		vars map[string]string
@@ -228,12 +228,12 @@ func Test_queryRequest_FromMap(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", fields{testIdentity}, args{vars: vars}, newQueryRequest(testIdentity), false},
-		{"+ve with empty IdentityID", fields{emptyTestIdentity}, args{vars: vars2}, newQueryRequest(emptyTestIdentity), false},
+		{"+ve", fields{testIdentity.(*baseIDs.IdentityID)}, args{vars: vars}, newQueryRequest(testIdentity), false},
+		{"+ve with empty IdentityID", fields{emptyTestIdentity.(*baseIDs.IdentityID)}, args{vars: vars2}, newQueryRequest(emptyTestIdentity), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				IdentityID: tt.fields.IdentityID,
 			}
 			if got, err := queryRequest.FromMap(tt.args.vars); !reflect.DeepEqual(got, tt.want) {
@@ -253,7 +253,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 func Test_queryRequest_Validate(t *testing.T) {
 	testIdentity, emptyTestIdentity := createTestInput()
 	type fields struct {
-		IdentityID ids.IdentityID
+		IdentityID *baseIDs.IdentityID
 	}
 	tests := []struct {
 		name    string
@@ -266,7 +266,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				IdentityID: tt.fields.IdentityID,
 			}
 			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
@@ -282,7 +282,7 @@ func Test_requestPrototype(t *testing.T) {
 		want helpers.QueryRequest
 	}{
 
-		{"+ve", queryRequest{}},
+		{"+ve", &QueryRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

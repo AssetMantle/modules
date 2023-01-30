@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	testOwnableID = baseIds.NewCoinID(baseIds.NewStringID("OwnerID"))
+	testOwnableID = baseIds.NewCoinID(baseIds.NewStringID("OwnerID")).ToAnyOwnableID().(*baseIds.AnyOwnableID)
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -50,9 +50,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want queryRequest
+		want helpers.QueryRequest
 	}{
-		{"+ve", args{newQueryRequest(testOwnableID)}, newQueryRequest(testOwnableID).(queryRequest)},
+		{"+ve", args{newQueryRequest(testOwnableID)}, newQueryRequest(testOwnableID).(*QueryRequest)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -69,7 +69,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeOwnableID()))
 	require.NoError(t, err1)
 	type fields struct {
-		OwnableID ids.OwnableID
+		OwnableID *baseIds.AnyOwnableID
 	}
 	type args struct {
 		bytes []byte
@@ -82,11 +82,11 @@ func Test_queryRequest_Decode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testOwnableID}, args{encodedReq}, newQueryRequest(testOwnableID), false},
-		{"+ve", fields{baseIds.PrototypeOwnableID()}, args{encodedReq1}, newQueryRequest(baseIds.PrototypeOwnableID()), false},
+		{"+ve", fields{baseIds.PrototypeOwnableID().(*baseIds.AnyOwnableID)}, args{encodedReq1}, newQueryRequest(baseIds.PrototypeOwnableID()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				OwnableID: tt.fields.OwnableID,
 			}
 			got, err := queryRequest.Decode(tt.args.bytes)
@@ -107,7 +107,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeOwnableID()))
 	require.NoError(t, err1)
 	type fields struct {
-		OwnableID ids.OwnableID
+		OwnableID *baseIds.AnyOwnableID
 	}
 	tests := []struct {
 		name    string
@@ -116,11 +116,11 @@ func Test_queryRequest_Encode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testOwnableID}, encodedReq, false},
-		{"+ve", fields{baseIds.PrototypeOwnableID()}, encodedReq1, false},
+		{"+ve", fields{baseIds.PrototypeOwnableID().(*baseIds.AnyOwnableID)}, encodedReq1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				OwnableID: tt.fields.OwnableID,
 			}
 			got, err := queryRequest.Encode()
@@ -139,7 +139,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OwnableID})
 	viper.Set(constants.OwnableID.GetName(), testOwnableID.AsString())
 	type fields struct {
-		OwnableID ids.OwnableID
+		OwnableID *baseIds.AnyOwnableID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -156,7 +156,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			qu := queryRequest{
+			qu := &QueryRequest{
 				OwnableID: tt.fields.OwnableID,
 			}
 			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
@@ -175,7 +175,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
 	vars[Query.GetName()] = testOwnableID.AsString()
 	type fields struct {
-		OwnableID ids.OwnableID
+		OwnableID *baseIds.AnyOwnableID
 	}
 	type args struct {
 		vars map[string]string
@@ -191,7 +191,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			qu := queryRequest{
+			qu := &QueryRequest{
 				OwnableID: tt.fields.OwnableID,
 			}
 			got, err := qu.FromMap(tt.args.vars)
@@ -208,7 +208,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		OwnableID ids.OwnableID
+		OwnableID *baseIds.AnyOwnableID
 	}
 	tests := []struct {
 		name    string
@@ -219,7 +219,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				OwnableID: tt.fields.OwnableID,
 			}
 			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
@@ -234,7 +234,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		{"+ve", queryRequest{}},
+		{"+ve", &QueryRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -4,6 +4,7 @@
 package reveal
 
 import (
+	"context"
 	"reflect"
 	"testing"
 
@@ -35,7 +36,7 @@ type TestKeepers struct {
 	MetasKeeper helpers.TransactionKeeper
 }
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
+func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -71,7 +72,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		MetasKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.TransactionKeeper),
 	}
 
-	return context, keepers
+	return sdkTypes.WrapSDKContext(context), keepers
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
@@ -84,7 +85,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(data))
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, newFact)); !reflect.DeepEqual(got, want) {
+		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, newFact).(*Message)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
@@ -92,7 +93,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	t.Run("NegativeCase-Reveal metas again", func(t *testing.T) {
 		t.Parallel()
 		want := newTransactionResponse(constants.EntityAlreadyExists)
-		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, data)); !reflect.DeepEqual(got, want) {
+		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, data).(*Message)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

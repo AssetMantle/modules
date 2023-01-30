@@ -61,9 +61,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Au
 		paramsTransientStoreKeys,
 	)
 	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
-	transferAuxiliary := transfer.AuxiliaryMock.Initialize(Mapper, Parameters)
-	supplementAuxiliary := supplement.AuxiliaryMock.Initialize(Mapper, Parameters)
-	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(Mapper, Parameters)
+	transferAuxiliary := transfer.Auxiliary.Initialize(Mapper, Parameters)
+	supplementAuxiliary := supplement.Auxiliary.Initialize(Mapper, Parameters)
+	scrubAuxiliary := scrub.Auxiliary.Initialize(Mapper, Parameters)
 
 	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
@@ -77,9 +77,9 @@ func Test_Block_Methods(t *testing.T) {
 	block := Prototype()
 	context, mapper, transferAuxiliary, supplementAuxiliary, _ := CreateTestInput(t)
 	block = block.Initialize(mapper, parameters.Prototype(), transferAuxiliary, supplementAuxiliary)
-	block.Begin(context, abciTypes.RequestBeginBlock{})
+	block.Begin(sdkTypes.WrapSDKContext(context), abciTypes.RequestBeginBlock{})
 
-	block.End(context, abciTypes.RequestEndBlock{})
+	block.End(sdkTypes.WrapSDKContext(context), abciTypes.RequestEndBlock{})
 }
 
 func Test_block_End(t *testing.T) {
@@ -115,7 +115,7 @@ func Test_block_End(t *testing.T) {
 				transferAuxiliary:   tt.fields.transferAuxiliary,
 				scrubAuxiliary:      tt.fields.scrubAuxiliary,
 			}
-			block.End(tt.args.context, tt.args.in1)
+			block.End(sdkTypes.WrapSDKContext(tt.args.context), tt.args.in1)
 		})
 	}
 }

@@ -19,13 +19,13 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-func createTestInput() ids.IdentityID {
+func createTestInput() *baseIds.IdentityID {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIds.NewClassificationID(immutables, mutables)
 	testIdentity := baseIds.NewIdentityID(classificationID, immutables)
 
-	return testIdentity
+	return testIdentity.(*baseIds.IdentityID)
 }
 
 func TestNewKey(t *testing.T) {
@@ -38,7 +38,7 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{testIdentity}, key{IdentityID: testIdentity}},
+		{"+ve", args{testIdentity}, &Key{IdentityID: testIdentity}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -54,7 +54,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", key{}},
+		{"+ve", &Key{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -74,14 +74,14 @@ func Test_keyFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    key
+		want    *Key
 		wantErr bool
 	}{
-		{"+ve", args{nil}, key{nil}, true},
-		{"-ve", args{NewKey(nil)}, key{nil}, false},
-		{"-ve", args{testIdentity}, key{nil}, true},
-		{"+ve", args{NewKey(testIdentity)}, key{testIdentity}, false},
-		{"-ve", args{baseIds.NewStringID("StringID")}, key{}, true},
+		{"+ve", args{nil}, &Key{nil}, true},
+		{"-ve", args{NewKey(nil)}, &Key{nil}, false},
+		{"-ve", args{testIdentity}, &Key{nil}, true},
+		{"+ve", args{NewKey(testIdentity)}, &Key{testIdentity}, false},
+		{"-ve", args{baseIds.NewStringID("StringID")}, &Key{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -100,7 +100,7 @@ func Test_keyFromInterface(t *testing.T) {
 func Test_key_Equals(t *testing.T) {
 	testIdentity := createTestInput()
 	type fields struct {
-		IdentityID ids.IdentityID
+		IdentityID *baseIds.IdentityID
 	}
 	type args struct {
 		compareKey helpers.Key
@@ -111,14 +111,14 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{nil}, args{key{nil}}, true},
-		{"-ve", fields{nil}, args{key{testIdentity}}, false},
-		{"-ve", fields{testIdentity}, args{key{nil}}, false},
-		{"+ve", fields{testIdentity}, args{key{testIdentity}}, true},
+		{"+ve", fields{nil}, args{&Key{nil}}, true},
+		{"-ve", fields{nil}, args{&Key{testIdentity}}, false},
+		{"-ve", fields{testIdentity}, args{&Key{nil}}, false},
+		{"+ve", fields{testIdentity}, args{&Key{testIdentity}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
+			key := &Key{
 				IdentityID: tt.fields.IdentityID,
 			}
 			if got := key.Equals(tt.args.compareKey); got != tt.want {
@@ -132,18 +132,18 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 	testIdentity := createTestInput()
 
 	type fields struct {
-		IdentityID ids.IdentityID
+		IdentityID *baseIds.IdentityID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{testIdentity}, module.StoreKeyPrefix.GenerateStoreKey(key{testIdentity}.Bytes())},
+		{"+ve", fields{testIdentity}, module.StoreKeyPrefix.GenerateStoreKey((&Key{testIdentity}).GenerateStoreKeyBytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
+			key := &Key{
 				IdentityID: tt.fields.IdentityID,
 			}
 			if got := key.GenerateStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
@@ -157,7 +157,7 @@ func Test_key_IsPartial(t *testing.T) {
 	testIdentity := createTestInput()
 
 	type fields struct {
-		IdentityID ids.IdentityID
+		IdentityID *baseIds.IdentityID
 	}
 	tests := []struct {
 		name   string
@@ -168,7 +168,7 @@ func Test_key_IsPartial(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
+			key := &Key{
 				IdentityID: tt.fields.IdentityID,
 			}
 			if got := key.IsPartial(); got != tt.want {
@@ -182,7 +182,7 @@ func Test_key_RegisterCodec(t *testing.T) {
 	testIdentity := createTestInput()
 
 	type fields struct {
-		IdentityID ids.IdentityID
+		IdentityID *baseIds.IdentityID
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -196,7 +196,7 @@ func Test_key_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ke := key{
+			ke := &Key{
 				IdentityID: tt.fields.IdentityID,
 			}
 			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)

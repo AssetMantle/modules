@@ -96,14 +96,14 @@ func Test_keeperPrototype(t *testing.T) {
 
 func Test_queryKeeper_Enquire(t *testing.T) {
 	context, keepers, Mapper, _ := CreateTestInput(t)
-	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
-	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList())))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData()))
 	immutables := baseQualified.NewImmutables(immutableProperties)
 	mutables := baseQualified.NewMutables(mutableProperties)
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutables, mutables)
-	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testIdentity))
+	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(testIdentity))
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -117,14 +117,14 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 		args   args
 		want   helpers.QueryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, newQueryRequest(testFromID)}, newQueryResponse(keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(context).Fetch(key.NewKey(testFromID)), nil)},
+		{"+ve", fields{Mapper}, args{context, newQueryRequest(testFromID)}, newQueryResponse(keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Fetch(key.NewKey(testFromID)), nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryKeeper := queryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := queryKeeper.Enquire(tt.args.context, tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
+			if got := queryKeeper.Enquire(types.WrapSDKContext(tt.args.context), tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Enquire() = %v, want %v", got, tt.want)
 			}
 		})

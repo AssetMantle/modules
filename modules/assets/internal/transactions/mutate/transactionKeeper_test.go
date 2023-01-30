@@ -5,11 +5,10 @@ package mutate
 
 import (
 	"fmt"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
@@ -23,7 +22,6 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
-	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -46,17 +44,18 @@ type TestKeepers struct {
 }
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
-	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
-	std.RegisterLegacyAminoCodec(legacyAmino)
-	legacyAmino.Seal()
-
+	//var legacyAmino = codec.NewLegacyAmino()
+	//schema.RegisterLegacyAminoCodec(legacyAmino)
+	//std.RegisterLegacyAminoCodec(legacyAmino)
+	//legacyAmino.Seal()
+	codec := baseHelpers.CodecPrototype()
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
 	ParamsKeeper := paramsKeeper.NewKeeper(
-		legacyAmino,
+		codec.GetProtoCodec(),
+		codec.GetLegacyAmino(),
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
@@ -74,9 +73,9 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	maintainAuxiliary = maintain.AuxiliaryMock.Initialize(Mapper, Parameters)
-	conformAuxiliary = conform.AuxiliaryMock.Initialize(Mapper, Parameters)
-	authenticateAuxiliary = authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
+	maintainAuxiliary = maintain.Auxiliary.Initialize(Mapper, Parameters)
+	conformAuxiliary = conform.Auxiliary.Initialize(Mapper, Parameters)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
 
 	keepers := TestKeepers{
 		MutateKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.TransactionKeeper),
@@ -141,8 +140,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, Mapper, _ := createTestInput(t)
 	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 	immutables := baseQualified.NewImmutables(immutableMetaProperties)
-	mutableMetaproperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
-	mutableproperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
+	mutableMetaproperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
+	mutableproperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
 	mutables := baseQualified.NewMutables(mutableMetaproperties)
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testAssetID := baseIDs.NewAssetID(classificationID, immutables)
@@ -151,7 +150,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 	fromID := baseIDs.NewIdentityID(classificationID, immutables)
-	keepers.MutateKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testAsset))
+	keepers.MutateKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(testAsset))
 
 	type fields struct {
 		mapper                helpers.Mapper
@@ -161,7 +160,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	}
 	type args struct {
 		context sdkTypes.Context
-		msg     sdkTypes.Msg
+		msg     helpers.Message
 	}
 	tests := []struct {
 		name   string
@@ -169,8 +168,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{Mapper, authenticateAuxiliary, maintainAuxiliary, conformAuxiliary}, args{context, newMessage(fromAccAddress, fromID, testAssetID, mutableMetaproperties, mutableproperties)}, newTransactionResponse(nil)},
-		{"+ve Entity Not Found", fields{Mapper, authenticateAuxiliary, maintainAuxiliary, conformAuxiliary}, args{context, newMessage(fromAccAddress, fromID, baseIDs.PrototypeAssetID(), mutableMetaproperties, mutableproperties)}, newTransactionResponse(errorConstants.EntityNotFound)},
+		{"+ve", fields{Mapper, authenticateAuxiliary, maintainAuxiliary, conformAuxiliary}, args{context, newMessage(fromAccAddress, fromID, testAssetID, mutableMetaproperties, mutableproperties).(*Message)}, newTransactionResponse(nil)},
+		{"+ve Entity Not Found", fields{Mapper, authenticateAuxiliary, maintainAuxiliary, conformAuxiliary}, args{context, newMessage(fromAccAddress, fromID, baseIDs.PrototypeAssetID(), mutableMetaproperties, mutableproperties).(*Message)}, newTransactionResponse(errorConstants.EntityNotFound)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -180,7 +179,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 				maintainAuxiliary:     tt.fields.maintainAuxiliary,
 				conformAuxiliary:      tt.fields.conformAuxiliary,
 			}
-			if got := transactionKeeper.Transact(tt.args.context, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
+			if got := transactionKeeper.Transact(sdkTypes.WrapSDKContext(tt.args.context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Transact() = %v, want %v", got, tt.want)
 			}
 		})

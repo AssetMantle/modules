@@ -85,7 +85,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("PositiveCase - ", func(t *testing.T) {
 		want := newAuxiliaryResponse(metaPropertyList.ScrubData(), nil)
-		if got := keepers.MetasKeeper.Help(context, NewAuxiliaryRequest(metaPropertyList)); !reflect.DeepEqual(got, want) {
+		if got := keepers.MetasKeeper.Help(sdkTypes.WrapSDKContext(context), NewAuxiliaryRequest(metaPropertyList)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
