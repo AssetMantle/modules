@@ -194,7 +194,7 @@ func (module module) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JS
 		panic(constants.UninitializedUsage)
 	}
 
-	genesisState.Import(sdkTypes.WrapSDKContext(context), module.mapper, module.parameters)
+	genesisState.Import(sdkTypes.WrapSDKContext(context), module.mapper)
 
 	return []abciTypes.ValidatorUpdate{}
 }
@@ -203,7 +203,7 @@ func (module module) ExportGenesis(context sdkTypes.Context, jsonCodec sdkCodec.
 		panic(constants.UninitializedUsage)
 	}
 
-	return module.genesisPrototype().Export(sdkTypes.WrapSDKContext(context), module.mapper, module.parameters).Encode(jsonCodec)
+	return module.genesisPrototype().Export(sdkTypes.WrapSDKContext(context), module.mapper).Encode(jsonCodec)
 }
 func (module module) BeginBlock(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock) {
 	module.block.Begin(sdkTypes.WrapSDKContext(context), beginBlockRequest)

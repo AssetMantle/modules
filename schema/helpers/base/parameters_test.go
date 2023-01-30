@@ -15,7 +15,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	parametersSchema "github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 )
@@ -27,7 +27,7 @@ func TestParameters(t *testing.T) {
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 	Parameter := baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
-	ParameterList := []parametersSchema.Parameter{Parameter}
+	ParameterList := []helpers.Parameter{Parameter}
 	Parameters := NewParameters(ParameterList...)
 	subspace := paramsTypes.NewSubspace(legacyAmino, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	subspace.SetParamSet(context, Parameters)
@@ -39,7 +39,7 @@ func TestParameters(t *testing.T) {
 
 	require.Equal(t, true, Parameters.Equal(Parameters))
 
-	require.Equal(t, true, Parameters.GetList()[0].Equal(Parameter))
+	require.Equal(t, true, Parameters.Get()[0].Equal(Parameter))
 	require.Equal(t, `{"id":{"idString":"testParameter"},"data":{"value":"testData"}}`, Parameters.String())
 
 	err := Parameters.Validate()

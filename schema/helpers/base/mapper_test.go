@@ -39,7 +39,7 @@ func TestMapper(t *testing.T) {
 	testMapper.Create(context, base.NewMappable("test2", "value2"))
 	testMapper.Create(context, base.NewMappable("test3", "value3"))
 
-	// Update
+	// Set
 	testMapper.Update(context, base.NewMappable("test2", "value3"))
 
 	// Remove

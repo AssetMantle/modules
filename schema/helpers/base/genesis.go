@@ -34,7 +34,7 @@ func (genesis genesis) Validate() error {
 		var isPresent bool
 		for _, defaultParameter := range genesis.Default().GetParameterList() {
 			isPresent = false
-			if defaultParameter.GetID().Compare(parameter.GetID()) == 0 {
+			if defaultParameter.GetMetaProperty().Compare(parameter.GetMetaProperty()) == 0 {
 				isPresent = true
 				break
 			}
@@ -54,16 +54,14 @@ func (genesis genesis) Validate() error {
 
 	return err
 }
-func (genesis genesis) Import(context context.Context, mapper helpers.Mapper, parameters helpers.Parameters) {
+func (genesis genesis) Import(context context.Context, mapper helpers.Mapper) {
 	for _, mappable := range genesis.GetMappableList() {
 		mapper.Create(context, mappable)
 	}
 
-	for _, parameter := range genesis.GetParameterList() {
-		parameters.Mutate(context, parameter)
-	}
+	NewParameters(genesis.GetParameterList()...).Set(context)
 }
-func (genesis genesis) Export(context context.Context, mapper helpers.Mapper, parameters helpers.Parameters) helpers.Genesis {
+func (genesis genesis) Export(context context.Context, mapper helpers.Mapper) helpers.Genesis {
 	var mappableList []helpers.Mappable
 
 	appendMappableList := func(mappable helpers.Mappable) bool {
@@ -72,11 +70,7 @@ func (genesis genesis) Export(context context.Context, mapper helpers.Mapper, pa
 	}
 	mapper.Iterate(context, genesis.keyPrototype(), appendMappableList)
 
-	for _, defaultParameter := range genesis.Default().GetParameterList() {
-		parameters = parameters.Fetch(context, defaultParameter.GetID())
-	}
-
-	return genesis.Initialize(mappableList, parameters.GetList())
+	return genesis.Initialize(mappableList, NewParameters(genesis.Default().GetParameterList()...).Fetch(context).Get())
 }
 func (genesis genesis) Encode(jsonCodec sdkCodec.JSONCodec) []byte {
 	bytes, err := jsonCodec.MarshalJSON(genesis.genesisState)

@@ -4,15 +4,14 @@
 package base
 
 import (
-	"strings"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"golang.org/x/net/context"
 
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/properties/base"
 )
 
 type parameters struct {
@@ -22,74 +21,36 @@ type parameters struct {
 
 var _ helpers.Parameters = (*parameters)(nil)
 
-func (parameters parameters) String() string {
-	parameterList := make([]string, len(parameters.parameterList))
-	for i, parameter := range parameters.parameterList {
-		parameterList[i] = parameter.AsString()
-	}
-
-	return strings.Join(parameterList, "\n")
-}
-func (parameters parameters) Validate() error {
-	for _, parameter := range parameters.parameterList {
-		if err := parameter.Validate(); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-func (parameters parameters) Equal(compareParameters helpers.Parameters) bool {
-	for _, compareParameter := range compareParameters.GetList() {
-		if !compareParameter.Equal(parameters.Get(compareParameter.GetID())) {
-			return false
-		}
-	}
-
-	return true
-}
-func (parameters parameters) Get(id ids.ID) helpers.Parameter {
-	for _, parameter := range parameters.parameterList {
-		if parameter.GetID().Compare(id) == 0 {
-			return parameter
-		}
-	}
-
-	return nil
-}
-func (parameters parameters) GetList() []helpers.Parameter {
+func (parameters parameters) Get() []helpers.Parameter {
 	return parameters.parameterList
 }
-func (parameters parameters) Fetch(context context.Context, id ids.ID) helpers.Parameters {
-	var Data data.AnyData
-
-	parameters.paramsSubspace.Get(sdkTypes.UnwrapSDKContext(context), id.Bytes(), &Data)
-
+func (parameters parameters) Fetch(context context.Context) helpers.Parameters {
 	for i, parameter := range parameters.parameterList {
-		if parameter.GetID().Compare(id) == 0 {
-			parameters.parameterList[i] = parameter.Mutate(Data)
-		}
+		var anyData data.AnyData
+		parameters.paramsSubspace.Get(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), &anyData)
+		parameters.parameterList[i] = parameter.Mutate(base.NewMetaProperty(parameter.GetMetaProperty().GetID().GetKey(), anyData))
 	}
 
 	return parameters
 }
-func (parameters parameters) Mutate(context context.Context, newParameter helpers.Parameter) helpers.Parameters {
-	for i, parameter := range parameters.parameterList {
-		if parameter.GetID().Compare(newParameter.GetID()) == 0 {
-			parameters.parameterList[i] = newParameter
-			parameters.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetID().Bytes(), parameter.GetData())
-
-			break
-		}
+func (parameters parameters) Set(context context.Context) {
+	for _, parameter := range parameters.parameterList {
+		parameters.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData())
 	}
-
-	return parameters
 }
 func (parameters parameters) ParamSetPairs() paramsTypes.ParamSetPairs {
 	paramSetPairList := make([]paramsTypes.ParamSetPair, len(parameters.parameterList))
 
 	for i, parameter := range parameters.parameterList {
-		paramSetPairList[i] = paramsTypes.NewParamSetPair(parameter.GetID().Bytes(), parameter.GetData(), parameter.GetValidator())
+		validator := func(i interface{}) error {
+			switch value := i.(type) {
+			case helpers.Parameter:
+				return value.Validate()
+			default:
+				return constants.InvalidParameter
+			}
+		}
+		paramSetPairList[i] = paramsTypes.NewParamSetPair(parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData(), validator)
 	}
 
 	return paramSetPairList
@@ -97,8 +58,8 @@ func (parameters parameters) ParamSetPairs() paramsTypes.ParamSetPairs {
 func (parameters parameters) GetKeyTable() paramsTypes.KeyTable {
 	return paramsTypes.NewKeyTable().RegisterParamSet(parameters)
 }
-func (parameters parameters) Initialize(paramsSubspace paramsTypes.Subspace) helpers.Parameters {
-	parameters.paramsSubspace = paramsSubspace
+func (parameters parameters) Initialize(subspace paramsTypes.Subspace) helpers.Parameters {
+	parameters.paramsSubspace = subspace
 	return parameters
 }
 
