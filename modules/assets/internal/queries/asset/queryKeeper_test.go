@@ -98,12 +98,12 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testAssetID := baseIDs.NewAssetID(classificationID, immutables)
-	keepers.AssetKeeper.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(base.NewAsset(classificationID, immutables, mutables)))
+	keepers.AssetKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(base.NewAsset(classificationID, immutables, mutables)))
 	type fields struct {
 		mapper helpers.Mapper
 	}
 	type args struct {
-		context      types.Context
+		context      sdkTypes.Context
 		queryRequest helpers.QueryRequest
 	}
 	tests := []struct {
@@ -112,14 +112,14 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 		args   args
 		want   helpers.QueryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, newQueryRequest(testAssetID)}, newQueryResponse(keepers.AssetKeeper.(queryKeeper).mapper.NewCollection(context).Fetch(key.NewKey(testAssetID)), nil)},
+		{"+ve", fields{Mapper}, args{context, newQueryRequest(testAssetID)}, newQueryResponse(keepers.AssetKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Fetch(key.NewKey(testAssetID)), nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryKeeper := queryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := queryKeeper.Enquire(tt.args.context, tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
+			if got := queryKeeper.Enquire(sdkTypes.WrapSDKContext(tt.args.context), tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Enquire() = %v, want %v", got, tt.want)
 			}
 		})

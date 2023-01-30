@@ -4,6 +4,7 @@
 package define
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"testing"
@@ -44,7 +45,7 @@ type TestKeepers struct {
 	ClassificationsKeeper helpers.AuxiliaryKeeper
 }
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
+func CreateTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -80,7 +81,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ClassificationsKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
-	return context, keepers, Mapper, Parameters
+	return sdkTypes.WrapSDKContext(context), keepers, Mapper, Parameters
 }
 
 func Test_Auxiliary_Keeper_Help(t *testing.T) {

@@ -4,6 +4,7 @@
 package block
 
 import (
+	"context"
 	"testing"
 
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -23,7 +24,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func CreateTestInput(t *testing.T) sdkTypes.Context {
+func CreateTestInput(t *testing.T) context.Context {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -45,7 +46,7 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	return context
+	return sdkTypes.WrapSDKContext(context)
 }
 
 func Test_Block_Methods(t *testing.T) {
