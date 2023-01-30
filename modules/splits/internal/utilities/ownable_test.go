@@ -29,7 +29,7 @@ func TestGetOwnableTotalSplitsValue(t *testing.T) {
 	testRate := types.NewDec(10)
 	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
 	context, testMapper := createTestInput1(t)
-	testSplits := testMapper.NewCollection(context).Add(mappable.NewMappable(split))
+	testSplits := testMapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(split))
 	type args struct {
 		collection helpers.Collection
 		ownableID  ids.ID
