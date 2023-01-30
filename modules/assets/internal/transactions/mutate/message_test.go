@@ -35,6 +35,14 @@ var (
 	testAssetID             = baseIDs.NewAssetID(classificationID, immutables).(*baseIDs.AssetID)
 )
 
+type fields struct {
+	From                  string
+	FromID                *baseIDs.IdentityID
+	AssetID               *baseIDs.AssetID
+	MutableMetaProperties *baseLists.PropertyList
+	MutableProperties     *baseLists.PropertyList
+}
+
 func Test_messageFromInterface(t *testing.T) {
 	type args struct {
 		msg sdkTypes.Msg
@@ -72,13 +80,7 @@ func Test_messagePrototype(t *testing.T) {
 }
 
 func Test_message_GetSignBytes(t *testing.T) {
-	type fields struct {
-		From                  string
-		FromID                *baseIDs.IdentityID
-		AssetID               *baseIDs.AssetID
-		MutableMetaProperties *baseLists.PropertyList
-		MutableProperties     *baseLists.PropertyList
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
@@ -103,13 +105,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 }
 
 func Test_message_GetSigners(t *testing.T) {
-	type fields struct {
-		From                  string
-		FromID                *baseIDs.IdentityID
-		AssetID               *baseIDs.AssetID
-		MutableMetaProperties *baseLists.PropertyList
-		MutableProperties     *baseLists.PropertyList
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
@@ -134,13 +130,7 @@ func Test_message_GetSigners(t *testing.T) {
 }
 
 func Test_message_RegisterCodec(t *testing.T) {
-	type fields struct {
-		From                  string
-		FromID                *baseIDs.IdentityID
-		AssetID               *baseIDs.AssetID
-		MutableMetaProperties *baseLists.PropertyList
-		MutableProperties     *baseLists.PropertyList
-	}
+
 	type args struct {
 		legacyAmino *codec.LegacyAmino
 	}
@@ -166,13 +156,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 }
 
 func Test_message_Route(t *testing.T) {
-	type fields struct {
-		From                  string
-		FromID                *baseIDs.IdentityID
-		AssetID               *baseIDs.AssetID
-		MutableMetaProperties *baseLists.PropertyList
-		MutableProperties     *baseLists.PropertyList
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
@@ -197,13 +181,7 @@ func Test_message_Route(t *testing.T) {
 }
 
 func Test_message_Type(t *testing.T) {
-	type fields struct {
-		From                  string
-		FromID                *baseIDs.IdentityID
-		AssetID               *baseIDs.AssetID
-		MutableMetaProperties *baseLists.PropertyList
-		MutableProperties     *baseLists.PropertyList
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
@@ -228,13 +206,7 @@ func Test_message_Type(t *testing.T) {
 }
 
 func Test_message_ValidateBasic(t *testing.T) {
-	type fields struct {
-		From                  string
-		FromID                *baseIDs.IdentityID
-		AssetID               *baseIDs.AssetID
-		MutableMetaProperties *baseLists.PropertyList
-		MutableProperties     *baseLists.PropertyList
-	}
+
 	tests := []struct {
 		name    string
 		fields  fields

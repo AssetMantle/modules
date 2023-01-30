@@ -32,6 +32,13 @@ var (
 	fromID                  = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
 )
 
+type fields struct {
+	From             string
+	FromID           *baseIDs.IdentityID
+	ToID             *baseIDs.IdentityID
+	ClassificationID *baseIDs.ClassificationID
+}
+
 func Test_messageFromInterface(t *testing.T) {
 	type args struct {
 		msg sdkTypes.Msg
@@ -69,12 +76,6 @@ func Test_messagePrototype(t *testing.T) {
 }
 
 func Test_message_GetSignBytes(t *testing.T) {
-	type fields struct {
-		From             string
-		FromID           *baseIDs.IdentityID
-		ToID             *baseIDs.IdentityID
-		ClassificationID *baseIDs.ClassificationID
-	}
 	tests := []struct {
 		name   string
 		fields fields
@@ -98,12 +99,6 @@ func Test_message_GetSignBytes(t *testing.T) {
 }
 
 func Test_message_GetSigners(t *testing.T) {
-	type fields struct {
-		From             string
-		FromID           *baseIDs.IdentityID
-		ToID             *baseIDs.IdentityID
-		ClassificationID *baseIDs.ClassificationID
-	}
 	tests := []struct {
 		name   string
 		fields fields
@@ -127,12 +122,6 @@ func Test_message_GetSigners(t *testing.T) {
 }
 
 func Test_message_RegisterCodec(t *testing.T) {
-	type fields struct {
-		From             string
-		FromID           *baseIDs.IdentityID
-		ToID             *baseIDs.IdentityID
-		ClassificationID *baseIDs.ClassificationID
-	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
 	}
@@ -157,12 +146,6 @@ func Test_message_RegisterCodec(t *testing.T) {
 }
 
 func Test_message_Route(t *testing.T) {
-	type fields struct {
-		From             string
-		FromID           *baseIDs.IdentityID
-		ToID             *baseIDs.IdentityID
-		ClassificationID *baseIDs.ClassificationID
-	}
 	tests := []struct {
 		name   string
 		fields fields
@@ -186,12 +169,6 @@ func Test_message_Route(t *testing.T) {
 }
 
 func Test_message_Type(t *testing.T) {
-	type fields struct {
-		From             string
-		FromID           *baseIDs.IdentityID
-		ToID             *baseIDs.IdentityID
-		ClassificationID *baseIDs.ClassificationID
-	}
 	tests := []struct {
 		name   string
 		fields fields
@@ -215,12 +192,6 @@ func Test_message_Type(t *testing.T) {
 }
 
 func Test_message_ValidateBasic(t *testing.T) {
-	type fields struct {
-		From             string
-		FromID           *baseIDs.IdentityID
-		ToID             *baseIDs.IdentityID
-		ClassificationID *baseIDs.ClassificationID
-	}
 	tests := []struct {
 		name    string
 		fields  fields
