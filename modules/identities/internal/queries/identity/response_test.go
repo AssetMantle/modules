@@ -26,14 +26,6 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func ProduceList(mappables []helpers.Mappable) []*mappable.Mappable {
-	var list []*mappable.Mappable
-	for _, item := range mappables {
-		list = append(list, item.(*mappable.Mappable))
-	}
-	return list
-}
-
 func CreateTestInputContext(t *testing.T) context.Context {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
@@ -112,7 +104,7 @@ func Test_queryResponse_Decode(t *testing.T) {
 			queryResponse := &QueryResponse{
 				Success: tt.fields.Success,
 				Error:   tt.fields.Error,
-				List:    ProduceList(tt.fields.List),
+				List:    mappable.MappablesFromInterface(tt.fields.List),
 			}
 			got, err := queryResponse.Decode(tt.args.bytes)
 			if (err != nil) != tt.wantErr {
@@ -129,8 +121,8 @@ func Test_queryResponse_Decode(t *testing.T) {
 func Test_queryResponse_Encode(t *testing.T) {
 	context := CreateTestInputContext(t)
 	collection := mapper.Prototype().NewCollection(context)
-	encodedByte, err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: true, Error: "", List: ProduceList(collection.GetList())})
-	encodedByteWithError, _err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: false, Error: constants.IncorrectFormat.Error(), List: ProduceList(collection.GetList())})
+	encodedByte, err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: true, Error: "", List: mappable.MappablesFromInterface(collection.GetList())})
+	encodedByteWithError, _err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: false, Error: constants.IncorrectFormat.Error(), List: mappable.MappablesFromInterface(collection.GetList())})
 	require.Nil(t, err)
 	type fields struct {
 		Success bool
@@ -152,7 +144,7 @@ func Test_queryResponse_Encode(t *testing.T) {
 			queryResponse := &QueryResponse{
 				Success: tt.fields.Success,
 				Error:   tt.fields.Error.Error(),
-				List:    ProduceList(tt.fields.List),
+				List:    mappable.MappablesFromInterface(tt.fields.List),
 			}
 			got, err := queryResponse.Encode()
 			if (err != nil) != tt.wantErr {
@@ -186,7 +178,7 @@ func Test_queryResponse_GetError(t *testing.T) {
 			queryResponse := &QueryResponse{
 				Success: tt.fields.Success,
 				Error:   tt.fields.Error.Error(),
-				List:    ProduceList(tt.fields.List),
+				List:    mappable.MappablesFromInterface(tt.fields.List),
 			}
 			if err := queryResponse.GetError(); (err != nil) != tt.wantErr {
 				t.Errorf("GetError() error = %v, wantErr %v", err, tt.wantErr)
@@ -215,7 +207,7 @@ func Test_queryResponse_IsSuccessful(t *testing.T) {
 			queryResponse := &QueryResponse{
 				Success: tt.fields.Success,
 				Error:   tt.fields.Error.Error(),
-				List:    ProduceList(tt.fields.List),
+				List:    mappable.MappablesFromInterface(tt.fields.List),
 			}
 			if got := queryResponse.IsSuccessful(); got != tt.want {
 				t.Errorf("IsSuccessful() = %v, want %v", got, tt.want)

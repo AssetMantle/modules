@@ -39,11 +39,7 @@ func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
 func newQueryResponse(collection helpers.Collection, error error) *QueryResponse {
-	var list []*mappable.Mappable
-
-	for _, item := range collection.GetList() {
-		list = append(list, item.(*mappable.Mappable))
-	}
+	list := mappable.MappablesFromInterface(collection.GetList())
 	if error != nil {
 		return &QueryResponse{
 			Success: false,
