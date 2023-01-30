@@ -82,9 +82,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	authenticateAuxiliary = authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
-	conformAuxiliary = conform.AuxiliaryMock.Initialize(Mapper, Parameters)
-	maintainersVerifyAuxiliary = verify.AuxiliaryMock.Initialize(Mapper, Parameters)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
+	conformAuxiliary = conform.Auxiliary.Initialize(Mapper, Parameters)
+	maintainersVerifyAuxiliary = verify.Auxiliary.Initialize(Mapper, Parameters)
 	keepers := TestKeepers{
 		IssueKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}).(helpers.TransactionKeeper),
 	}

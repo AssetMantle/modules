@@ -82,10 +82,10 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	renumerateAuxiliary = renumerate.AuxiliaryMock.Initialize(Mapper, Parameters)
-	maintainAuxiliary = maintain.AuxiliaryMock.Initialize(Mapper, Parameters)
-	supplementAuxiliary = supplement.AuxiliaryMock.Initialize(Mapper, Parameters)
-	authenticateAuxiliary = authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
+	renumerateAuxiliary = renumerate.Auxiliary.Initialize(Mapper, Parameters)
+	maintainAuxiliary = maintain.Auxiliary.Initialize(Mapper, Parameters)
+	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, Parameters)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
 
 	keepers := TestKeepers{
 		BurnKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.TransactionKeeper),

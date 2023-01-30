@@ -68,8 +68,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(mapper, Parameters)
-	defineAuxiliary := define.AuxiliaryMock.Initialize(mapper, Parameters)
+	scrubAuxiliary := scrub.Auxiliary.Initialize(mapper, Parameters)
+	defineAuxiliary := define.Auxiliary.Initialize(mapper, Parameters)
 	keepers := TestKeepers{
 		IdentitiesKeeper: keeperPrototype().Initialize(mapper, Parameters,
 			[]interface{}{scrubAuxiliary,

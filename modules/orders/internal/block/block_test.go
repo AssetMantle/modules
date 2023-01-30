@@ -61,9 +61,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Au
 		paramsTransientStoreKeys,
 	)
 	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
-	transferAuxiliary := transfer.AuxiliaryMock.Initialize(Mapper, Parameters)
-	supplementAuxiliary := supplement.AuxiliaryMock.Initialize(Mapper, Parameters)
-	scrubAuxiliary := scrub.AuxiliaryMock.Initialize(Mapper, Parameters)
+	transferAuxiliary := transfer.Auxiliary.Initialize(Mapper, Parameters)
+	supplementAuxiliary := supplement.Auxiliary.Initialize(Mapper, Parameters)
+	scrubAuxiliary := scrub.Auxiliary.Initialize(Mapper, Parameters)
 
 	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",

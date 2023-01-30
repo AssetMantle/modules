@@ -85,7 +85,7 @@ func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	memberAuxiliary = member.AuxiliaryMock.Initialize(Mapper, Parameters)
+	memberAuxiliary = member.Auxiliary.Initialize(Mapper, Parameters)
 	keepers := TestKeepers{
 		DeputizeKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}

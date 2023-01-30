@@ -78,7 +78,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	authenticateAuxiliary := authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
+	authenticateAuxiliary := authenticate.Auxiliary.Initialize(Mapper, Parameters)
 	keepers := TestKeepers{
 		UnProvisionKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
 	}
@@ -104,7 +104,7 @@ func Test_keeperPrototype(t *testing.T) {
 
 func Test_transactionKeeper_Initialize(t *testing.T) {
 	_, _, mapper, _parameters := CreateTestInput(t)
-	supplementAuxiliary = supplement.AuxiliaryMock.Initialize(mapper, _parameters)
+	supplementAuxiliary = supplement.Auxiliary.Initialize(mapper, _parameters)
 	type fields struct {
 		mapper              helpers.Mapper
 		supplementAuxiliary helpers.Auxiliary

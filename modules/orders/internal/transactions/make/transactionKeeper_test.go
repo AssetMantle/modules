@@ -81,11 +81,11 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	authenticateAuxiliary = authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
-	supplementAuxiliary = supplement.AuxiliaryMock.Initialize(Mapper, Parameters)
-	transferAuxiliary = transfer.AuxiliaryMock.Initialize(Mapper, Parameters)
-	conformAuxiliary = conform.AuxiliaryMock.Initialize(Mapper, Parameters)
-	maintainersVerifyAuxiliary = verify.AuxiliaryMock.Initialize(Mapper, Parameters)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
+	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, Parameters)
+	transferAuxiliary = transfer.Auxiliary.Initialize(Mapper, Parameters)
+	conformAuxiliary = conform.Auxiliary.Initialize(Mapper, Parameters)
+	maintainersVerifyAuxiliary = verify.Auxiliary.Initialize(Mapper, Parameters)
 
 	context := types.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
