@@ -4,6 +4,7 @@
 package nub
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
 

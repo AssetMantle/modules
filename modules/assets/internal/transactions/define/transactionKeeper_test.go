@@ -157,7 +157,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 	fromID := baseIDs.NewIdentityID(classificationID, immutables)
-	keepers.BurnKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testAsset))
+	keepers.BurnKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(testAsset))
 
 	type fields struct {
 		mapper                helpers.Mapper
@@ -167,7 +167,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	}
 	type args struct {
 		context sdkTypes.Context
-		msg     sdkTypes.Msg
+		msg     helpers.Message
 	}
 	tests := []struct {
 		name   string
@@ -175,7 +175,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{Mapper, defineAuxiliary, superAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, fromID, immutableMetaPropertiesLists, immutablePropertiesLists, mutableMetaPropertiesLists, mutablePropertiesLists)}, newTransactionResponse(nil)},
+		{"+ve", fields{Mapper, defineAuxiliary, superAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, fromID, immutableMetaPropertiesLists, immutablePropertiesLists, mutableMetaPropertiesLists, mutablePropertiesLists).(*Message)}, newTransactionResponse(nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -185,7 +185,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 				superAuxiliary:        tt.fields.superAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
-			if got := transactionKeeper.Transact(tt.args.context, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
+			if got := transactionKeeper.Transact(sdkTypes.WrapSDKContext(tt.args.context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Transact() = %v, want %v", got, tt.want)
 			}
 		})
