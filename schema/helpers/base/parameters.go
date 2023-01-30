@@ -24,6 +24,39 @@ var _ helpers.Parameters = (*parameters)(nil)
 func (parameters parameters) Get() []helpers.Parameter {
 	return parameters.parameterList
 }
+func (parameters parameters) Validate() error {
+
+	if len(genesis.GetParameterList()) != len(genesis.Default().GetParameterList()) {
+		return constants.InvalidParameter
+	}
+
+	for _, parameter := range genesis.GetParameterList() {
+		var isPresent bool
+		for _, defaultParameter := range genesis.Default().GetParameterList() {
+			isPresent = false
+			if defaultParameter.GetMetaProperty().Compare(parameter.GetMetaProperty()) == 0 {
+				isPresent = true
+				break
+			}
+		}
+
+		if !isPresent {
+			return constants.InvalidParameter
+		}
+
+		if err := parameter.Validate(); err != nil {
+			return err
+		}
+	}
+
+	for _, parameter := range parameters.parameterList {
+		if err := parameter.Validate(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 func (parameters parameters) Fetch(context context.Context) helpers.Parameters {
 	for i, parameter := range parameters.parameterList {
 		var anyData data.AnyData
