@@ -4,6 +4,7 @@
 package asset
 
 import (
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -145,7 +146,6 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID})
-	context := client.Context{}.WithCodec(base.CodecPrototype())
 
 	viper.Set(constants.AssetID.GetName(), testAssetID.AsString())
 	type fields struct {
@@ -162,7 +162,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testAssetID}, args{cliCommand, context}, newQueryRequest(testAssetID), false},
+		{"+ve", fields{testAssetID}, args{cliCommand, test.TestClientContext}, newQueryRequest(testAssetID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

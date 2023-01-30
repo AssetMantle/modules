@@ -5,6 +5,7 @@ package quash
 
 import (
 	"encoding/json"
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -86,7 +87,6 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	legacyAmino.Seal()
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.IdentityID})
-	context := client.Context{}.WithCodec(baseHelpers.CodecPrototype())
 
 	testBaseReq, _, testFromID := createTestInput(t)
 	type fields struct {
@@ -105,7 +105,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.AsString(), testFromID.AsString()}, args{cliCommand: cliCommand, context: context}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.IdentityID)}, false},
+		{"+ve", fields{testBaseReq, testFromID.AsString(), testFromID.AsString()}, args{cliCommand: cliCommand, context: test.TestClientContext}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromID), cliCommand.ReadString(constants.IdentityID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

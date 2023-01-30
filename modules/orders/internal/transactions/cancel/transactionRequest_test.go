@@ -6,6 +6,7 @@ package cancel
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -80,7 +81,6 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := basehelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OrderID, constants.FromID})
-	context := client.Context{}.WithCodec(base.CodecPrototype())
 
 	viper.Set(constants.FromID.GetName(), testFromID.AsString())
 	viper.Set(constants.OrderID.GetName(), testOrderID.AsString())
@@ -100,7 +100,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, args{cliCommand, context}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testOrderID.AsString()), false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, args{cliCommand, test.TestClientContext}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testOrderID.AsString()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

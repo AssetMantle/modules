@@ -80,7 +80,6 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.ToID, constants.FromID, constants.OwnableID, constants.Value})
-	context := client.Context{}.WithCodec(base.CodecPrototype())
 
 	viper.Set(constants.FromID.GetName(), fromID.AsString())
 	viper.Set(constants.ToID.GetName(), fromID.AsString())
@@ -104,7 +103,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), ownableID.AsString(), testRate.String()}, args{cliCommand, context}, transactionRequest{testBaseRequest, fromID.AsString(), fromID.AsString(), ownableID.AsString(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), ownableID.AsString(), testRate.String()}, args{cliCommand, test.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), fromID.AsString(), ownableID.AsString(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

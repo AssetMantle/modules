@@ -5,7 +5,6 @@ package reveal
 
 import (
 	"encoding/json"
-	"github.com/cosmos/cosmos-sdk/client"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -28,7 +27,6 @@ func Test_Reveal_Request(t *testing.T) {
 	legacyAmino.Seal()
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.Data})
-	context := client.Context{}.WithCodec(baseHelpers.CodecPrototype())
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
