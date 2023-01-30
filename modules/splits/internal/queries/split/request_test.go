@@ -4,6 +4,7 @@
 package split
 
 import (
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
