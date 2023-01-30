@@ -49,7 +49,7 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 
 func Test_Asset_Response(t *testing.T) {
 	context := CreateTestInput(t)
-	collection := mapper.Prototype().NewCollection(context)
+	collection := mapper.Prototype().sdkTypes.WrapSDKContext(context)
 
 	testQueryResponse := newQueryResponse(collection, nil)
 	testQueryResponseWithError := newQueryResponse(collection, constants.IncorrectFormat)

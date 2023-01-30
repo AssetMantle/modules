@@ -155,7 +155,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, Mapper, Parameters := CreateTestInput(t)
 	mutableMetaProperties := baseLists.NewPropertyList(
-		baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())),
+		baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("exchangeRate"), baseData.NewDecData(types.NewDec(10))),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerOwnableID"), baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID("makerID")))),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("creationHeight"), baseData.NewHeightData(baseTypes.NewHeight(1))),
@@ -164,10 +164,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerID"), baseData.NewIDData(baseIDs.PrototypeIdentityID())),
 	)
 	mutableProperties := baseLists.NewPropertyList(
-		baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())),
+		baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()),
 	)
-	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList())))
-	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList())))
+	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData()))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData()))
 	immutablesMeta := baseQualified.NewImmutables(immutableMetaProperties)
 	mutablesMeta := baseQualified.NewMutables(mutableMetaProperties)
 	testClassificationID := baseIDs.NewClassificationID(immutablesMeta, mutablesMeta)
@@ -189,7 +189,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	testHeight := baseTypes.NewHeight(1)
 	// testOrderID := baseIDs.NewOrderID(testClassificationID, testMakerOwnableID, testTakerOwnableID, testRate, testHeight, testFromID, immutablesMeta)
 	// testOrderID2 := baseIDs.NewOrderID(testClassificationID, testTakerOwnableID, testTakerOwnableID, testRate, testHeight, testFromID, immutablesMeta)
-	keepers.ImmediateKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testOrder))
+	keepers.ImmediateKeeper.(transactionKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(testOrder))
 	type fields struct {
 		mapper                helpers.Mapper
 		parameters            helpers.Parameters
@@ -200,7 +200,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	}
 	type args struct {
 		context types.Context
-		msg     types.Msg
+		msg     helpers.Message
 	}
 	tests := []struct {
 		name   string
@@ -220,7 +220,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 				transferAuxiliary:     tt.fields.transferAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
-			if got := transactionKeeper.Transact(tt.args.context, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
+			if got := transactionKeeper.Transact(types.WrapSDKContext(context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Transact() = %v, want %v", got, tt.want)
 			}
 		})

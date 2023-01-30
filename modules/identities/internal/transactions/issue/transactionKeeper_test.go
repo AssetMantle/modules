@@ -5,6 +5,7 @@ package issue
 
 import (
 	"fmt"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 	"reflect"
 	"testing"
 
@@ -155,7 +156,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Nil(t, err)
 	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID11"), baseData.NewStringData("ImmutableData")))
-	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
+	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("authentication"), baseData.NewListData()))
 	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("authentication"), baseData.NewStringData("MutableData")))
 	immutables := baseQualified.NewImmutables(immutableMetaProperties)
 	mutables := baseQualified.NewMutables(mutableMetaProperties)
@@ -163,8 +164,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	fromIdentityID := baseIds.NewIdentityID(classificationID, immutables)
 	identity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 	identity = identity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
-	identity.Mutate(immutableMetaProperties.GetList()...)
-	keepers.IssueKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(identity))
+	identity.Mutate(utilities.AnyPropertyListToPropertyList(immutableMetaProperties.GetList()...)...)
+	keepers.IssueKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(identity))
 	type fields struct {
 		mapper                     helpers.Mapper
 		authenticateAuxiliary      helpers.Auxiliary
@@ -173,7 +174,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	}
 	type args struct {
 		context sdkTypes.Context
-		msg     sdkTypes.Msg
+		msg     helpers.Message
 	}
 	tests := []struct {
 		name   string
@@ -182,8 +183,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want   helpers.TransactionResponse
 	}{
 		// NOTE: When test individually run 2nd test will fail
-		{"+ve", fields{mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}, args{context, newMessage(fromAccAddress, toAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)}, newTransactionResponse(nil)},
-		{"+ve Entity Already Exists", fields{mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}, args{context, newMessage(fromAccAddress, toAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)}, newTransactionResponse(errorConstants.EntityAlreadyExists)},
+		{"+ve", fields{mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}, args{context, newMessage(fromAccAddress, toAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
+		{"+ve Entity Already Exists", fields{mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}, args{context, newMessage(fromAccAddress, toAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(errorConstants.EntityAlreadyExists)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -193,7 +194,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 				conformAuxiliary:           tt.fields.conformAuxiliary,
 				maintainersVerifyAuxiliary: tt.fields.maintainersVerifyAuxiliary,
 			}
-			if got := transactionKeeper.Transact(tt.args.context, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
+			if got := transactionKeeper.Transact(sdkTypes.WrapSDKContext(tt.args.context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Transact() = %v, want %v", got, tt.want)
 			}
 		})

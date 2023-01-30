@@ -4,6 +4,7 @@
 package unprovision
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"testing"
@@ -46,7 +47,7 @@ var (
 	supplementAuxiliary helpers.Auxiliary
 )
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
+func CreateTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -83,7 +84,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		UnProvisionKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
 	}
 
-	return context, keepers, Mapper, Parameters
+	return sdkTypes.WrapSDKContext(context), keepers, Mapper, Parameters
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -137,9 +138,9 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	context, keepers, mapper, _ := CreateTestInput(t)
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList()))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList()))))
+	ctx, keepers, mapper, _ := CreateTestInput(t)
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData())))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
@@ -149,14 +150,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Nil(t, err)
 	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutables, mutables)
 	testIdentity.ProvisionAddress([]sdkTypes.AccAddress{toAccAddress}...)
-	keepers.UnProvisionKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testIdentity))
+	keepers.UnProvisionKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewMappable(testIdentity))
 	type fields struct {
 		mapper              helpers.Mapper
 		supplementAuxiliary helpers.Auxiliary
 	}
 	type args struct {
-		context sdkTypes.Context
-		msg     sdkTypes.Msg
+		context context.Context
+		msg     helpers.Message
 	}
 	tests := []struct {
 		name   string
@@ -164,9 +165,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve Not Authorized", fields{mapper, supplementAuxiliary}, args{context, newMessage(fromAccAddress, toAccAddress, testFromID)}, newTransactionResponse(errorConstants.NotAuthorized)},
-		{"+ve Not Found", fields{mapper, supplementAuxiliary}, args{context, newMessage(toAccAddress, fromAccAddress, testFromID)}, newTransactionResponse(errorConstants.EntityNotFound)},
-		{"+ve", fields{mapper, supplementAuxiliary}, args{context, newMessage(toAccAddress, toAccAddress, testFromID)}, newTransactionResponse(nil)},
+		{"+ve Not Authorized", fields{mapper, supplementAuxiliary}, args{ctx, newMessage(fromAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse(errorConstants.NotAuthorized)},
+		{"+ve Not Found", fields{mapper, supplementAuxiliary}, args{ctx, newMessage(toAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(errorConstants.EntityNotFound)},
+		{"+ve", fields{mapper, supplementAuxiliary}, args{ctx, newMessage(toAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse(nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -174,7 +175,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 				mapper:              tt.fields.mapper,
 				supplementAuxiliary: tt.fields.supplementAuxiliary,
 			}
-			if got := transactionKeeper.Transact(tt.args.context, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
+			if got := transactionKeeper.Transact(ctx, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Transact() = %v, want %v", got, tt.want)
 			}
 		})
