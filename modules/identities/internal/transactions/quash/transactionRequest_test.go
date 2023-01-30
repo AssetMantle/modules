@@ -203,10 +203,10 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		want    types.Msg
+		want    helpers.Message
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.AsString(), testFromID.AsString()}, message{fromAccAddress, testFromID, testFromID}, false},
+		{"+ve", fields{testBaseReq, testFromID.AsString(), testFromID.AsString()}, &Message{fromAccAddress.String(), testFromID, testFromID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

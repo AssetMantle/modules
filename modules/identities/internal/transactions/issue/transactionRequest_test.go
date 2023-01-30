@@ -6,6 +6,7 @@ package issue
 import (
 	"encoding/json"
 	"fmt"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
 

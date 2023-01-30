@@ -5,6 +5,7 @@ package deputize
 
 import (
 	"encoding/json"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
 
