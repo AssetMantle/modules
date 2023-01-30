@@ -145,6 +145,8 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.ClassificationID})
+	context := client.Context{}.WithCodec(baseHelpers.CodecPrototype())
+
 	type fields struct {
 		ClassificationID *baseIDs.ClassificationID
 	}

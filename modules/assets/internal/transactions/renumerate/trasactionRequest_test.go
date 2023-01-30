@@ -65,6 +65,8 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID, constants.FromID})
+	context := client.Context{}.WithCodec(base.CodecPrototype())
+
 	viper.Set(constants.AssetID.GetName(), testAssetID.AsString())
 	viper.Set(constants.FromID.GetName(), fromID.AsString())
 	type fields struct {

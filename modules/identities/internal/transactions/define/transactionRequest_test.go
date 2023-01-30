@@ -5,6 +5,7 @@ package define
 
 import (
 	"encoding/json"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 	"reflect"
 	"testing"
 
@@ -79,6 +80,7 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
+	context := client.Context{}.WithCodec(baseHelpers.CodecPrototype())
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 

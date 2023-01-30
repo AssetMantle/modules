@@ -170,6 +170,8 @@ func Test_queryRequest_Encode(t *testing.T) {
 func Test_queryRequest_FromCLI(t *testing.T) {
 	testIdentity, _ := createTestInput()
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.IdentityID})
+	context := client.Context{}.WithCodec(baseHelpers.CodecPrototype())
+
 	viper.Set(constants.IdentityID.GetName(), testIdentity.String())
 	type fields struct {
 		IdentityID *baseIDs.IdentityID

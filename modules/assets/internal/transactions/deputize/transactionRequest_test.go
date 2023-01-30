@@ -79,6 +79,8 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.ToID, constants.FromID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMintAsset, constants.CanBurnAsset, constants.CanRenumerateAsset, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
+	context := client.Context{}.WithCodec(base.CodecPrototype())
+
 	viper.Set(constants.ToID.GetName(), fromID.AsString())
 	viper.Set(constants.FromID.GetName(), fromID.AsString())
 	viper.Set(constants.ClassificationID.GetName(), classificationID.AsString())

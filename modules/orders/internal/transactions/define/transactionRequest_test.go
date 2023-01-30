@@ -86,6 +86,8 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.ImmutableProperties, constants.FromID, constants.ImmutableMetaProperties, constants.MutableMetaProperties, constants.MutableProperties})
+	context := client.Context{}.WithCodec(baseHelpers.CodecPrototype())
+
 	viper.Set(constants.ImmutableProperties.GetName(), immutablePropertiesString)
 	viper.Set(constants.ImmutableMetaProperties.GetName(), immutableMetaPropertiesString)
 	viper.Set(constants.MutableMetaProperties.GetName(), mutableMetaPropertiesString)

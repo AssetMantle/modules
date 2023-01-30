@@ -80,6 +80,8 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OwnableID, constants.FromID, constants.Value})
+	context := client.Context{}.WithCodec(baseHelpers.CodecPrototype())
+
 	viper.Set(constants.FromID.GetName(), fromID.AsString())
 	viper.Set(constants.OwnableID.GetName(), ownableID.AsString())
 	viper.Set(constants.Value.GetName(), testRate.String())

@@ -137,6 +137,8 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OwnableID})
+	context := client.Context{}.WithCodec(base.CodecPrototype())
+
 	viper.Set(constants.OwnableID.GetName(), testOwnableID.AsString())
 	type fields struct {
 		OwnableID *baseIds.AnyOwnableID

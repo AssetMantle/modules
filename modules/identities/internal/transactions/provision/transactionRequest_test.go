@@ -86,6 +86,8 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	legacyAmino.Seal()
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.To, constants.IdentityID})
+	context := client.Context{}.WithCodec(baseHelpers.CodecPrototype())
+
 	testBaseReq, testToAddress, testFromID := createTestInput(t)
 	type fields struct {
 		BaseReq    rest.BaseReq

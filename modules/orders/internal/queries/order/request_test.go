@@ -149,6 +149,8 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OrderID})
+	context := client.Context{}.WithCodec(baseHelpers.CodecPrototype())
+
 	viper.Set(constants.OrderID.GetName(), testOrderID.AsString())
 	type fields struct {
 		OrderID *baseIDs.OrderID

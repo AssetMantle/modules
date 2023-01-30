@@ -51,7 +51,7 @@ func Test_newTransactionRequest(t *testing.T) {
 		want helpers.TransactionRequest
 	}{
 		{"+ve", args{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testOrderID.AsString())},
-		{"+ve", args{testBaseRequest, testFromID.AsString(), testOrderID1.String()}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testOrderID1.String())},
+		{"+ve", args{testBaseRequest, testFromID.AsString(), testOrderID1.AsString()}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testOrderID1.AsString())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -80,6 +80,8 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := basehelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OrderID, constants.FromID})
+	context := client.Context{}.WithCodec(base.CodecPrototype())
+
 	viper.Set(constants.FromID.GetName(), testFromID.AsString())
 	viper.Set(constants.OrderID.GetName(), testOrderID.AsString())
 	type fields struct {
@@ -122,7 +124,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 func Test_transactionRequest_FromJSON(t *testing.T) {
 	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.AsString(), testOrderID.AsString()))
 	require.NoError(t, err)
-	jsonMessage1, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.AsString(), testOrderID1.String()))
+	jsonMessage1, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.AsString(), testOrderID1.AsString()))
 	require.NoError(t, err)
 
 	type fields struct {
@@ -141,7 +143,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, args{jsonMessage}, transactionRequest{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, false},
-		{"+ve with nil", fields{testBaseRequest, testFromID.AsString(), testOrderID1.String()}, args{jsonMessage1}, transactionRequest{testBaseRequest, testFromID.AsString(), testOrderID1.String()}, false},
+		{"+ve with nil", fields{testBaseRequest, testFromID.AsString(), testOrderID1.AsString()}, args{jsonMessage1}, transactionRequest{testBaseRequest, testFromID.AsString(), testOrderID1.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -174,7 +176,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		want   rest.BaseReq
 	}{
 		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, testBaseRequest},
-		{"+ve with nil", fields{testBaseRequest, testFromID.AsString(), testOrderID1.String()}, testBaseRequest},
+		{"+ve with nil", fields{testBaseRequest, testFromID.AsString(), testOrderID1.AsString()}, testBaseRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -238,7 +240,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, args{codec.NewLegacyAmino()}},
-		{"+ve with nil", fields{testBaseRequest, testFromID.AsString(), testOrderID1.String()}, args{codec.NewLegacyAmino()}},
+		{"+ve with nil", fields{testBaseRequest, testFromID.AsString(), testOrderID1.AsString()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -264,7 +266,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, false},
-		{"+ve with nil", fields{testBaseRequest, testFromID.AsString(), testOrderID1.String()}, true},
+		{"+ve with nil", fields{testBaseRequest, testFromID.AsString(), testOrderID1.AsString()}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

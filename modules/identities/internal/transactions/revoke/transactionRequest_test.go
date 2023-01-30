@@ -89,6 +89,8 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	legacyAmino.Seal()
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ToID, constants.ClassificationID})
+	context := client.Context{}.WithCodec(baseHelpers.CodecPrototype())
+
 	testBaseReq, _, testFromID, testToID, testClassificationID := createTestInput(t)
 	type fields struct {
 		BaseReq          rest.BaseReq
@@ -149,7 +151,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, testFromID, testToID, testClassificationID}))}, transactionRequest{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, false},
+		{"+ve", fields{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), testFromID, testToID, testClassificationID}))}, transactionRequest{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
