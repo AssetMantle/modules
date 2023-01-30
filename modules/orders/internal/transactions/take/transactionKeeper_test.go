@@ -198,9 +198,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve Not Authorized", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID2, testRate, testOrderID)}, newTransactionResponse(errorConstants.NotAuthorized)},
-		{"+ve", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testRate, testOrderID)}, newTransactionResponse(nil)},
-		{"+ve Entity Not Found", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testRate, testOrderID2)}, newTransactionResponse(errorConstants.EntityNotFound)},
+		{"+ve Not Authorized", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID2, testRate, testOrderID).(*Message)}, newTransactionResponse(errorConstants.NotAuthorized)},
+		{"+ve", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testRate, testOrderID).(*Message)}, newTransactionResponse(nil)},
+		{"+ve Entity Not Found", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testRate, testOrderID2).(*Message)}, newTransactionResponse(errorConstants.EntityNotFound)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -211,7 +211,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 				transferAuxiliary:     tt.fields.transferAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
-			if got := transactionKeeper.Transact(sdkTypes.WrapSDKContext(context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
+			if got := transactionKeeper.Transact(types.WrapSDKContext(context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Transact() = %v, want %v", got, tt.want)
 			}
 		})
