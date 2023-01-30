@@ -41,13 +41,13 @@ func TestNewParameter(t *testing.T) {
 		want parameters.Parameter
 	}{
 
-		{"+ve", args{id, testData, dummyValidator}, parameter{id, testData, dummyValidator}},
-		{"empty", args{}, parameter{}},
-		{"nil", args{nil, nil, nil}, parameter{nil, nil, nil}},
+		{"+ve", args{id, testData, dummyValidator}, &Parameter{id.(*baseIDs.StringID), testData.ToAnyData().(*baseData.AnyData)}},
+		{"empty", args{}, &Parameter{}},
+		{"nil", args{nil, nil, nil}, &Parameter{nil, nil}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewParameter(tt.args.id, tt.args.data, tt.args.validator); !reflect.DeepEqual(got.String(), tt.want.String()) {
+			if got := NewParameter(tt.args.id, tt.args.data, tt.args.validator); !reflect.DeepEqual(got.AsString(), tt.want.AsString()) {
 				t.Errorf("NewParameter() = %v, want %v", got, tt.want)
 			}
 		})
@@ -79,10 +79,9 @@ func Test_parameter_Equal(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			parameter := parameter{
-				ID:        tt.fields.ID,
-				Data:      tt.fields.Data,
-				validator: tt.fields.validator,
+			parameter := &Parameter{
+				ID:   tt.fields.ID.(*baseIDs.StringID),
+				Data: tt.fields.Data.ToAnyData().(*baseData.AnyData),
 			}
 			if got := parameter.Equal(tt.args.compareParameter); got != tt.want {
 				t.Errorf("Equal() = %v, want %v", got, tt.want)
@@ -108,10 +107,9 @@ func Test_parameter_GetData(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			parameter := parameter{
-				ID:        tt.fields.ID,
-				Data:      tt.fields.Data,
-				validator: tt.fields.validator,
+			parameter := &Parameter{
+				ID:   tt.fields.ID.(*baseIDs.StringID),
+				Data: tt.fields.Data.ToAnyData().(*baseData.AnyData),
 			}
 			if got := parameter.GetData(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetData() = %v, want %v", got, tt.want)
@@ -137,10 +135,9 @@ func Test_parameter_GetID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			parameter := parameter{
-				ID:        tt.fields.ID,
-				Data:      tt.fields.Data,
-				validator: tt.fields.validator,
+			parameter := &Parameter{
+				ID:   tt.fields.ID.(*baseIDs.StringID),
+				Data: tt.fields.Data.ToAnyData().(*baseData.AnyData),
 			}
 			if got := parameter.GetID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetID() = %v, want %v", got, tt.want)
@@ -166,10 +163,9 @@ func Test_parameter_GetValidator(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			parameter := parameter{
-				ID:        tt.fields.ID,
-				Data:      tt.fields.Data,
-				validator: tt.fields.validator,
+			parameter := &Parameter{
+				ID:   tt.fields.ID.(*baseIDs.StringID),
+				Data: tt.fields.Data.ToAnyData().(*baseData.AnyData),
 			}
 			if got := parameter.GetValidator(); !reflect.DeepEqual(got, tt.want) {
 				// t.Errorf("GetValidator() = %p, want %p", got, tt.want)
@@ -196,16 +192,15 @@ func Test_parameter_Mutate(t *testing.T) {
 		want   parameters.Parameter
 	}{
 
-		{"+ve", fields{id, testData, dummyValidator}, args{newData}, parameter{id, newData, dummyValidator}},
+		{"+ve", fields{id, testData, dummyValidator}, args{newData}, &Parameter{id.(*baseIDs.StringID), newData.ToAnyData().(*baseData.AnyData)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			parameter := parameter{
-				ID:        tt.fields.ID,
-				Data:      tt.fields.Data,
-				validator: tt.fields.validator,
+			parameter := &Parameter{
+				ID:   tt.fields.ID.(*baseIDs.StringID),
+				Data: tt.fields.Data.ToAnyData().(*baseData.AnyData),
 			}
-			if got := parameter.Mutate(tt.args.data); !reflect.DeepEqual(got.String(), tt.want.String()) {
+			if got := parameter.Mutate(tt.args.data); !reflect.DeepEqual(got.AsString(), tt.want.AsString()) {
 				t.Errorf("Mutate() = %v, want %v", got, tt.want)
 			}
 		})
@@ -225,14 +220,13 @@ func Test_parameter_String(t *testing.T) {
 		want   string
 	}{
 
-		{"+ve", fields{id, testData, dummyValidator}, testParameter.String()},
+		{"+ve", fields{id, testData, dummyValidator}, testParameter.AsString()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			parameter := parameter{
-				ID:        tt.fields.ID,
-				Data:      tt.fields.Data,
-				validator: tt.fields.validator,
+			parameter := &Parameter{
+				ID:   tt.fields.ID.(*baseIDs.StringID),
+				Data: tt.fields.Data.ToAnyData().(*baseData.AnyData),
 			}
 			if got := parameter.String(); got != tt.want {
 				t.Errorf("String() = %v, want %v", got, tt.want)
@@ -258,10 +252,9 @@ func Test_parameter_Validate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			parameter := parameter{
-				ID:        tt.fields.ID,
-				Data:      tt.fields.Data,
-				validator: tt.fields.validator,
+			parameter := &Parameter{
+				ID:   tt.fields.ID.(*baseIDs.StringID),
+				Data: tt.fields.Data.ToAnyData().(*baseData.AnyData),
 			}
 			if err := parameter.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)

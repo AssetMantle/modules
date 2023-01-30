@@ -26,8 +26,8 @@ func TestNewImmutables(t *testing.T) {
 		args args
 		want qualified.Immutables
 	}{
-		{"+ve", args{}, immutables{}},
-		{"+ve", args{testImmutablePropertyList}, immutables{testImmutablePropertyList}},
+		{"+ve", args{}, &Immutables{}},
+		{"+ve", args{testImmutablePropertyList}, &Immutables{testImmutablePropertyList.(*base.PropertyList)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -56,8 +56,8 @@ func Test_immutables_GenerateHashID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			testImmutables := immutables{
-				PropertyList: tt.fields.PropertyList,
+			testImmutables := Immutables{
+				PropertyList: tt.fields.PropertyList.(*base.PropertyList),
 			}
 			if got := testImmutables.GenerateHashID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GenerateHashID() = %v, want %v", got, tt.want)
@@ -77,12 +77,12 @@ func Test_immutables_GetImmutablePropertyList(t *testing.T) {
 		want   lists.PropertyList
 	}{
 		{"+ve with nil", fields{base.NewPropertyList()}, base.NewPropertyList()},
-		{"+ve", fields{testImmutablePropertyList}, immutables{testImmutablePropertyList}.PropertyList},
+		{"+ve", fields{testImmutablePropertyList}, Immutables{testImmutablePropertyList.(*base.PropertyList)}.PropertyList},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			testImmutables := immutables{
-				PropertyList: tt.fields.PropertyList,
+			testImmutables := Immutables{
+				PropertyList: tt.fields.PropertyList.(*base.PropertyList),
 			}
 			if got := testImmutables.GetImmutablePropertyList(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetImmutablePropertyList() = %v, want %v", got, tt.want)
