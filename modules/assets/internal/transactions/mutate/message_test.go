@@ -25,14 +25,14 @@ import (
 var (
 	immutableMetaProperties = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 	immutables              = baseQualified.NewImmutables(immutableMetaProperties)
-	mutableMetaProperties   = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
-	mutableProperties       = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
+	mutableMetaProperties   = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
+	mutableProperties       = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
 	mutables                = baseQualified.NewMutables(mutableMetaProperties)
-	classificationID        = baseIDs.NewClassificationID(immutables, mutables)
+	classificationID        = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
 	fromAddress             = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, _       = sdkTypes.AccAddressFromBech32(fromAddress)
-	fromID                  = baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID             = baseIDs.NewAssetID(classificationID, immutables)
+	fromID                  = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
+	testAssetID             = baseIDs.NewAssetID(classificationID, immutables).(*baseIDs.AssetID)
 )
 
 func Test_messageFromInterface(t *testing.T) {
@@ -42,9 +42,9 @@ func Test_messageFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want message
+		want helpers.Message
 	}{
-		{"+ve", args{newMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties)}, newMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties).(message)},
+		{"+ve", args{newMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties)}, newMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties).(*Message)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -60,7 +60,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", message{}},
+		{"+ve", &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -73,22 +73,22 @@ func Test_messagePrototype(t *testing.T) {
 
 func Test_message_GetSignBytes(t *testing.T) {
 	type fields struct {
-		From                  sdkTypes.AccAddress
-		FromID                ids.IdentityID
-		AssetID               ids.AssetID
-		MutableMetaProperties lists.PropertyList
-		MutableProperties     lists.PropertyList
+		From                  string
+		FromID                *baseIDs.IdentityID
+		AssetID               *baseIDs.AssetID
+		MutableMetaProperties *baseLists.PropertyList
+		MutableProperties     *baseLists.PropertyList
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(newMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties)))},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(newMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties)))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				AssetID:               tt.fields.AssetID,
@@ -104,22 +104,22 @@ func Test_message_GetSignBytes(t *testing.T) {
 
 func Test_message_GetSigners(t *testing.T) {
 	type fields struct {
-		From                  sdkTypes.AccAddress
-		FromID                ids.IdentityID
-		AssetID               ids.AssetID
-		MutableMetaProperties lists.PropertyList
-		MutableProperties     lists.PropertyList
+		From                  string
+		FromID                *baseIDs.IdentityID
+		AssetID               *baseIDs.AssetID
+		MutableMetaProperties *baseLists.PropertyList
+		MutableProperties     *baseLists.PropertyList
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []sdkTypes.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}, []sdkTypes.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID, mutableMetaProperties, mutableProperties}, []sdkTypes.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				AssetID:               tt.fields.AssetID,
@@ -135,11 +135,11 @@ func Test_message_GetSigners(t *testing.T) {
 
 func Test_message_RegisterCodec(t *testing.T) {
 	type fields struct {
-		From                  sdkTypes.AccAddress
-		FromID                ids.IdentityID
-		AssetID               ids.AssetID
-		MutableMetaProperties lists.PropertyList
-		MutableProperties     lists.PropertyList
+		From                  string
+		FromID                *baseIDs.IdentityID
+		AssetID               *baseIDs.AssetID
+		MutableMetaProperties *baseLists.PropertyList
+		MutableProperties     *baseLists.PropertyList
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -149,11 +149,11 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID, mutableMetaProperties, mutableProperties}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			me := message{
+			me := &Message{
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				AssetID:               tt.fields.AssetID,
@@ -167,22 +167,22 @@ func Test_message_RegisterCodec(t *testing.T) {
 
 func Test_message_Route(t *testing.T) {
 	type fields struct {
-		From                  sdkTypes.AccAddress
-		FromID                ids.IdentityID
-		AssetID               ids.AssetID
-		MutableMetaProperties lists.PropertyList
-		MutableProperties     lists.PropertyList
+		From                  string
+		FromID                *baseIDs.IdentityID
+		AssetID               *baseIDs.AssetID
+		MutableMetaProperties *baseLists.PropertyList
+		MutableProperties     *baseLists.PropertyList
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}, module.Name},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID, mutableMetaProperties, mutableProperties}, module.Name},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				AssetID:               tt.fields.AssetID,
@@ -198,22 +198,22 @@ func Test_message_Route(t *testing.T) {
 
 func Test_message_Type(t *testing.T) {
 	type fields struct {
-		From                  sdkTypes.AccAddress
-		FromID                ids.IdentityID
-		AssetID               ids.AssetID
-		MutableMetaProperties lists.PropertyList
-		MutableProperties     lists.PropertyList
+		From                  string
+		FromID                *baseIDs.IdentityID
+		AssetID               *baseIDs.AssetID
+		MutableMetaProperties *baseLists.PropertyList
+		MutableProperties     *baseLists.PropertyList
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID, mutableMetaProperties, mutableProperties}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				AssetID:               tt.fields.AssetID,
@@ -229,23 +229,23 @@ func Test_message_Type(t *testing.T) {
 
 func Test_message_ValidateBasic(t *testing.T) {
 	type fields struct {
-		From                  sdkTypes.AccAddress
-		FromID                ids.IdentityID
-		AssetID               ids.AssetID
-		MutableMetaProperties lists.PropertyList
-		MutableProperties     lists.PropertyList
+		From                  string
+		FromID                *baseIDs.IdentityID
+		AssetID               *baseIDs.AssetID
+		MutableMetaProperties *baseLists.PropertyList
+		MutableProperties     *baseLists.PropertyList
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}, false},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID, mutableMetaProperties, mutableProperties}, false},
 		{"+ve", fields{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				AssetID:               tt.fields.AssetID,
@@ -272,7 +272,7 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve with nil", args{}, message{}},
+		{"+ve with nil", args{}, &Message{}},
 		{"+ve", args{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}, newMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties)},
 	}
 	for _, tt := range tests {

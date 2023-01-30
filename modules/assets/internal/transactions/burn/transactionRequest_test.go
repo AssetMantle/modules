@@ -6,6 +6,7 @@ package burn
 import (
 	"encoding/json"
 	"fmt"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
@@ -122,7 +123,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), testAssetID.AsString()}, args{sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, testAssetID}))}, newTransactionRequest(testBaseRequest, fromID.AsString(), testAssetID.AsString()), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), testAssetID.AsString()}, args{sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), fromID.(*baseIDs.IdentityID), testAssetID.(*baseIDs.AssetID)}))}, newTransactionRequest(testBaseRequest, fromID.AsString(), testAssetID.AsString()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
