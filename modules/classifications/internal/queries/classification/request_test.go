@@ -23,11 +23,11 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-func createTestInput() ids.ClassificationID {
+func createTestInput() *baseIDs.ClassificationID {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	return classificationID
+	return classificationID.(*baseIDs.ClassificationID)
 }
 
 func Test_newQueryRequest(t *testing.T) {
@@ -39,7 +39,7 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve", args{createTestInput()}, queryRequest{createTestInput()}},
+		{"+ve", args{createTestInput()}, &QueryRequest{createTestInput()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -57,10 +57,10 @@ func Test_queryRequestFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want queryRequest
+		want helpers.QueryRequest
 	}{
-		{"+ve", args{newQueryRequest(createTestInput())}, queryRequest{createTestInput()}},
-		{"+ve", args{newQueryRequest(baseIDs.PrototypeClassificationID())}, queryRequest{baseIDs.PrototypeClassificationID()}},
+		{"+ve", args{newQueryRequest(createTestInput())}, &QueryRequest{createTestInput()}},
+		{"+ve", args{newQueryRequest(baseIDs.PrototypeClassificationID())}, &QueryRequest{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -72,12 +72,12 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedQueryResponse, err := queryRequest{createTestInput()}.Encode()
+	encodedQueryResponse, err := (&QueryRequest{createTestInput()}).Encode()
 	require.NoError(t, err)
-	encodedQueryResponse1, err := queryRequest{baseIDs.PrototypeClassificationID()}.Encode()
+	encodedQueryResponse1, err := (&QueryRequest{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}).Encode()
 	require.NoError(t, err)
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	type args struct {
 		bytes []byte
@@ -89,12 +89,12 @@ func Test_queryRequest_Decode(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{baseIDs.PrototypeClassificationID()}, args{encodedQueryResponse}, queryRequest{createTestInput()}, false},
-		{"+ve", fields{baseIDs.PrototypeClassificationID()}, args{encodedQueryResponse1}, queryRequest{baseIDs.PrototypeClassificationID()}, false},
+		{"+ve", fields{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}, args{encodedQueryResponse}, &QueryRequest{createTestInput()}, false},
+		{"+ve", fields{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}, args{encodedQueryResponse1}, &QueryRequest{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				ClassificationID: tt.fields.ClassificationID,
 			}
 			got, err := queryRequest.Decode(tt.args.bytes)
@@ -110,12 +110,12 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := common.LegacyAmino.MarshalJSON(queryRequest{baseIDs.PrototypeClassificationID()})
+	encodedQuery, err := common.LegacyAmino.MarshalJSON(&QueryRequest{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)})
 	require.NoError(t, err)
-	encodedQuery1, err := common.LegacyAmino.MarshalJSON(queryRequest{createTestInput()})
+	encodedQuery1, err := common.LegacyAmino.MarshalJSON(&QueryRequest{createTestInput()})
 	require.NoError(t, err)
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	tests := []struct {
 		name    string
@@ -123,12 +123,12 @@ func Test_queryRequest_Encode(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{"+ve with nil", fields{baseIDs.PrototypeClassificationID()}, encodedQuery, false},
+		{"+ve with nil", fields{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}, encodedQuery, false},
 		{"+ve with nil", fields{createTestInput()}, encodedQuery1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				ClassificationID: tt.fields.ClassificationID,
 			}
 			got, err := queryRequest.Encode()
@@ -146,7 +146,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.ClassificationID})
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -163,7 +163,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			qu := queryRequest{
+			qu := &QueryRequest{
 				ClassificationID: tt.fields.ClassificationID,
 			}
 			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
@@ -182,7 +182,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
 	vars[Query.GetName()] = "GBYwV5EFZY35encqWghm_e6EL5Uy6QnYfKyVIzew24A="
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	type args struct {
 		vars map[string]string
@@ -198,7 +198,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			qu := queryRequest{
+			qu := &QueryRequest{
 				ClassificationID: tt.fields.ClassificationID,
 			}
 			got, err := qu.FromMap(tt.args.vars)
@@ -215,7 +215,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		ClassificationID ids.ClassificationID
+		ClassificationID *baseIDs.ClassificationID
 	}
 	tests := []struct {
 		name    string
@@ -223,11 +223,11 @@ func Test_queryRequest_Validate(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{createTestInput()}, false},
-		{"+ve", fields{baseIDs.PrototypeClassificationID()}, false},
+		{"+ve", fields{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				ClassificationID: tt.fields.ClassificationID,
 			}
 			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
@@ -242,7 +242,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		{"+ve", queryRequest{}},
+		{"+ve", &QueryRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

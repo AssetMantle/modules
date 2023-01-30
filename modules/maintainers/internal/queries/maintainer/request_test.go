@@ -21,7 +21,7 @@ import (
 
 var (
 	testMaintainerID, _ = createTestData()
-	testMaintainerID1   = baseIds.PrototypeMaintainerID()
+	testMaintainerID1   = baseIds.PrototypeMaintainerID().(*baseIds.MaintainerID)
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -33,8 +33,8 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve", args{testMaintainerID}, queryRequest{testMaintainerID}},
-		{"+ve with nil", args{testMaintainerID1}, queryRequest{testMaintainerID1}},
+		{"+ve", args{testMaintainerID}, &QueryRequest{testMaintainerID}},
+		{"+ve with nil", args{testMaintainerID1}, &QueryRequest{testMaintainerID1}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -52,10 +52,10 @@ func Test_queryRequestFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want queryRequest
+		want helpers.QueryRequest
 	}{
-		{"+ve", args{newQueryRequest(testMaintainerID)}, queryRequest{testMaintainerID}},
-		{"+ve with nil", args{newQueryRequest(testMaintainerID1)}, queryRequest{testMaintainerID1}},
+		{"+ve", args{newQueryRequest(testMaintainerID)}, &QueryRequest{testMaintainerID}},
+		{"+ve with nil", args{newQueryRequest(testMaintainerID1)}, &QueryRequest{testMaintainerID1}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -67,12 +67,12 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedQuery, err := queryRequest{testMaintainerID}.Encode()
+	encodedQuery, err := (&QueryRequest{testMaintainerID}).Encode()
 	require.NoError(t, err)
-	encodedQuery1, err := queryRequest{testMaintainerID1}.Encode()
+	encodedQuery1, err := (&QueryRequest{testMaintainerID1}).Encode()
 	require.NoError(t, err)
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		MaintainerID *baseIds.MaintainerID
 	}
 	type args struct {
 		bytes []byte
@@ -84,12 +84,12 @@ func Test_queryRequest_Decode(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testMaintainerID}, args{encodedQuery}, queryRequest{testMaintainerID}, false},
-		{"+ve", fields{testMaintainerID1}, args{encodedQuery1}, queryRequest{testMaintainerID1}, false},
+		{"+ve", fields{testMaintainerID}, args{encodedQuery}, &QueryRequest{testMaintainerID}, false},
+		{"+ve", fields{testMaintainerID1}, args{encodedQuery1}, &QueryRequest{testMaintainerID1}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				MaintainerID: tt.fields.MaintainerID,
 			}
 			got, err := queryRequest.Decode(tt.args.bytes)
@@ -105,12 +105,12 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := common.LegacyAmino.MarshalJSON(queryRequest{testMaintainerID})
+	encodedQuery, err := common.LegacyAmino.MarshalJSON(&QueryRequest{testMaintainerID})
 	require.NoError(t, err)
-	encodedQuery1, err := common.LegacyAmino.MarshalJSON(queryRequest{testMaintainerID1})
+	encodedQuery1, err := common.LegacyAmino.MarshalJSON(&QueryRequest{testMaintainerID1})
 	require.NoError(t, err)
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		MaintainerID *baseIds.MaintainerID
 	}
 	tests := []struct {
 		name    string
@@ -123,7 +123,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				MaintainerID: tt.fields.MaintainerID,
 			}
 			got, err := queryRequest.Encode()
@@ -142,7 +142,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.MaintainerID})
 	viper.Set(constants.MaintainerID.GetName(), testMaintainerID.AsString())
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		MaintainerID *baseIds.MaintainerID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -155,11 +155,11 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testMaintainerID}, args{cliCommand, context}, queryRequest{testMaintainerID}, false},
+		{"+ve", fields{testMaintainerID}, args{cliCommand, context}, &QueryRequest{testMaintainerID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			qu := queryRequest{
+			qu := &QueryRequest{
 				MaintainerID: tt.fields.MaintainerID,
 			}
 			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
@@ -180,7 +180,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	vars1 := make(map[string]string)
 	vars1[Query.GetName()] = testMaintainerID.AsString()
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		MaintainerID *baseIds.MaintainerID
 	}
 	type args struct {
 		vars map[string]string
@@ -196,7 +196,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			qu := queryRequest{
+			qu := &QueryRequest{
 				MaintainerID: tt.fields.MaintainerID,
 			}
 			got, err := qu.FromMap(tt.args.vars)
@@ -213,7 +213,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		MaintainerID *baseIds.MaintainerID
 	}
 	tests := []struct {
 		name    string
@@ -225,7 +225,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				MaintainerID: tt.fields.MaintainerID,
 			}
 			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
@@ -240,7 +240,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		{"+ve", queryRequest{}},
+		{"+ve", &QueryRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

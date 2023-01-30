@@ -30,7 +30,6 @@ import (
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -41,7 +40,7 @@ type TestKeepers struct {
 	MaintainerKeeper helpers.QueryKeeper
 }
 
-func createTestData() (ids.MaintainerID, documents.Maintainer) {
+func createTestData() (*baseIDs.MaintainerID, documents.Maintainer) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -49,7 +48,7 @@ func createTestData() (ids.MaintainerID, documents.Maintainer) {
 	testMaintainerID := baseIDs.NewMaintainerID(testClassificationID, immutables)
 	testMaintainedPropertyID := baseLists.NewIDList(baseIDs.NewStringID("maintainer"))
 	testMaintainer := base.NewMaintainer(testIdentityID, testClassificationID, testMaintainedPropertyID, testMaintainedPropertyID)
-	return testMaintainerID, testMaintainer
+	return testMaintainerID.(*baseIDs.MaintainerID), testMaintainer
 }
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
