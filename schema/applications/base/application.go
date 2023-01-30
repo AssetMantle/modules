@@ -156,10 +156,10 @@ type application struct {
 var _ applications.Application = (*application)(nil)
 
 func (application application) GetDefaultNodeHome() string {
-	return os.ExpandEnv("$HOME/." + application.name + "/Node")
+	return os.ExpandEnv("$HOME/." + application.name)
 }
 func (application application) GetDefaultClientHome() string {
-	return os.ExpandEnv("$HOME/." + application.name + "/Client")
+	return os.ExpandEnv("$HOME/." + application.name)
 }
 func (application application) GetModuleBasicManager() module.BasicManager {
 	return application.moduleBasicManager
