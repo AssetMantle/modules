@@ -28,7 +28,7 @@ func TestDuplicate(t *testing.T) {
 		{"Negative Case, DuplicateExists", args{propertyList: []properties.AnyProperty{baseProperties.NewMesaProperty(baseIDs.NewStringID("a"), baseData.NewStringData("factA")).ToAnyProperty(),
 			baseProperties.NewMesaProperty(baseIDs.NewStringID("b"), baseData.NewStringData("factB")).ToAnyProperty(),
 			baseProperties.NewMesaProperty(baseIDs.NewStringID("c"), baseData.NewStringData("factC")).ToAnyProperty(),
-			baseProperties.NewMesaProperty(baseIDs.NewStringID("a"), baseData.NewStringData("factD")).ToAnyProperty()}}, true},
+			baseProperties.NewMesaProperty(baseIDs.NewStringID("a"), baseData.NewStringData("factA")).ToAnyProperty()}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

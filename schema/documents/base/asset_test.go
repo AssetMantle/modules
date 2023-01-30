@@ -53,7 +53,7 @@ func Test_asset_GetBurn(t *testing.T) {
 		fields fields
 		want   properties.Property
 	}{
-		{"+ve", fields{Document: testDocumentWithBurn}, baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1)))},
+		{"+ve", fields{Document: testDocumentWithBurn}, baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))).ToAnyProperty()},
 		{"+ve", fields{Document: testDocument}, constants.BurnHeightProperty},
 	}
 	for _, tt := range tests {

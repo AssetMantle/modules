@@ -4,19 +4,20 @@
 package utilities
 
 import (
-	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/properties"
 )
 
 func IsDuplicate(propertyList []properties.AnyProperty) bool {
-	propertyIDMap := map[ids.ID]bool{}
+	propertyIDMap := map[string]bool{}
 
+	var str = ""
 	for _, property := range propertyList {
-		if _, ok := propertyIDMap[property.GetID()]; ok {
+		str = property.GetID().GetKey().AsString() + ":" + property.GetID().GetType().AsString()
+		if _, ok := propertyIDMap[str]; ok {
 			return true
 		}
 
-		propertyIDMap[property.GetID()] = true
+		propertyIDMap[str] = true
 	}
 
 	return false
