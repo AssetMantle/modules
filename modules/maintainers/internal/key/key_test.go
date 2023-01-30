@@ -129,7 +129,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		want   []byte
 	}{
 		{"+ve", fields{createTestData()}, module.StoreKeyPrefix.GenerateStoreKey((&Key{createTestData()}).GenerateStoreKeyBytes())},
-		{"-ve", fields{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}, module.StoreKeyPrefix.GenerateStoreKey((&Key{baseIDs.PrototypeMaintainerID()}).GenerateStoreKeyBytes())},
+		{"-ve", fields{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}, module.StoreKeyPrefix.GenerateStoreKey((&Key{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}).GenerateStoreKeyBytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
