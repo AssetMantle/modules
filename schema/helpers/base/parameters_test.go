@@ -4,34 +4,31 @@
 package base
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"testing"
 
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/std"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/utilities/test"
 
-	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
 func TestParameters(t *testing.T) {
-	context, storeKey, transientStoreKey := test.SetupTest(t)
-	var legacyAmino = sdkCodec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
-	std.RegisterLegacyAminoCodec(legacyAmino)
-	legacyAmino.Seal()
+	context, storeKey, transientStoreKey, _ := test.SetupTest(t)
+
+	codec := CodecPrototype()
+
 	Parameter := baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
-	ParameterList := []helpers.Parameter{Parameter}
-	Parameters := NewParameters(ParameterList...)
-	subspace := paramsTypes.NewSubspace(legacyAmino, storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
-	subspace.SetParamSet(context, Parameters)
-	Parameters = Parameters.Initialize(subspace).(parameters)
+	ParameterList := []parametersSchema.Parameter{Parameter}
+	Parameters := NewParameters(ParameterList...).(*parameters)
+	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
+	subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), Parameters)
+	Parameters = Parameters.Initialize(subspace).(*parameters)
 
 	require.NotNil(t, Parameters.ParamSetPairs())
 
@@ -39,7 +36,7 @@ func TestParameters(t *testing.T) {
 
 	require.Equal(t, true, Parameters.Equal(Parameters))
 
-	require.Equal(t, true, Parameters.Get()[0].Equal(Parameter))
+	require.Equal(t, true, Parameters.GetList()[0].Equal(Parameter))
 	require.Equal(t, `{"id":{"idString":"testParameter"},"data":{"value":"testData"}}`, Parameters.String())
 
 	err := Parameters.Validate()
@@ -50,5 +47,5 @@ func TestParameters(t *testing.T) {
 	})
 
 	require.Equal(t, "testData123", Parameters.Mutate(context,
-		baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData123"), func(interface{}) error { return nil })).Get(baseIDs.NewStringID("testParameter")).GetData().String())
+		baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData123"), func(interface{}) error { return nil })).Get(baseIDs.NewStringID("testParameter")).GetData().AsString())
 }

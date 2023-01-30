@@ -6,6 +6,7 @@ package revoke
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -78,6 +79,7 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ToID, constants.ClassificationID})
+
 	viper.Set(constants.FromID.GetName(), testFromID.AsString())
 	viper.Set(constants.ToID.GetName(), testFromID.AsString())
 	viper.Set(constants.ClassificationID.GetName(), testClassificationID.AsString())
@@ -98,7 +100,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString()}, args{cliCommand, context}, transactionRequest{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString()}, false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString()}, args{cliCommand, test.TestClientContext}, transactionRequest{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

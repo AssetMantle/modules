@@ -25,8 +25,8 @@ func TestNewMappable(t *testing.T) {
 		args args
 		want helpers.Mappable
 	}{
-		{"+ve", args{base.NewStringData("data")}, mappable{base.NewStringData("data")}},
-		{"+ve with nil", args{}, mappable{}},
+		{"+ve", args{base.NewStringData("data")}, &Mappable{base.NewStringData("data").ToAnyData().(*base.AnyData)}},
+		{"+ve with nil", args{}, &Mappable{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -42,7 +42,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		{"+ve", mappable{}},
+		{"+ve", &Mappable{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -66,8 +66,8 @@ func Test_mappable_GetKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mappable := mappable{
-				Data: tt.fields.Data,
+			mappable := &Mappable{
+				Data: tt.fields.Data.ToAnyData().(*base.AnyData),
 			}
 			if got := mappable.GetKey(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetKey() = %v, want %v", got, tt.want)
@@ -92,8 +92,8 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ma := mappable{
-				Data: tt.fields.Data,
+			ma := &Mappable{
+				Data: tt.fields.Data.ToAnyData().(*base.AnyData),
 			}
 			ma.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})

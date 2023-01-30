@@ -18,7 +18,6 @@ func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, IDData{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, ListData{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, StringData{})
-	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyDataList{})
 
 	legacyAmino.RegisterInterface((*isAnyData_Impl)(nil), nil)
 	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_AccAddressData{})

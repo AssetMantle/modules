@@ -4,6 +4,7 @@
 package asset
 
 import (
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -27,7 +28,7 @@ var (
 	immutables       = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables         = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID = baseIDs.NewClassificationID(immutables, mutables)
-	testAssetID      = baseIDs.NewAssetID(classificationID, immutables)
+	testAssetID      = baseIDs.NewAssetID(classificationID, immutables).(*baseIDs.AssetID)
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -40,7 +41,7 @@ func Test_newQueryRequest(t *testing.T) {
 		want helpers.QueryRequest
 	}{
 		{"+ve", args{testAssetID}, newQueryRequest(testAssetID)},
-		{"+ve", args{baseIDs.PrototypeAssetID()}, newQueryRequest(baseIDs.PrototypeAssetID())},
+		{"+ve", args{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -58,9 +59,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want queryRequest
+		want helpers.QueryRequest
 	}{
-		{"+ve", args{newQueryRequest(testAssetID)}, newQueryRequest(testAssetID).(queryRequest)},
+		{"+ve", args{newQueryRequest(testAssetID)}, newQueryRequest(testAssetID).(*QueryRequest)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -74,10 +75,10 @@ func Test_queryRequestFromInterface(t *testing.T) {
 func Test_queryRequest_Decode(t *testing.T) {
 	encodedQuery, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testAssetID))
 	require.NoError(t, err)
-	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID()))
+	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID)))
 	require.NoError(t, err)
 	type fields struct {
-		AssetID ids.AssetID
+		AssetID *baseIDs.AssetID
 	}
 	type args struct {
 		bytes []byte
@@ -90,11 +91,11 @@ func Test_queryRequest_Decode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testAssetID}, args{encodedQuery}, newQueryRequest(testAssetID), false},
-		{"+ve", fields{baseIDs.PrototypeAssetID()}, args{encodedQuery1}, newQueryRequest(baseIDs.PrototypeAssetID()), false},
+		{"+ve", fields{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, args{encodedQuery1}, newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID)), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				AssetID: tt.fields.AssetID,
 			}
 			got, err := queryRequest.Decode(tt.args.bytes)
@@ -112,10 +113,10 @@ func Test_queryRequest_Decode(t *testing.T) {
 func Test_queryRequest_Encode(t *testing.T) {
 	encodedQuery, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testAssetID))
 	require.NoError(t, err)
-	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID()))
+	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID)))
 	require.NoError(t, err)
 	type fields struct {
-		AssetID ids.AssetID
+		AssetID *baseIDs.AssetID
 	}
 	tests := []struct {
 		name    string
@@ -124,11 +125,11 @@ func Test_queryRequest_Encode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testAssetID}, encodedQuery, false},
-		{"+ve with nil", fields{baseIDs.PrototypeAssetID()}, encodedQuery1, false},
+		{"+ve with nil", fields{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, encodedQuery1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				AssetID: tt.fields.AssetID,
 			}
 			got, err := queryRequest.Encode()
@@ -145,9 +146,10 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID})
+
 	viper.Set(constants.AssetID.GetName(), testAssetID.AsString())
 	type fields struct {
-		AssetID ids.AssetID
+		AssetID *baseIDs.AssetID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -160,11 +162,11 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testAssetID}, args{cliCommand, context}, newQueryRequest(testAssetID), false},
+		{"+ve", fields{testAssetID}, args{cliCommand, test.TestClientContext}, newQueryRequest(testAssetID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			qu := queryRequest{
+			qu := &QueryRequest{
 				AssetID: tt.fields.AssetID,
 			}
 			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
@@ -183,7 +185,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
 	vars[Query.GetName()] = testAssetID.AsString()
 	type fields struct {
-		AssetID ids.AssetID
+		AssetID *baseIDs.AssetID
 	}
 	type args struct {
 		vars map[string]string
@@ -199,7 +201,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			qu := queryRequest{
+			qu := &QueryRequest{
 				AssetID: tt.fields.AssetID,
 			}
 			got, err := qu.FromMap(tt.args.vars)
@@ -216,7 +218,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		AssetID ids.AssetID
+		AssetID *baseIDs.AssetID
 	}
 	tests := []struct {
 		name    string
@@ -227,7 +229,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				AssetID: tt.fields.AssetID,
 			}
 			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
@@ -242,7 +244,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		{"+ve", queryRequest{}},
+		{"+ve", &QueryRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

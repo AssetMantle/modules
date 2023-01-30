@@ -29,7 +29,7 @@ var (
 	testOwnableID       = baseIds.NewCoinID(baseIds.NewStringID("ownerid"))
 	splitID             = baseIds.NewSplitID(testOwnerIdentityID, testOwnableID)
 	testRate            = sdkTypes.NewDec(1)
-	split               = baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
+	split               = baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate).(*baseTypes.Split)
 )
 
 func TestNewMappable(t *testing.T) {
@@ -41,7 +41,7 @@ func TestNewMappable(t *testing.T) {
 		args args
 		want helpers.Mappable
 	}{
-		{"+ve", args{split}, mappable{split}},
+		{"+ve", args{split}, &Mappable{split}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -57,7 +57,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		{"+ve", mappable{}},
+		{"+ve", &Mappable{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -70,7 +70,7 @@ func TestPrototype(t *testing.T) {
 
 func Test_mappable_GetKey(t *testing.T) {
 	type fields struct {
-		Split types.Split
+		Split *baseTypes.Split
 	}
 	tests := []struct {
 		name   string
@@ -81,7 +81,7 @@ func Test_mappable_GetKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mappable := mappable{
+			mappable := &Mappable{
 				Split: tt.fields.Split,
 			}
 			if got := mappable.GetKey(); !reflect.DeepEqual(got, tt.want) {
@@ -93,7 +93,7 @@ func Test_mappable_GetKey(t *testing.T) {
 
 func Test_mappable_RegisterCodec(t *testing.T) {
 	type fields struct {
-		Split types.Split
+		Split *baseTypes.Split
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -107,7 +107,7 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ma := mappable{
+			ma := &Mappable{
 				Split: tt.fields.Split,
 			}
 			ma.RegisterLegacyAminoCodec(tt.args.legacyAmino)

@@ -4,6 +4,7 @@
 package classifications
 
 import (
+	"github.com/AssetMantle/modules/modules/classifications/internal/invariants"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -23,13 +24,15 @@ import (
 func TestPrototype(t *testing.T) {
 	require.Equal(t, Prototype().Name(), baseHelpers.NewModule(
 		module.Name,
+		module.ConsensusVersion,
 		auxiliaries.Prototype,
+		block.Prototype,
 		genesis.Prototype,
+		invariants.Prototype,
 		mapper.Prototype,
 		parameters.Prototype,
 		queries.Prototype,
 		simulator.Prototype,
 		transactions.Prototype,
-		block.Prototype,
 	).Name())
 }

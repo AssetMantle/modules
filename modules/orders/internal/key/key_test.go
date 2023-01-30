@@ -23,7 +23,7 @@ var (
 	immutables       = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables         = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID = baseIds.NewClassificationID(immutables, mutables)
-	testOrderID      = baseIds.NewOrderID(classificationID, immutables)
+	testOrderID      = baseIds.NewOrderID(classificationID, immutables).(*baseIds.OrderID)
 )
 
 func TestNewKey(t *testing.T) {
@@ -35,7 +35,7 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{testOrderID}, key{OrderID: testOrderID}},
+		{"+ve", args{testOrderID}, &Key{OrderID: testOrderID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -51,7 +51,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", key{}},
+		{"+ve", &Key{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -69,12 +69,12 @@ func Test_keyFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    key
+		want    *Key
 		wantErr bool
 	}{
-		{"+ve", args{}, key{}, true},
-		{"+ve", args{NewKey(testOrderID)}, key{testOrderID}, false},
-		{"-ve", args{baseIds.NewStringID("StringID")}, key{}, true},
+		{"+ve", args{}, &Key{}, true},
+		{"+ve", args{NewKey(testOrderID)}, &Key{testOrderID}, false},
+		{"-ve", args{baseIds.NewStringID("StringID")}, &Key{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -92,7 +92,7 @@ func Test_keyFromInterface(t *testing.T) {
 
 func Test_key_Equals(t *testing.T) {
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIds.OrderID
 	}
 	type args struct {
 		compareKey helpers.Key
@@ -103,11 +103,11 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{testOrderID}, args{key{testOrderID}}, true},
+		{"+ve", fields{testOrderID}, args{&Key{testOrderID}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
+			key := &Key{
 				OrderID: tt.fields.OrderID,
 			}
 			if got := key.Equals(tt.args.compareKey); got != tt.want {
@@ -119,22 +119,22 @@ func Test_key_Equals(t *testing.T) {
 
 func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIds.OrderID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{testOrderID}, module.StoreKeyPrefix.GenerateStoreKey(key{testOrderID}.Bytes())},
+		{"+ve", fields{testOrderID}, module.StoreKeyPrefix.GenerateStoreKey((&Key{testOrderID}).GenerateStoreKeyBytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
+			key := &Key{
 				OrderID: tt.fields.OrderID,
 			}
 			if got := key.GenerateStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GenerateStoreKeyBytes() = %v, want %v", got, tt.want)
+				t.Errorf("GenerateStoreKeyGenerateStoreKeyBytes() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -142,7 +142,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 
 func Test_key_IsPartial(t *testing.T) {
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIds.OrderID
 	}
 	tests := []struct {
 		name   string
@@ -153,7 +153,7 @@ func Test_key_IsPartial(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
+			key := &Key{
 				OrderID: tt.fields.OrderID,
 			}
 			if got := key.IsPartial(); got != tt.want {
@@ -165,7 +165,7 @@ func Test_key_IsPartial(t *testing.T) {
 
 func Test_key_RegisterCodec(t *testing.T) {
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIds.OrderID
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -179,7 +179,7 @@ func Test_key_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ke := key{
+			ke := &Key{
 				OrderID: tt.fields.OrderID,
 			}
 			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)

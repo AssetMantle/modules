@@ -86,7 +86,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	immutables1 := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("ImmutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	classificationID1 := baseIDs.NewClassificationID(immutables1, mutables)
-	keepers.MemberKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewClassification(immutables, mutables)))
+	keepers.MemberKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(baseDocuments.NewClassification(immutables, mutables)))
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -109,7 +109,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			auxiliaryKeeper := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := auxiliaryKeeper.Help(tt.args.context, tt.args.request); !reflect.DeepEqual(got, tt.want) {
+			if got := auxiliaryKeeper.Help(sdkTypes.WrapSDKContext(tt.args.context), tt.args.request); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Help() = %v, want %v", got, tt.want)
 			}
 		})

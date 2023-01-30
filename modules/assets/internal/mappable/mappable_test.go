@@ -23,11 +23,11 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, mappable) {
+func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, *Mappable) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testMappable := mappable{Asset: baseDocuments.NewAsset(classificationID, immutables, mutables)}
+	testMappable := &Mappable{Asset: baseDocuments.NewAsset(classificationID, immutables, mutables).Get().(*baseDocuments.Document)}
 	return classificationID, immutables, mutables, testMappable
 }
 
@@ -36,7 +36,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		{"+ve", mappable{}},
+		{"+ve", &Mappable{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -55,7 +55,7 @@ func TestNewMappable(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want documentsSchema.Asset
+		want helpers.Mappable
 	}{
 		{"+ve", args{baseDocuments.NewAsset(classificationID, immutables, mutables)}, testMappable},
 	}
@@ -71,7 +71,7 @@ func TestNewMappable(t *testing.T) {
 func Test_mappable_GetKey(t *testing.T) {
 	_, _, _, testMappable := createTestInput()
 	type fields struct {
-		Document mappable
+		Document *Mappable
 	}
 	tests := []struct {
 		name      string
@@ -79,13 +79,13 @@ func Test_mappable_GetKey(t *testing.T) {
 		want      helpers.Key
 		wantPanic bool
 	}{
-		{"+ve", fields{testMappable}, key.NewKey(baseIDs.NewAssetID(mappable{testMappable}.GetClassificationID(), mappable{testMappable}.GetImmutables())), false},
-		{"panic case nil", fields{mappable{nil}}, nil, true},
+		{"+ve", fields{testMappable}, key.NewKey(baseIDs.NewAssetID((&Mappable{testMappable.Asset}).Asset.GetClassificationID(), (&Mappable{testMappable.Asset}).Asset.GetImmutables())), false},
+		{"panic case nil", fields{&Mappable{nil}}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			asset := mappable{
-				Asset: tt.fields.Document,
+			asset := &Mappable{
+				Asset: tt.fields.Document.Asset,
 			}
 			if tt.wantPanic {
 				require.Panics(t, func() {
@@ -101,7 +101,7 @@ func Test_mappable_GetKey(t *testing.T) {
 func Test_mappable_RegisterCodec(t *testing.T) {
 	_, _, _, testMappable := createTestInput()
 	type fields struct {
-		Document mappable
+		Document *Mappable
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -112,12 +112,12 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		{"+ve", fields{testMappable}, args{legacyAmino: codec.NewLegacyAmino()}},
-		{"+ve nil", fields{mappable{nil}}, args{legacyAmino: codec.NewLegacyAmino()}},
+		{"+ve nil", fields{&Mappable{nil}}, args{legacyAmino: codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			as := mappable{
-				Asset: tt.fields.Document,
+			as := &Mappable{
+				Asset: tt.fields.Document.Asset,
 			}
 			as.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})

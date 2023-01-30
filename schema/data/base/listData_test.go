@@ -16,26 +16,24 @@ import (
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 var fromAddress = "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
 
-var accAddress = NewAccAddressData(sdkTypes.AccAddress(fromAddress)).String()
+var accAddress = NewAccAddressData(sdkTypes.AccAddress(fromAddress)).AsString()
 
 func TestListDataPrototype(t *testing.T) {
 	type args struct {
-		value lists.DataList
+		value data.ListData
 	}
 	tests := []struct {
 		name string
 		args args
 		want data.Data
 	}{
-		{"+ve", args{}, listData{}.ZeroValue()},
+		{"+ve", args{}, &ListData{[]*AnyData{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -46,20 +44,20 @@ func TestListDataPrototype(t *testing.T) {
 
 func TestNewListData(t *testing.T) {
 	type args struct {
-		value lists.DataList
+		value data.ListData
 	}
 	tests := []struct {
 		name string
 		args args
 		want data.Data
 	}{
-		{"+ve for some id", args{baseLists.NewDataList(NewStringData("Data"))}, listData{baseLists.NewDataList(NewStringData("Data"))}},
-		{"+ve for empty String", args{baseLists.NewDataList(NewStringData(""))}, listData{baseLists.NewDataList(NewStringData(""))}},
+		{"+ve for some id", args{NewListData(NewStringData("Data"))}, &ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData)}}},
+		{"+ve for empty String", args{NewListData(NewStringData(""))}, &ListData{[]*AnyData{NewStringData("").ToAnyData().(*AnyData)}}},
 
-		{"+ve empty datalist", args{baseLists.NewDataList([]data.Data{}...)}, listData{}.ZeroValue()},
-		{"+ve address string", args{baseLists.NewDataList(NewStringData(fromAddress))}, listData{baseLists.NewDataList(NewStringData(fromAddress))}},
+		{"+ve empty datalist", args{NewListData([]data.Data{}...)}, (&ListData{}).ZeroValue()},
+		{"+ve address string", args{NewListData(NewStringData(fromAddress))}, &ListData{[]*AnyData{NewStringData(fromAddress).ToAnyData().(*AnyData)}}},
 		// TODO: Check address format
-		// {"-ve wrong address string format", args{baseLists.NewDataList(NewStringData(fromAddress))}, listData{}.ZeroValue()},
+		// {"-ve wrong address string format", args{NewListData(NewStringData(fromAddress))}, &ListData{}.ZeroValue()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -75,13 +73,13 @@ func Test_listDataFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    listData
+		want    *ListData
 		wantErr assert.ErrorAssertionFunc
 	}{
-		{"+ve for some id", args{listData{baseLists.NewDataList(NewStringData("Data"))}}, listData{baseLists.NewDataList(NewStringData("Data"))}, assert.NoError},
-		{"+ve for empty String", args{listData{baseLists.NewDataList(NewStringData(""))}}, listData{baseLists.NewDataList(NewStringData(""))}, assert.NoError},
-		{"-ve for empty String", args{heightData{}}, listData{}, assert.Error},
-		{"-ve for empty String", args{NewStringData("")}, listData{}, assert.Error},
+		{"+ve for some id", args{&ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData)}}}, &ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData)}}, assert.NoError},
+		{"+ve for empty String", args{&ListData{[]*AnyData{NewStringData("").ToAnyData().(*AnyData)}}}, &ListData{[]*AnyData{NewStringData("").ToAnyData().(*AnyData)}}, assert.NoError},
+		{"-ve for empty String", args{&HeightData{}}, &ListData{}, assert.Error},
+		{"-ve for empty String", args{NewStringData("").ToAnyData().(*AnyData)}, &ListData{}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -96,7 +94,7 @@ func Test_listDataFromInterface(t *testing.T) {
 
 func Test_listData_Add(t *testing.T) {
 	type fields struct {
-		Value lists.DataList
+		Value []*AnyData
 	}
 	type args struct {
 		data []data.Data
@@ -108,17 +106,17 @@ func Test_listData_Add(t *testing.T) {
 		want        data.ListData
 		wantFailure bool
 	}{
-		{"+ve for multiple ids", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData("Data"))}, false},
-		{"+ve for multiple ids/nils", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData(""), NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData(""))}, false},
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"))}, false},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{}, listData{baseLists.NewDataList(NewStringData(""))}, false},
-		{"-ve for value inequality", fields{baseLists.NewDataList(NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data1"))}, true},
-		{"-ve for occurrence inequality", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"), NewStringData("Data"))}, args{}, listData{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data"))}, true},
+		{"+ve for multiple ids", fields{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData), NewStringData("Data").ToAnyData().(*AnyData), NewStringData("Data").ToAnyData().(*AnyData)}}, args{}, &ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData), NewStringData("Data").ToAnyData().(*AnyData), NewStringData("Data").ToAnyData().(*AnyData)}}, false},
+		{"+ve for multiple ids/nils", fields{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData), NewStringData("").ToAnyData().(*AnyData), NewStringData("Data").ToAnyData().(*AnyData)}}, args{}, &ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData), NewStringData("Data").ToAnyData().(*AnyData), NewStringData("").ToAnyData().(*AnyData)}}, false},
+		{"+ve for some id", fields{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData)}}, args{}, &ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData)}}, false},
+		{"+ve for empty String", fields{[]*AnyData{NewStringData("").ToAnyData().(*AnyData)}}, args{}, &ListData{[]*AnyData{NewStringData("").ToAnyData().(*AnyData)}}, false},
+		{"-ve for value inequality", fields{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData)}}, args{}, &ListData{[]*AnyData{NewStringData("Data1").ToAnyData().(*AnyData)}}, true},
+		{"-ve for occurrence inequality", fields{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData), NewStringData("Data").ToAnyData().(*AnyData), NewStringData("Data").ToAnyData().(*AnyData)}}, args{}, &ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData), NewStringData("Data").ToAnyData().(*AnyData)}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			listData := listData{
-				Value: tt.fields.Value,
+			listData := &ListData{
+				DataList: tt.fields.Value,
 			}
 			if tt.wantFailure {
 				assert.NotEqualf(t, tt.want, listData.Add(tt.args.data...), "Add(%v)", tt.args.data)
@@ -131,22 +129,20 @@ func Test_listData_Add(t *testing.T) {
 
 func Test_listData_Bytes(t *testing.T) {
 	type fields struct {
-		Value lists.DataList
+		Value data.ListData
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, NewStringData("Data").Bytes()}, // for a single data no loop iteration is required, so directly it's byte should match
-		{"+ve for multiple ids", fields{baseLists.NewDataList(NewStringData("Data"), NewStringData("Data1"))}, bytes.Join([][]byte{NewStringData("Data").Bytes(), NewStringData("Data1").Bytes()}, nil)},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, []byte(nil)},
+		{"+ve for some id", fields{NewListData(NewStringData("Data").ToAnyData().(*AnyData))}, NewStringData("Data").Bytes()}, // for a single data no loop iteration is required, so directly it's byte should match
+		{"+ve for multiple ids", fields{NewListData(NewStringData("Data").ToAnyData().(*AnyData), NewStringData("Data1"))}, bytes.Join([][]byte{NewStringData("Data").Bytes(), NewStringData("Data1").Bytes()}, nil)},
+		{"+ve for empty String", fields{NewListData(NewStringData(""))}, []byte(nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			listData := listData{
-				Value: tt.fields.Value,
-			}
+			listData := tt.fields.Value
 			assert.Equalf(t, tt.want, listData.Bytes(), "Bytes()")
 		})
 	}
@@ -154,7 +150,7 @@ func Test_listData_Bytes(t *testing.T) {
 
 func Test_listData_Compare(t *testing.T) {
 	type fields struct {
-		Value lists.DataList
+		Value data.ListData
 	}
 	type args struct {
 		listable traits.Listable
@@ -166,17 +162,15 @@ func Test_listData_Compare(t *testing.T) {
 		want      int
 		wantPanic bool
 	}{
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, 0, false},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{listData{baseLists.NewDataList(NewStringData("Data"))}}, -1, false},
-		{"Test for Equal case", fields{baseLists.NewDataList(NewStringData(fromAddress))}, args{listData{baseLists.NewDataList(NewStringData(fromAddress))}}, 0, false},
-		{"Test for Not Equal case", fields{baseLists.NewDataList(NewStringData(fromAddress))}, args{listData{baseLists.NewDataList(NewStringData(accAddress))}}, 1, false},
-		{"panic test for Not Equal case", fields{baseLists.NewDataList(NewStringData(accAddress))}, args{heightData{baseTypes.NewHeight(100)}}, 1, true},
+		{"+ve for some id", fields{NewListData(NewStringData("Data").ToAnyData().(*AnyData))}, args{&ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData)}}}, 0, false},
+		{"+ve for empty String", fields{NewListData(NewStringData("").ToAnyData().(*AnyData))}, args{&ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData)}}}, -1, false},
+		{"Test for Equal case", fields{NewListData(NewStringData(fromAddress).ToAnyData().(*AnyData))}, args{&ListData{[]*AnyData{NewStringData(fromAddress).ToAnyData().(*AnyData)}}}, 0, false},
+		{"Test for Not Equal case", fields{NewListData(NewStringData(fromAddress))}, args{&ListData{[]*AnyData{NewStringData(accAddress).ToAnyData().(*AnyData)}}}, 1, false},
+		{"panic test for Not Equal case", fields{NewListData(NewStringData(accAddress))}, args{&HeightData{baseTypes.NewHeight(100).(*baseTypes.Height)}}, 1, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			listData := listData{
-				Value: tt.fields.Value,
-			}
+			listData := tt.fields.Value
 			if tt.wantPanic {
 				require.Panics(t, func() {
 					listData.Compare(tt.args.listable)
@@ -190,26 +184,24 @@ func Test_listData_Compare(t *testing.T) {
 
 func Test_listData_GenerateHashID(t *testing.T) {
 	type fields struct {
-		Value lists.DataList
+		Value data.ListData
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, baseIDs.GenerateHashID(listData{baseLists.NewDataList(NewStringData("Data"))}.Bytes()).String()},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, baseIDs.GenerateHashID(listData{baseLists.NewDataList(NewStringData(""))}.Bytes()).String()},
-		{"empty string", fields{baseLists.NewDataList()}, baseIDs.NewStringID("").String()},
-		{"+ve case", fields{baseLists.NewDataList(NewStringData(accAddress))}, baseIDs.NewStringID("xrHmURH4R458qdPeDW8kU9eO3a3bvQRE0W6CAoZ8yCw=").String()},
-		{"-ve case", fields{baseLists.NewDataList(NewStringData(""))}, baseIDs.NewStringID("").String()},
-		{"-ve case with empty datalist", fields{baseLists.NewDataList([]data.Data{}...)}, baseIDs.NewStringID("").String()},
-		{"-ve case with nil data", fields{baseLists.NewDataList()}, baseIDs.NewStringID("").String()},
+		{"+ve for some id", fields{NewListData(NewStringData("Data"))}, baseIDs.GenerateHashID((&ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData)}}).Bytes()).AsString()},
+		{"+ve for empty String", fields{NewListData(NewStringData(""))}, baseIDs.GenerateHashID((&ListData{[]*AnyData{NewStringData("").ToAnyData().(*AnyData)}}).Bytes()).AsString()},
+		{"empty string", fields{NewListData()}, baseIDs.NewStringID("").AsString()},
+		{"+ve case", fields{NewListData(NewStringData(accAddress))}, baseIDs.NewStringID("xrHmURH4R458qdPeDW8kU9eO3a3bvQRE0W6CAoZ8yCw=").AsString()},
+		{"-ve case", fields{NewListData(NewStringData(""))}, baseIDs.NewStringID("").AsString()},
+		{"-ve case with empty datalist", fields{NewListData([]data.Data{}...)}, baseIDs.NewStringID("").AsString()},
+		{"-ve case with nil data", fields{NewListData()}, baseIDs.NewStringID("").AsString()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			listData := listData{
-				Value: tt.fields.Value,
-			}
+			listData := tt.fields.Value
 			assert.Equalf(t, tt.want, listData.GenerateHashID().AsString(), "GenerateHashID()")
 		})
 	}
@@ -217,21 +209,19 @@ func Test_listData_GenerateHashID(t *testing.T) {
 
 func Test_listData_Get(t *testing.T) {
 	type fields struct {
-		Value lists.DataList
+		Value data.ListData
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   []data.Data
+		want   []*AnyData
 	}{
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, listData{baseLists.NewDataList(NewStringData("Data"))}.Value.GetList()},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, listData{baseLists.NewDataList(NewStringData(""))}.Value.GetList()},
+		{"+ve for some id", fields{NewListData(NewStringData("Data"))}, (&ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData)}}).DataList},
+		{"+ve for empty String", fields{NewListData(NewStringData(""))}, (&ListData{[]*AnyData{NewStringData("").ToAnyData().(*AnyData)}}).DataList},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			listData := listData{
-				Value: tt.fields.Value,
-			}
+			listData := tt.fields.Value
 			assert.Equalf(t, tt.want, listData.Get(), "Get()")
 		})
 	}
@@ -239,21 +229,19 @@ func Test_listData_Get(t *testing.T) {
 
 func Test_listData_GetID(t *testing.T) {
 	type fields struct {
-		Value lists.DataList
+		Value data.ListData
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   ids.DataID
 	}{
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, baseIDs.GenerateDataID(listData{baseLists.NewDataList(NewStringData("Data"))})},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, baseIDs.GenerateDataID(listData{baseLists.NewDataList(NewStringData(""))})},
+		{"+ve for some id", fields{NewListData(NewStringData("Data"))}, baseIDs.GenerateDataID(&ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData)}})},
+		{"+ve for empty String", fields{NewListData(NewStringData(""))}, baseIDs.GenerateDataID(&ListData{[]*AnyData{NewStringData("").ToAnyData().(*AnyData)}})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			listData := listData{
-				Value: tt.fields.Value,
-			}
+			listData := tt.fields.Value
 			assert.Equalf(t, tt.want, listData.GetID(), "GetID()")
 		})
 	}
@@ -261,21 +249,19 @@ func Test_listData_GetID(t *testing.T) {
 
 func Test_listData_GetType(t *testing.T) {
 	type fields struct {
-		Value lists.DataList
+		Value data.ListData
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   ids.StringID
 	}{
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, dataConstants.ListDataID},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, dataConstants.ListDataID},
+		{"+ve for some id", fields{NewListData(NewStringData("Data"))}, dataConstants.ListDataID},
+		{"+ve for empty String", fields{NewListData(NewStringData(""))}, dataConstants.ListDataID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			listData := listData{
-				Value: tt.fields.Value,
-			}
+			listData := tt.fields.Value
 			assert.Equalf(t, tt.want, listData.GetType(), "GetType()")
 		})
 	}
@@ -283,7 +269,7 @@ func Test_listData_GetType(t *testing.T) {
 
 func Test_listData_Remove(t *testing.T) {
 	type fields struct {
-		Value lists.DataList
+		Value data.ListData
 	}
 	type args struct {
 		data []data.Data
@@ -294,15 +280,13 @@ func Test_listData_Remove(t *testing.T) {
 		args   args
 		want   data.ListData
 	}{
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, args{[]data.Data{}}, listData{baseLists.NewDataList(NewStringData(""))}},
-		{"+ve for empty String & removing it", fields{baseLists.NewDataList(NewStringData(""))}, args{[]data.Data{NewStringData("")}}, listData{baseLists.NewDataList()}},
-		{"+ve ", fields{baseLists.NewDataList(NewStringData("data"))}, args{[]data.Data{NewStringData("data")}}, listData{baseLists.NewDataList()}},
+		{"+ve for empty String", fields{NewListData(NewStringData(""))}, args{[]data.Data{}}, &ListData{[]*AnyData{NewStringData("").ToAnyData().(*AnyData)}}},
+		{"+ve for empty String & removing it", fields{NewListData(NewStringData(""))}, args{[]data.Data{NewStringData("").ToAnyData().(*AnyData)}}, &ListData{[]*AnyData{}}},
+		{"+ve ", fields{NewListData(NewStringData("data"))}, args{[]data.Data{NewStringData("data")}}, &ListData{[]*AnyData{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			listData := listData{
-				Value: tt.fields.Value,
-			}
+			listData := tt.fields.Value
 			assert.Equalf(t, tt.want, listData.Remove(tt.args.data...), "Remove(%v)", tt.args.data)
 		})
 	}
@@ -310,7 +294,7 @@ func Test_listData_Remove(t *testing.T) {
 
 func Test_listData_Search(t *testing.T) {
 	type fields struct {
-		Value lists.DataList
+		Value data.ListData
 	}
 	type args struct {
 		data data.Data
@@ -322,15 +306,13 @@ func Test_listData_Search(t *testing.T) {
 		want   int
 		want1  bool
 	}{
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, args{NewStringData("Data")}, 0, true},
-		{"+ve for empty String", fields{baseLists.NewDataList([]data.Data{NewStringData("Data"), NewStringData("")}...)}, args{NewStringData("")}, 0, true},
-		{"-ve", fields{baseLists.NewDataList([]data.Data{NewStringData("Data"), NewStringData("")}...)}, args{NewStringData("test")}, 2, false},
+		{"+ve for some id", fields{NewListData(NewStringData("Data"))}, args{NewStringData("Data").ToAnyData().(*AnyData)}, 0, true},
+		{"+ve for empty String", fields{NewListData([]data.Data{NewStringData("Data").ToAnyData().(*AnyData), NewStringData("").ToAnyData().(*AnyData)}...)}, args{NewStringData("").ToAnyData().(*AnyData)}, 0, true},
+		{"-ve", fields{NewListData([]data.Data{NewStringData("Data").ToAnyData().(*AnyData), NewStringData("").ToAnyData().(*AnyData)}...)}, args{NewStringData("test")}, 2, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			listData := listData{
-				Value: tt.fields.Value,
-			}
+			listData := tt.fields.Value
 			got, got1 := listData.Search(tt.args.data)
 			assert.Equalf(t, tt.want, got, "Search(%v)", tt.args.data)
 			assert.Equalf(t, tt.want1, got1, "Search(%v)", tt.args.data)
@@ -340,43 +322,39 @@ func Test_listData_Search(t *testing.T) {
 
 func Test_listData_String(t *testing.T) {
 	type fields struct {
-		Value lists.DataList
+		Value data.ListData
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, "Data"},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, ""},
+		{"+ve for some id", fields{NewListData(NewStringData("Data"))}, "Data"},
+		{"+ve for empty String", fields{NewListData(NewStringData(""))}, ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			listData := listData{
-				Value: tt.fields.Value,
-			}
-			assert.Equalf(t, tt.want, listData.String(), "String()")
+			listData := tt.fields.Value
+			assert.Equalf(t, tt.want, listData.AsString(), "String()")
 		})
 	}
 }
 
 func Test_listData_ZeroValue(t *testing.T) {
 	type fields struct {
-		Value lists.DataList
+		Value data.ListData
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   data.Data
 	}{
-		{"+ve for some id", fields{baseLists.NewDataList(NewStringData("Data"))}, NewListData(baseLists.NewDataList([]data.Data{}...))},
-		{"+ve for empty String", fields{baseLists.NewDataList(NewStringData(""))}, NewListData(baseLists.NewDataList([]data.Data{}...))},
+		{"+ve for some id", fields{NewListData(NewStringData("Data"))}, NewListData(NewListData([]data.Data{}...))},
+		{"+ve for empty String", fields{NewListData(NewStringData(""))}, NewListData(NewListData([]data.Data{}...))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			listData := listData{
-				Value: tt.fields.Value,
-			}
+			listData := tt.fields.Value
 			assert.Equalf(t, tt.want, listData.ZeroValue(), "ZeroValue()")
 		})
 	}

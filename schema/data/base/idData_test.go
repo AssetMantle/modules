@@ -25,8 +25,8 @@ func TestNewIDData(t *testing.T) {
 		args args
 		want data.Data
 	}{
-		{"+ve", args{NewStringData("Data")}, idData{NewStringData("Data")}},
-		{"+ve empty string", args{NewStringData("")}, idData{NewStringData("")}},
+		{"+ve", args{baseIDs.NewStringID("Data")}, &IDData{baseIDs.NewStringID("Data").ToAnyID().(*baseIDs.AnyID)}},
+		{"+ve empty string", args{baseIDs.NewStringID("")}, &IDData{baseIDs.NewStringID("").ToAnyID().(*baseIDs.AnyID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -42,16 +42,16 @@ func Test_idDataFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    idData
+		want    IDData
 		wantErr assert.ErrorAssertionFunc
 	}{
-		{"+ve", args{NewIDData(NewStringData("Data"))}, idData{NewStringData("Data")}, assert.NoError},
-		{"+ve", args{NewIDData(NewStringData(""))}, idData{NewStringData("")}, assert.NoError},
-		{"-ve", args{NewStringData("Data")}, idData{}, assert.Error},
+		{"+ve", args{NewIDData(baseIDs.NewStringID("Data"))}, IDData{baseIDs.NewStringID("Data").ToAnyID().(*baseIDs.AnyID)}, assert.NoError},
+		{"+ve", args{NewIDData(baseIDs.NewStringID(""))}, IDData{baseIDs.NewStringID("").ToAnyID().(*baseIDs.AnyID)}, assert.NoError},
+		{"-ve", args{baseIDs.NewStringID("Data")}, IDData{}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := idDataFromInterface(tt.args.listable)
+			got, err := dataFromListable(tt.args.listable)
 			if !tt.wantErr(t, err, fmt.Sprintf("idDataFromInterface(%v)", tt.args.listable)) {
 				return
 			}
@@ -69,13 +69,13 @@ func Test_idData_Bytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{NewStringData("")}, []byte{}},
-		{"+ve", fields{NewStringData("Data")}, NewStringData("Data").Bytes()},
+		{"+ve", fields{baseIDs.NewStringID("")}, []byte{}},
+		{"+ve", fields{baseIDs.NewStringID("Data")}, baseIDs.NewStringID("Data").Bytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			idData := idData{
-				Value: tt.fields.Value,
+			idData := IDData{
+				Value: tt.fields.Value.ToAnyID().(*baseIDs.AnyID),
 			}
 			assert.Equalf(t, tt.want, idData.Bytes(), "Bytes()")
 		})
@@ -95,13 +95,13 @@ func Test_idData_Compare(t *testing.T) {
 		args   args
 		want   int
 	}{
-		{"+ve", fields{NewStringData("Data")}, args{idData{NewStringData("Data")}}, 0},
-		{"+ve", fields{NewStringData("Data")}, args{idData{NewStringData("0")}}, 1},
+		{"+ve", fields{baseIDs.NewStringID("Data")}, args{&IDData{baseIDs.NewStringID("Data").ToAnyID().(*baseIDs.AnyID)}}, 0},
+		{"+ve", fields{baseIDs.NewStringID("Data")}, args{&IDData{baseIDs.NewStringID("0").ToAnyID().(*baseIDs.AnyID)}}, 1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			idData := idData{
-				Value: tt.fields.Value,
+			idData := IDData{
+				Value: tt.fields.Value.ToAnyID().(*baseIDs.AnyID),
 			}
 			assert.Equalf(t, tt.want, idData.Compare(tt.args.listable), "Compare(%v)", tt.args.listable)
 		})
@@ -117,13 +117,13 @@ func Test_idData_GenerateHashID(t *testing.T) {
 		fields fields
 		want   ids.HashID
 	}{
-		{"+ve", fields{NewStringData("Data")}, baseIDs.GenerateHashID(idData{NewStringData("Data")}.Bytes())},
-		{"+ve with empty String", fields{NewStringData("")}, baseIDs.GenerateHashID(idData{NewStringData("")}.Bytes())},
+		{"+ve", fields{baseIDs.NewStringID("Data")}, baseIDs.GenerateHashID((&IDData{baseIDs.NewStringID("Data").ToAnyID().(*baseIDs.AnyID)}).Bytes())},
+		{"+ve with empty String", fields{baseIDs.NewStringID("")}, baseIDs.GenerateHashID((&IDData{baseIDs.NewStringID("").ToAnyID().(*baseIDs.AnyID)}).Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			idData := idData{
-				Value: tt.fields.Value,
+			idData := IDData{
+				Value: tt.fields.Value.ToAnyID().(*baseIDs.AnyID),
 			}
 			assert.Equalf(t, tt.want, idData.GenerateHashID(), "GenerateHashID()")
 		})
@@ -139,13 +139,13 @@ func Test_idData_Get(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		{"+ve", fields{NewStringData("Data")}, NewStringData("Data")},
-		{"+ve", fields{NewStringData("")}, NewStringData("")},
+		{"+ve", fields{baseIDs.NewStringID("Data")}, baseIDs.NewStringID("Data")},
+		{"+ve", fields{baseIDs.NewStringID("")}, baseIDs.NewStringID("")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			idData := idData{
-				Value: tt.fields.Value,
+			idData := IDData{
+				Value: tt.fields.Value.ToAnyID().(*baseIDs.AnyID),
 			}
 			assert.Equalf(t, tt.want, idData.Get(), "Get()")
 		})
@@ -161,12 +161,12 @@ func Test_idData_GetID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		{"+ve", fields{NewStringData("Data")}, baseIDs.GenerateDataID(idData{NewStringData("Data")})},
+		{"+ve", fields{baseIDs.NewStringID("Data")}, baseIDs.GenerateDataID(&IDData{baseIDs.NewStringID("Data").ToAnyID().(*baseIDs.AnyID)})},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			idData := idData{
-				Value: tt.fields.Value,
+			idData := IDData{
+				Value: tt.fields.Value.ToAnyID().(*baseIDs.AnyID),
 			}
 			assert.Equalf(t, tt.want, idData.GetID(), "GetID()")
 		})
@@ -182,12 +182,12 @@ func Test_idData_GetType(t *testing.T) {
 		fields fields
 		want   ids.StringID
 	}{
-		{"+ve", fields{NewStringData("Data")}, dataConstants.IDDataID},
+		{"+ve", fields{baseIDs.NewStringID("Data")}, dataConstants.IDDataID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			idData := idData{
-				Value: tt.fields.Value,
+			idData := IDData{
+				Value: tt.fields.Value.(*baseIDs.AnyID),
 			}
 			assert.Equalf(t, tt.want, idData.GetType(), "GetType()")
 		})
@@ -203,12 +203,12 @@ func Test_idData_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{NewStringData("Data")}, "Data"},
+		{"+ve", fields{baseIDs.NewStringID("Data")}, "Data"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			idData := idData{
-				Value: tt.fields.Value,
+			idData := IDData{
+				Value: tt.fields.Value.(*baseIDs.AnyID),
 			}
 			assert.Equalf(t, tt.want, idData.String(), "String()")
 		})
@@ -224,12 +224,12 @@ func Test_idData_ZeroValue(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		{"+ve", fields{NewStringData("Data")}, NewIDData(baseIDs.NewStringID(""))},
+		{"+ve", fields{baseIDs.NewStringID("Data")}, NewIDData(baseIDs.NewStringID(""))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			idData := idData{
-				Value: tt.fields.Value,
+			idData := IDData{
+				Value: tt.fields.Value.(*baseIDs.AnyID),
 			}
 			assert.Equalf(t, tt.want, idData.ZeroValue(), "ZeroValue()")
 		})

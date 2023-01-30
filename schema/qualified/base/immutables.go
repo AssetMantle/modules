@@ -36,6 +36,9 @@ func (immutables *Immutables) GenerateHashID() ids.ID {
 }
 
 func NewImmutables(propertyList lists.PropertyList) qualified.Immutables {
+	if propertyList == nil {
+		return &Immutables{}
+	}
 	return &Immutables{
 		PropertyList: propertyList.(*baseLists.PropertyList),
 	}

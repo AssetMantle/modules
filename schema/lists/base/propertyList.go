@@ -1,6 +1,7 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/traits"
 	"sort"
 
 	"github.com/AssetMantle/modules/schema/ids"
@@ -96,6 +97,15 @@ func (propertyList *PropertyList) sort() lists.PropertyList {
 	})
 
 	return propertyList
+}
+
+//TODO: Evaluate need
+func propertiesToListables(properties ...properties.Property) []traits.Listable {
+	listables := make([]traits.Listable, len(properties))
+	for i, property := range properties {
+		listables[i] = property
+	}
+	return listables
 }
 
 func NewPropertyList(properties ...properties.Property) lists.PropertyList {

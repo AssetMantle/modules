@@ -4,6 +4,7 @@
 package block
 
 import (
+	"context"
 	"testing"
 
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -23,7 +24,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func CreateTestInput(t *testing.T) sdkTypes.Context {
+func CreateTestInput(t *testing.T) context.Context {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -45,17 +46,17 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	return context
+	return sdkTypes.WrapSDKContext(context)
 }
 
 func Test_block_Begin(t *testing.T) {
-	context := CreateTestInput(t)
+	ctx := CreateTestInput(t)
 	type fields struct {
 		mapper     helpers.Mapper
 		parameters helpers.Parameters
 	}
 	type args struct {
-		in0 sdkTypes.Context
+		in0 context.Context
 		in1 abciTypes.RequestBeginBlock
 	}
 	tests := []struct {
@@ -64,7 +65,7 @@ func Test_block_Begin(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{mapper: mapper.Prototype(), parameters: parameters.Prototype()}, args{in0: context, in1: abciTypes.RequestBeginBlock{}}},
+		{"+ve", fields{mapper: mapper.Prototype(), parameters: parameters.Prototype()}, args{in0: ctx, in1: abciTypes.RequestBeginBlock{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -83,7 +84,7 @@ func Test_block_End(t *testing.T) {
 		parameters helpers.Parameters
 	}
 	type args struct {
-		in0 sdkTypes.Context
+		in0 context.Context
 		in1 abciTypes.RequestEndBlock
 	}
 	tests := []struct {

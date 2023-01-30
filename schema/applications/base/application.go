@@ -6,6 +6,7 @@ package base
 import (
 	"encoding/json"
 	"errors"
+	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
 	"io"
 	"log"
 	"net/http"
@@ -156,10 +157,10 @@ type application struct {
 var _ applications.Application = (*application)(nil)
 
 func (application application) GetDefaultNodeHome() string {
-	return os.ExpandEnv("$HOME/." + application.name + "/Node")
+	return os.ExpandEnv("$HOME/." + application.name)
 }
 func (application application) GetDefaultClientHome() string {
-	return os.ExpandEnv("$HOME/." + application.name + "/Client")
+	return os.ExpandEnv("$HOME/." + application.name)
 }
 func (application application) GetModuleBasicManager() module.BasicManager {
 	return application.moduleBasicManager
@@ -323,6 +324,7 @@ func (application application) RegisterAPIRoutes(server *api.Server, apiConfig c
 	tmservice.RegisterGRPCGatewayRoutes(clientCtx, server.GRPCGatewayRouter)
 	application.moduleBasicManager.RegisterRESTRoutes(clientCtx, server.Router)
 	application.moduleBasicManager.RegisterGRPCGatewayRoutes(clientCtx, server.GRPCGatewayRouter)
+	utilitiesRest.RegisterRESTRoutes(clientCtx, server.Router)
 	if apiConfig.Swagger {
 		Fs, err := fs.New()
 		if err != nil {

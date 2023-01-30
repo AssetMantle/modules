@@ -4,6 +4,7 @@
 package block
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"testing"
@@ -25,7 +26,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func CreateAssetsTestInput(t *testing.T) sdkTypes.Context {
+func CreateAssetsTestInput(t *testing.T) context.Context {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -47,17 +48,16 @@ func CreateAssetsTestInput(t *testing.T) sdkTypes.Context {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	return context
+	return sdkTypes.WrapSDKContext(context)
 }
 
 func Test_block_Begin(t *testing.T) {
-	context := CreateAssetsTestInput(t)
 	type fields struct {
 		mapper     helpers.Mapper
 		parameters helpers.Parameters
 	}
 	type args struct {
-		in0 sdkTypes.Context
+		in0 context.Context
 		in1 abciTypes.RequestBeginBlock
 	}
 	tests := []struct {
@@ -66,7 +66,7 @@ func Test_block_Begin(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{context, abciTypes.RequestBeginBlock{}}},
+		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateAssetsTestInput(t), abciTypes.RequestBeginBlock{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -80,14 +80,12 @@ func Test_block_Begin(t *testing.T) {
 }
 
 func Test_block_End(t *testing.T) {
-	context := CreateAssetsTestInput(t)
-
 	type fields struct {
 		mapper     helpers.Mapper
 		parameters helpers.Parameters
 	}
 	type args struct {
-		in0 sdkTypes.Context
+		in0 context.Context
 		in1 abciTypes.RequestEndBlock
 	}
 	tests := []struct {
@@ -96,7 +94,7 @@ func Test_block_End(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{context, abciTypes.RequestEndBlock{}}},
+		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateAssetsTestInput(t), abciTypes.RequestEndBlock{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

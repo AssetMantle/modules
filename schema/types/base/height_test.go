@@ -23,16 +23,16 @@ func TestNewHeight(t *testing.T) {
 		// Fails in case of overflow conditions
 		{"Testing with value 10", args{
 			10,
-		}, height{Value: 10}},
+		}, &Height{Value: 10}},
 		{"Testing with value -10", args{
 			-10,
-		}, height{Value: -1}},
+		}, &Height{Value: -1}},
 		{"Testing with value math.MaxInt64", args{
 			math.MaxInt64,
-		}, height{Value: math.MaxInt64}},
+		}, &Height{Value: math.MaxInt64}},
 		{"Testing with value math.MinInt64", args{
 			math.MinInt64,
-		}, height{Value: -1}},
+		}, &Height{Value: -1}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -59,22 +59,22 @@ func Test_height_Compare(t *testing.T) {
 		{
 			"compareHeight > height", fields{
 				10,
-			}, args{height{11}}, -1,
+			}, args{&Height{11}}, -1,
 		},
 		{
 			"compareHeight < height", fields{
 				10,
-			}, args{height{9}}, 1,
+			}, args{&Height{9}}, 1,
 		},
 		{
 			"compareHeight === height", fields{
 				10,
-			}, args{height{10}}, 0,
+			}, args{&Height{10}}, 0,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			height := height{
+			height := &Height{
 				Value: tt.fields.Value,
 			}
 			if got := height.Compare(tt.args.compareHeight); got != tt.want {
@@ -101,7 +101,7 @@ func Test_height_Get(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			height := height{
+			height := &Height{
 				Value: tt.fields.Value,
 			}
 			if got := height.Get(); got != tt.want {

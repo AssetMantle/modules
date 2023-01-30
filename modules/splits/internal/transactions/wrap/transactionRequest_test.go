@@ -6,6 +6,7 @@ package wrap
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -31,7 +32,7 @@ var (
 	fromAccAddress, _ = types.AccAddressFromBech32(fromAddress)
 	testBaseRequest   = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 	immutables        = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables          = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList()))))
+	mutables          = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
 	classificationID  = baseIDs.NewClassificationID(immutables, mutables)
 	fromID            = baseIDs.NewIdentityID(classificationID, immutables)
 	ownableID         = baseIDs.NewCoinID(baseIDs.NewStringID("ownableid"))
@@ -78,6 +79,7 @@ func Test_requestPrototype(t *testing.T) {
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.Coins, constants.FromID})
+
 	viper.Set(constants.FromID.GetName(), fromID.AsString())
 	viper.Set(constants.Coins.GetName(), testRate.String())
 	type fields struct {
@@ -96,7 +98,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), testRate.String()}, args{cliCommand, context}, transactionRequest{testBaseRequest, fromID.AsString(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), testRate.String()}, args{cliCommand, test.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -16,10 +16,13 @@ import (
 )
 
 func TestQuery(t *testing.T) {
-	context, storeKey, _ := test.SetupTest(t)
+	context, storeKey, _, cliCtx := test.SetupTest(t)
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 	Query := NewQuery("test", "t", "testQuery", "test", base.TestQueryRequestPrototype,
-		base.TestQueryResponsePrototype, base.TestQueryKeeperPrototype).Initialize(Mapper, parametersPrototype()).(query)
+		base.TestQueryResponsePrototype, base.TestQueryKeeperPrototype,
+		nil,
+		nil,
+	).Initialize(Mapper, parametersPrototype()).(query)
 
 	require.Equal(t, nil, base.TestQueryKeeperPrototype().(base.TestQueryKeeper).Help(context, nil))
 	require.Equal(t, nil, base.TestQueryRequestPrototype().Validate())
@@ -47,18 +50,18 @@ func TestQuery(t *testing.T) {
 	err = command.ParseFlags([]string{"--node", "tcp://localhost:26657"})
 	require.Nil(t, err)
 	require.Equal(t, `ABCIQuery: Post failed: Post "http://localhost:26657": dial tcp 127.0.0.1:26657: connect: connection refused`,
-		command.ExecuteContext(context.Context()).Error())
+		command.ExecuteContext(context).Error())
 
 	// require.Equal(t, nil, command.ExecuteContext(context.Context()))
 
 	// RESTQueryHandler
-	Query.RESTQueryHandler(context)
+	Query.RESTQueryHandler(cliCtx)
 
 	// RPC ERROR
 	testRequest1, err := http.NewRequest("GET", "/test", nil)
 	require.Nil(t, err)
 	responseRecorder := httptest.NewRecorder()
-	Query.RESTQueryHandler(context).ServeHTTP(responseRecorder, testRequest1)
+	Query.RESTQueryHandler(cliCtx).ServeHTTP(responseRecorder, testRequest1)
 	require.Equal(t, responseRecorder.Code, http.StatusInternalServerError)
 
 }

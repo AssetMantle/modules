@@ -19,9 +19,9 @@ import (
 )
 
 var (
-	mutableProperties      = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
-	immutableProperties    = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList())))
-	toMutateMetaProperties = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList(baseData.NewStringData("Test")))))
+	mutableProperties      = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
+	immutableProperties    = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData()))
+	toMutateMetaProperties = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseData.NewStringData("Test"))))
 	immutables             = baseQualified.NewImmutables(immutableProperties)
 	mutables               = baseQualified.NewMutables(mutableProperties)
 	testClassificationID   = baseIDs.NewClassificationID(immutables, mutables)

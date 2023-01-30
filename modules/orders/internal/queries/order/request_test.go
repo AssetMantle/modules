@@ -4,6 +4,7 @@
 package order
 
 import (
+	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -27,10 +28,10 @@ var (
 	immutables = baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables   = baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 
-	testClassificationID = baseIDs.NewClassificationID(immutables, mutables)
-	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables)
-	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables)
-	testOrderID1         = baseIDs.PrototypeOrderID()
+	testClassificationID = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
+	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
+	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
+	testOrderID1         = baseIDs.PrototypeOrderID().(*baseIDs.OrderID)
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -61,10 +62,10 @@ func Test_queryRequestFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want queryRequest
+		want helpers.QueryRequest
 	}{
-		{"+ve", args{newQueryRequest(testOrderID)}, queryRequest{testOrderID}},
-		{"+ve with nil", args{newQueryRequest(testOrderID1)}, queryRequest{testOrderID1}},
+		{"+ve", args{newQueryRequest(testOrderID)}, &QueryRequest{testOrderID}},
+		{"+ve with nil", args{newQueryRequest(testOrderID1)}, &QueryRequest{testOrderID1}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -81,7 +82,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(testOrderID1))
 	require.NoError(t, err1)
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIDs.OrderID
 	}
 	type args struct {
 		bytes []byte
@@ -98,7 +99,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				OrderID: tt.fields.OrderID,
 			}
 			got, err := queryRequest.Decode(tt.args.bytes)
@@ -119,7 +120,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(testOrderID1))
 	require.NoError(t, err1)
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIDs.OrderID
 	}
 	tests := []struct {
 		name    string
@@ -132,7 +133,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				OrderID: tt.fields.OrderID,
 			}
 			got, err := queryRequest.Encode()
@@ -149,9 +150,10 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OrderID})
+
 	viper.Set(constants.OrderID.GetName(), testOrderID.AsString())
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIDs.OrderID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -164,11 +166,11 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testOrderID}, args{cliCommand, context}, newQueryRequest(testOrderID), false},
+		{"+ve", fields{testOrderID}, args{cliCommand, test.TestClientContext}, newQueryRequest(testOrderID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			qu := queryRequest{
+			qu := &QueryRequest{
 				OrderID: tt.fields.OrderID,
 			}
 			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
@@ -187,7 +189,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
 	vars[Query.GetName()] = testOrderID.AsString()
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIDs.OrderID
 	}
 	type args struct {
 		vars map[string]string
@@ -203,7 +205,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			qu := queryRequest{
+			qu := &QueryRequest{
 				OrderID: tt.fields.OrderID,
 			}
 			got, err := qu.FromMap(tt.args.vars)
@@ -220,7 +222,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		OrderID ids.OrderID
+		OrderID *baseIDs.OrderID
 	}
 	tests := []struct {
 		name    string
@@ -231,7 +233,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := queryRequest{
+			queryRequest := &QueryRequest{
 				OrderID: tt.fields.OrderID,
 			}
 			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
@@ -246,7 +248,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		{"+ve", queryRequest{}},
+		{"+ve", &QueryRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

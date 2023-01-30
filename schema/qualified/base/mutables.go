@@ -32,6 +32,9 @@ func (mutables *Mutables) Mutate(propertyList ...properties.Property) qualified.
 }
 
 func NewMutables(propertyList lists.PropertyList) qualified.Mutables {
+	if propertyList == nil {
+		return &Mutables{}
+	}
 	return &Mutables{
 		PropertyList: propertyList.(*baseLists.PropertyList),
 	}

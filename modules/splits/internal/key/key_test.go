@@ -25,7 +25,7 @@ var (
 	classificationID    = baseIds.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID = baseIds.NewIdentityID(classificationID, immutables)
 	testOwnableID       = baseIds.NewCoinID(baseIds.NewStringID("ownerid"))
-	splitID             = baseIds.NewSplitID(testOwnerIdentityID, testOwnableID)
+	splitID             = baseIds.NewSplitID(testOwnerIdentityID, testOwnableID).(*baseIds.SplitID)
 )
 
 func TestNewKey(t *testing.T) {
@@ -37,8 +37,8 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{splitID}, key{splitID}},
-		{"+ve with nil", args{baseIds.PrototypeSplitID()}, key{baseIds.PrototypeSplitID()}},
+		{"+ve", args{splitID}, &Key{splitID}},
+		{"+ve with nil", args{baseIds.PrototypeSplitID()}, &Key{baseIds.PrototypeSplitID().(*baseIds.SplitID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -54,7 +54,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", key{}},
+		{"+ve", &Key{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -72,11 +72,11 @@ func Test_keyFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    key
+		want    *Key
 		wantErr bool
 	}{
-		{"+ve", args{NewKey(splitID)}, key{splitID}, false},
-		{"+ve", args{NewKey(baseIds.PrototypeSplitID())}, key{baseIds.PrototypeSplitID()}, false},
+		{"+ve", args{NewKey(splitID)}, &Key{splitID}, false},
+		{"+ve", args{NewKey(baseIds.PrototypeSplitID())}, &Key{baseIds.PrototypeSplitID().(*baseIds.SplitID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -110,8 +110,8 @@ func Test_key_Equals(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				SplitID: tt.fields.SplitID,
+			key := &Key{
+				SplitID: tt.fields.SplitID.(*baseIds.SplitID),
 			}
 			if got := key.Equals(tt.args.compareKey); got != tt.want {
 				t.Errorf("Equals() = %v, want %v", got, tt.want)
@@ -129,13 +129,13 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{splitID}, module.StoreKeyPrefix.GenerateStoreKey(key{splitID}.Bytes())},
-		{"+ve", fields{baseIds.PrototypeSplitID()}, module.StoreKeyPrefix.GenerateStoreKey(key{baseIds.PrototypeSplitID()}.Bytes())},
+		{"+ve", fields{splitID}, module.StoreKeyPrefix.GenerateStoreKey((&Key{splitID}).GenerateStoreKeyBytes())},
+		{"+ve", fields{baseIds.PrototypeSplitID()}, module.StoreKeyPrefix.GenerateStoreKey((&Key{baseIds.PrototypeSplitID().(*baseIds.SplitID)}).GenerateStoreKeyBytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				SplitID: tt.fields.SplitID,
+			key := &Key{
+				SplitID: tt.fields.SplitID.(*baseIds.SplitID),
 			}
 			if got := key.GenerateStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GenerateStoreKeyBytes() = %v, want %v", got, tt.want)
@@ -158,8 +158,8 @@ func Test_key_IsPartial(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := key{
-				SplitID: tt.fields.SplitID,
+			key := &Key{
+				SplitID: tt.fields.SplitID.(*baseIds.SplitID),
 			}
 			if got := key.IsPartial(); got != tt.want {
 				t.Errorf("IsPartial() = %v, want %v", got, tt.want)
@@ -184,8 +184,8 @@ func Test_key_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ke := key{
-				SplitID: tt.fields.SplitID,
+			ke := &Key{
+				SplitID: tt.fields.SplitID.(*baseIds.SplitID),
 			}
 			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})

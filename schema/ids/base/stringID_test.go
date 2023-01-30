@@ -20,8 +20,8 @@ func TestNewStringID(t *testing.T) {
 		args args
 		want ids.StringID
 	}{
-		{"+ve", args{"ID"}, stringID{"ID"}},
-		{"+ve", args{"S|ID"}, stringID{"S|ID"}}, // TODO: It should fail
+		{"+ve", args{"ID"}, &StringID{"ID"}},
+		{"+ve", args{"S|ID"}, &StringID{"S|ID"}}, // TODO: It should fail
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -39,11 +39,11 @@ func Test_stringIDFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    stringID
+		want    *StringID
 		wantErr bool
 	}{
 
-		{"+ve", args{NewStringID("ID")}, stringID{IDString: "ID"}, false},
+		{"+ve", args{NewStringID("ID")}, &StringID{IDString: "ID"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -52,11 +52,11 @@ func Test_stringIDFromInterface(t *testing.T) {
 				r := recover()
 
 				if (r != nil) != tt.wantErr {
-					t.Errorf("stringIDFromInterface() error = %v, wantErr %v", r, tt.wantErr)
+					t.Errorf("&StringIDFromInterface() error = %v, wantErr %v", r, tt.wantErr)
 				}
 			}()
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("stringIDFromInterface() got = %v, want %v", got, tt.want)
+				t.Errorf("&StringIDFromInterface() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -76,7 +76,7 @@ func Test_stringID_Bytes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			stringID := stringID{
+			stringID := &StringID{
 				IDString: tt.fields.IDString,
 			}
 			if got := stringID.Bytes(); !reflect.DeepEqual(got, tt.want) {
@@ -106,7 +106,7 @@ func Test_stringID_Compare(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			stringID := stringID{
+			stringID := &StringID{
 				IDString: tt.fields.IDString,
 			}
 			if got := stringID.Compare(tt.args.listable); got != tt.want {
@@ -130,7 +130,7 @@ func Test_stringID_String(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			stringID := stringID{
+			stringID := &StringID{
 				IDString: tt.fields.IDString,
 			}
 			if got := stringID.AsString(); got != tt.want {

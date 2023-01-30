@@ -42,7 +42,7 @@ func TestNewMappable(t *testing.T) {
 		args args
 		want helpers.Mappable
 	}{
-		{"+ve", args{testMaintainer}, mappable{testMaintainer}},
+		{"+ve", args{testMaintainer}, &Mappable{testMaintainer.Get().(*base.Document)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -58,7 +58,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		{"+ve", mappable{}},
+		{"+ve", &Mappable{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -87,8 +87,8 @@ func Test_mappable_GetKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			maintainer := mappable{
-				Maintainer: tt.fields.Maintainer,
+			maintainer := &Mappable{
+				Maintainer: tt.fields.Maintainer.Get().(*base.Document),
 			}
 			if got := maintainer.GetKey(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetKey() = %v, want %v", got, tt.want)
@@ -114,8 +114,8 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ma := mappable{
-				Maintainer: tt.fields.Maintainer,
+			ma := &Mappable{
+				Maintainer: tt.fields.Maintainer.Get().(*base.Document),
 			}
 			ma.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
