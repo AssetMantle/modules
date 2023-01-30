@@ -12,6 +12,8 @@ import (
 type Parameters interface {
 	Get() []Parameter
 
+	Validate() error
+
 	Fetch(context.Context) Parameters
 	Set(context.Context)
 
