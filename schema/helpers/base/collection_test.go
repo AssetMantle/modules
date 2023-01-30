@@ -20,7 +20,7 @@ func TestCollection(t *testing.T) {
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 
 	// Initialize
-	Collection := collection{}.Initialize(context.Context(), Mapper).(collection)
+	Collection := collection{}.Initialize(context, Mapper).(collection)
 	require.Equal(t, reflect.TypeOf(Mapper), reflect.TypeOf(Collection.mapper))
 
 	// Add

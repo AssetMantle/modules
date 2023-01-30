@@ -22,7 +22,7 @@ import (
 
 var fromAddress = "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
 
-var accAddress = NewAccAddressData(sdkTypes.AccAddress(fromAddress)).String()
+var accAddress = NewAccAddressData(sdkTypes.AccAddress(fromAddress)).AsString()
 
 func TestListDataPrototype(t *testing.T) {
 	type args struct {
@@ -335,7 +335,7 @@ func Test_listData_String(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			listData := tt.fields.Value
-			assert.Equalf(t, tt.want, listData.String(), "String()")
+			assert.Equalf(t, tt.want, listData.AsString(), "String()")
 		})
 	}
 }

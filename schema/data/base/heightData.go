@@ -6,6 +6,7 @@ package base
 import (
 	"bytes"
 	"encoding/binary"
+	"strconv"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
@@ -20,6 +21,9 @@ var _ data.HeightData = (*HeightData)(nil)
 
 func (heightData *HeightData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(heightData)
+}
+func (heightData *HeightData) AsString() string {
+	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
 func (heightData *HeightData) Compare(listable traits.Listable) int {
 	compareHeightData, err := dataFromListable(listable)

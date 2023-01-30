@@ -59,7 +59,7 @@ func Test_auxiliary_GetKeeper(t *testing.T) {
 				auxiliaryKeeper: tt.fields.auxiliaryKeeper,
 				keeperPrototype: tt.fields.keeperPrototype,
 			}
-			if got := auxiliary.GetKeeper().Help(context.Context(), nil); !reflect.DeepEqual(got, tt.want) {
+			if got := auxiliary.GetKeeper().Help(context, nil); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetKeeper() = %T, want %T", got, tt.want)
 			}
 		})

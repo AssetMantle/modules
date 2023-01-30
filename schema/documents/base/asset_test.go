@@ -53,7 +53,7 @@ func Test_asset_GetBurn(t *testing.T) {
 		fields fields
 		want   properties.Property
 	}{
-		{"+ve", fields{Document: testDocumentWithBurn}, baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1)))},
+		{"+ve", fields{Document: testDocumentWithBurn}, baseProperties.NewMesaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))).ToAnyProperty()},
 		{"+ve", fields{Document: testDocument}, constants.BurnHeightProperty},
 	}
 	for _, tt := range tests {
@@ -80,7 +80,7 @@ func Test_asset_GetLock(t *testing.T) {
 		want   properties.Property
 	}{
 		{"+ve with default lock", fields{testDocument}, constants.LockProperty},
-		{"+ve with mutated", fields{testDocumentWithLock}, baseProperties.NewMesaProperty(constants.LockProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1)))},
+		{"+ve with mutated", fields{testDocumentWithLock}, baseProperties.NewMesaProperty(constants.LockProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))).ToAnyProperty()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

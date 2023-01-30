@@ -2,7 +2,6 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 )
@@ -44,6 +43,6 @@ func (genesisState *GenesisState) Initialize(mappableList []helpers.Mappable, pa
 func PrototypeGenesisState() helpers.GenesisState {
 	return &GenesisState{
 		Mappables:  []*TestMappable{},
-		Parameters: baseParameters.ParametersFromInterfaces(baseHelpers.NewParameters().GetList()),
+		Parameters: nil,
 	}
 }

@@ -29,29 +29,29 @@ func TestMapper(t *testing.T) {
 	require.Equal(t, "test", testMapper.GetKVStoreKey().Name())
 
 	// NewCollection
-	require.Equal(t, reflect.TypeOf(collection{}), reflect.TypeOf(testMapper.NewCollection(context.Context()).(collection)))
-	require.Equal(t, testMapper.kvStoreKey.String(), testMapper.NewCollection(context.Context()).(collection).mapper.(mapper).kvStoreKey.String())
-	require.Equal(t, context, testMapper.NewCollection(context.Context()).(collection).context)
+	require.Equal(t, reflect.TypeOf(collection{}), reflect.TypeOf(testMapper.NewCollection(context).(collection)))
+	require.Equal(t, testMapper.kvStoreKey.String(), testMapper.NewCollection(context).(collection).mapper.(mapper).kvStoreKey.String())
+	require.Equal(t, context, testMapper.NewCollection(context).(collection).context)
 
 	// Create
-	testMapper.Create(context.Context(), base.NewMappable("test1", "value1"))
-	testMapper.Create(context.Context(), base.NewMappable("test2", "value2"))
-	testMapper.Create(context.Context(), base.NewMappable("test3", "value3"))
+	testMapper.Create(context, base.NewMappable("test1", "value1"))
+	testMapper.Create(context, base.NewMappable("test2", "value2"))
+	testMapper.Create(context, base.NewMappable("test3", "value3"))
 
 	// Update
-	testMapper.Update(context.Context(), base.NewMappable("test2", "value3"))
+	testMapper.Update(context, base.NewMappable("test2", "value3"))
 
 	// Remove
-	testMapper.Delete(context.Context(), base.NewKey("test3"))
+	testMapper.Delete(context, base.NewKey("test3"))
 
 	// Read
-	require.Equal(t, base.NewMappable("test1", "value1"), testMapper.Read(context.Context(), base.NewKey("test1")))
-	require.Equal(t, base.NewMappable("test2", "value3"), testMapper.Read(context.Context(), base.NewKey("test2")))
-	require.Equal(t, nil, testMapper.Read(context.Context(), base.NewKey("test3")))
+	require.Equal(t, base.NewMappable("test1", "value1"), testMapper.Read(context, base.NewKey("test1")))
+	require.Equal(t, base.NewMappable("test2", "value3"), testMapper.Read(context, base.NewKey("test2")))
+	require.Equal(t, nil, testMapper.Read(context, base.NewKey("test3")))
 
 	// Iterate
-	testMapper.Iterate(context.Context(), base.NewKey("test1"), func(mappable helpers.Mappable) bool { return false })
-	testMapper.Iterate(context.Context(), base.NewKey("test3"), func(mappable helpers.Mappable) bool { return false })
+	testMapper.Iterate(context, base.NewKey("test1"), func(mappable helpers.Mappable) bool { return false })
+	testMapper.Iterate(context, base.NewKey("test3"), func(mappable helpers.Mappable) bool { return false })
 
 	//TODO: Test functionality without legacy amino
 	// Store Decoder

@@ -5,6 +5,7 @@ package base
 
 import (
 	"bytes"
+	"strconv"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
@@ -31,6 +32,9 @@ func (booleanData *BooleanData) Compare(listable traits.Listable) int {
 	} else {
 		return -1
 	}
+}
+func (booleanData *BooleanData) AsString() string {
+	return strconv.FormatBool(booleanData.Value)
 }
 func (booleanData *BooleanData) Bytes() []byte {
 	if booleanData.Get() {

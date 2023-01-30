@@ -5,6 +5,7 @@ package base
 
 import (
 	"bytes"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 	"sort"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -23,6 +24,15 @@ func (listData *ListData) Get() []data.AnyData {
 		anyDataList[i] = anyData
 	}
 	return anyDataList
+}
+func (listData *ListData) AsString() string {
+	dataStrings := make([]string, len(listData.DataList))
+
+	for i, datum := range listData.DataList {
+		dataStrings[i] = datum.String()
+	}
+
+	return stringUtilities.JoinListStrings(dataStrings...)
 }
 func (listData *ListData) Search(data data.Data) (int, bool) {
 	index := sort.Search(

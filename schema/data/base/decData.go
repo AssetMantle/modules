@@ -44,6 +44,9 @@ func (decData *DecData) GenerateHashID() ids.HashID {
 
 	return baseIDs.GenerateHashID(decData.Bytes())
 }
+func (decData *DecData) AsString() string {
+	return decData.Value.String()
+}
 func (decData *DecData) Get() sdkTypes.Dec {
 	return decData.Value
 }
