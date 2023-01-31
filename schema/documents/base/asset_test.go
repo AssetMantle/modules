@@ -103,17 +103,17 @@ func Test_asset_GetSupply(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   properties.Property
+		want   properties.AnyProperty
 	}{
-		{"+ve", fields{testDocument}, constants.SupplyProperty},
-		{"+ve", fields{testDocumentWithSupply}, baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(sdkTypes.NewDec(1)))},
+		{"+ve", fields{testDocument}, constants.SupplyProperty.ToAnyProperty()},
+		{"+ve with supply", fields{testDocumentWithSupply}, baseProperties.NewMesaProperty(constants.SupplyProperty.GetKey(), baseData.NewDecData(sdkTypes.NewDec(1))).ToAnyProperty()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			asset := asset{
 				Document: tt.fields.Document,
 			}
-			if got := asset.GetSupply(); !reflect.DeepEqual(got, tt.want) {
+			if got := asset.GetSupply().ToAnyProperty(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSupply() = %v, want %v", got, tt.want)
 			}
 		})

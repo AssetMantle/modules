@@ -20,12 +20,12 @@ func dummyValidator(interface{}) error {
 	return nil
 }
 
-func createTestInput() (ids.StringID, data.Data, parameters.Parameter) {
+func createTestInput() (*baseIDs.StringID, data.Data, parameters.Parameter) {
 	id := baseIDs.NewStringID("ID")
 	stringData := baseData.NewStringData("Data")
 
 	testParameter := NewParameter(id, stringData, dummyValidator)
-	return id, stringData, testParameter
+	return id.(*baseIDs.StringID), stringData, testParameter
 }
 
 func TestNewParameter(t *testing.T) {
@@ -42,7 +42,7 @@ func TestNewParameter(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", args{id, testData, dummyValidator}, &Parameter{id.(*baseIDs.StringID), testData.ToAnyData().(*baseData.AnyData)}, false},
+		{"+ve", args{id, testData, dummyValidator}, &Parameter{id, testData.ToAnyData().(*baseData.AnyData)}, false},
 		{"panic empty", args{}, &Parameter{}, true},
 		{"nil", args{nil, nil, nil}, &Parameter{nil, nil}, true},
 	}
@@ -108,10 +108,10 @@ func Test_parameter_GetData(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   data.Data
+		want   data.AnyData
 	}{
 
-		{"+ve", fields{id, testData, dummyValidator}, testData},
+		{"+ve", fields{id, testData, dummyValidator}, testData.ToAnyData()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -200,7 +200,7 @@ func Test_parameter_Mutate(t *testing.T) {
 		want   parameters.Parameter
 	}{
 
-		{"+ve", fields{id, testData, dummyValidator}, args{newData}, &Parameter{id.(*baseIDs.StringID), newData.ToAnyData().(*baseData.AnyData)}},
+		{"+ve", fields{id, testData, dummyValidator}, args{newData}, &Parameter{id, newData.ToAnyData().(*baseData.AnyData)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -215,7 +215,7 @@ func Test_parameter_Mutate(t *testing.T) {
 	}
 }
 
-func Test_parameter_String(t *testing.T) {
+func Test_parameter_AsString(t *testing.T) {
 	id, testData, testParameter := createTestInput()
 	type fields struct {
 		ID        ids.StringID
@@ -236,7 +236,7 @@ func Test_parameter_String(t *testing.T) {
 				ID:   tt.fields.ID.(*baseIDs.StringID),
 				Data: tt.fields.Data.ToAnyData().(*baseData.AnyData),
 			}
-			if got := parameter.String(); got != tt.want {
+			if got := parameter.AsString(); got != tt.want {
 				t.Errorf("String() = %v, want %v", got, tt.want)
 			}
 		})
