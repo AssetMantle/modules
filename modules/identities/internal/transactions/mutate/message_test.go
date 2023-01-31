@@ -24,7 +24,15 @@ import (
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-func createTestInputForMessage(t *testing.T) (types.AccAddress, ids.IdentityID, ids.IdentityID, lists.PropertyList, lists.PropertyList) {
+type fields struct {
+	From                  string
+	FromID                *baseIDs.IdentityID
+	IdentityID            *baseIDs.IdentityID
+	MutableMetaProperties *baseLists.PropertyList
+	MutableProperties     *baseLists.PropertyList
+}
+
+func createTestInputForMessage(t *testing.T) (types.AccAddress, *baseIDs.IdentityID, *baseIDs.IdentityID, *baseLists.PropertyList, *baseLists.PropertyList) {
 	testFrom, err := types.AccAddressFromBech32("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")
 	require.Nil(t, err)
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
@@ -37,7 +45,7 @@ func createTestInputForMessage(t *testing.T) (types.AccAddress, ids.IdentityID, 
 	testMutableMetaProperties := baseLists.NewPropertyList([]properties.Property{metaProperty}...)
 	testMutableProperties := baseLists.NewPropertyList([]properties.Property{mesaProperty}...)
 
-	return testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties
+	return testFrom, testFromID.(*baseIDs.IdentityID), testIdentityID.(*baseIDs.IdentityID), testMutableMetaProperties.(*baseLists.PropertyList), testMutableProperties.(*baseLists.PropertyList)
 }
 
 func Test_messageFromInterface(t *testing.T) {
@@ -48,10 +56,10 @@ func Test_messageFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want message
+		want *Message
 	}{
-		{"+ve with nil", args{}, message{}},
-		{"+ve", args{message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}}, message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
+		{"+ve with nil", args{}, &Message{}},
+		{"+ve", args{&Message{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}}, &Message{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -67,7 +75,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", message{}},
+		{"+ve", &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -80,23 +88,17 @@ func Test_messagePrototype(t *testing.T) {
 
 func Test_message_GetSignBytes(t *testing.T) {
 	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
-	type fields struct {
-		From                  types.AccAddress
-		FromID                ids.IdentityID
-		IdentityID            ids.IdentityID
-		MutableMetaProperties lists.PropertyList
-		MutableProperties     lists.PropertyList
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}))},
+		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				IdentityID:            tt.fields.IdentityID,
@@ -112,24 +114,18 @@ func Test_message_GetSignBytes(t *testing.T) {
 
 func Test_message_GetSigners(t *testing.T) {
 	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
-	type fields struct {
-		From                  types.AccAddress
-		FromID                ids.IdentityID
-		IdentityID            ids.IdentityID
-		MutableMetaProperties lists.PropertyList
-		MutableProperties     lists.PropertyList
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   []types.AccAddress
 	}{
 		{"+ve with nil", fields{}, []types.AccAddress{nil}},
-		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, []types.AccAddress{testFrom}},
+		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, []types.AccAddress{testFrom}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				IdentityID:            tt.fields.IdentityID,
@@ -145,13 +141,7 @@ func Test_message_GetSigners(t *testing.T) {
 
 func Test_message_RegisterCodec(t *testing.T) {
 	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
-	type fields struct {
-		From                  types.AccAddress
-		FromID                ids.IdentityID
-		IdentityID            ids.IdentityID
-		MutableMetaProperties lists.PropertyList
-		MutableProperties     lists.PropertyList
-	}
+
 	type args struct {
 		legacyAmino *codec.LegacyAmino
 	}
@@ -161,11 +151,11 @@ func Test_message_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		{"+ve with nil", fields{}, args{codec.NewLegacyAmino()}},
-		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			me := message{
+			me := &Message{
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				IdentityID:            tt.fields.IdentityID,
@@ -179,24 +169,18 @@ func Test_message_RegisterCodec(t *testing.T) {
 
 func Test_message_Route(t *testing.T) {
 	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
-	type fields struct {
-		From                  types.AccAddress
-		FromID                ids.IdentityID
-		IdentityID            ids.IdentityID
-		MutableMetaProperties lists.PropertyList
-		MutableProperties     lists.PropertyList
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
 		{"+ve with nil", fields{}, module.Name},
-		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, module.Name},
+		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, module.Name},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				IdentityID:            tt.fields.IdentityID,
@@ -212,24 +196,18 @@ func Test_message_Route(t *testing.T) {
 
 func Test_message_Type(t *testing.T) {
 	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
-	type fields struct {
-		From                  types.AccAddress
-		FromID                ids.IdentityID
-		IdentityID            ids.IdentityID
-		MutableMetaProperties lists.PropertyList
-		MutableProperties     lists.PropertyList
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
 		{"+ve with nil", fields{}, Transaction.GetName()},
-		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, Transaction.GetName()},
+		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				IdentityID:            tt.fields.IdentityID,
@@ -245,24 +223,18 @@ func Test_message_Type(t *testing.T) {
 
 func Test_message_ValidateBasic(t *testing.T) {
 	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
-	type fields struct {
-		From                  types.AccAddress
-		FromID                ids.IdentityID
-		IdentityID            ids.IdentityID
-		MutableMetaProperties lists.PropertyList
-		MutableProperties     lists.PropertyList
-	}
+
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
 		{"+ve with nil", fields{}, true},
-		{"+ve", fields{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, false},
+		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				IdentityID:            tt.fields.IdentityID,
@@ -290,8 +262,8 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		{"+ve with nil", args{}, message{}},
-		{"+ve", args{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, message{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
+		{"+ve with nil", args{}, &Message{}},
+		{"+ve", args{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, &Message{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

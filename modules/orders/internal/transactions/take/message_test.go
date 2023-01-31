@@ -4,6 +4,7 @@
 package take
 
 import (
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"reflect"
 	"testing"
 
@@ -20,6 +21,13 @@ var (
 	testMessage = newMessage(fromAccAddress, testFromID, takerOwnableSplit, testOrderID)
 )
 
+type fields struct {
+	From              string
+	FromID            *baseIDs.IdentityID
+	TakerOwnableSplit types.Dec
+	OrderID           *baseIDs.OrderID
+}
+
 func Test_messageFromInterface(t *testing.T) {
 	type args struct {
 		msg types.Msg
@@ -27,9 +35,9 @@ func Test_messageFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want message
+		want *Message
 	}{
-		{"+ve", args{testMessage}, message{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}},
+		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -45,7 +53,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", message{}},
+		{"+ve", &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -57,22 +65,17 @@ func Test_messagePrototype(t *testing.T) {
 }
 
 func Test_message_GetSignBytes(t *testing.T) {
-	type fields struct {
-		From              types.AccAddress
-		FromID            ids.IdentityID
-		TakerOwnableSplit types.Dec
-		OrderID           ids.OrderID
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(testMessage))},
+		{"+ve", fields{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}, types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(testMessage))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:              tt.fields.From,
 				FromID:            tt.fields.FromID,
 				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
@@ -86,22 +89,17 @@ func Test_message_GetSignBytes(t *testing.T) {
 }
 
 func Test_message_GetSigners(t *testing.T) {
-	type fields struct {
-		From              types.AccAddress
-		FromID            ids.IdentityID
-		TakerOwnableSplit types.Dec
-		OrderID           ids.OrderID
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   []types.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, []types.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}, []types.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:              tt.fields.From,
 				FromID:            tt.fields.FromID,
 				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
@@ -115,12 +113,7 @@ func Test_message_GetSigners(t *testing.T) {
 }
 
 func Test_message_RegisterCodec(t *testing.T) {
-	type fields struct {
-		From              types.AccAddress
-		FromID            ids.IdentityID
-		TakerOwnableSplit types.Dec
-		OrderID           ids.OrderID
-	}
+
 	type args struct {
 		legacyAmino *codec.LegacyAmino
 	}
@@ -129,11 +122,11 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			me := message{
+			me := &Message{
 				From:              tt.fields.From,
 				FromID:            tt.fields.FromID,
 				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
@@ -145,22 +138,17 @@ func Test_message_RegisterCodec(t *testing.T) {
 }
 
 func Test_message_Route(t *testing.T) {
-	type fields struct {
-		From              types.AccAddress
-		FromID            ids.IdentityID
-		TakerOwnableSplit types.Dec
-		OrderID           ids.OrderID
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, module.Name},
+		{"+ve", fields{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}, module.Name},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:              tt.fields.From,
 				FromID:            tt.fields.FromID,
 				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
@@ -174,22 +162,17 @@ func Test_message_Route(t *testing.T) {
 }
 
 func Test_message_Type(t *testing.T) {
-	type fields struct {
-		From              types.AccAddress
-		FromID            ids.IdentityID
-		TakerOwnableSplit types.Dec
-		OrderID           ids.OrderID
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:              tt.fields.From,
 				FromID:            tt.fields.FromID,
 				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
@@ -203,23 +186,18 @@ func Test_message_Type(t *testing.T) {
 }
 
 func Test_message_ValidateBasic(t *testing.T) {
-	type fields struct {
-		From              types.AccAddress
-		FromID            ids.IdentityID
-		TakerOwnableSplit types.Dec
-		OrderID           ids.OrderID
-	}
+
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
 		{"-ve with nil", fields{}, true},
-		{"+ve", fields{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, false},
+		{"+ve", fields{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:              tt.fields.From,
 				FromID:            tt.fields.FromID,
 				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
@@ -244,7 +222,7 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		{"+ve", args{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, message{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}},
+		{"+ve", args{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, &Message{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

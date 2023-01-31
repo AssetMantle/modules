@@ -4,6 +4,7 @@
 package wrap
 
 import (
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"reflect"
 	"testing"
 
@@ -16,16 +17,22 @@ import (
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
+type fields struct {
+	From   string
+	FromID *baseIDs.IdentityID
+	Coins  types.Coins
+}
+
 func Test_messageFromInterface(t *testing.T) {
 	type args struct {
-		msg types.Msg
+		msg helpers.Message
 	}
 	tests := []struct {
 		name string
 		args args
-		want message
+		want *Message
 	}{
-		{"+ve", args{newMessage(fromAccAddress, fromID, testRate)}, message{fromAccAddress, fromID, testRate}},
+		{"+ve", args{newMessage(fromAccAddress, fromID, testRate).(*Message)}, &Message{fromAccAddress.String(), fromID, testRate}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -41,7 +48,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", message{}},
+		{"+ve", &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -53,21 +60,17 @@ func Test_messagePrototype(t *testing.T) {
 }
 
 func Test_message_GetSignBytes(t *testing.T) {
-	type fields struct {
-		From   types.AccAddress
-		FromID ids.IdentityID
-		Coins  types.Coins
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testRate}, types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, testRate}))},
+		{"+ve", fields{fromAccAddress.String(), fromID, testRate}, types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress, fromID, testRate}))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:   tt.fields.From,
 				FromID: tt.fields.FromID,
 				Coins:  tt.fields.Coins,
@@ -80,21 +83,17 @@ func Test_message_GetSignBytes(t *testing.T) {
 }
 
 func Test_message_GetSigners(t *testing.T) {
-	type fields struct {
-		From   types.AccAddress
-		FromID ids.IdentityID
-		Coins  types.Coins
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   []types.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testRate}, []types.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), fromID, testRate}, []types.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:   tt.fields.From,
 				FromID: tt.fields.FromID,
 				Coins:  tt.fields.Coins,
@@ -107,11 +106,7 @@ func Test_message_GetSigners(t *testing.T) {
 }
 
 func Test_message_RegisterCodec(t *testing.T) {
-	type fields struct {
-		From   types.AccAddress
-		FromID ids.IdentityID
-		Coins  types.Coins
-	}
+
 	type args struct {
 		legacyAmino *codec.LegacyAmino
 	}
@@ -120,11 +115,11 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testRate}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), fromID, testRate}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			me := message{
+			me := &Message{
 				From:   tt.fields.From,
 				FromID: tt.fields.FromID,
 				Coins:  tt.fields.Coins,
@@ -135,21 +130,17 @@ func Test_message_RegisterCodec(t *testing.T) {
 }
 
 func Test_message_Route(t *testing.T) {
-	type fields struct {
-		From   types.AccAddress
-		FromID ids.IdentityID
-		Coins  types.Coins
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testRate}, module.Name},
+		{"+ve", fields{fromAccAddress.String(), fromID, testRate}, module.Name},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:   tt.fields.From,
 				FromID: tt.fields.FromID,
 				Coins:  tt.fields.Coins,
@@ -162,21 +153,17 @@ func Test_message_Route(t *testing.T) {
 }
 
 func Test_message_Type(t *testing.T) {
-	type fields struct {
-		From   types.AccAddress
-		FromID ids.IdentityID
-		Coins  types.Coins
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testRate}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), fromID, testRate}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:   tt.fields.From,
 				FromID: tt.fields.FromID,
 				Coins:  tt.fields.Coins,
@@ -189,21 +176,17 @@ func Test_message_Type(t *testing.T) {
 }
 
 func Test_message_ValidateBasic(t *testing.T) {
-	type fields struct {
-		From   types.AccAddress
-		FromID ids.IdentityID
-		Coins  types.Coins
-	}
+
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testRate}, false},
+		{"+ve", fields{fromAccAddress.String(), fromID, testRate}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:   tt.fields.From,
 				FromID: tt.fields.FromID,
 				Coins:  tt.fields.Coins,
@@ -226,7 +209,7 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		{"+ve", args{fromAccAddress, fromID, testRate}, message{fromAccAddress, fromID, testRate}},
+		{"+ve", args{fromAccAddress, fromID, testRate}, &Message{fromAccAddress.String(), fromID, testRate}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -6,6 +6,7 @@ package define
 import (
 	"encoding/json"
 	"fmt"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
@@ -29,19 +30,23 @@ var (
 	fromAddress       = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, _ = types.AccAddressFromBech32(fromAddress)
 
-	immutableMetaPropertiesString = "defaultImmutableMeta1:S|defaultImmutableMeta1"
-	immutablePropertiesString     = "defaultMutableMeta1:S|defaultMutableMeta1"
-	mutableMetaPropertiesString   = "defaultMutableMeta1:S|defaultMutableMeta1"
-	mutablePropertiesString       = "defaultMutable1:S|defaultMutable1"
-	immutableMetaProperties, _    = utilities.ReadMetaPropertyList(immutableMetaPropertiesString)
-	immutableProperties, _        = utilities.ReadMetaPropertyList(immutablePropertiesString)
-	mutableMetaProperties, _      = utilities.ReadMetaPropertyList(mutableMetaPropertiesString)
-	mutableProperties, _          = utilities.ReadMetaPropertyList(mutablePropertiesString)
-	immutables                    = base.NewImmutables(immutableProperties)
-	mutables                      = base.NewMutables(mutableProperties)
-	testClassificationID          = baseIDs.NewClassificationID(immutables, mutables)
-	testFromID                    = baseIDs.NewIdentityID(testClassificationID, immutables)
-	testBaseRequest               = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
+	immutableMetaPropertiesString        = "defaultImmutableMeta1:S|defaultImmutableMeta1"
+	immutablePropertiesString            = "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutableMetaPropertiesString          = "defaultMutableMeta1:S|defaultMutableMeta1"
+	mutablePropertiesString              = "defaultMutable1:S|defaultMutable1"
+	immutableMetaPropertiesInterfaces, _ = utilities.ReadMetaPropertyList(immutableMetaPropertiesString)
+	immutableMetaProperties              = immutableMetaPropertiesInterfaces.(*baseLists.PropertyList)
+	immutablePropertiesInterfaces, _     = utilities.ReadMetaPropertyList(immutablePropertiesString)
+	immutableProperties                  = immutablePropertiesInterfaces.(*baseLists.PropertyList)
+	mutableMetaPropertiesInterfaces, _   = utilities.ReadMetaPropertyList(mutableMetaPropertiesString)
+	mutableMetaProperties                = mutableMetaPropertiesInterfaces.(*baseLists.PropertyList)
+	mutablePropertiesInterfaces, _       = utilities.ReadMetaPropertyList(mutablePropertiesString)
+	mutableProperties                    = mutablePropertiesInterfaces.(*baseLists.PropertyList)
+	immutables                           = base.NewImmutables(immutableProperties)
+	mutables                             = base.NewMutables(mutableProperties)
+	testClassificationID                 = baseIDs.NewClassificationID(immutables, mutables)
+	testFromID                           = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
+	testBaseRequest                      = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 )
 
 func Test_newTransactionRequest(t *testing.T) {
