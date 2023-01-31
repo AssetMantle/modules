@@ -75,6 +75,9 @@ func (mapper mapper) Iterate(context context.Context, partialKey helpers.Key, ac
 		}
 	}
 }
+func (mapper mapper) IterateAll(context context.Context, accumulator func(helpers.Mappable) bool) {
+	mapper.Iterate(context, mapper.keyPrototype(), accumulator)
+}
 func (mapper mapper) ReverseIterate(context context.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
 	store := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 	kvStoreReversePrefixIterator := sdkTypes.KVStoreReversePrefixIterator(store, partialKey.GenerateStoreKeyBytes())

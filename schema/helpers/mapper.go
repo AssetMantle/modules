@@ -12,11 +12,11 @@ import (
 
 type Mapper interface {
 	NewCollection(context.Context) Collection
-
 	Create(context.Context, Mappable)
 	Read(context.Context, Key) Mappable
 	Update(context.Context, Mappable)
 	Delete(context.Context, Key)
+	IterateAll(context.Context, func(Mappable) bool)
 	Iterate(context.Context, Key, func(Mappable) bool)
 	ReverseIterate(context.Context, Key, func(Mappable) bool)
 
