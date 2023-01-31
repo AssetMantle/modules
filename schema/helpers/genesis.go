@@ -10,17 +10,15 @@ import (
 type Genesis interface {
 	proto.Message
 
-	GetParameterList() []Parameter
-	GetMappableList() []Mappable
 	Default() Genesis
 
 	Validate() error
 
-	Import(context.Context, Mapper)
-	Export(context.Context, Mapper) Genesis
+	Import(context.Context, Mapper, ParameterList)
+	Export(context.Context, Mapper, ParameterList) Genesis
 
 	Encode(sdkCodec.JSONCodec) []byte
 	Decode(sdkCodec.JSONCodec, []byte) Genesis
 
-	Initialize(mappableList []Mappable, parameterList []Parameter) Genesis
+	Initialize([]Mappable, []Parameter) Genesis
 }

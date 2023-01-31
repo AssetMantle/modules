@@ -4,8 +4,9 @@
 package base
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"testing"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
@@ -25,10 +26,10 @@ func TestParameters(t *testing.T) {
 
 	Parameter := baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
 	ParameterList := []parametersSchema.Parameter{Parameter}
-	Parameters := NewParameters(ParameterList...).(*parameters)
+	Parameters := NewParameterList(ParameterList...).(*parameterList)
 	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), Parameters)
-	Parameters = Parameters.Initialize(subspace).(*parameters)
+	Parameters = Parameters.Initialize(subspace).(*parameterList)
 
 	require.NotNil(t, Parameters.ParamSetPairs())
 

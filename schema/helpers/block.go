@@ -12,5 +12,5 @@ import (
 type Block interface {
 	Begin(context.Context, abciTypes.RequestBeginBlock)
 	End(context.Context, abciTypes.RequestEndBlock)
-	Initialize(Mapper, Parameters, ...interface{}) Block
+	Initialize(Mapper, ParameterList, ...interface{}) Block
 }

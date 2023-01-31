@@ -4,11 +4,12 @@
 package helpers
 
 import (
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/properties"
 )
 
 type Parameter interface {
 	Validate() error
 	GetMetaProperty() properties.MetaProperty
-	Mutate(properties.MetaProperty) Parameter
+	Mutate(data.Data) Parameter
 }

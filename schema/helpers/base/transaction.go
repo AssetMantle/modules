@@ -256,7 +256,7 @@ func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessa
 
 	return transactionRequest.MakeMsg()
 }
-func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Transaction {
+func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameters helpers.ParameterList, auxiliaryKeepers ...interface{}) helpers.Transaction {
 	transaction.keeper = transaction.keeperPrototype().Initialize(mapper, parameters, auxiliaryKeepers).(helpers.TransactionKeeper)
 	return transaction
 }

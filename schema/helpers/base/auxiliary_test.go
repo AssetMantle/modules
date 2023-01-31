@@ -4,9 +4,10 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 
 	"github.com/AssetMantle/modules/utilities/test"
 
@@ -108,7 +109,7 @@ func Test_auxiliary_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper           helpers.Mapper
-		parameters       helpers.Parameters
+		parameters       helpers.ParameterList
 		auxiliaryKeepers []interface{}
 	}
 	tests := []struct {
@@ -118,7 +119,7 @@ func Test_auxiliary_Initialize(t *testing.T) {
 		want   helpers.Auxiliary
 	}{
 		// TODO find fix
-		// {"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, args{mapper: Mapper, parameters: nil, auxiliaryKeepers: nil}, Auxiliary},
+		// {"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, args{mapper: Mapper, parameterList: nil, auxiliaryKeepers: nil}, Auxiliary},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -33,18 +33,18 @@ type module struct {
 	genesisPrototype      func() helpers.Genesis
 	invariantsPrototype   func() helpers.Invariants
 	mapperPrototype       func() helpers.Mapper
-	parametersPrototype   func() helpers.Parameters
+	parametersPrototype   func() helpers.ParameterList
 	queriesPrototype      func() helpers.Queries
 	simulatorPrototype    func() helpers.Simulator
 	transactionsPrototype func() helpers.Transactions
 
-	auxiliaries  helpers.Auxiliaries
-	genesis      helpers.Genesis
-	mapper       helpers.Mapper
-	parameters   helpers.Parameters
-	queries      helpers.Queries
-	transactions helpers.Transactions
-	block        helpers.Block
+	auxiliaries   helpers.Auxiliaries
+	genesis       helpers.Genesis
+	mapper        helpers.Mapper
+	parameterList helpers.ParameterList
+	queries       helpers.Queries
+	transactions  helpers.Transactions
+	block         helpers.Block
 }
 
 var _ helpers.Module = (*module)(nil)
@@ -190,20 +190,20 @@ func (module module) ConsensusVersion() uint64 {
 func (module module) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
 	genesisState := module.genesisPrototype().Decode(jsonCodec, rawMessage)
 
-	if module.mapper == nil || module.parameters == nil {
+	if module.mapper == nil || module.parameterList == nil {
 		panic(constants.UninitializedUsage)
 	}
 
-	genesisState.Import(sdkTypes.WrapSDKContext(context), module.mapper)
+	genesisState.Import(sdkTypes.WrapSDKContext(context), module.mapper, module.parameterList)
 
 	return []abciTypes.ValidatorUpdate{}
 }
 func (module module) ExportGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec) json.RawMessage {
-	if module.mapper == nil || module.parameters == nil {
+	if module.mapper == nil || module.parameterList == nil {
 		panic(constants.UninitializedUsage)
 	}
 
-	return module.genesisPrototype().Export(sdkTypes.WrapSDKContext(context), module.mapper).Encode(jsonCodec)
+	return module.genesisPrototype().Export(sdkTypes.WrapSDKContext(context), module.mapper, module.parameterList).Encode(jsonCodec)
 }
 func (module module) BeginBlock(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock) {
 	module.block.Begin(sdkTypes.WrapSDKContext(context), beginBlockRequest)
@@ -231,14 +231,14 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace paramsTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
 
-	module.genesis = module.genesisPrototype().Initialize(module.genesisPrototype().GetMappableList(), module.genesisPrototype().GetParameterList())
+	module.genesis = module.genesisPrototype()
 
-	module.parameters = module.parametersPrototype().Initialize(paramsSubspace.WithKeyTable(module.parametersPrototype().GetKeyTable()))
+	module.parameterList = module.parametersPrototype().Initialize(paramsSubspace.WithKeyTable(module.parametersPrototype().GetKeyTable()))
 
 	auxiliaryList := make([]helpers.Auxiliary, len(module.auxiliariesPrototype().GetList()))
 
 	for i, auxiliary := range module.auxiliariesPrototype().GetList() {
-		auxiliaryList[i] = auxiliary.Initialize(module.mapper, module.parameters, auxiliaryKeepers...)
+		auxiliaryList[i] = auxiliary.Initialize(module.mapper, module.parameterList, auxiliaryKeepers...)
 	}
 
 	module.auxiliaries = NewAuxiliaries(auxiliaryList...)
@@ -250,7 +250,7 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 	transactionList := make([]helpers.Transaction, len(module.transactionsPrototype().GetList()))
 
 	for i, transaction := range module.transactionsPrototype().GetList() {
-		transactionList[i] = transaction.InitializeKeeper(module.mapper, module.parameters, auxiliaryKeepers...)
+		transactionList[i] = transaction.InitializeKeeper(module.mapper, module.parameterList, auxiliaryKeepers...)
 	}
 
 	module.transactions = NewTransactions(transactionList...)
@@ -258,17 +258,17 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 	queryList := make([]helpers.Query, len(module.queriesPrototype().GetList()))
 
 	for i, query := range module.queriesPrototype().GetList() {
-		queryList[i] = query.Initialize(module.mapper, module.parameters, auxiliaryKeepers...)
+		queryList[i] = query.Initialize(module.mapper, module.parameterList, auxiliaryKeepers...)
 	}
 
 	module.queries = NewQueries(queryList...)
 
-	module.block = module.blockPrototype().Initialize(module.mapper, module.parameters, auxiliaryKeepers...)
+	module.block = module.blockPrototype().Initialize(module.mapper, module.parameterList, auxiliaryKeepers...)
 
 	return module
 }
 
-func NewModule(name string, consensusVersion uint64, auxiliariesPrototype func() helpers.Auxiliaries, blockPrototype func() helpers.Block, genesisPrototype func() helpers.Genesis, invariantsPrototype func() helpers.Invariants, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.Parameters, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions) helpers.Module {
+func NewModule(name string, consensusVersion uint64, auxiliariesPrototype func() helpers.Auxiliaries, blockPrototype func() helpers.Block, genesisPrototype func() helpers.Genesis, invariantsPrototype func() helpers.Invariants, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.ParameterList, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions) helpers.Module {
 	return module{
 		name:                  name,
 		consensusVersion:      consensusVersion,

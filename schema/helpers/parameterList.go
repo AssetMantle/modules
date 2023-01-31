@@ -9,15 +9,13 @@ import (
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
-type Parameters interface {
+type ParameterList interface {
 	Get() []Parameter
 
-	Validate() error
-
-	Fetch(context.Context) Parameters
-	Set(context.Context)
+	Fetch(context.Context) ParameterList
+	Set(context.Context, ...Parameter)
 
 	GetKeyTable() paramsTypes.KeyTable
 
-	Initialize(paramsTypes.Subspace) Parameters
+	Initialize(paramsTypes.Subspace) ParameterList
 }

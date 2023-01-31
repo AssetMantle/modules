@@ -25,7 +25,7 @@ import (
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
-//TODO: Add grpc gateway handling for tests
+// TODO: Add grpc gateway handling for tests
 
 var auxiliariesPrototype = func() helpers.Auxiliaries {
 	return auxiliaries{[]helpers.Auxiliary{NewAuxiliary("testAuxiliary", baseTestUtilities.TestAuxiliaryKeeperPrototype)}}
@@ -37,8 +37,8 @@ var genesisPrototype = func() helpers.Genesis {
 var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
 }
-var parametersPrototype = func() helpers.Parameters {
-	return NewParameters(baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil }))
+var parametersPrototype = func() helpers.ParameterList {
+	return NewParameterList(baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil }))
 }
 var queriesPrototype = func() helpers.Queries {
 	return queries{[]helpers.Query{NewQuery("testQuery", "q", "testQuery", "test", baseTestUtilities.TestQueryRequestPrototype,
