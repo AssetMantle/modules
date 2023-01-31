@@ -5,7 +5,6 @@ package deputize
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/test"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
@@ -98,7 +97,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{BaseReq: rest.BaseReq{From: test.TestClientContext.GetFromAddress().String(), ChainID: test.TestClientContext.ChainID, Simulate: test.TestClientContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanMintAsset: false, CanBurnAsset: false, CanRenumerateAsset: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, args{cliCommand, test.TestClientContext}, transactionRequest{BaseReq: rest.BaseReq{From: test.TestClientContext.GetFromAddress().String(), ChainID: test.TestClientContext.ChainID, Simulate: test.TestClientContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, false},
+		{"+ve", fields{BaseReq: rest.BaseReq{From: constants.TestClientContext.GetFromAddress().String(), ChainID: constants.TestClientContext.ChainID, Simulate: constants.TestClientContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanMintAsset: false, CanBurnAsset: false, CanRenumerateAsset: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, args{cliCommand, constants.TestClientContext}, transactionRequest{BaseReq: rest.BaseReq{From: constants.TestClientContext.GetFromAddress().String(), ChainID: constants.TestClientContext.ChainID, Simulate: constants.TestClientContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

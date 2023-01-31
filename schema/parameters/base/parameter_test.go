@@ -36,17 +36,25 @@ func TestNewParameter(t *testing.T) {
 		validator func(interface{}) error
 	}
 	tests := []struct {
-		name string
-		args args
-		want parameters.Parameter
+		name    string
+		args    args
+		want    parameters.Parameter
+		wantErr bool
 	}{
 
-		{"+ve", args{id, testData, dummyValidator}, &Parameter{id.(*baseIDs.StringID), testData.ToAnyData().(*baseData.AnyData)}},
-		{"empty", args{}, &Parameter{}},
-		{"nil", args{nil, nil, nil}, &Parameter{nil, nil}},
+		{"+ve", args{id, testData, dummyValidator}, &Parameter{id.(*baseIDs.StringID), testData.ToAnyData().(*baseData.AnyData)}, false},
+		{"panic empty", args{}, &Parameter{}, true},
+		{"nil", args{nil, nil, nil}, &Parameter{nil, nil}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			defer func() {
+				r := recover()
+
+				if (r != nil) != tt.wantErr {
+					t.Errorf("Error %v", r)
+				}
+			}()
 			if got := NewParameter(tt.args.id, tt.args.data, tt.args.validator); !reflect.DeepEqual(got.AsString(), tt.want.AsString()) {
 				t.Errorf("NewParameter() = %v, want %v", got, tt.want)
 			}

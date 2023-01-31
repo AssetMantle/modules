@@ -5,7 +5,6 @@ package mutate
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/test"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
@@ -51,7 +50,7 @@ func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, clie
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 
-	return legacyAmino, cliCommand, test.TestClientContext, mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, testBaseReq
+	return legacyAmino, cliCommand, constants.TestClientContext, mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, testBaseReq
 }
 
 func Test_newTransactionRequest(t *testing.T) {

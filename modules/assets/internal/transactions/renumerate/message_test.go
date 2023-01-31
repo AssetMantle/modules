@@ -34,7 +34,7 @@ var (
 )
 
 type fields struct {
-	From    sdkTypes.AccAddress
+	From    string
 	FromID  *baseIDs.IdentityID
 	AssetID *baseIDs.AssetID
 }
@@ -87,7 +87,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:    tt.fields.From.String(),
+				From:    tt.fields.From,
 				FromID:  tt.fields.FromID,
 				AssetID: tt.fields.AssetID,
 			}
@@ -157,7 +157,7 @@ func Test_message_Route(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:    tt.fields.From.String(),
+				From:    tt.fields.From,
 				FromID:  tt.fields.FromID,
 				AssetID: tt.fields.AssetID,
 			}

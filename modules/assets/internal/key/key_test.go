@@ -31,15 +31,24 @@ func TestNewKey(t *testing.T) {
 		assetID ids.AssetID
 	}
 	tests := []struct {
-		name string
-		args args
-		want helpers.Key
+		name    string
+		args    args
+		want    helpers.Key
+		wantErr bool
 	}{
-		{"+ve", args{testAssetID}, &Key{testAssetID}},
-		{"+ve with nil", args{}, &Key{}},
+		{"+ve", args{testAssetID}, &Key{testAssetID}, false},
+		{"+ve empty AssedID", args{baseIDs.PrototypeAssetID()}, &Key{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, false},
+		{"panic case with nil", args{}, &Key{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			defer func() {
+				r := recover()
+
+				if (r != nil) != tt.wantErr {
+					t.Errorf("error = %v, wantErr %v", r, tt.wantErr)
+				}
+			}()
 			if got := NewKey(tt.args.assetID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewKey() = %v, want %v", got, tt.want)
 			}
