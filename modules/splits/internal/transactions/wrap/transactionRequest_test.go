@@ -33,9 +33,9 @@ var (
 	testBaseRequest   = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 	immutables        = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables          = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
-	classificationID  = baseIDs.NewClassificationID(immutables, mutables)
-	fromID            = baseIDs.NewIdentityID(classificationID, immutables)
-	ownableID         = baseIDs.NewCoinID(baseIDs.NewStringID("ownableid"))
+	classificationID  = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
+	fromID            = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
+	ownableID         = baseIDs.NewCoinID(baseIDs.NewStringID("ownableid")).ToAnyOwnableID().(*baseIDs.AnyOwnableID)
 	testRate          = types.NewCoins(types.NewCoin("mntl", types.NewInt(1)))
 )
 

@@ -289,7 +289,7 @@ func Test_newMessage(t *testing.T) {
 		want sdkTypes.Msg
 	}{
 		{"+ve", args{}, &Message{}},
-		{"+ve", args{fromAccAddress, fromID, fromID, classificationID, mutableMetaProperties, true, true, true, true, true, true}, message{fromAccAddress, fromID, fromID, classificationID, mutableMetaProperties, true, true, true, true, true, true}},
+		{"+ve", args{fromAccAddress, fromID, fromID, classificationID, mutableMetaProperties, true, true, true, true, true, true}, &Message{fromAccAddress, fromID, fromID, classificationID, mutableMetaProperties, true, true, true, true, true, true}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

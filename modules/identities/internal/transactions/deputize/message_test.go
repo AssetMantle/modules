@@ -25,7 +25,21 @@ import (
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-func createTestInput(t *testing.T) (ids.IdentityID, ids.IdentityID, ids.ClassificationID, sdkTypes.AccAddress, lists.PropertyList) {
+type fields struct {
+	From                 string
+	FromID               *baseIDs.IdentityID
+	ToID                 *baseIDs.IdentityID
+	ClassificationID     *baseIDs.ClassificationID
+	MaintainedProperties *baseLists.PropertyList
+	CanMintAsset         bool `json:"canMintAsset"`
+	CanBurnAsset         bool `json:"canBurnAsset"`
+	CanRenumerateAsset   bool `json:"canRenumerateAsset"`
+	CanAddMaintainer     bool `json:"canAddMaintainer"`
+	CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
+	CanMutateMaintainer  bool `json:"canMutateMaintainer"`
+}
+
+func createTestInput(t *testing.T) (*baseIDs.IdentityID, *baseIDs.IdentityID, *baseIDs.ClassificationID, sdkTypes.AccAddress, *baseLists.PropertyList) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -37,7 +51,7 @@ func createTestInput(t *testing.T) (ids.IdentityID, ids.IdentityID, ids.Classifi
 
 	maintainedProperty := "maintainedProperty:S|maintainedProperty"
 	maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
-	return testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties
+	return testFromID.(*baseIDs.IdentityID), testToID.(*baseIDs.IdentityID), testClassificationID.(*baseIDs.ClassificationID), fromAccAddress, maintainedProperties.(*baseLists.PropertyList)
 }
 
 func Test_messageFromInterface(t *testing.T) {
@@ -48,10 +62,10 @@ func Test_messageFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want message
+		want *Message
 	}{
 
-		{"+ve", args{message{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}}, message{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}},
+		{"+ve", args{&Message{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}}, &Message{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -68,7 +82,7 @@ func Test_messagePrototype(t *testing.T) {
 		want helpers.Message
 	}{
 
-		{"+ve", message{}},
+		{"+ve", &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -81,30 +95,18 @@ func Test_messagePrototype(t *testing.T) {
 
 func Test_message_GetSignBytes(t *testing.T) {
 	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
-	type fields struct {
-		From                 sdkTypes.AccAddress
-		FromID               ids.IdentityID
-		ToID                 ids.IdentityID
-		ClassificationID     ids.ClassificationID
-		MaintainedProperties lists.PropertyList
-		CanMintAsset         bool `json:"canMintAsset"`
-		CanBurnAsset         bool `json:"canBurnAsset"`
-		CanRenumerateAsset   bool `json:"canRenumerateAsset"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
 
-		{"+ve", fields{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}))},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                 tt.fields.From,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
@@ -126,30 +128,18 @@ func Test_message_GetSignBytes(t *testing.T) {
 
 func Test_message_GetSigners(t *testing.T) {
 	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
-	type fields struct {
-		From                 sdkTypes.AccAddress
-		FromID               ids.IdentityID
-		ToID                 ids.IdentityID
-		ClassificationID     ids.ClassificationID
-		MaintainedProperties lists.PropertyList
-		CanMintAsset         bool `json:"canMintAsset"`
-		CanBurnAsset         bool `json:"canBurnAsset"`
-		CanRenumerateAsset   bool `json:"canRenumerateAsset"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   []sdkTypes.AccAddress
 	}{
 
-		{"+ve", fields{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, []sdkTypes.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, []sdkTypes.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                 tt.fields.From,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
@@ -171,19 +161,7 @@ func Test_message_GetSigners(t *testing.T) {
 
 func Test_message_RegisterCodec(t *testing.T) {
 	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
-	type fields struct {
-		From                 sdkTypes.AccAddress
-		FromID               ids.IdentityID
-		ToID                 ids.IdentityID
-		ClassificationID     ids.ClassificationID
-		MaintainedProperties lists.PropertyList
-		CanMintAsset         bool `json:"canMintAsset"`
-		CanBurnAsset         bool `json:"canBurnAsset"`
-		CanRenumerateAsset   bool `json:"canRenumerateAsset"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
-	}
+
 	type args struct {
 		legacyAmino *codec.LegacyAmino
 	}
@@ -193,11 +171,11 @@ func Test_message_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			me := message{
+			me := &Message{
 				From:                 tt.fields.From,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
@@ -217,30 +195,18 @@ func Test_message_RegisterCodec(t *testing.T) {
 
 func Test_message_Route(t *testing.T) {
 	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
-	type fields struct {
-		From                 sdkTypes.AccAddress
-		FromID               ids.IdentityID
-		ToID                 ids.IdentityID
-		ClassificationID     ids.ClassificationID
-		MaintainedProperties lists.PropertyList
-		CanMintAsset         bool `json:"canMintAsset"`
-		CanBurnAsset         bool `json:"canBurnAsset"`
-		CanRenumerateAsset   bool `json:"canRenumerateAsset"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
 
-		{"+ve", fields{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, module.Name},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, module.Name},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                 tt.fields.From,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
@@ -262,30 +228,18 @@ func Test_message_Route(t *testing.T) {
 
 func Test_message_Type(t *testing.T) {
 	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
-	type fields struct {
-		From                 sdkTypes.AccAddress
-		FromID               ids.IdentityID
-		ToID                 ids.IdentityID
-		ClassificationID     ids.ClassificationID
-		MaintainedProperties lists.PropertyList
-		CanMintAsset         bool `json:"canMintAsset"`
-		CanBurnAsset         bool `json:"canBurnAsset"`
-		CanRenumerateAsset   bool `json:"canRenumerateAsset"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
 
-		{"+ve", fields{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                 tt.fields.From,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
@@ -307,30 +261,18 @@ func Test_message_Type(t *testing.T) {
 
 func Test_message_ValidateBasic(t *testing.T) {
 	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
-	type fields struct {
-		From                 sdkTypes.AccAddress
-		FromID               ids.IdentityID
-		ToID                 ids.IdentityID
-		ClassificationID     ids.ClassificationID
-		MaintainedProperties lists.PropertyList
-		CanMintAsset         bool `json:"canMintAsset"`
-		CanBurnAsset         bool `json:"canBurnAsset"`
-		CanRenumerateAsset   bool `json:"canRenumerateAsset"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
-	}
+
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
 
-		{"+ve", fields{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, false},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:                 tt.fields.From,
 				FromID:               tt.fields.FromID,
 				ToID:                 tt.fields.ToID,
@@ -370,7 +312,7 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve", args{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, message{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}},
+		{"+ve", args{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, &Message{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -34,8 +34,8 @@ var (
 	mutables          = baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 
 	testClassificationID = baseIDs.NewClassificationID(immutables, mutables)
-	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables)
-	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables)
+	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
+	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
 	testBaseRequest      = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 	takerOwnableSplit    = types.NewDec(60)
 )

@@ -22,7 +22,13 @@ import (
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-func createInputForMessage(t *testing.T) (ids.IdentityID, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, sdkTypes.Msg) {
+type fields struct {
+	From       string
+	To         string
+	IdentityID *baseIDs.IdentityID
+}
+
+func createInputForMessage(t *testing.T) (*baseIDs.IdentityID, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, sdkTypes.Msg) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -38,7 +44,7 @@ func createInputForMessage(t *testing.T) (ids.IdentityID, string, sdkTypes.AccAd
 
 	testMessage := newMessage(fromAccAddress, toAccAddress, testIdentityID)
 
-	return testIdentityID, fromAddress, fromAccAddress, toAddress, toAccAddress, testMessage
+	return testIdentityID.(*baseIDs.IdentityID), fromAddress, fromAccAddress, toAddress, toAccAddress, testMessage
 }
 
 func Test_messageFromInterface(t *testing.T) {
@@ -49,9 +55,9 @@ func Test_messageFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want message
+		want *Message
 	}{
-		{"+ve", args{testMessage}, message{fromAccAddress, toAccAddress, testIdentityID}},
+		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), toAccAddress.String(), testIdentityID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -67,7 +73,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", message{}},
+		{"+ve", &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -80,21 +86,17 @@ func Test_messagePrototype(t *testing.T) {
 
 func Test_message_GetSignBytes(t *testing.T) {
 	testIdentityID, _, fromAccAddress, _, toAccAddress, testMessage := createInputForMessage(t)
-	type fields struct {
-		From       sdkTypes.AccAddress
-		To         sdkTypes.AccAddress
-		IdentityID ids.IdentityID
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{fromAccAddress, toAccAddress, testIdentityID}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(testMessage))},
+		{"+ve", fields{fromAccAddress.String(), toAccAddress.String(), testIdentityID}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(testMessage))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:       tt.fields.From,
 				To:         tt.fields.To,
 				IdentityID: tt.fields.IdentityID,
@@ -109,21 +111,16 @@ func Test_message_GetSignBytes(t *testing.T) {
 func Test_message_GetSigners(t *testing.T) {
 	testIdentityID, _, fromAccAddress, _, toAccAddress, _ := createInputForMessage(t)
 
-	type fields struct {
-		From       sdkTypes.AccAddress
-		To         sdkTypes.AccAddress
-		IdentityID ids.IdentityID
-	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []sdkTypes.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress, toAccAddress, testIdentityID}, []sdkTypes.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), toAccAddress.String(), testIdentityID}, []sdkTypes.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:       tt.fields.From,
 				To:         tt.fields.To,
 				IdentityID: tt.fields.IdentityID,
@@ -138,11 +135,6 @@ func Test_message_GetSigners(t *testing.T) {
 func Test_message_RegisterCodec(t *testing.T) {
 	testIdentityID, _, fromAccAddress, _, toAccAddress, _ := createInputForMessage(t)
 
-	type fields struct {
-		From       sdkTypes.AccAddress
-		To         sdkTypes.AccAddress
-		IdentityID ids.IdentityID
-	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
 	}
@@ -151,11 +143,11 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress, toAccAddress, testIdentityID}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), toAccAddress.String(), testIdentityID}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			me := message{
+			me := &Message{
 				From:       tt.fields.From,
 				To:         tt.fields.To,
 				IdentityID: tt.fields.IdentityID,
@@ -168,21 +160,16 @@ func Test_message_RegisterCodec(t *testing.T) {
 func Test_message_Route(t *testing.T) {
 	testIdentityID, _, fromAccAddress, _, toAccAddress, _ := createInputForMessage(t)
 
-	type fields struct {
-		From       sdkTypes.AccAddress
-		To         sdkTypes.AccAddress
-		IdentityID ids.IdentityID
-	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress, toAccAddress, testIdentityID}, module.Name},
+		{"+ve", fields{fromAccAddress.String(), toAccAddress.String(), testIdentityID}, module.Name},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:       tt.fields.From,
 				To:         tt.fields.To,
 				IdentityID: tt.fields.IdentityID,
@@ -197,21 +184,16 @@ func Test_message_Route(t *testing.T) {
 func Test_message_Type(t *testing.T) {
 	testIdentityID, _, fromAccAddress, _, toAccAddress, _ := createInputForMessage(t)
 
-	type fields struct {
-		From       sdkTypes.AccAddress
-		To         sdkTypes.AccAddress
-		IdentityID ids.IdentityID
-	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress, toAccAddress, testIdentityID}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), toAccAddress.String(), testIdentityID}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:       tt.fields.From,
 				To:         tt.fields.To,
 				IdentityID: tt.fields.IdentityID,
@@ -226,22 +208,17 @@ func Test_message_Type(t *testing.T) {
 func Test_message_ValidateBasic(t *testing.T) {
 	testIdentityID, _, fromAccAddress, _, toAccAddress, _ := createInputForMessage(t)
 
-	type fields struct {
-		From       sdkTypes.AccAddress
-		To         sdkTypes.AccAddress
-		IdentityID ids.IdentityID
-	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{fromAccAddress, toAccAddress, testIdentityID}, false},
+		{"+ve", fields{fromAccAddress.String(), toAccAddress.String(), testIdentityID}, false},
 		{"+ve", fields{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:       tt.fields.From,
 				To:         tt.fields.To,
 				IdentityID: tt.fields.IdentityID,
@@ -266,7 +243,7 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve", args{fromAccAddress, toAccAddress, testIdentityID}, message{fromAccAddress, toAccAddress, testIdentityID}},
+		{"+ve", args{fromAccAddress, toAccAddress, testIdentityID}, &Message{fromAccAddress.String(), toAccAddress.String(), testIdentityID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

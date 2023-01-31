@@ -34,8 +34,8 @@ var (
 	immutables        = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables          = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
 	classificationID  = baseIDs.NewClassificationID(immutables, mutables)
-	fromID            = baseIDs.NewIdentityID(classificationID, immutables)
-	ownableID         = baseIDs.NewCoinID(baseIDs.NewStringID("ownableid"))
+	fromID            = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
+	ownableID         = baseIDs.NewCoinID(baseIDs.NewStringID("ownableid")).ToAnyOwnableID().(*baseIDs.AnyOwnableID)
 	testRate          = types.NewDec(1)
 )
 
