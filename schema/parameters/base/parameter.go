@@ -9,7 +9,7 @@ import (
 
 var _ helpers.Parameter = (*Parameter)(nil)
 
-func (m *Parameter) Validate() error {
+func (m *Parameter) ValidateBasic() error {
 	// TODO call m.MetaProperty.Validate()
 	return nil
 }
