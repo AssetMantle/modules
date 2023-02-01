@@ -22,7 +22,7 @@ func (t TestQueryKeeper) Help(_ context.Context, _ helpers.AuxiliaryRequest) hel
 	return nil
 }
 
-func (t TestQueryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
+func (t TestQueryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterList, _ []interface{}) helpers.Keeper {
 	return TestQueryKeeper{mapper: mapper}
 }
 

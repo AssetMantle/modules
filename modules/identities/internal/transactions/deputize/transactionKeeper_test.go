@@ -42,7 +42,7 @@ type TestKeepers struct {
 }
 
 var (
-	Parameters            helpers.Parameters
+	Parameters            helpers.ParameterList
 	deputizeAuxiliary     helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
 )
@@ -108,13 +108,13 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	_, _, Mapper := CreateTestInput(t)
 	type fields struct {
 		mapper                helpers.Mapper
-		parameters            helpers.Parameters
+		parameters            helpers.ParameterList
 		deputizeAuxiliary     helpers.Auxiliary
 		authenticateAuxiliary helpers.Auxiliary
 	}
 	type args struct {
 		mapper      helpers.Mapper
-		parameters  helpers.Parameters
+		parameters  helpers.ParameterList
 		auxiliaries []interface{}
 	}
 	tests := []struct {
@@ -159,7 +159,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	keepers.DeputizeKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(identity))
 	type fields struct {
 		mapper                helpers.Mapper
-		parameters            helpers.Parameters
+		parameters            helpers.ParameterList
 		deputizeAuxiliary     helpers.Auxiliary
 		authenticateAuxiliary helpers.Auxiliary
 	}

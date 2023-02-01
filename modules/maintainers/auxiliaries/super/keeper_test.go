@@ -46,7 +46,7 @@ var (
 	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables)
 )
 
-func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
+func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterList) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -122,7 +122,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper helpers.Mapper
-		in1    helpers.Parameters
+		in1    helpers.ParameterList
 		in2    []interface{}
 	}
 	tests := []struct {

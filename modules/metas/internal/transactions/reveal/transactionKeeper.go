@@ -15,7 +15,7 @@ import (
 
 type transactionKeeper struct {
 	mapper     helpers.Mapper
-	parameters helpers.Parameters
+	parameters helpers.ParameterList
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -40,7 +40,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	return &Response{}, nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, _ []interface{}) helpers.Keeper {
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterList, _ []interface{}) helpers.Keeper {
 	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
 	return transactionKeeper
 }

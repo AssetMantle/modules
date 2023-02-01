@@ -47,7 +47,7 @@ type TestKeepers struct {
 	DefineKeeper helpers.TransactionKeeper
 }
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
+func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterList) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -110,14 +110,14 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	_, _, Mapper, Parameters := CreateTestInput(t)
 	type fields struct {
 		mapper                helpers.Mapper
-		parameters            helpers.Parameters
+		parameters            helpers.ParameterList
 		defineAuxiliary       helpers.Auxiliary
 		superAuxiliary        helpers.Auxiliary
 		authenticateAuxiliary helpers.Auxiliary
 	}
 	type args struct {
 		mapper      helpers.Mapper
-		parameters  helpers.Parameters
+		parameters  helpers.ParameterList
 		auxiliaries []interface{}
 	}
 	tests := []struct {
@@ -164,7 +164,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	keepers.DefineKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(testOrder))
 	type fields struct {
 		mapper                helpers.Mapper
-		parameters            helpers.Parameters
+		parameters            helpers.ParameterList
 		defineAuxiliary       helpers.Auxiliary
 		superAuxiliary        helpers.Auxiliary
 		authenticateAuxiliary helpers.Auxiliary

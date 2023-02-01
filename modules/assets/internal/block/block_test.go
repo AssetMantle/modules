@@ -54,7 +54,7 @@ func CreateAssetsTestInput(t *testing.T) context.Context {
 func Test_block_Begin(t *testing.T) {
 	type fields struct {
 		mapper     helpers.Mapper
-		parameters helpers.Parameters
+		parameters helpers.ParameterList
 	}
 	type args struct {
 		in0 context.Context
@@ -71,8 +71,8 @@ func Test_block_Begin(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
-				mapper:     tt.fields.mapper,
-				parameters: tt.fields.parameters,
+				mapper:        tt.fields.mapper,
+				parameterList: tt.fields.parameters,
 			}
 			block.Begin(tt.args.in0, tt.args.in1)
 		})
@@ -82,7 +82,7 @@ func Test_block_Begin(t *testing.T) {
 func Test_block_End(t *testing.T) {
 	type fields struct {
 		mapper     helpers.Mapper
-		parameters helpers.Parameters
+		parameters helpers.ParameterList
 	}
 	type args struct {
 		in0 context.Context
@@ -99,8 +99,8 @@ func Test_block_End(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
-				mapper:     tt.fields.mapper,
-				parameters: tt.fields.parameters,
+				mapper:        tt.fields.mapper,
+				parameterList: tt.fields.parameters,
 			}
 			block.End(tt.args.in0, tt.args.in1)
 		})
@@ -113,11 +113,11 @@ func Test_block_Initialize(t *testing.T) {
 	testBlock := block{testMapper, testParameter}
 	type fields struct {
 		mapper     helpers.Mapper
-		parameters helpers.Parameters
+		parameters helpers.ParameterList
 	}
 	type args struct {
 		mapper     helpers.Mapper
-		parameters helpers.Parameters
+		parameters helpers.ParameterList
 		in2        []interface{}
 	}
 	tests := []struct {
@@ -131,8 +131,8 @@ func Test_block_Initialize(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
-				mapper:     tt.fields.mapper,
-				parameters: tt.fields.parameters,
+				mapper:        tt.fields.mapper,
+				parameterList: tt.fields.parameters,
 			}
 			if got := block.Initialize(tt.args.mapper, tt.args.parameters, tt.args.in2...); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)

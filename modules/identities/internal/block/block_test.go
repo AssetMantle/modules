@@ -53,7 +53,7 @@ func Test_block_Begin(t *testing.T) {
 	ctx := CreateTestInput(t)
 	type fields struct {
 		mapper     helpers.Mapper
-		parameters helpers.Parameters
+		parameters helpers.ParameterList
 	}
 	type args struct {
 		in0 context.Context
@@ -70,8 +70,8 @@ func Test_block_Begin(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
-				mapper:     tt.fields.mapper,
-				parameters: tt.fields.parameters,
+				mapper:        tt.fields.mapper,
+				parameterList: tt.fields.parameters,
 			}
 			block.Begin(tt.args.in0, tt.args.in1)
 		})
@@ -81,7 +81,7 @@ func Test_block_Begin(t *testing.T) {
 func Test_block_End(t *testing.T) {
 	type fields struct {
 		mapper     helpers.Mapper
-		parameters helpers.Parameters
+		parameters helpers.ParameterList
 	}
 	type args struct {
 		in0 context.Context
@@ -98,8 +98,8 @@ func Test_block_End(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
-				mapper:     tt.fields.mapper,
-				parameters: tt.fields.parameters,
+				mapper:        tt.fields.mapper,
+				parameterList: tt.fields.parameters,
 			}
 			block.End(tt.args.in0, tt.args.in1)
 		})

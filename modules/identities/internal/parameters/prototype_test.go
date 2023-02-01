@@ -17,7 +17,7 @@ func TestPrototype(t *testing.T) {
 		want string
 	}{
 
-		{"+ve", baseHelpers.NewParameters(dummy.Parameter).String()},
+		{"+ve", baseHelpers.NewParameterList(dummy.Parameter).String()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

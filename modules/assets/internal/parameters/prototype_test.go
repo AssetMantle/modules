@@ -16,10 +16,10 @@ import (
 func TestPrototype(t *testing.T) {
 	tests := []struct {
 		name      string
-		want      helpers.Parameters
+		want      helpers.ParameterList
 		wantError error
 	}{
-		{"+ve", baseHelpers.NewParameters(dummy.Parameter), nil},
+		{"+ve", baseHelpers.NewParameterList(dummy.Parameter), nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

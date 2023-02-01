@@ -9,6 +9,6 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
-func Prototype() helpers.Parameters {
-	return baseHelpers.NewParameters(dummy.Parameter)
+func Prototype() helpers.ParameterList {
+	return baseHelpers.NewParameterList(dummy.Parameter)
 }

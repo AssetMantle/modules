@@ -31,7 +31,7 @@ import (
 
 type block struct {
 	mapper              helpers.Mapper
-	parameters          helpers.Parameters
+	parameterList       helpers.ParameterList
 	supplementAuxiliary helpers.Auxiliary
 	transferAuxiliary   helpers.Auxiliary
 	scrubAuxiliary      helpers.Auxiliary
@@ -183,8 +183,8 @@ func Prototype() helpers.Block {
 	return block{}
 }
 
-func (block block) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Block {
-	block.mapper, block.parameters = mapper, parameters
+func (block block) Initialize(mapper helpers.Mapper, parameters helpers.ParameterList, auxiliaryKeepers ...interface{}) helpers.Block {
+	block.mapper, block.parameterList = mapper, parameters
 
 	for _, auxiliaryKeeper := range auxiliaryKeepers {
 		switch value := auxiliaryKeeper.(type) {
