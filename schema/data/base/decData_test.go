@@ -117,8 +117,8 @@ func Test_decData_Compare(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-		{"+ve with nil", fields{}, args{&DecData{}}, 0, true},
-		{"+ve with nil", fields{sdkTypes.Dec{}}, args{&DecData{sdkTypes.Dec{}}}, 0, false},
+		{"panic with nil", fields{}, args{&DecData{}}, 0, true},
+		{"MetaDataError with nil", fields{sdkTypes.Dec{}}, args{&DecData{sdkTypes.Dec{}}}, 0, true},
 		{"+ve with zero dec", fields{sdkTypes.ZeroDec()}, args{&DecData{sdkTypes.ZeroDec()}}, 0, false},
 		{"+ve", fields{sdkTypes.NewDec(100)}, args{&DecData{sdkTypes.NewDec(100)}}, 0, false},
 		{"-ve", fields{sdkTypes.NewDec(-100)}, args{&DecData{sdkTypes.NewDec(100)}}, -1, false},
@@ -151,7 +151,7 @@ func Test_decData_GenerateHashID(t *testing.T) {
 		want      ids.HashID
 		wantPanic bool
 	}{
-		{"panic case with nil", fields{sdkTypes.Dec{}}, baseIDs.GenerateHashID(), false},
+		{"panic case with nil", fields{sdkTypes.Dec{}}, baseIDs.GenerateHashID(), true},
 		{"+ve with zero dec", fields{sdkTypes.ZeroDec()}, baseIDs.GenerateHashID(), false},
 		{"+ve", fields{sdkTypes.NewDec(100)}, baseIDs.GenerateHashID((&DecData{sdkTypes.NewDec(100)}).Bytes()), false},
 		{"+ve with -ve Dec", fields{sdkTypes.NewDec(-100)}, baseIDs.GenerateHashID((&DecData{sdkTypes.NewDec(-100)}).Bytes()), false},

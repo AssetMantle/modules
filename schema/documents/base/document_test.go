@@ -80,26 +80,25 @@ func Test_document_GetClassificationID(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: testImmutables.(*baseQualified.Immutables), Mutables: testMutables.(*baseQualified.Mutables)}, classificationID, false},
+		{"+ve empty classificationID", fields{ClassificationID: baseIDs.PrototypeClassificationID(), Immutables: testImmutables.(*baseQualified.Immutables), Mutables: testMutables.(*baseQualified.Mutables)}, baseIDs.PrototypeClassificationID(), false},
+		{"+ve empty immutables", fields{classificationID, baseQualified.NewImmutables(nil), testMutables}, classificationID, false},
+		{"+ve empty mutables", fields{classificationID, testImmutables, baseQualified.NewMutables(nil)}, classificationID, false},
+		{"+ve all empty", fields{baseIDs.PrototypeClassificationID(), baseQualified.NewImmutables(nil), baseQualified.NewMutables(nil)}, baseIDs.PrototypeClassificationID(), false},
 		{"panic with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables.(*baseQualified.Immutables), Mutables: testMutables.(*baseQualified.Mutables)}, nil, true},
-		{"+ve with nil immutables", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: nil, Mutables: testMutables.(*baseQualified.Mutables)}, classificationID, false},
-		{"+ve with nil mutables", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: testImmutables.(*baseQualified.Immutables), Mutables: nil}, classificationID, false},
-		{"+ve with all nil", fields{}, nil, true},
+		{"panic with nil immutables", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: nil, Mutables: testMutables.(*baseQualified.Mutables)}, classificationID, true},
+		{"panic with nil mutables", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: testImmutables.(*baseQualified.Immutables), Mutables: nil}, classificationID, true},
+		{"panic with all nil", fields{}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			document := &Document{
-				ClassificationID: tt.fields.ClassificationID.(*baseIDs.ClassificationID),
-				Immutables:       tt.fields.Immutables.(*baseQualified.Immutables),
-				Mutables:         tt.fields.Mutables.(*baseQualified.Mutables),
-			}
 			defer func() {
-				r := recover
+				r := recover()
 
 				if (r != nil) != tt.wantErr {
 					t.Errorf("error = %v, wantErr %v", r, tt.wantErr)
 				}
 			}()
-			if got := document.GetClassificationID(); !reflect.DeepEqual(got, tt.want) {
+			if got := NewDocument(tt.fields.ClassificationID, tt.fields.Immutables, tt.fields.Mutables).GetClassificationID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetClassificationID() = %v, want %v", got, tt.want)
 			}
 		})
