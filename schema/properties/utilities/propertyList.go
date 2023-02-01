@@ -10,14 +10,12 @@ import (
 func IsDuplicate(propertyList []properties.AnyProperty) bool {
 	propertyIDMap := map[string]bool{}
 
-	var str = ""
 	for _, property := range propertyList {
-		str = property.GetID().GetKey().AsString() + ":" + property.GetID().GetType().AsString()
-		if _, ok := propertyIDMap[str]; ok {
+		if _, ok := propertyIDMap[property.GetID().AsString()]; ok {
 			return true
 		}
 
-		propertyIDMap[str] = true
+		propertyIDMap[property.GetID().AsString()] = true
 	}
 
 	return false
