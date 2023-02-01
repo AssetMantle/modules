@@ -6,9 +6,9 @@ import (
 	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
-var _ helpers.GenesisState = (*GenesisState)(nil)
+var _ helpers.Genesis = (*GenesisState)(nil)
 
-func (genesisState *GenesisState) Default() helpers.GenesisState {
+func (genesisState *GenesisState) Default() helpers.Genesis {
 	return PrototypeGenesisState()
 }
 func (genesisState *GenesisState) GetMappables() []helpers.Mappable {
@@ -17,7 +17,7 @@ func (genesisState *GenesisState) GetMappables() []helpers.Mappable {
 func (genesisState *GenesisState) GetParameters() []parametersSchema.Parameter {
 	return baseParameters.ParametersToInterfaces(genesisState.Parameters)
 }
-func (genesisState *GenesisState) Initialize(mappableList []helpers.Mappable, parameterList []parametersSchema.Parameter) helpers.GenesisState {
+func (genesisState *GenesisState) Initialize(mappableList []helpers.Mappable, parameterList []parametersSchema.Parameter) helpers.Genesis {
 	if len(mappableList) == 0 {
 		genesisState.Mappables = MappablesFromInterface(genesisState.Default().GetMappables())
 	} else {
@@ -40,7 +40,7 @@ func (genesisState *GenesisState) Initialize(mappableList []helpers.Mappable, pa
 	return genesisState
 }
 
-func PrototypeGenesisState() helpers.GenesisState {
+func PrototypeGenesisState() helpers.Genesis {
 	return &GenesisState{
 		Mappables:  []*TestMappable{},
 		Parameters: nil,
