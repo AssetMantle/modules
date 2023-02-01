@@ -38,7 +38,7 @@ func Test_new_Classification(t *testing.T) {
 			defer func() {
 				r := recover()
 				if (r != nil) != tt.wantError {
-					t.Errorf("lol")
+					t.Errorf("error = %v, wantErr %v", r, tt.wantError)
 				}
 			}()
 			if got := NewClassification(tt.fields.immutables, tt.fields.mutables); !reflect.DeepEqual(got, tt.want) {
