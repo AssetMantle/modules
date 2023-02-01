@@ -132,14 +132,18 @@ func Test_mesaProperty_Compare(t *testing.T) {
 		listable traits.Listable
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   int
+		name    string
+		fields  fields
+		args    args
+		want    int
+		wantErr bool
 	}{
-		{"+ve compare with property with no Data", fields{testMesaPropertyID, testData.GetID()}, args{&MesaProperty{Id: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID)}}, 0},
-		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{&MesaProperty{Id: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID), DataID: baseData.NewStringData("Data2").GetID().(*base.DataID)}}, 0},
-		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{testMesaProperty}, 0},
+		{"+ve compare with property with no Data", fields{testMesaPropertyID, testData.GetID()}, args{&MesaProperty{Id: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID)}}, 0, false},
+		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{&MesaProperty{Id: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID), DataID: baseData.NewStringData("Data2").GetID().(*base.DataID)}}, 0, false},
+		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{testMesaProperty}, 0, false},
+		{"+ve nil dataID", fields{testMesaPropertyID, nil}, args{testMesaProperty}, 0, false},
+		{"panic nil propertyID", fields{nil, testData.GetID()}, args{testMesaProperty}, 0, true},
+		{"panic all nil", fields{}, args{testMesaProperty}, 0, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -147,6 +151,13 @@ func Test_mesaProperty_Compare(t *testing.T) {
 				Id:     ValidatedID[*base.PropertyID](tt.fields.ID),
 				DataID: ValidatedID[*base.DataID](tt.fields.DataID),
 			}
+			defer func() {
+				r := recover()
+
+				if (r != nil) != tt.wantErr {
+					t.Errorf("error = %v, wantErr %v", r, tt.wantErr)
+				}
+			}()
 			if got := mesaProperty.Compare(tt.args.listable); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
 			}
@@ -189,11 +200,15 @@ func Test_mesaProperty_GetHash(t *testing.T) {
 		DataID ids.DataID
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   ids.ID
+		name    string
+		fields  fields
+		want    ids.ID
+		wantErr bool
 	}{
-		{"+ve", fields{testMesaPropertyID, testData.GetID()}, testData.GetID().GetHashID()},
+		{"+ve", fields{testMesaPropertyID, testData.GetID()}, testData.GetID().GetHashID(), false},
+		{"+ve nil PropertyID", fields{nil, testData.GetID()}, testData.GetID().GetHashID(), false},
+		{"panic nil DataID", fields{testMesaPropertyID, nil}, testData.GetID().GetHashID(), true},
+		{"panic all nil", fields{nil, nil}, testData.GetID().GetHashID(), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -201,6 +216,13 @@ func Test_mesaProperty_GetHash(t *testing.T) {
 				Id:     ValidatedID[*base.PropertyID](tt.fields.ID),
 				DataID: ValidatedID[*base.DataID](tt.fields.DataID),
 			}
+			defer func() {
+				r := recover()
+
+				if (r != nil) != tt.wantErr {
+					t.Errorf("error = %v, wantErr %v", r, tt.wantErr)
+				}
+			}()
 			if got := mesaProperty.GetHash(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetHash() = %v, want %v", got, tt.want)
 			}
