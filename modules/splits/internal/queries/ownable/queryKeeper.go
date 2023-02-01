@@ -24,7 +24,7 @@ func (queryKeeper queryKeeper) Handle(context context.Context, queryRequest *Que
 	return newQueryResponse(utilities.GetOwnableTotalSplitsValue(queryKeeper.mapper.NewCollection(context), queryRequestFromInterface(queryRequest).OwnableID), nil), nil
 }
 
-func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
+func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterList, _ []interface{}) helpers.Keeper {
 	queryKeeper.mapper = mapper
 	return queryKeeper
 }

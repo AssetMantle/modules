@@ -45,7 +45,7 @@ type TestKeepers struct {
 }
 
 var (
-	Parameters                 helpers.Parameters
+	Parameters                 helpers.ParameterList
 	authenticateAuxiliary      helpers.Auxiliary
 	conformAuxiliary           helpers.Auxiliary
 	maintainersVerifyAuxiliary helpers.Auxiliary
@@ -119,7 +119,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper      helpers.Mapper
-		in1         helpers.Parameters
+		in1         helpers.ParameterList
 		auxiliaries []interface{}
 	}
 	tests := []struct {

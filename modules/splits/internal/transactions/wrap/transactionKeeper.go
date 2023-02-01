@@ -18,14 +18,9 @@ import (
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
-	parameters            helpers.Parameters
+	parameters            helpers.ParameterList
 	bankKeeper            bankKeeper.Keeper
 	authenticateAuxiliary helpers.Auxiliary
-}
-
-func (transactionKeeper transactionKeeper) Wrap(ctx context.Context, message *Message) (*TransactionResponse, error) {
-	// TODO implement me
-	panic("implement me")
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -59,7 +54,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	return &Response{}, nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
 
 	for _, auxiliary := range auxiliaries {

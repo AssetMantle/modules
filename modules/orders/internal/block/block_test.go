@@ -88,7 +88,7 @@ func Test_block_End(t *testing.T) {
 	testContext1 := context.WithBlockHeight(-1)
 	type fields struct {
 		mapper              helpers.Mapper
-		parameters          helpers.Parameters
+		parameters          helpers.ParameterList
 		supplementAuxiliary helpers.Auxiliary
 		transferAuxiliary   helpers.Auxiliary
 		scrubAuxiliary      helpers.Auxiliary
@@ -110,7 +110,7 @@ func Test_block_End(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
 				mapper:              tt.fields.mapper,
-				parameters:          tt.fields.parameters,
+				parameterList:       tt.fields.parameters,
 				supplementAuxiliary: tt.fields.supplementAuxiliary,
 				transferAuxiliary:   tt.fields.transferAuxiliary,
 				scrubAuxiliary:      tt.fields.scrubAuxiliary,

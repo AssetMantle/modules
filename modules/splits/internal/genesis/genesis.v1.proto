@@ -1,0 +1,13 @@
+syntax = "proto3";
+package splits;
+
+import "gogoproto/gogo.proto";
+import "modules/splits/internal/mappable/mappable.v1.proto";
+import "schema/parameters/base/parameter.v1.proto";
+
+message Genesis {
+  option (gogoproto.goproto_getters) = false;
+
+  repeated Mappable mappables = 1;
+  repeated parameters.Parameter parameters = 2;
+}

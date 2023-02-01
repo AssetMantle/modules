@@ -28,7 +28,7 @@ import (
 
 type transactionKeeper struct {
 	mapper                     helpers.Mapper
-	parameters                 helpers.Parameters
+	parameters                 helpers.ParameterList
 	conformAuxiliary           helpers.Auxiliary
 	mintAuxiliary              helpers.Auxiliary
 	authenticateAuxiliary      helpers.Auxiliary
@@ -87,7 +87,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	return &Response{}, nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaries []interface{}) helpers.Keeper {
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
 
 	for _, auxiliary := range auxiliaries {

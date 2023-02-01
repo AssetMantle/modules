@@ -5,14 +5,15 @@ package base
 
 import (
 	"context"
+
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type block struct {
-	mapper     helpers.Mapper
-	parameters helpers.Parameters
+	mapper        helpers.Mapper
+	parameterList helpers.ParameterList
 }
 
 var _ helpers.Block = (*block)(nil)
@@ -25,7 +26,7 @@ func (b block) End(_ context.Context, _ abci.RequestEndBlock) {
 
 }
 
-func (b block) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, _ ...interface{}) helpers.Block {
+func (b block) Initialize(mapper helpers.Mapper, parameters helpers.ParameterList, _ ...interface{}) helpers.Block {
 	return block{mapper, parameters}
 }
 

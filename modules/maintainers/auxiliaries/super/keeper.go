@@ -45,7 +45,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	return newAuxiliaryResponse(nil)
 }
 
-func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.Parameters, _ []interface{}) helpers.Keeper {
+func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterList, _ []interface{}) helpers.Keeper {
 	return auxiliaryKeeper{mapper: mapper}
 }
 

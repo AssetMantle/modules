@@ -126,7 +126,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper helpers.Mapper
-		in1    helpers.Parameters
+		in1    helpers.ParameterList
 		in2    []interface{}
 	}
 	tests := []struct {

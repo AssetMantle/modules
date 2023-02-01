@@ -5,6 +5,7 @@ package dummy
 
 import (
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	"github.com/AssetMantle/modules/schema/properties/base"
 )
 
-var Parameter = baseTypes.NewParameter(ID, DefaultData, validator)
+var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, DefaultData))

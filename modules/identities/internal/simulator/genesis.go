@@ -11,7 +11,6 @@ import (
 
 	"github.com/AssetMantle/modules/modules/identities/internal/common"
 	"github.com/AssetMantle/modules/modules/identities/internal/genesis"
-	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	identitiesModule "github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters/dummy"
@@ -19,9 +18,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 )
@@ -45,7 +42,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMappable(base.NewIdentity(baseIDs.NewClassificationID(immutables, mutables), immutables, mutables))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, genesis.PrototypeGenesisState().Initialize(mappableList, []parametersSchema.Parameter{dummy.Parameter.Mutate(Data)}))
+	genesisState := genesis.Prototype().Initialize(mappableList, []helpers.Parameter{dummy.Parameter.Mutate(Data)})
 
 	simulationState.GenState[identitiesModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
 }

@@ -11,15 +11,12 @@ import (
 
 	"github.com/AssetMantle/modules/modules/metas/internal/common"
 	"github.com/AssetMantle/modules/modules/metas/internal/genesis"
-	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	metasModule "github.com/AssetMantle/modules/modules/metas/internal/module"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters/dummy"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 )
 
@@ -40,7 +37,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMappable(baseSimulation.GenerateRandomData(simulationState.Rand))
 	}
 
-	genesisState := baseHelpers.NewGenesis(key.Prototype, genesis.PrototypeGenesisState().Initialize(mappableList, []parametersSchema.Parameter{dummy.Parameter.Mutate(Data)}))
+	genesisState := genesis.Prototype().Initialize(mappableList, []helpers.Parameter{dummy.Parameter.Mutate(Data)})
 
 	simulationState.GenState[metasModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
 }

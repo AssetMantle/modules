@@ -6,13 +6,13 @@ package dummy
 import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/parameters"
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func validator(i interface{}) error {
 	switch value := i.(type) {
-	case parameters.Parameter:
-		if value.GetID().Compare(ID) != 0 || value.GetData().Get().(data.DecData).Get().IsNegative() {
+	case helpers.Parameter:
+		if value.GetMetaProperty().GetID().Compare(ID) != 0 || value.GetMetaProperty().GetData().Get().(data.DecData).Get().IsNegative() {
 			return constants.InvalidParameter
 		}
 

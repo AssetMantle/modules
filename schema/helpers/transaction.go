@@ -27,5 +27,5 @@ type Transaction interface {
 	RegisterService(module.Configurator)
 	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)
 	DecodeTransactionRequest(json.RawMessage) (sdkTypes.Msg, error)
-	InitializeKeeper(Mapper, Parameters, ...interface{}) Transaction
+	InitializeKeeper(Mapper, ParameterList, ...interface{}) Transaction
 }

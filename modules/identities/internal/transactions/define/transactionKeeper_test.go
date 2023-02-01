@@ -49,7 +49,7 @@ var (
 	defineAuxiliary       helpers.Auxiliary
 	superAuxiliary        helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
-	Parameters            helpers.Parameters
+	Parameters            helpers.ParameterList
 )
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper) {
@@ -122,7 +122,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper      helpers.Mapper
-		in1         helpers.Parameters
+		in1         helpers.ParameterList
 		auxiliaries []interface{}
 	}
 	tests := []struct {
