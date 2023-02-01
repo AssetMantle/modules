@@ -28,15 +28,15 @@ type module struct {
 	name             string
 	consensusVersion uint64
 
-	auxiliariesPrototype  func() helpers.Auxiliaries
-	blockPrototype        func() helpers.Block
-	genesisPrototype      func() helpers.Genesis
-	invariantsPrototype   func() helpers.Invariants
-	mapperPrototype       func() helpers.Mapper
-	parametersPrototype   func() helpers.ParameterList
-	queriesPrototype      func() helpers.Queries
-	simulatorPrototype    func() helpers.Simulator
-	transactionsPrototype func() helpers.Transactions
+	auxiliariesPrototype   func() helpers.Auxiliaries
+	blockPrototype         func() helpers.Block
+	genesisPrototype       func() helpers.Genesis
+	invariantsPrototype    func() helpers.Invariants
+	mapperPrototype        func() helpers.Mapper
+	parameterListPrototype func() helpers.ParameterList
+	queriesPrototype       func() helpers.Queries
+	simulatorPrototype     func() helpers.Simulator
+	transactionsPrototype  func() helpers.Transactions
 
 	auxiliaries   helpers.Auxiliaries
 	genesis       helpers.Genesis
@@ -233,7 +233,7 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 
 	module.genesis = module.genesisPrototype()
 
-	module.parameterList = module.parametersPrototype().Initialize(paramsSubspace.WithKeyTable(module.parametersPrototype().GetKeyTable()))
+	module.parameterList = module.parameterListPrototype().Initialize(paramsSubspace.WithKeyTable(module.parameterListPrototype().GetKeyTable()))
 
 	auxiliaryList := make([]helpers.Auxiliary, len(module.auxiliariesPrototype().GetList()))
 
@@ -270,16 +270,16 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 
 func NewModule(name string, consensusVersion uint64, auxiliariesPrototype func() helpers.Auxiliaries, blockPrototype func() helpers.Block, genesisPrototype func() helpers.Genesis, invariantsPrototype func() helpers.Invariants, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.ParameterList, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions) helpers.Module {
 	return module{
-		name:                  name,
-		consensusVersion:      consensusVersion,
-		auxiliariesPrototype:  auxiliariesPrototype,
-		blockPrototype:        blockPrototype,
-		genesisPrototype:      genesisPrototype,
-		invariantsPrototype:   invariantsPrototype,
-		mapperPrototype:       mapperPrototype,
-		parametersPrototype:   parametersPrototype,
-		queriesPrototype:      queriesPrototype,
-		simulatorPrototype:    simulatorPrototype,
-		transactionsPrototype: transactionsPrototype,
+		name:                   name,
+		consensusVersion:       consensusVersion,
+		auxiliariesPrototype:   auxiliariesPrototype,
+		blockPrototype:         blockPrototype,
+		genesisPrototype:       genesisPrototype,
+		invariantsPrototype:    invariantsPrototype,
+		mapperPrototype:        mapperPrototype,
+		parameterListPrototype: parametersPrototype,
+		queriesPrototype:       queriesPrototype,
+		simulatorPrototype:     simulatorPrototype,
+		transactionsPrototype:  transactionsPrototype,
 	}
 }
