@@ -5,7 +5,6 @@ package classification
 
 import (
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -161,7 +160,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"+ve", fields{}, args{cliCommand, test.TestClientContext}, "", false},
+		{"+ve", fields{}, args{cliCommand, constants.TestClientContext}, "", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

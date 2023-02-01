@@ -5,7 +5,6 @@ package unprovision
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -21,7 +20,6 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
-	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -29,7 +27,7 @@ import (
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-func createInputForMessage(t *testing.T) (ids.IdentityID, string, types.AccAddress, types.Msg, rest.BaseReq) {
+func createInputForMessage(t *testing.T) (*baseIDs.IdentityID, string, types.AccAddress, types.Msg, rest.BaseReq) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -47,7 +45,7 @@ func createInputForMessage(t *testing.T) (ids.IdentityID, string, types.AccAddre
 
 	testMessage := newMessage(fromAccAddress, toAccAddress, testIdentityID)
 
-	return testIdentityID, toAddress, toAccAddress, testMessage, testBaseReq
+	return testIdentityID.(*baseIDs.IdentityID), toAddress, toAccAddress, testMessage, testBaseReq
 }
 
 func Test_newTransactionRequest(t *testing.T) {
@@ -115,7 +113,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, args{cliCommand, test.TestClientContext}, transactionRequest{cliCommand.ReadBaseReq(test.TestClientContext), cliCommand.ReadString(constants.To), cliCommand.ReadString(constants.IdentityID)}, false},
+		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, args{cliCommand, constants.TestClientContext}, transactionRequest{cliCommand.ReadBaseReq(constants.TestClientContext), cliCommand.ReadString(constants.To), cliCommand.ReadString(constants.IdentityID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -153,7 +151,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"), toAccAddress, testIdentityID}))}, transactionRequest{testBaseReq, toAddress, testIdentityID.AsString()}, false},
+		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c").String(), toAccAddress.String(), testIdentityID}))}, transactionRequest{testBaseReq, toAddress, testIdentityID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -218,7 +216,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, message{fromAccAddress, toAccAddress, testIdentityID}, false},
+		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, &Message{fromAccAddress.String(), toAccAddress.String(), testIdentityID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

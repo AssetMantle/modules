@@ -6,7 +6,6 @@ package deputize
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -124,7 +123,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true, true}, args{cliCommand, test.TestClientContext}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true, true), false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true, true}, args{cliCommand, constants.TestClientContext}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true, true), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

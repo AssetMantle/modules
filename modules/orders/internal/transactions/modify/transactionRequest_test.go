@@ -6,7 +6,6 @@ package modify
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -40,9 +39,9 @@ var (
 	immutables                    = baseQualified.NewImmutables(immutableProperties)
 	mutables                      = baseQualified.NewMutables(mutableProperties)
 
-	testClassificationID = baseIDs.NewClassificationID(immutables, mutables)
-	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables)
-	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables)
+	testClassificationID = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
+	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
+	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
 	testBaseRequest      = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 	expiresIn            = int64(60)
 	makerOwnableSplit    = types.NewDec(60)
@@ -123,7 +122,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerOwnableSplit.String(), makerOwnableSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, test.TestClientContext}, transactionRequest{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerOwnableSplit.String(), makerOwnableSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerOwnableSplit.String(), makerOwnableSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, constants.TestClientContext}, transactionRequest{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerOwnableSplit.String(), makerOwnableSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

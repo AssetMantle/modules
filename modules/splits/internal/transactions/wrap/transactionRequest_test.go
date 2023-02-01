@@ -6,7 +6,6 @@ package wrap
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -33,9 +32,9 @@ var (
 	testBaseRequest   = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 	immutables        = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables          = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
-	classificationID  = baseIDs.NewClassificationID(immutables, mutables)
-	fromID            = baseIDs.NewIdentityID(classificationID, immutables)
-	ownableID         = baseIDs.NewCoinID(baseIDs.NewStringID("ownableid"))
+	classificationID  = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
+	fromID            = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
+	ownableID         = baseIDs.NewCoinID(baseIDs.NewStringID("ownableid")).ToAnyOwnableID().(*baseIDs.AnyOwnableID)
 	testRate          = types.NewCoins(types.NewCoin("mntl", types.NewInt(1)))
 )
 
@@ -98,7 +97,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), testRate.String()}, args{cliCommand, test.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), testRate.String()}, args{cliCommand, constants.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

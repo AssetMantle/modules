@@ -33,8 +33,8 @@ var (
 	immutables        = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables          = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
 	classificationID  = baseIDs.NewClassificationID(immutables, mutables)
-	fromID            = baseIDs.NewIdentityID(classificationID, immutables)
-	ownableID         = baseIDs.NewCoinID(baseIDs.NewStringID("ownableid"))
+	fromID            = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
+	ownableID         = baseIDs.NewCoinID(baseIDs.NewStringID("ownableid")).ToAnyOwnableID().(*baseIDs.AnyOwnableID)
 	testRate          = types.NewDec(1)
 )
 
@@ -103,7 +103,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), ownableID.AsString(), testRate.String()}, args{cliCommand, test.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), fromID.AsString(), ownableID.AsString(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), ownableID.AsString(), testRate.String()}, args{cliCommand, constants.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), fromID.AsString(), ownableID.AsString(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

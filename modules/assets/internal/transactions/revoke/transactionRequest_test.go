@@ -87,7 +87,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()}, args{cliCommand, test.TestClientContext}, newTransactionRequest(testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()}, args{cliCommand, constants.TestClientContext}, newTransactionRequest(testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -126,7 +126,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, fromID, fromID, classificationID}))}, newTransactionRequest(testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), fromID, fromID, classificationID}))}, newTransactionRequest(testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

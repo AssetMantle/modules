@@ -6,7 +6,6 @@ package take
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -34,8 +33,8 @@ var (
 	mutables          = baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 
 	testClassificationID = baseIDs.NewClassificationID(immutables, mutables)
-	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables)
-	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables)
+	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
+	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
 	testBaseRequest      = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 	takerOwnableSplit    = types.NewDec(60)
 )
@@ -102,7 +101,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}, args{cliCommand, test.TestClientContext}, transactionRequest{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}, false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}, args{cliCommand, constants.TestClientContext}, transactionRequest{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

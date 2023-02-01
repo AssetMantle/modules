@@ -73,20 +73,28 @@ func Test_decData_Bytes(t *testing.T) {
 		Value sdkTypes.Dec
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   []byte
+		name    string
+		fields  fields
+		want    []byte
+		wantErr bool
 	}{
-		{"+ve with nil", fields{}, []byte{0x1}}, // TODO: Update test after fixing the bug
-		{"+ve with zero dec", fields{sdkTypes.ZeroDec()}, (&DecData{sdkTypes.ZeroDec()}).Bytes()},
-		{"+ve", fields{sdkTypes.NewDec(100)}, (&DecData{sdkTypes.NewDec(100)}).Bytes()},
-		{"+ve with -ve Dec", fields{sdkTypes.NewDec(-100)}, (&DecData{sdkTypes.NewDec(-100)}).Bytes()},
+		{"+ve with nil", fields{}, []byte{0x1}, true}, // TODO: Update test after fixing the bug
+		{"+ve with zero dec", fields{sdkTypes.ZeroDec()}, (&DecData{sdkTypes.ZeroDec()}).Bytes(), false},
+		{"+ve", fields{sdkTypes.NewDec(100)}, (&DecData{sdkTypes.NewDec(100)}).Bytes(), false},
+		{"+ve with -ve Dec", fields{sdkTypes.NewDec(-100)}, (&DecData{sdkTypes.NewDec(-100)}).Bytes(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			decData := &DecData{
 				Value: tt.fields.Value,
 			}
+			defer func() {
+				r := recover()
+
+				if (r != nil) != tt.wantErr {
+					t.Errorf("error = %v, wantErr %v", r, tt.wantErr)
+				}
+			}()
 			assert.Equalf(t, tt.want, decData.Bytes(), "Bytes()")
 		})
 	}
@@ -103,23 +111,31 @@ func Test_decData_Compare(t *testing.T) {
 		listable traits.Listable
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   int
+		name    string
+		fields  fields
+		args    args
+		want    int
+		wantErr bool
 	}{
-		{"+ve with nil", fields{}, args{&DecData{}}, 0},
-		{"+ve with nil", fields{sdkTypes.Dec{}}, args{&DecData{sdkTypes.Dec{}}}, 0},
-		{"+ve with zero dec", fields{sdkTypes.ZeroDec()}, args{&DecData{sdkTypes.ZeroDec()}}, 0},
-		{"+ve", fields{sdkTypes.NewDec(100)}, args{&DecData{sdkTypes.NewDec(100)}}, 0},
-		{"-ve", fields{sdkTypes.NewDec(-100)}, args{&DecData{sdkTypes.NewDec(100)}}, -1},
-		{"+ve with -ve Dec", fields{sdkTypes.NewDec(-100)}, args{&DecData{sdkTypes.NewDec(-100)}}, 0},
+		{"panic with nil", fields{}, args{&DecData{}}, 0, true},
+		{"MetaDataError with nil", fields{sdkTypes.Dec{}}, args{&DecData{sdkTypes.Dec{}}}, 0, true},
+		{"+ve with zero dec", fields{sdkTypes.ZeroDec()}, args{&DecData{sdkTypes.ZeroDec()}}, 0, false},
+		{"+ve", fields{sdkTypes.NewDec(100)}, args{&DecData{sdkTypes.NewDec(100)}}, 0, false},
+		{"-ve", fields{sdkTypes.NewDec(-100)}, args{&DecData{sdkTypes.NewDec(100)}}, -1, false},
+		{"+ve with -ve Dec", fields{sdkTypes.NewDec(-100)}, args{&DecData{sdkTypes.NewDec(-100)}}, 0, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			decData := &DecData{
 				Value: tt.fields.Value,
 			}
+			defer func() {
+				r := recover()
+
+				if (r != nil) != tt.wantErr {
+					t.Errorf("error = %v, wantErr %v", r, tt.wantErr)
+				}
+			}()
 			assert.Equalf(t, tt.want, decData.Compare(tt.args.listable), "Compare(%v)", tt.args.listable)
 		})
 	}
@@ -135,7 +151,7 @@ func Test_decData_GenerateHashID(t *testing.T) {
 		want      ids.HashID
 		wantPanic bool
 	}{
-		{"panic case with nil", fields{sdkTypes.Dec{}}, baseIDs.GenerateHashID(), false},
+		{"panic case with nil", fields{sdkTypes.Dec{}}, baseIDs.GenerateHashID(), true},
 		{"+ve with zero dec", fields{sdkTypes.ZeroDec()}, baseIDs.GenerateHashID(), false},
 		{"+ve", fields{sdkTypes.NewDec(100)}, baseIDs.GenerateHashID((&DecData{sdkTypes.NewDec(100)}).Bytes()), false},
 		{"+ve with -ve Dec", fields{sdkTypes.NewDec(-100)}, baseIDs.GenerateHashID((&DecData{sdkTypes.NewDec(-100)}).Bytes()), false},

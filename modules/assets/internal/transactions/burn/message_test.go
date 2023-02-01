@@ -38,9 +38,9 @@ func Test_messageFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want message
+		want helpers.Message
 	}{
-		{"+ve", args{newMessage(fromAccAddress, fromID, testAssetID)}, newMessage(fromAccAddress, fromID, testAssetID).(message)},
+		{"+ve", args{newMessage(fromAccAddress, fromID, testAssetID)}, newMessage(fromAccAddress, fromID, testAssetID).(*Message)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -56,7 +56,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", message{}},
+		{"+ve", &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -78,15 +78,15 @@ func Test_message_GetSignBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(newMessage(fromAccAddress, fromID, testAssetID)))},
-		{"+ve", fields{}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{}))},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(newMessage(fromAccAddress, fromID, testAssetID)))},
+		{"+ve", fields{}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{}))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
-				From:    tt.fields.From,
-				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
+			message := &Message{
+				From:    tt.fields.From.String(),
+				FromID:  tt.fields.FromID.(*baseIDs.IdentityID),
+				AssetID: tt.fields.AssetID.(*baseIDs.AssetID),
 			}
 			if got := message.GetSignBytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSignBytes() = %v, want %v", got, tt.want)
@@ -106,14 +106,14 @@ func Test_message_GetSigners(t *testing.T) {
 		fields fields
 		want   []sdkTypes.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID}, []sdkTypes.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID}, []sdkTypes.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
-				From:    tt.fields.From,
-				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
+			message := &Message{
+				From:    tt.fields.From.String(),
+				FromID:  tt.fields.FromID.(*baseIDs.IdentityID),
+				AssetID: tt.fields.AssetID.(*baseIDs.AssetID),
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
@@ -136,15 +136,15 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID}, args{codec.NewLegacyAmino()}},
 		{"+ve", fields{}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			me := message{
-				From:    tt.fields.From,
-				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
+			me := &Message{
+				From:    tt.fields.From.String(),
+				FromID:  tt.fields.FromID.(*baseIDs.IdentityID),
+				AssetID: tt.fields.AssetID.(*baseIDs.AssetID),
 			}
 			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -162,14 +162,14 @@ func Test_message_Route(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID}, module.Name},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID}, module.Name},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
-				From:    tt.fields.From,
-				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
+			message := &Message{
+				From:    tt.fields.From.String(),
+				FromID:  tt.fields.FromID.(*baseIDs.IdentityID),
+				AssetID: tt.fields.AssetID.(*baseIDs.AssetID),
 			}
 			if got := message.Route(); got != tt.want {
 				t.Errorf("Route() = %v, want %v", got, tt.want)
@@ -189,14 +189,14 @@ func Test_message_Type(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
-				From:    tt.fields.From,
-				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
+			message := &Message{
+				From:    tt.fields.From.String(),
+				FromID:  tt.fields.FromID.(*baseIDs.IdentityID),
+				AssetID: tt.fields.AssetID.(*baseIDs.AssetID),
 			}
 			if got := message.Type(); got != tt.want {
 				t.Errorf("Type() = %v, want %v", got, tt.want)
@@ -216,15 +216,15 @@ func Test_message_ValidateBasic(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID}, false},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID}, false},
 		{"-ve", fields{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
-				From:    tt.fields.From,
-				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
+			message := &Message{
+				From:    tt.fields.From.String(),
+				FromID:  tt.fields.FromID.(*baseIDs.IdentityID),
+				AssetID: tt.fields.AssetID.(*baseIDs.AssetID),
 			}
 			if err := message.ValidateBasic(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
@@ -244,8 +244,8 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve", args{fromAccAddress, fromID, testAssetID}, message{fromAccAddress, fromID, testAssetID}},
-		{"+ve with nil", args{}, message{}},
+		{"+ve", args{fromAccAddress, fromID, testAssetID}, &Message{fromAccAddress.String(), fromID.(*baseIDs.IdentityID), testAssetID.(*baseIDs.AssetID)}},
+		{"+ve with nil", args{}, &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -18,14 +18,19 @@ import (
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
-func createTestInput(t *testing.T) (ids.ID, string, sdkTypes.AccAddress) {
+type fields struct {
+	From  string
+	NubID *baseIDs.StringID
+}
+
+func createTestInput(t *testing.T) (*baseIDs.StringID, string, sdkTypes.AccAddress) {
 	testNubID := baseIDs.NewStringID("nubID")
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	return testNubID, fromAddress, fromAccAddress
+	return testNubID.(*baseIDs.StringID), fromAddress, fromAccAddress
 }
 
 func Test_messageFromInterface(t *testing.T) {
@@ -36,10 +41,10 @@ func Test_messageFromInterface(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want message
+		want *Message
 	}{
-		{"+ve", args{message{From: fromAccAddress, NubID: testNubID}}, message{From: fromAccAddress, NubID: testNubID}},
-		{"+ve", args{nil}, message{}},
+		{"+ve", args{&Message{From: fromAccAddress.String(), NubID: testNubID}}, &Message{From: fromAccAddress.String(), NubID: testNubID}},
+		{"+ve", args{nil}, &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -55,7 +60,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", message{}},
+		{"+ve", &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -68,20 +73,17 @@ func Test_messagePrototype(t *testing.T) {
 
 func Test_message_GetSignBytes(t *testing.T) {
 	testNubID, _, fromAccAddress := createTestInput(t)
-	type fields struct {
-		From  sdkTypes.AccAddress
-		NubID ids.ID
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{fromAccAddress, testNubID}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message{fromAccAddress, testNubID}))},
+		{"+ve", fields{fromAccAddress.String(), testNubID}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), testNubID}))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:  tt.fields.From,
 				NubID: tt.fields.NubID,
 			}
@@ -94,20 +96,17 @@ func Test_message_GetSignBytes(t *testing.T) {
 
 func Test_message_GetSigners(t *testing.T) {
 	testNubID, _, fromAccAddress := createTestInput(t)
-	type fields struct {
-		From  sdkTypes.AccAddress
-		NubID ids.ID
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   []sdkTypes.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress, testNubID}, []sdkTypes.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), testNubID}, []sdkTypes.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:  tt.fields.From,
 				NubID: tt.fields.NubID,
 			}
@@ -120,10 +119,7 @@ func Test_message_GetSigners(t *testing.T) {
 
 func Test_message_RegisterCodec(t *testing.T) {
 	testNubID, _, fromAccAddress := createTestInput(t)
-	type fields struct {
-		From  sdkTypes.AccAddress
-		NubID ids.ID
-	}
+
 	type args struct {
 		legacyAmino *codec.LegacyAmino
 	}
@@ -132,11 +128,11 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress, testNubID}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), testNubID}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			me := message{
+			me := &Message{
 				From:  tt.fields.From,
 				NubID: tt.fields.NubID,
 			}
@@ -147,20 +143,17 @@ func Test_message_RegisterCodec(t *testing.T) {
 
 func Test_message_Route(t *testing.T) {
 	testNubID, _, fromAccAddress := createTestInput(t)
-	type fields struct {
-		From  sdkTypes.AccAddress
-		NubID ids.ID
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress, testNubID}, module.Name},
+		{"+ve", fields{fromAccAddress.String(), testNubID}, module.Name},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:  tt.fields.From,
 				NubID: tt.fields.NubID,
 			}
@@ -173,20 +166,17 @@ func Test_message_Route(t *testing.T) {
 
 func Test_message_Type(t *testing.T) {
 	testNubID, _, fromAccAddress := createTestInput(t)
-	type fields struct {
-		From  sdkTypes.AccAddress
-		NubID ids.ID
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress, testNubID}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), testNubID}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:  tt.fields.From,
 				NubID: tt.fields.NubID,
 			}
@@ -199,21 +189,18 @@ func Test_message_Type(t *testing.T) {
 
 func Test_message_ValidateBasic(t *testing.T) {
 	testNubID, _, fromAccAddress := createTestInput(t)
-	type fields struct {
-		From  sdkTypes.AccAddress
-		NubID ids.ID
-	}
+
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{fromAccAddress, testNubID}, false},
+		{"+ve", fields{fromAccAddress.String(), testNubID}, false},
 		{"-ve", fields{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			message := message{
+			message := &Message{
 				From:  tt.fields.From,
 				NubID: tt.fields.NubID,
 			}
@@ -235,7 +222,7 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve", args{fromAccAddress, testNubID}, message{fromAccAddress, testNubID}},
+		{"+ve", args{fromAccAddress, testNubID}, &Message{fromAccAddress.String(), testNubID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
