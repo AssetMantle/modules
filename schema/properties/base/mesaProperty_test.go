@@ -272,7 +272,7 @@ func Test_mesaProperty_GetKey(t *testing.T) {
 	}{
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, testKey, false},
 		{"+ve nil dataID", fields{testMesaPropertyID, nil}, testKey, false},
-		{"panic nil propertyID", fields{nil, testData.GetID()}, testKey, false},
+		{"panic nil propertyID", fields{nil, testData.GetID()}, testKey, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -301,11 +301,14 @@ func Test_mesaProperty_GetType(t *testing.T) {
 		DataID ids.DataID
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   ids.StringID
+		name    string
+		fields  fields
+		want    ids.StringID
+		wantErr bool
 	}{
-		{"+ve", fields{testMesaPropertyID, testData.GetID()}, base.NewStringID("S")},
+		{"+ve", fields{testMesaPropertyID, testData.GetID()}, base.NewStringID("S"), false},
+		{"+ve nil dataID", fields{testMesaPropertyID, nil}, base.NewStringID("S"), false},
+		{"panic nil PropertyID", fields{nil, testData.GetID()}, base.NewStringID("S"), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -313,6 +316,13 @@ func Test_mesaProperty_GetType(t *testing.T) {
 				Id:     ValidatedID[*base.PropertyID](tt.fields.ID),
 				DataID: ValidatedID[*base.DataID](tt.fields.DataID),
 			}
+			defer func() {
+				r := recover()
+
+				if (r != nil) != tt.wantErr {
+					t.Errorf("error = %v, wantErr %v", r, tt.wantErr)
+				}
+			}()
 			if got := mesaProperty.GetType(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetType() = %v, want %v", got, tt.want)
 			}
