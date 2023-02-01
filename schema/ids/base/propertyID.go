@@ -24,9 +24,6 @@ func (propertyID *PropertyID) GetKey() ids.StringID {
 func (propertyID *PropertyID) GetType() ids.StringID {
 	return propertyID.TypeID
 }
-func (propertyID *PropertyID) PropertyIDString() string {
-	return stringUtilities.JoinIDStrings(propertyID.KeyID.AsString(), propertyID.TypeID.AsString())
-}
 func (propertyID *PropertyID) Bytes() []byte {
 	var Bytes []byte
 	Bytes = append(Bytes, propertyID.KeyID.Bytes()...)

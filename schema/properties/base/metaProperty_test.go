@@ -17,9 +17,16 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
+func ValidatedData(value data.Data) *baseData.AnyData {
+	if value == nil {
+		return nil
+	}
+	return value.ToAnyData().(*baseData.AnyData)
+}
+
 func createTestInput() (ids.StringID, ids.PropertyID, data.Data, properties.MetaProperty) {
 	testKey := base.NewStringID("ID")
-	testData := NewStringData("Data")
+	testData := baseData.NewStringData("Data")
 	testPropertyID := base.NewPropertyID(testKey, testData.GetType())
 	testMetaProperty := NewMetaProperty(testKey, testData)
 	return testKey, testPropertyID, testData, testMetaProperty
@@ -31,15 +38,23 @@ func TestNewEmptyMetaPropertyFromID(t *testing.T) {
 		propertyID ids.PropertyID
 	}
 	tests := []struct {
-		name string
-		args args
-		want properties.MetaProperty
+		name    string
+		args    args
+		want    properties.MetaProperty
+		wantErr bool
 	}{
-		{"+ve", args{testPropertyID}, &MetaProperty{Id: testPropertyID.(*base.PropertyID)}},
-		{"+ve with nil", args{}, &MetaProperty{}},
+		{"+ve", args{testPropertyID}, &MetaProperty{Id: testPropertyID.(*base.PropertyID)}, false},
+		{"panic with nil", args{}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			defer func() {
+				r := recover()
+
+				if (r != nil) != tt.wantErr {
+					t.Errorf("error = %v, wantErr %v", r, tt.wantErr)
+				}
+			}()
 			if got := NewEmptyMetaPropertyFromID(tt.args.propertyID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewEmptyMetaPropertyFromID() = %v, want %v", got, tt.want)
 			}
@@ -90,12 +105,12 @@ func Test_metaProperty_Compare(t *testing.T) {
 	}{
 		{"+ve", fields{testPropertyID, testData}, args{testMetaProperty}, 0},
 		{"+ve compare with metaProperty with no Data", fields{testPropertyID, testData}, args{&MetaProperty{Id: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID)}}, 0},
-		{"+ve", fields{testPropertyID, testData}, args{&MetaProperty{base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID), NewStringData("Data2").ToAnyData().(*baseData.AnyData)}}, 0}}
+		{"+ve", fields{testPropertyID, testData}, args{&MetaProperty{base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID), baseData.NewStringData("Data2").ToAnyData().(*baseData.AnyData)}}, 0}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      tt.fields.ID.(*base.PropertyID),
-				AnyData: tt.fields.Data.ToAnyData().(*baseData.AnyData),
+				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
+				AnyData: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.Compare(tt.args.listable); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
@@ -115,14 +130,14 @@ func Test_metaProperty_GetData(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		{"+ve", fields{testPropertyID, testData}, testData},
-		{"+ve with nil", fields{}, nil},
+		{"+ve", fields{testPropertyID, testData}, testData.ToAnyData()},
+		{"+ve with nil", fields{}, (*baseData.AnyData)(nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      tt.fields.ID.(*base.PropertyID),
-				AnyData: tt.fields.Data.ToAnyData().(*baseData.AnyData),
+				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
+				AnyData: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetData(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetData() = %v, want %v", got, tt.want)
@@ -147,8 +162,8 @@ func Test_metaProperty_GetDataID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      tt.fields.ID.(*base.PropertyID),
-				AnyData: tt.fields.Data.ToAnyData().(*baseData.AnyData),
+				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
+				AnyData: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetDataID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetDataID() = %v, want %v", got, tt.want)
@@ -174,8 +189,8 @@ func Test_metaProperty_GetID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      tt.fields.ID.(*base.PropertyID),
-				AnyData: tt.fields.Data.ToAnyData().(*baseData.AnyData),
+				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
+				AnyData: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetID() = %v, want %v", got, tt.want)
@@ -200,8 +215,8 @@ func Test_metaProperty_GetKey(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      tt.fields.ID.(*base.PropertyID),
-				AnyData: tt.fields.Data.ToAnyData().(*baseData.AnyData),
+				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
+				AnyData: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetKey(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetKey() = %v, want %v", got, tt.want)
@@ -226,8 +241,8 @@ func Test_metaProperty_GetType(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      tt.fields.ID.(*base.PropertyID),
-				AnyData: tt.fields.Data.ToAnyData().(*baseData.AnyData),
+				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
+				AnyData: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetType(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetType() = %v, want %v", got, tt.want)
@@ -252,8 +267,8 @@ func Test_metaProperty_RemoveData(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      tt.fields.ID.(*base.PropertyID),
-				AnyData: tt.fields.Data.ToAnyData().(*baseData.AnyData),
+				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
+				AnyData: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.ScrubData(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ScrubData() = %v, want %v", got, tt.want)
