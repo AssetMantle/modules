@@ -6,7 +6,6 @@ package revoke
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -100,7 +99,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString()}, args{cliCommand, test.TestClientContext}, transactionRequest{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString()}, false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString()}, args{cliCommand, constants.TestClientContext}, transactionRequest{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

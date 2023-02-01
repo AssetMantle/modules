@@ -5,7 +5,6 @@ package unprovision
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/test"
 	"reflect"
 	"testing"
 
@@ -114,7 +113,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, args{cliCommand, test.TestClientContext}, transactionRequest{cliCommand.ReadBaseReq(test.TestClientContext), cliCommand.ReadString(constants.To), cliCommand.ReadString(constants.IdentityID)}, false},
+		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, args{cliCommand, constants.TestClientContext}, transactionRequest{cliCommand.ReadBaseReq(constants.TestClientContext), cliCommand.ReadString(constants.To), cliCommand.ReadString(constants.IdentityID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
