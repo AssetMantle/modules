@@ -19,7 +19,7 @@ import (
 
 func createTestInput() (ids.StringID, ids.PropertyID, data.Data, properties.MetaProperty) {
 	testKey := base.NewStringID("ID")
-	testData := NewStringData("Data")
+	testData := baseData.NewStringData("Data")
 	testPropertyID := base.NewPropertyID(testKey, testData.GetType())
 	testMetaProperty := NewMetaProperty(testKey, testData)
 	return testKey, testPropertyID, testData, testMetaProperty
@@ -90,7 +90,7 @@ func Test_metaProperty_Compare(t *testing.T) {
 	}{
 		{"+ve", fields{testPropertyID, testData}, args{testMetaProperty}, 0},
 		{"+ve compare with metaProperty with no Data", fields{testPropertyID, testData}, args{&MetaProperty{Id: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID)}}, 0},
-		{"+ve", fields{testPropertyID, testData}, args{&MetaProperty{base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID), NewStringData("Data2").ToAnyData().(*baseData.AnyData)}}, 0}}
+		{"+ve", fields{testPropertyID, testData}, args{&MetaProperty{base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID), baseData.NewStringData("Data2").ToAnyData().(*baseData.AnyData)}}, 0}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
