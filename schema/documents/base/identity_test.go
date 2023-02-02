@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -151,7 +150,7 @@ func Test_identity_GetAuthentication(t *testing.T) {
 		fields fields
 		want   data.ListData
 	}{
-		{"+ve", fields{identity{NewDocument(classificationID, immutables, mutables)}}, base.NewListData(constants.AuthenticationProperty.GetData().(data.Data))},
+		{"+ve", fields{identity{NewDocument(classificationID, immutables, mutables)}}, constants.AuthenticationProperty.GetData().Get().(data.ListData)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

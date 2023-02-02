@@ -16,6 +16,10 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified"
 )
 
+type fields struct {
+	PropertyList *base.PropertyList
+}
+
 func TestNewMutables(t *testing.T) {
 	testMutableProperties := baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))
 	type args struct {
@@ -41,21 +45,19 @@ func TestNewMutables(t *testing.T) {
 
 func Test_mutables_GetMutablePropertyList(t *testing.T) {
 	testMutableProperties := baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))
-	type fields struct {
-		PropertyList lists.PropertyList
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
 		want   lists.PropertyList
 	}{
 		{"+ve", fields{}, base.NewPropertyList()},
-		{"+ve", fields{base.NewPropertyList(testMutableProperties)}, (&Mutables{base.NewPropertyList(testMutableProperties).(*base.PropertyList)}).PropertyList},
+		{"+ve", fields{base.NewPropertyList(testMutableProperties).(*base.PropertyList)}, (&Mutables{base.NewPropertyList(testMutableProperties).(*base.PropertyList)}).PropertyList},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mutables := &Mutables{
-				PropertyList: tt.fields.PropertyList.(*base.PropertyList),
+				PropertyList: tt.fields.PropertyList,
 			}
 			if got := mutables.GetMutablePropertyList(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetMutablePropertyList() = %v, want %v", got, tt.want)
@@ -68,9 +70,6 @@ func Test_mutables_Mutate(t *testing.T) {
 	testMutableProperties := baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))
 	testMutableProperties1 := baseProperties.NewMesaProperty(baseIDs.NewStringID("ID3"), baseData.NewStringData("MutableData"))
 
-	type fields struct {
-		PropertyList lists.PropertyList
-	}
 	type args struct {
 		propertyList []properties.Property
 	}
@@ -81,13 +80,13 @@ func Test_mutables_Mutate(t *testing.T) {
 		want   qualified.Mutables
 	}{
 		{"+ve", fields{}, args{}, &Mutables{}},
-		{"+ve mutate", fields{base.NewPropertyList(testMutableProperties)}, args{[]properties.Property{testMutableProperties1}}, (&Mutables{base.NewPropertyList(testMutableProperties).(*base.PropertyList)}).Mutate(testMutableProperties1)}, // TODO: it seems incorrect, not failing for wrong check
-		{"+ve nil mutate", fields{base.NewPropertyList(testMutableProperties)}, args{}, &Mutables{base.NewPropertyList(testMutableProperties).(*base.PropertyList)}},
+		{"+ve mutate", fields{base.NewPropertyList(testMutableProperties).(*base.PropertyList)}, args{[]properties.Property{testMutableProperties1}}, (&Mutables{base.NewPropertyList(testMutableProperties).(*base.PropertyList)}).Mutate(testMutableProperties1)}, // TODO: it seems incorrect, not failing for wrong check
+		{"+ve nil mutate", fields{base.NewPropertyList(testMutableProperties).(*base.PropertyList)}, args{}, &Mutables{base.NewPropertyList(testMutableProperties).(*base.PropertyList)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mutables := &Mutables{
-				PropertyList: tt.fields.PropertyList.(*base.PropertyList),
+				PropertyList: tt.fields.PropertyList,
 			}
 			if got := mutables.Mutate(tt.args.propertyList...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Mutate() = %v, want %v", got, tt.want)

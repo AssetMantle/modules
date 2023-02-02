@@ -5,6 +5,7 @@ package base
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,20 +43,22 @@ func Test_idDataFromInterface(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    IDData
+		want    *IDData
 		wantErr assert.ErrorAssertionFunc
 	}{
-		{"+ve", args{NewIDData(baseIDs.NewStringID("Data"))}, IDData{baseIDs.NewStringID("Data").ToAnyID().(*baseIDs.AnyID)}, assert.NoError},
-		{"+ve", args{NewIDData(baseIDs.NewStringID(""))}, IDData{baseIDs.NewStringID("").ToAnyID().(*baseIDs.AnyID)}, assert.NoError},
-		{"-ve", args{baseIDs.NewStringID("Data")}, IDData{}, assert.Error},
+		{"+ve", args{NewIDData(baseIDs.NewStringID("Data"))}, &IDData{baseIDs.NewStringID("Data").ToAnyID().(*baseIDs.AnyID)}, assert.NoError},
+		{"+ve", args{NewIDData(baseIDs.NewStringID(""))}, &IDData{baseIDs.NewStringID("").ToAnyID().(*baseIDs.AnyID)}, assert.NoError},
+		{"-ve", args{baseIDs.NewStringID("Data")}, &IDData{}, assert.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := dataFromListable(tt.args.listable)
+			got, err := IDDataFromInterface(tt.args.listable)
 			if !tt.wantErr(t, err, fmt.Sprintf("idDataFromInterface(%v)", tt.args.listable)) {
 				return
 			}
-			assert.Equalf(t, tt.want, got, "idDataFromInterface(%v)", tt.args.listable)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Got() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -147,7 +150,7 @@ func Test_idData_Get(t *testing.T) {
 			idData := IDData{
 				Value: tt.fields.Value.ToAnyID().(*baseIDs.AnyID),
 			}
-			assert.Equalf(t, tt.want, idData.Get(), "Get()")
+			assert.Equalf(t, tt.want, idData.Get().Get(), "Get()")
 		})
 	}
 }
@@ -187,14 +190,14 @@ func Test_idData_GetType(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			idData := IDData{
-				Value: tt.fields.Value.(*baseIDs.AnyID),
+				Value: tt.fields.Value.ToAnyID().(*baseIDs.AnyID),
 			}
 			assert.Equalf(t, tt.want, idData.GetType(), "GetType()")
 		})
 	}
 }
 
-func Test_idData_String(t *testing.T) {
+func Test_idData_AsString(t *testing.T) {
 	type fields struct {
 		Value ids.ID
 	}
@@ -208,9 +211,9 @@ func Test_idData_String(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			idData := IDData{
-				Value: tt.fields.Value.(*baseIDs.AnyID),
+				Value: tt.fields.Value.ToAnyID().(*baseIDs.AnyID),
 			}
-			assert.Equalf(t, tt.want, idData.String(), "String()")
+			assert.Equalf(t, tt.want, idData.AsString(), "String()")
 		})
 	}
 }

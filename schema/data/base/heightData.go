@@ -6,6 +6,7 @@ package base
 import (
 	"bytes"
 	"encoding/binary"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"strconv"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -58,6 +59,14 @@ func (heightData *HeightData) ToAnyData() data.AnyData {
 		Impl: &AnyData_HeightData{
 			HeightData: heightData,
 		},
+	}
+}
+func HeightDataFromInterface(listable traits.Listable) (*HeightData, error) {
+	switch value := listable.(type) {
+	case *HeightData:
+		return value, nil
+	default:
+		return &HeightData{}, constants.MetaDataError
 	}
 }
 
