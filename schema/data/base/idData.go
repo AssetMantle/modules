@@ -5,8 +5,6 @@ package base
 
 import (
 	"bytes"
-	"github.com/AssetMantle/modules/schema/errors/constants"
-
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -50,14 +48,6 @@ func (idData *IDData) ToAnyData() data.AnyData {
 		Impl: &AnyData_IDData{
 			IDData: idData,
 		},
-	}
-}
-func IDDataFromInterface(listable traits.Listable) (*IDData, error) {
-	switch value := listable.(type) {
-	case *IDData:
-		return value, nil
-	default:
-		return &IDData{}, constants.MetaDataError
 	}
 }
 func IDDataPrototype() data.IDData {

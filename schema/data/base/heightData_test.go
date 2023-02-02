@@ -8,18 +8,14 @@ import (
 	"strconv"
 	"testing"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-
 	"github.com/AssetMantle/modules/schema/data"
 	idsConstants "github.com/AssetMantle/modules/schema/data/constants"
-	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
 	"github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	"github.com/stretchr/testify/assert"
 )
 
 type fields struct {
@@ -51,41 +47,6 @@ func TestNewHeightData(t *testing.T) {
 			}()
 			if got := NewHeightData(tt.args.value); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewHeightData() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_heightDataFromInterface(t *testing.T) {
-	type args struct {
-		listable traits.Listable
-	}
-	tests := []struct {
-		name        string
-		args        args
-		want        *HeightData
-		wantErr     bool
-		errorString string
-	}{
-
-		{"Test for empty height data", args{&HeightData{}}, &HeightData{}, false, ""},
-		{"Test for +ve int height data", args{&HeightData{baseTypes.NewHeight(100).(*baseTypes.Height)}}, &HeightData{baseTypes.NewHeight(100).(*baseTypes.Height)}, false, ""},
-		{"Test for -ve int height data", args{&HeightData{baseTypes.NewHeight(-100).(*baseTypes.Height)}}, &HeightData{baseTypes.NewHeight(-100).(*baseTypes.Height)}, false, ""},
-		{"-ve Test for Other listable Type", args{&DecData{sdkTypes.ZeroDec()}}, &HeightData{}, true, constants.MetaDataError.Error()},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := HeightDataFromInterface(tt.args.listable)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("heightDataFromInterface() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if tt.wantErr {
-				require.Error(t, err)
-				assert.Equal(t, tt.errorString, err.Error())
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("heightDataFromInterface() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

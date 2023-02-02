@@ -4,8 +4,6 @@
 package base
 
 import (
-	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -32,33 +30,6 @@ func TestNewIDData(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equalf(t, tt.want, NewIDData(tt.args.value), "NewIDData(%v)", tt.args.value)
-		})
-	}
-}
-
-func Test_idDataFromInterface(t *testing.T) {
-	type args struct {
-		listable traits.Listable
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    *IDData
-		wantErr assert.ErrorAssertionFunc
-	}{
-		{"+ve", args{NewIDData(baseIDs.NewStringID("Data"))}, &IDData{baseIDs.NewStringID("Data").ToAnyID().(*baseIDs.AnyID)}, assert.NoError},
-		{"+ve", args{NewIDData(baseIDs.NewStringID(""))}, &IDData{baseIDs.NewStringID("").ToAnyID().(*baseIDs.AnyID)}, assert.NoError},
-		{"-ve", args{baseIDs.NewStringID("Data")}, &IDData{}, assert.Error},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := IDDataFromInterface(tt.args.listable)
-			if !tt.wantErr(t, err, fmt.Sprintf("idDataFromInterface(%v)", tt.args.listable)) {
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Got() = %v, want %v", got, tt.want)
-			}
 		})
 	}
 }
