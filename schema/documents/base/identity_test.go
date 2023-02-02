@@ -110,7 +110,7 @@ func Test_identity_ProvisionAddress(t *testing.T) {
 	require.Nil(t, err)
 	fromAccAddress2, err := sdkTypes.AccAddressFromBech32("cosmos1u6xn6rv07p2yzzj2rm8st04x54xe5ur0t9nl5j")
 	require.Nil(t, err)
-	testIdentity.Document = testIdentity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), base.NewListData(testIdentity.GetAuthentication().Add(accAddressesToData([]sdkTypes.AccAddress{fromAccAddress}...)...))))
+	testIdentity.Document = testIdentity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), testIdentity.GetAuthentication().Add(accAddressesToData([]sdkTypes.AccAddress{fromAccAddress}...)...)))
 	fmt.Println("TEST:	", testIdentity.IsProvisioned(fromAccAddress))
 	type fields struct {
 		Document documents.Identity

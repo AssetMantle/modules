@@ -20,9 +20,16 @@ import (
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
+func ValidatedParameter[V *baseIDs.ClassificationID | *baseQualified.Immutables | *baseQualified.Mutables](value any) V {
+	if value == nil {
+		return nil
+	}
+	return value.(V)
+}
+
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, documents.Document) {
 	testImmutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	testMutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseData.NewListData()))))
+	testMutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData().ZeroValue())))
 	classificationID := baseIDs.NewClassificationID(testImmutables, testMutables)
 	testDocument := NewDocument(classificationID, testImmutables, testMutables)
 	return classificationID, testImmutables, testMutables, testDocument
@@ -119,16 +126,15 @@ func Test_document_GetImmutables(t *testing.T) {
 	}{
 		{"+ve", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: testImmutables.(*baseQualified.Immutables), Mutables: testMutables.(*baseQualified.Mutables)}, testImmutables},
 		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables.(*baseQualified.Immutables), Mutables: testMutables.(*baseQualified.Mutables)}, testImmutables},
-		{"+ve with nil immutables", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: nil, Mutables: testMutables.(*baseQualified.Mutables)}, nil},
+		{"+ve with nil immutables", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: nil, Mutables: testMutables.(*baseQualified.Mutables)}, (*baseQualified.Immutables)(nil)},
 		{"+ve with nil mutables", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: testImmutables.(*baseQualified.Immutables), Mutables: nil}, testImmutables},
-		{"+ve with all nil", fields{}, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			document := &Document{
-				ClassificationID: tt.fields.ClassificationID.(*baseIDs.ClassificationID),
-				Immutables:       tt.fields.Immutables.(*baseQualified.Immutables),
-				Mutables:         tt.fields.Mutables.(*baseQualified.Mutables),
+				ClassificationID: ValidatedParameter[*baseIDs.ClassificationID](tt.fields.ClassificationID),
+				Immutables:       ValidatedParameter[*baseQualified.Immutables](tt.fields.Immutables),
+				Mutables:         ValidatedParameter[*baseQualified.Mutables](tt.fields.Mutables),
 			}
 			if got := document.GetImmutables(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetImmutables() = %v, want %v", got, tt.want)
@@ -152,15 +158,15 @@ func Test_document_GetMutables(t *testing.T) {
 		{"+ve", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: testImmutables.(*baseQualified.Immutables), Mutables: testMutables.(*baseQualified.Mutables)}, testMutables},
 		{"+ve with nil classificationID", fields{ClassificationID: nil, Immutables: testImmutables.(*baseQualified.Immutables), Mutables: testMutables.(*baseQualified.Mutables)}, testMutables},
 		{"+ve with nil immutables", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: nil, Mutables: testMutables.(*baseQualified.Mutables)}, testMutables},
-		{"+ve with nil mutables", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: testImmutables.(*baseQualified.Immutables), Mutables: nil}, nil},
-		{"+ve with all nil", fields{}, nil},
+		{"+ve with nil mutables", fields{ClassificationID: classificationID.(*baseIDs.ClassificationID), Immutables: testImmutables.(*baseQualified.Immutables), Mutables: nil}, (*baseQualified.Mutables)(nil)},
+		{"+ve with all nil", fields{}, (*baseQualified.Mutables)(nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			document := &Document{
-				ClassificationID: tt.fields.ClassificationID.(*baseIDs.ClassificationID),
-				Immutables:       tt.fields.Immutables.(*baseQualified.Immutables),
-				Mutables:         tt.fields.Mutables.(*baseQualified.Mutables),
+				ClassificationID: ValidatedParameter[*baseIDs.ClassificationID](tt.fields.ClassificationID),
+				Immutables:       ValidatedParameter[*baseQualified.Immutables](tt.fields.Immutables),
+				Mutables:         ValidatedParameter[*baseQualified.Mutables](tt.fields.Mutables),
 			}
 			if got := document.GetMutables(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetMutables() = %v, want %v", got, tt.want)
@@ -208,9 +214,9 @@ func Test_document_GetProperty(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			document := &Document{
-				ClassificationID: tt.fields.ClassificationID.(*baseIDs.ClassificationID),
-				Immutables:       tt.fields.Immutables.(*baseQualified.Immutables),
-				Mutables:         tt.fields.Mutables.(*baseQualified.Mutables),
+				ClassificationID: ValidatedParameter[*baseIDs.ClassificationID](tt.fields.ClassificationID),
+				Immutables:       ValidatedParameter[*baseQualified.Immutables](tt.fields.Immutables),
+				Mutables:         ValidatedParameter[*baseQualified.Mutables](tt.fields.Mutables),
 			}
 			if tt.wantPanic {
 				require.Panics(t, func() {
@@ -253,9 +259,9 @@ func Test_document_Mutate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			document := &Document{
-				ClassificationID: tt.fields.ClassificationID.(*baseIDs.ClassificationID),
-				Immutables:       tt.fields.Immutables.(*baseQualified.Immutables),
-				Mutables:         tt.fields.Mutables.(*baseQualified.Mutables),
+				ClassificationID: ValidatedParameter[*baseIDs.ClassificationID](tt.fields.ClassificationID),
+				Immutables:       ValidatedParameter[*baseQualified.Immutables](tt.fields.Immutables),
+				Mutables:         ValidatedParameter[*baseQualified.Mutables](tt.fields.Mutables),
 			}
 			if tt.wantPanic {
 				require.Panics(t, func() {

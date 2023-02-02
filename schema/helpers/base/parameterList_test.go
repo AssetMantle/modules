@@ -15,8 +15,8 @@ import (
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
 func TestParameters(t *testing.T) {

@@ -27,16 +27,24 @@ func TestNewHeightData(t *testing.T) {
 		value types.Height
 	}
 	tests := []struct {
-		name string
-		args args
-		want data.Data
+		name    string
+		args    args
+		want    data.Data
+		wantErr bool
 	}{
-		{"+ve with nil", args{nil}, &HeightData{nil}},
-		{"Test for +ve int", args{baseTypes.NewHeight(100).(*baseTypes.Height)}, &HeightData{baseTypes.NewHeight(100).(*baseTypes.Height)}},
-		{"Test for +ve int", args{baseTypes.NewHeight(-100)}, &HeightData{baseTypes.NewHeight(-100).(*baseTypes.Height)}},
+		{"panic with nil", args{nil}, &HeightData{nil}, true},
+		{"Test for +ve int", args{baseTypes.NewHeight(100).(*baseTypes.Height)}, &HeightData{baseTypes.NewHeight(100).(*baseTypes.Height)}, false},
+		{"Test for +ve int", args{baseTypes.NewHeight(-100)}, &HeightData{baseTypes.NewHeight(-100).(*baseTypes.Height)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			defer func() {
+				r := recover()
+
+				if (r != nil) != tt.wantErr {
+					t.Errorf("error = %v, wantErr %v", r, tt.wantErr)
+				}
+			}()
 			if got := NewHeightData(tt.args.value); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewHeightData() = %v, want %v", got, tt.want)
 			}

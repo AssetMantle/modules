@@ -50,7 +50,7 @@ func (identity identity) ProvisionAddress(accAddresses ...sdkTypes.AccAddress) d
 	for _, address := range accAddressesToData(accAddresses...) {
 		accAddressList = append(accAddressList, address)
 	}
-	identity.Document = identity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(identity.GetAuthentication().Add(accAddressList...))))
+	identity.Document = identity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), identity.GetAuthentication().Add(accAddressList...)))
 	return identity
 }
 func (identity identity) UnprovisionAddress(accAddresses ...sdkTypes.AccAddress) documents.Identity {
@@ -58,7 +58,7 @@ func (identity identity) UnprovisionAddress(accAddresses ...sdkTypes.AccAddress)
 	for _, address := range accAddressesToData(accAddresses...) {
 		accAddressList = append(accAddressList, address)
 	}
-	identity.Document = identity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(identity.GetAuthentication().Remove(accAddressList...))))
+	identity.Document = identity.Document.Mutate(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), identity.GetAuthentication().Remove(accAddressList...)))
 	return identity
 }
 func accAddressesToData(accAddresses ...sdkTypes.AccAddress) []data.Data {

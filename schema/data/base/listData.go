@@ -5,6 +5,7 @@ package base
 
 import (
 	"bytes"
+	"fmt"
 	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 	"sort"
 
@@ -118,6 +119,8 @@ func listDataFromInterface(listable traits.Listable) (*ListData, error) {
 	case *ListData:
 		return value, nil
 	default:
+		x := value
+		fmt.Println(x)
 		return &ListData{}, errorConstants.MetaDataError
 	}
 }

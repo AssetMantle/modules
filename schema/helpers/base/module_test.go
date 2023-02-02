@@ -21,8 +21,8 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
 // TODO: Add grpc gateway handling for tests
