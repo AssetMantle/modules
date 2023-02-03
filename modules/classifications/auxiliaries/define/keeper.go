@@ -17,6 +17,7 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"strconv"
 )
 
@@ -45,15 +46,21 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		}
 	}
 
-	bondedImmutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(baseIDs.NewStringID("BondingAmount"), baseData.NewStringData(strconv.Itoa(totalSize*func() int {
-		for _, param := range auxiliaryKeeper.parameterList.Get() {
-			if param.GetMetaProperty().GetID().AsString() == "BondingWeightage.D" {
-				res, _ := strconv.Atoi(param.GetMetaProperty().GetData().AsString())
-				return res
-			}
-		}
-		return 0
-	}())+"stake"))))
+	bondedImmutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(baseIDs.NewStringID("BondingAmount"),
+		baseData.NewStringData(
+			func() string {
+				val1, _ := sdkTypes.NewDecFromStr(strconv.Itoa(totalSize))
+				result := val1.Mul(func() sdkTypes.Dec {
+					for _, param := range auxiliaryKeeper.parameterList.Get() {
+						if param.GetMetaProperty().GetID().AsString() == "BondingWeightage.D" {
+							res, _ := sdkTypes.NewDecFromStr(param.GetMetaProperty().GetData().AsString())
+							return res
+						}
+					}
+					return sdkTypes.ZeroDec()
+				}())
+				return result.String() + "stake"
+			}()))))
 
 	classificationID := baseIDs.NewClassificationID(bondedImmutables, auxiliaryRequest.Mutables)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(classificationID))

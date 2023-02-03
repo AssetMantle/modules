@@ -17,7 +17,7 @@ import (
 )
 
 var ID = baseIDs.NewStringID("BondingWeightage")
-var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewDecData(sdkTypes.SmallestDec())))
+var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewDecData(sdkTypes.NewDec(2))))
 
 func validator(i interface{}) error {
 	switch value := i.(type) {
