@@ -662,6 +662,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 	assetsModule := assets.Prototype().Initialize(
 		application.keys[assets.Prototype().Name()],
 		ParamsKeeper.Subspace(assets.Prototype().Name()),
+		BankKeeper,
 		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
