@@ -5,6 +5,7 @@ package define
 
 import (
 	"context"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -64,6 +65,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
+		case bankKeeper.BaseKeeper:
+			continue
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case define.Auxiliary.GetName():

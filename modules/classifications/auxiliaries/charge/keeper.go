@@ -8,6 +8,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -24,7 +25,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	mappable := mappable.GetClassification(classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID)))
 	for _, i := range mappable.GetImmutables().GetImmutablePropertyList().GetList() {
-		if i.Get().GetID().AsString() == "BondingAmount.S" {
+		if i.Get().GetID().AsString() == constants.BondingIDString {
 			coins, err := sdkTypes.ParseCoinsNormalized(i.Get().(properties.MetaProperty).GetData().Get().AsString())
 			if err != nil {
 				fmt.Println("Incorrect format: ", err.Error())
