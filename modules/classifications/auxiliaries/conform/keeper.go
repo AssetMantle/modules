@@ -5,7 +5,6 @@ package conform
 
 import (
 	"context"
-
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -30,11 +29,14 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	classification := mappable.GetClassification(Mappable)
 
 	if auxiliaryRequest.Immutables != nil {
-		if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList()) != len(classification.GetImmutables().GetImmutablePropertyList().GetList()) {
-			return newAuxiliaryResponse(errorConstants.IncorrectFormat)
-		}
+		//if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList()) != len(classification.GetImmutables().GetImmutablePropertyList().GetList()) {
+		//	return newAuxiliaryResponse(errorConstants.IncorrectFormat)
+		//}
 
 		for _, immutableProperty := range classification.GetImmutables().GetImmutablePropertyList().GetList() {
+			if immutableProperty.Get().IsMeta() && immutableProperty.Get().GetID().AsString() == "BondingAmount.S" {
+				continue
+			}
 			if property := auxiliaryRequest.Immutables.GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) != 0 && property.GetDataID().GetHashID().Compare(immutableProperty.GetDataID().GetHashID()) != 0 {
 				return newAuxiliaryResponse(errorConstants.IncorrectFormat)
 			}
