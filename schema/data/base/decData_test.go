@@ -252,7 +252,7 @@ func Test_decData_GetType(t *testing.T) {
 	}
 }
 
-func Test_decData_String(t *testing.T) {
+func Test_decData_AsString(t *testing.T) {
 	type fields struct {
 		Value sdkTypes.Dec
 	}
@@ -271,7 +271,7 @@ func Test_decData_String(t *testing.T) {
 			decData := &DecData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, decData.String(), "String()")
+			assert.Equalf(t, tt.want, decData.AsString(), "String()")
 		})
 	}
 }

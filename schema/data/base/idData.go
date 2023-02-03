@@ -5,7 +5,6 @@ package base
 
 import (
 	"bytes"
-
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -51,7 +50,6 @@ func (idData *IDData) ToAnyData() data.AnyData {
 		},
 	}
 }
-
 func IDDataPrototype() data.IDData {
 	return NewIDData(baseIDs.NewStringID(""))
 }
