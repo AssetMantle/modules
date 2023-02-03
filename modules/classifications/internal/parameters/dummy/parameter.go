@@ -16,7 +16,7 @@ import (
 	"github.com/AssetMantle/modules/schema/properties/base"
 )
 
-var ID = baseIDs.NewStringID("dummy")
+var ID = baseIDs.NewStringID("BondingWeightage")
 var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewDecData(sdkTypes.SmallestDec())))
 
 func validator(i interface{}) error {

@@ -21,7 +21,8 @@ import (
 )
 
 type auxiliaryKeeper struct {
-	mapper helpers.Mapper
+	mapper        helpers.Mapper
+	parameterList helpers.ParameterList
 }
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
@@ -44,7 +45,15 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		}
 	}
 
-	bondedImmutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(baseIDs.NewStringID("BondingAmount"), baseData.NewStringData(strconv.Itoa(totalSize)+"stake"))))
+	bondedImmutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(baseIDs.NewStringID("BondingAmount"), baseData.NewStringData(strconv.Itoa(totalSize*func() int {
+		for _, param := range auxiliaryKeeper.parameterList.Get() {
+			if param.GetMetaProperty().GetID().AsString() == "BondingWeightage.D" {
+				res, _ := strconv.Atoi(param.GetMetaProperty().GetData().AsString())
+				return res
+			}
+		}
+		return 0
+	}())+"stake"))))
 
 	classificationID := baseIDs.NewClassificationID(bondedImmutables, auxiliaryRequest.Mutables)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(classificationID))
@@ -57,8 +66,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	return newAuxiliaryResponse(classificationID, nil)
 }
 
-func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterList, _ []interface{}) helpers.Keeper {
-	return auxiliaryKeeper{mapper: mapper}
+func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterList helpers.ParameterList, _ []interface{}) helpers.Keeper {
+	return auxiliaryKeeper{mapper: mapper, parameterList: parameterList}
 }
 
 func keeperPrototype() helpers.AuxiliaryKeeper {
