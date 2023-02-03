@@ -9,7 +9,7 @@ import (
 )
 
 type Parameter interface {
-	Validate() error
+	ValidateBasic() error
 	GetMetaProperty() properties.MetaProperty
 	Mutate(data.Data) Parameter
 }
