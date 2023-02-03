@@ -11,6 +11,7 @@ import (
 // TODO URI and PropertyID Data type
 type Data interface {
 	GetID() ids.DataID
+	GetWidth() int
 
 	Unmarshal([]byte) error
 	MarshalTo([]byte) (int, error)

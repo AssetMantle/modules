@@ -25,6 +25,9 @@ func (heightData *HeightData) GetID() ids.DataID {
 func (heightData *HeightData) AsString() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
+func (heightData *HeightData) GetWidth() int {
+	return 64
+}
 func (heightData *HeightData) Compare(listable traits.Listable) int {
 	compareHeightData, err := dataFromListable(listable)
 	if err != nil {

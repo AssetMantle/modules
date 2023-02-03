@@ -72,6 +72,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
+	//TODO:Fetch classification
+	//TODO:Release coins
 	assets.Remove(mappable.NewMappable(asset))
 
 	return &Response{}, nil

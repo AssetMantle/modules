@@ -19,6 +19,9 @@ var _ data.BooleanData = (*BooleanData)(nil)
 func (booleanData *BooleanData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(booleanData)
 }
+func (boolean *BooleanData) GetWidth() int {
+	return 64
+}
 func (booleanData *BooleanData) Compare(listable traits.Listable) int {
 	compareBooleanData, err := dataFromListable(listable)
 	if err != nil {

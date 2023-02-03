@@ -26,6 +26,9 @@ func (listData *ListData) Get() []data.AnyData {
 	}
 	return anyDataList
 }
+func (listData *ListData) GetWidth() int {
+	return 64
+}
 func (listData *ListData) AsString() string {
 	dataStrings := make([]string, len(listData.DataList))
 

@@ -63,6 +63,9 @@ func (x *AnyData) ToAnyData() data.AnyData {
 func (x *AnyData) Compare(listable traits.Listable) int {
 	return x.Impl.(getter).get().Compare(listable)
 }
+func (x *AnyData) GetWidth() int {
+	return x.Impl.(getter).get().GetWidth()
+}
 
 func dataFromListable(listable traits.Listable) (data.Data, error) {
 	switch value := listable.(type) {

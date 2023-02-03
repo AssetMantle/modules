@@ -5,15 +5,21 @@ package define
 
 import (
 	"context"
-
+	"encoding/base64"
+	"fmt"
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/properties"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/utilities"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	"strconv"
 )
 
 type auxiliaryKeeper struct {
@@ -33,14 +39,24 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
-	classificationID := baseIDs.NewClassificationID(auxiliaryRequest.Immutables, auxiliaryRequest.Mutables)
+	totalSize := 0
+	for _, prop := range append(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...) {
+		if prop.IsMeta() {
+			totalSize += prop.Get().(properties.MetaProperty).GetData().GetWidth()
+		}
+	}
 
+	bondedImmutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(baseIDs.NewStringID("BondingAmount"), baseData.NewStringData(strconv.Itoa(totalSize)+"stake"))))
+
+	classificationID := baseIDs.NewClassificationID(bondedImmutables, auxiliaryRequest.Mutables)
+	x := base64.URLEncoding.EncodeToString(classificationID.Bytes())
+	fmt.Println(x)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(classificationID))
 	if classifications.Get(key.NewKey(classificationID)) != nil {
 		return newAuxiliaryResponse(classificationID, errorConstants.EntityAlreadyExists)
 	}
 
-	classifications.Add(mappable.NewMappable(base.NewClassification(auxiliaryRequest.Immutables, auxiliaryRequest.Mutables)))
+	classifications.Add(mappable.NewMappable(base.NewClassification(bondedImmutables, auxiliaryRequest.Mutables)))
 
 	return newAuxiliaryResponse(classificationID, nil)
 }
