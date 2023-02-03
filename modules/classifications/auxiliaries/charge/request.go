@@ -14,9 +14,10 @@ import (
 
 type auxiliaryRequest struct {
 	ClassificationID ids.ClassificationID
-	fromAddress      sdkTypes.AccAddress
+	address          sdkTypes.AccAddress
 	moduleName       string
 	bankKeeper       bankKeeper.Keeper
+	bondingMode      bool
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -35,11 +36,12 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress, moduleName string, bankKeeper bankKeeper.Keeper) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress, moduleName string, bankKeeper bankKeeper.Keeper, bondingMode bool) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		ClassificationID: classificationID,
-		fromAddress:      fromAddress,
+		address:          fromAddress,
 		moduleName:       moduleName,
 		bankKeeper:       bankKeeper,
+		bondingMode:      bondingMode,
 	}
 }

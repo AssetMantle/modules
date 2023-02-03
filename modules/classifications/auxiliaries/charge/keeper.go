@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
-	mappable2 "github.com/AssetMantle/modules/modules/classifications/internal/mappable"
+	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -22,20 +22,21 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.ClassificationID))
 
-	mappable := mappable2.GetClassification(classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID)))
+	mappable := mappable.GetClassification(classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID)))
 	for _, i := range mappable.GetImmutables().GetImmutablePropertyList().GetList() {
-		x := i.Get().GetID().AsString()
-		if x == "BondingAmount.S" {
-			prop := i.Get().(properties.MetaProperty)
-			dat := prop.GetData()
-			findat := dat.Get()
-			str := findat.AsString()
-			coins, err := sdkTypes.ParseCoinsNormalized(str) //i.Get().(properties.MetaProperty).GetData().Get().AsString()
+		if i.Get().GetID().AsString() == "BondingAmount.S" {
+			coins, err := sdkTypes.ParseCoinsNormalized(i.Get().(properties.MetaProperty).GetData().Get().AsString())
 			if err != nil {
-				fmt.Println("IDK")
+				fmt.Println("Incorrect format: ", err.Error())
 			}
-			if err := auxiliaryRequest.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.fromAddress, auxiliaryRequest.moduleName, coins); err != nil {
-				fmt.Println("error")
+			if auxiliaryRequest.bondingMode {
+				if err := auxiliaryRequest.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.address, auxiliaryRequest.moduleName, coins); err != nil {
+					fmt.Println("error")
+				}
+			} else {
+				if err := auxiliaryRequest.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.moduleName, auxiliaryRequest.address, coins); err != nil {
+					fmt.Println("error")
+				}
 			}
 			return newAuxiliaryResponse(i.Get().(properties.MetaProperty).GetData().AsString(), nil)
 		}

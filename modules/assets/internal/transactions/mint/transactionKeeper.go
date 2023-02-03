@@ -6,8 +6,11 @@ package mint
 import (
 	"context"
 	"fmt"
+	"github.com/AssetMantle/modules/modules/assets/internal/key"
+	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/charge"
+	"github.com/AssetMantle/modules/schema/documents/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
@@ -63,16 +66,16 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	assetID := baseIDs.NewAssetID(message.ClassificationID, immutables)
 
-	//assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(assetID))
-	//if assets.Get(key.NewKey(assetID)) != nil {
-	//	return nil, errorConstants.EntityAlreadyExists
-	//}
+	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(assetID))
+	if assets.Get(key.NewKey(assetID)) != nil {
+		return nil, errorConstants.EntityAlreadyExists
+	}
 
-	//mutables := baseQualified.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...))
 
-	//if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); !auxiliaryResponse.IsSuccessful() {
-	//	return nil, auxiliaryResponse.GetError()
-	//}
+	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); !auxiliaryResponse.IsSuccessful() {
+		return nil, auxiliaryResponse.GetError()
+	}
 
 	split := sdkTypes.SmallestDec()
 
@@ -84,13 +87,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	response := transactionKeeper.chargeAuxiliary.GetKeeper().Help(context, charge.NewAuxiliaryRequest(message.ClassificationID, fromAddress, module.Name, transactionKeeper.bankKeeper))
+	response := transactionKeeper.chargeAuxiliary.GetKeeper().Help(context, charge.NewAuxiliaryRequest(message.ClassificationID, fromAddress, module.Name, transactionKeeper.bankKeeper, true))
 
 	if response.GetError() != nil {
 		fmt.Println("unable to charge user")
 	}
 
-	//assets.Add(mappable.NewMappable(base.NewAsset(message.ClassificationID, immutables, mutables)))
+	assets.Add(mappable.NewMappable(base.NewAsset(message.ClassificationID, immutables, mutables)))
 
 	return &Response{}, nil
 }

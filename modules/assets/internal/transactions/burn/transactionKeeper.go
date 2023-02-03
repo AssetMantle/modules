@@ -5,6 +5,10 @@ package burn
 
 import (
 	"context"
+	"fmt"
+	"github.com/AssetMantle/modules/modules/assets/internal/module"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/charge"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -28,6 +32,8 @@ type transactionKeeper struct {
 	maintainAuxiliary     helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
+	chargeAuxiliary       helpers.Auxiliary
+	bankKeeper            bankKeeper.Keeper
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -72,8 +78,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	//TODO:Fetch classification
-	//TODO:Release coins
+	response := transactionKeeper.chargeAuxiliary.GetKeeper().Help(context, charge.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress, module.Name, transactionKeeper.bankKeeper, false))
+
+	if response.GetError() != nil {
+		fmt.Println("unable to refund user")
+	}
+
 	assets.Remove(mappable.NewMappable(asset))
 
 	return &Response{}, nil
@@ -84,6 +94,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
+		case bankKeeper.Keeper:
+			transactionKeeper.bankKeeper = value
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case renumerate.Auxiliary.GetName():
@@ -94,6 +106,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.supplementAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
+			case charge.Auxiliary.GetName():
+				transactionKeeper.chargeAuxiliary = value
 			}
 		default:
 			panic(errorConstants.UninitializedUsage)

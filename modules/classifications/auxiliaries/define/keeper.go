@@ -5,8 +5,6 @@ package define
 
 import (
 	"context"
-	"encoding/base64"
-	"fmt"
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
@@ -49,8 +47,6 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	bondedImmutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(baseIDs.NewStringID("BondingAmount"), baseData.NewStringData(strconv.Itoa(totalSize)+"stake"))))
 
 	classificationID := baseIDs.NewClassificationID(bondedImmutables, auxiliaryRequest.Mutables)
-	x := base64.URLEncoding.EncodeToString(classificationID.Bytes())
-	fmt.Println(x)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(classificationID))
 	if classifications.Get(key.NewKey(classificationID)) != nil {
 		return newAuxiliaryResponse(classificationID, errorConstants.EntityAlreadyExists)
