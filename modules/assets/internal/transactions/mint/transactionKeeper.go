@@ -10,15 +10,12 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/charge"
-	"github.com/AssetMantle/modules/schema/documents/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -27,6 +24,8 @@ import (
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 )
 
 type transactionKeeper struct {
@@ -62,7 +61,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)...))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...), constants.BondingProperty.ToAnyProperty())...)...))
 
 	assetID := baseIDs.NewAssetID(message.ClassificationID, immutables)
 

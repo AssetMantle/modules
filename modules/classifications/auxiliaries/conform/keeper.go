@@ -29,9 +29,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	classification := mappable.GetClassification(Mappable)
 
 	if auxiliaryRequest.Immutables != nil {
-		//if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList()) != len(classification.GetImmutables().GetImmutablePropertyList().GetList()) {
-		//	return newAuxiliaryResponse(errorConstants.IncorrectFormat)
-		//}
+		if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList()) != len(classification.GetImmutables().GetImmutablePropertyList().GetList()) {
+			return newAuxiliaryResponse(errorConstants.IncorrectFormat)
+		}
 
 		for _, immutableProperty := range classification.GetImmutables().GetImmutablePropertyList().GetList() {
 			if immutableProperty.Get().IsMeta() && immutableProperty.Get().GetID().AsString() == "BondingAmount.S" {
