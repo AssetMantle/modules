@@ -264,7 +264,7 @@ func Test_parameter_Validate(t *testing.T) {
 				ID:   tt.fields.ID.(*baseIDs.StringID),
 				Data: tt.fields.Data.ToAnyData().(*baseData.AnyData),
 			}
-			if err := parameter.Validate(); (err != nil) != tt.wantErr {
+			if err := parameter.ValidateBasic(); (err != nil) != tt.wantErr {
 				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

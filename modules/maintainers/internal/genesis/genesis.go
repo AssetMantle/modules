@@ -37,7 +37,7 @@ func (genesis *Genesis) Validate() error {
 			return constants.InvalidParameter
 		}
 
-		if err := parameter.Validate(); err != nil {
+		if err := parameter.ValidateBasic(); err != nil {
 			return err
 		}
 	}

@@ -56,8 +56,8 @@ func TestModule(t *testing.T) {
 
 	codec := CodecPrototype()
 
-	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test") // .WithKeyTable(parametersPrototype().GetKeyTable())
-	// subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), parametersPrototype())
+	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test") // .WithKeyTable(parameterListPrototype().GetKeyTable())
+	// subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), parameterListPrototype())
 	Module := NewModule("test", 1, auxiliariesPrototype, blockPrototype, genesisPrototype, nil,
 		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype).Initialize(storeKey, subspace).(module)
 

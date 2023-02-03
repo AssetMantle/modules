@@ -10,5 +10,5 @@ import (
 )
 
 func Prototype() helpers.ParameterList {
-	return baseHelpers.NewParameterList(dummy.Parameter)
+	return baseHelpers.NewParameterList(dummy.ValidatableParameter)
 }

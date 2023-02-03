@@ -9,48 +9,42 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type parameterList struct {
-	parameters     []helpers.Parameter
-	paramsSubspace paramsTypes.Subspace
+	validatableParameters []helpers.ValidatableParameter
+	paramsSubspace        paramsTypes.Subspace
 }
 
 var _ helpers.ParameterList = (*parameterList)(nil)
 
 func (parameterList parameterList) Get() []helpers.Parameter {
-	return parameterList.parameters
+	parameters := make([]helpers.Parameter, len(parameterList.validatableParameters))
+	for i, validatableParameter := range parameterList.validatableParameters {
+		parameters[i] = validatableParameter.GetParameter()
+	}
+	return parameters
 }
 func (parameterList parameterList) Fetch(context context.Context) helpers.ParameterList {
-	for i, parameter := range parameterList.parameters {
+	for i, validatableParameter := range parameterList.validatableParameters {
 		var anyData data.AnyData
-		parameterList.paramsSubspace.Get(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), &anyData)
-		parameterList.parameters[i] = parameter.Mutate(anyData)
+		parameterList.paramsSubspace.Get(sdkTypes.UnwrapSDKContext(context), validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes(), &anyData)
+		parameterList.validatableParameters[i] = validatableParameter.Mutate(anyData)
 	}
 
 	return parameterList
 }
 func (parameterList parameterList) Set(context context.Context, parameters ...helpers.Parameter) {
-	parameterList.parameters = parameters
-	for _, parameter := range parameterList.parameters {
+	for _, parameter := range parameters {
 		parameterList.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData())
 	}
 }
 func (parameterList parameterList) ParamSetPairs() paramsTypes.ParamSetPairs {
-	paramSetPairList := make([]paramsTypes.ParamSetPair, len(parameterList.parameters))
+	paramSetPairList := make([]paramsTypes.ParamSetPair, len(parameterList.validatableParameters))
 
-	for i, parameter := range parameterList.parameters {
-		validator := func(i interface{}) error {
-			switch value := i.(type) {
-			case helpers.Parameter:
-				return value.Validate()
-			default:
-				return constants.InvalidParameter
-			}
-		}
-		paramSetPairList[i] = paramsTypes.NewParamSetPair(parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData(), validator)
+	for i, validatableParameter := range parameterList.validatableParameters {
+		paramSetPairList[i] = paramsTypes.NewParamSetPair(validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes(), validatableParameter.GetParameter().GetMetaProperty().GetData(), validatableParameter.GetValidator())
 	}
 
 	return paramSetPairList
@@ -63,8 +57,8 @@ func (parameterList parameterList) Initialize(subspace paramsTypes.Subspace) hel
 	return parameterList
 }
 
-func NewParameterList(parameters ...helpers.Parameter) helpers.ParameterList {
+func NewParameterList(validatableParameters ...helpers.ValidatableParameter) helpers.ParameterList {
 	return parameterList{
-		parameters: parameters,
+		validatableParameters: validatableParameters,
 	}
 }
