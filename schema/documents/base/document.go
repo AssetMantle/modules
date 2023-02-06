@@ -12,12 +12,6 @@ import (
 	"github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-// type document struct {
-//	ids.ClassificationID
-//	qualified.Immutables
-//	qualified.Mutables
-// }
-
 var _ documents.Document = (*Document)(nil)
 
 func (document *Document) Get() documents.Document {
