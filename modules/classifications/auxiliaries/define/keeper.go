@@ -15,6 +15,7 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -52,7 +53,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 				val1, _ := sdkTypes.NewDecFromStr(strconv.Itoa(totalSize))
 				result := val1.Mul(func() sdkTypes.Dec {
 					for _, param := range auxiliaryKeeper.parameterList.Get() {
-						if param.GetMetaProperty().GetID().AsString() == "BondingWeightage.D" {
+						if param.GetMetaProperty().GetID().AsString() == constants.BondingWeightageString {
 							res, _ := sdkTypes.NewDecFromStr(param.GetMetaProperty().GetData().AsString())
 							return res
 						}
