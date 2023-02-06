@@ -5,7 +5,6 @@ package mint
 
 import (
 	"context"
-	"fmt"
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
@@ -86,10 +85,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	response := transactionKeeper.chargeAuxiliary.GetKeeper().Help(context, charge.NewAuxiliaryRequest(message.ClassificationID, fromAddress, module.Name, transactionKeeper.bankKeeper, true))
-
-	if response.GetError() != nil {
-		fmt.Println("unable to charge user")
+	if auxiliaryResponse := transactionKeeper.chargeAuxiliary.GetKeeper().Help(context, charge.NewAuxiliaryRequest(message.ClassificationID, fromAddress, module.Name, transactionKeeper.bankKeeper, true)); !auxiliaryResponse.IsSuccessful() {
+		return nil, auxiliaryResponse.GetError()
 	}
 
 	assets.Add(mappable.NewMappable(base.NewAsset(message.ClassificationID, immutables, mutables)))

@@ -5,7 +5,6 @@ package burn
 
 import (
 	"context"
-	"fmt"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/charge"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -78,10 +77,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	response := transactionKeeper.chargeAuxiliary.GetKeeper().Help(context, charge.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress, module.Name, transactionKeeper.bankKeeper, false))
-
-	if response.GetError() != nil {
-		fmt.Println("unable to refund user")
+	if auxiliaryResponse := transactionKeeper.chargeAuxiliary.GetKeeper().Help(context, charge.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress, module.Name, transactionKeeper.bankKeeper, false)); !auxiliaryResponse.IsSuccessful() {
+		return nil, auxiliaryResponse.GetError()
 	}
 
 	assets.Remove(mappable.NewMappable(asset))

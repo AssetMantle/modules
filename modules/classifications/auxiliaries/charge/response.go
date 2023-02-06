@@ -38,7 +38,7 @@ func newAuxiliaryResponse(charge string, error error) helpers.AuxiliaryResponse 
 	}
 }
 
-func GetClassificationIDFromResponse(response helpers.AuxiliaryResponse) (string, error) {
+func GetChargedValueFromResponse(response helpers.AuxiliaryResponse) (string, error) {
 	switch value := response.(type) {
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
