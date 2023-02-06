@@ -4,6 +4,7 @@
 package properties
 
 import (
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -15,7 +16,10 @@ type Property interface {
 	GetType() ids.StringID
 
 	IsMeta() bool
+	ValidateBasic() error
 
 	ToAnyProperty() AnyProperty
+
+	Mutate(data.Data) Property
 	traits.Listable
 }

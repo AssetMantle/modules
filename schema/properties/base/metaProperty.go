@@ -22,7 +22,7 @@ func (metaProperty *MetaProperty) ValidateBasic() error {
 	return nil
 }
 func (metaProperty *MetaProperty) GetData() data.AnyData {
-	return metaProperty.AnyData
+	return metaProperty.Data
 }
 func (metaProperty *MetaProperty) ScrubData() properties.MesaProperty {
 	return NewMesaProperty(metaProperty.GetKey(), metaProperty.GetData())
@@ -31,20 +31,20 @@ func (metaProperty *MetaProperty) GetID() ids.PropertyID {
 	return metaProperty.ID
 }
 func (metaProperty *MetaProperty) GetDataID() ids.DataID {
-	return metaProperty.AnyData.GetID()
+	return metaProperty.Data.GetID()
 }
 func (metaProperty *MetaProperty) GetKey() ids.StringID {
 	return metaProperty.ID.GetKey()
 }
 func (metaProperty *MetaProperty) GetType() ids.StringID {
-	return metaProperty.AnyData.GetType()
+	return metaProperty.Data.GetType()
 }
 func (metaProperty *MetaProperty) IsMeta() bool {
 	return true
 }
 func (metaProperty *MetaProperty) Mutate(data data.Data) properties.Property {
-	// TODO implement me
-	panic("implement me")
+	metaProperty.Data = data.ToAnyData().(*base.AnyData)
+	return metaProperty
 }
 func (metaProperty *MetaProperty) Compare(listable traits.Listable) int {
 	// NOTE: compare property can be meta or mesa, so listable must only be cast to Property Interface
@@ -71,7 +71,7 @@ func NewMetaProperty(key ids.StringID, data data.Data) properties.MetaProperty {
 		panic(errorConstants.MetaDataError)
 	}
 	return &MetaProperty{
-		ID:      baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.PropertyID),
-		AnyData: data.ToAnyData().(*base.AnyData),
+		ID:   baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.PropertyID),
+		Data: data.ToAnyData().(*base.AnyData),
 	}
 }
