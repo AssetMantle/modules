@@ -33,7 +33,7 @@ func (listData *ListData) AsString() string {
 	dataStrings := make([]string, len(listData.DataList))
 
 	for i, datum := range listData.DataList {
-		dataStrings[i] = datum.String()
+		dataStrings[i] = datum.AsString()
 	}
 
 	return stringUtilities.JoinListStrings(dataStrings...)
@@ -135,9 +135,5 @@ func ListDataPrototype() data.ListData {
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
 func NewListData(data ...data.Data) data.ListData {
-	dataList := make([]*AnyData, 0)
-	for _, datum := range data {
-		dataList = append(dataList, datum.ToAnyData().(*AnyData))
-	}
-	return &ListData{DataList: dataList}
+	return (&ListData{}).Add(data...)
 }
