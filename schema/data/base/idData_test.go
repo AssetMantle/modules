@@ -203,7 +203,7 @@ func Test_idData_ZeroValue(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			idData := IDData{
-				Value: tt.fields.Value.(*baseIDs.AnyID),
+				Value: tt.fields.Value.ToAnyID().(*baseIDs.AnyID),
 			}
 			assert.Equalf(t, tt.want, idData.ZeroValue(), "ZeroValue()")
 		})

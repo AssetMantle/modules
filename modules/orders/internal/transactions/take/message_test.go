@@ -203,6 +203,13 @@ func Test_message_ValidateBasic(t *testing.T) {
 				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
 				OrderID:           tt.fields.OrderID,
 			}
+			defer func() {
+				r := recover()
+
+				if (r != nil) != tt.wantErr {
+					t.Errorf("error = %v, wantErr %v", r, tt.wantErr)
+				}
+			}()
 			if err := message.ValidateBasic(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
 			}
