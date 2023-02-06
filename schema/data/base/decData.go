@@ -21,7 +21,7 @@ func (decData *DecData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(decData)
 }
 func (decData *DecData) GetWidth() int {
-	return 64
+	return dataConstants.DecDataWidth
 }
 func (decData *DecData) Compare(listable traits.Listable) int {
 	compareDecData, err := dataFromListable(listable)

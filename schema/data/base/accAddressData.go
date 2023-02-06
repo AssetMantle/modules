@@ -21,7 +21,7 @@ func (accAddressData *AccAddressData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(accAddressData)
 }
 func (accAddressData *AccAddressData) GetWidth() int {
-	return 90
+	return dataConstants.AccAddressDataWidth
 }
 func (accAddressData *AccAddressData) Compare(listable traits.Listable) int {
 	compareAccAddressData, err := dataFromListable(listable)

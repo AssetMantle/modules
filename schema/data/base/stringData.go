@@ -19,7 +19,7 @@ func (stringData *StringData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(stringData)
 }
 func (stringData *StringData) GetWidth() int {
-	return 255
+	return dataConstants.StringDataWidth
 }
 func (stringData *StringData) Compare(listable traits.Listable) int {
 	compareStringData, err := dataFromListable(listable)

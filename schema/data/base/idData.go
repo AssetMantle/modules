@@ -18,7 +18,7 @@ func (idData *IDData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(idData)
 }
 func (idData *IDData) GetWidth() int {
-	return 64
+	return dataConstants.IDDataWidth
 }
 func (idData *IDData) AsString() string {
 	return idData.Value.AsString()
