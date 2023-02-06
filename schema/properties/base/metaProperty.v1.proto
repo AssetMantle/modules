@@ -8,6 +8,6 @@ import "gogoproto/gogo.proto";
 message MetaProperty {
   option (gogoproto.goproto_getters) = false;
 
-  ids.PropertyID id = 1;
+  ids.PropertyID i_d = 1;
   data.AnyData any_data = 2;
 }
