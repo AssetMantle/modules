@@ -5,6 +5,7 @@ package add
 
 import (
 	"bytes"
+	"github.com/cosmos/cosmos-sdk/client"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -28,7 +29,7 @@ func TestHandler(t *testing.T) {
 	Codec.RegisterConcrete(request{}, "request", nil)
 	Codec.RegisterConcrete(response{}, "response", nil)
 
-	handler := handler(context)
+	handler := handler(client.Context{})
 
 	viper.Set(flags.FlagKeyringBackend, keyring.BackendTest)
 	viper.Set(flags.FlagHome, t.TempDir())
@@ -37,7 +38,7 @@ func TestHandler(t *testing.T) {
 	require.NoError(t, err)
 
 	router := mux.NewRouter()
-	RegisterRESTRoutes(context, router)
+	RegisterRESTRoutes(client.Context{}, router)
 
 	t.Cleanup(func() {
 		_ = Keyring.Delete("keyName1")

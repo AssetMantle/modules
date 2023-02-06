@@ -4,6 +4,7 @@
 package define
 
 import (
+	"github.com/AssetMantle/modules/utilities/transaction"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -22,7 +23,11 @@ import (
 
 var _ helpers.Message = (*Message)(nil)
 
-func (message *Message) Type() string { return Transaction.GetName() }
+func (message *Message) GetSignBytes() []byte {
+	return sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(message))
+}
+func (message *Message) Route() string { return module.Name }
+func (message *Message) Type() string  { return Transaction.GetName() }
 func (message *Message) ValidateBasic() error {
 	var _, err = govalidator.ValidateStruct(message)
 	if err != nil {
