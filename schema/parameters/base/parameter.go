@@ -10,7 +10,7 @@ import (
 var _ helpers.Parameter = (*Parameter)(nil)
 
 func (m *Parameter) ValidateBasic() error {
-	// TODO call m.MetaProperty.Validate()
+	// TODO call m.MetaProperty.ValidateBasic()
 	return nil
 }
 func (m *Parameter) GetMetaProperty() properties.MetaProperty {
