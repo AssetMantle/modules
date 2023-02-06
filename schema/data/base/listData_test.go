@@ -34,7 +34,7 @@ func TestListDataPrototype(t *testing.T) {
 		args args
 		want data.Data
 	}{
-		{"+ve", args{}, &ListData{[]*AnyData{nil}}},
+		{"+ve", args{}, &ListData{[]*AnyData(nil)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -346,8 +346,8 @@ func Test_listData_ZeroValue(t *testing.T) {
 		fields fields
 		want   data.Data
 	}{
-		{"+ve for some id", fields{NewListData(NewStringData("Data"))}, NewListData(NewListData([]data.Data{}...))},
-		{"+ve for empty String", fields{NewListData(NewStringData(""))}, NewListData(NewListData([]data.Data{}...))},
+		{"+ve for some id", fields{NewListData(NewStringData("Data"))}, NewListData([]data.Data{}...)},
+		{"+ve for empty String", fields{NewListData(NewStringData(""))}, NewListData([]data.Data{}...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
