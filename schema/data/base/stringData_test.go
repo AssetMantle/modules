@@ -4,7 +4,6 @@
 package base
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -31,32 +30,6 @@ func TestNewStringData(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equalf(t, tt.want, NewStringData(tt.args.value), "NewStringData(%v)", tt.args.value)
-		})
-	}
-}
-
-func Test_stringDataFromInterface(t *testing.T) {
-	type args struct {
-		listable traits.Listable
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    *StringData
-		wantErr assert.ErrorAssertionFunc
-	}{
-		{"+ve data", args{&StringData{"data"}}, &StringData{"data"}, assert.NoError},
-		{"data with special char", args{&StringData{"data_!@#$%^&*("}}, &StringData{"data_!@#$%^&*("}, assert.NoError},
-		{"empty string", args{&StringData{""}}, &StringData{""}, assert.NoError},
-		{"-ve with decData", args{&DecData{}}, &StringData{}, assert.Error},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := dataFromListable(tt.args.listable)
-			if !tt.wantErr(t, err, fmt.Sprintf("stringDataFromInterface(%v)", tt.args.listable)) {
-				return
-			}
-			assert.Equalf(t, tt.want, got, "stringDataFromInterface(%v)", tt.args.listable)
 		})
 	}
 }
@@ -201,7 +174,7 @@ func Test_stringData_GetType(t *testing.T) {
 	}
 }
 
-func Test_stringData_String(t *testing.T) {
+func Test_stringData_AsString(t *testing.T) {
 	type fields struct {
 		Value string
 	}
@@ -219,7 +192,7 @@ func Test_stringData_String(t *testing.T) {
 			stringData := &StringData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, stringData.String(), "String()")
+			assert.Equalf(t, tt.want, stringData.AsString(), "String()")
 		})
 	}
 }
