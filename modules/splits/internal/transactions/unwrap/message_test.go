@@ -217,7 +217,7 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		{"+ve", args{fromAccAddress.String(), fromID, ownableID, testRate}, &Message{fromAccAddress.String(), fromID, ownableID, testRate}},
+		{"+ve", args{fromAccAddress, fromID, ownableID, testRate}, &Message{fromAccAddress.String(), fromID, ownableID, testRate}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
