@@ -35,22 +35,24 @@ func TestReadData(t *testing.T) {
 	}{
 		{"String Data", args{"S|newFact"}, base.NewStringData("newFact"), false},
 		{"-ve Unknown Data", args{"SomeRandomData"}, nil, true},
-		{"List Data", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(base.NewListData(dataList...)), false},
-		{"List Data empty list", args{"L|"}, base.NewListData(base.NewListData()), false},
+		{"List Data", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(dataList...), false},
+		{"List Data empty list", args{"L|"}, base.NewListData(), false},
 		{"Id Data", args{"I|data"}, base.NewIDData(baseIDs.NewStringID("data")), false},
 		{"Height Data", args{"H|100"}, base.NewHeightData(baseTypes.NewHeight(100)), false},
 		{"Dec Data", args{"D|100"}, base.NewDecData(sdkTypes.NewDec(100)), false},
 		{"Bool Data", args{"B|true"}, base.NewBooleanData(true), false},
 		{"AccAddress data", args{"A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"}, base.NewAccAddressData(fromAccAddress), false},
-		{"-ve String Data", args{"S|S,|newFact"}, base.NewStringData("S,|newFact"), true},
-		{"-ve List Data String", args{"L|S|,TestData,S|,Test"}, base.NewListData(base.NewListData([]data.Data{base.NewStringData("S|,TestData"), base.NewStringData("S|,Test")}...)), true},
+		{"-ve String Data", args{"S|S,|newFact"}, base.NewStringData("S,|newFact"), false},
+		{"-ve List Data String", args{"L|S|,TestData,S|,Test"}, base.NewListData([]data.Data{base.NewStringData("S|,TestData"), base.NewStringData("S|,Test")}...), true},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := ReadData(tt.args.dataString)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ReadData() error = %v, wantErr %v", err, tt.wantErr)
+			if tt.wantErr {
+				if err == nil {
+					t.Errorf("ReadData() error = %v, wantErr %v", err, tt.wantErr)
+				}
 			} else if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ReadData() got = %v, want %v", got, tt.want)
 				t.Errorf("ReadData() got = %T, want %T", got, tt.want)
