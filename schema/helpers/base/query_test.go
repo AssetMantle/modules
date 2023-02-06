@@ -4,7 +4,6 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -56,13 +55,13 @@ func TestQuery(t *testing.T) {
 	// require.Equal(t, nil, command.ExecuteContext(context.Context()))
 
 	// RESTQueryHandler
-	Query.RESTQueryHandler(constants.TestClientContext)
+	Query.RESTQueryHandler(TestClientContext)
 
 	// RPC ERROR
 	testRequest1, err := http.NewRequest("GET", "/test", nil)
 	require.Nil(t, err)
 	responseRecorder := httptest.NewRecorder()
-	Query.RESTQueryHandler(constants.TestClientContext).ServeHTTP(responseRecorder, testRequest1)
+	Query.RESTQueryHandler(TestClientContext).ServeHTTP(responseRecorder, testRequest1)
 	require.Equal(t, responseRecorder.Code, http.StatusInternalServerError)
 
 }

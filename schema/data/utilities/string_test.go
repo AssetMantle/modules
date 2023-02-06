@@ -240,7 +240,7 @@ func Test_readListData(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve nil", args{}, base.ListDataPrototype(), false},
-		{"+ve string", args{"S|1,S|2,S|3"}, base.NewListData(base.NewListData([]data.Data{base.NewStringData("1"), base.NewStringData("2"), base.NewStringData("3")}...)), false},
+		{"+ve string", args{"S|1,S|2,S|3"}, base.NewListData([]data.Data{base.NewStringData("1"), base.NewStringData("2"), base.NewStringData("3")}...), false},
 		{"-ve", args{"testData"}, base.ListDataPrototype(), true},
 	}
 	for _, tt := range tests {

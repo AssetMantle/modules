@@ -85,7 +85,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{BaseReq: testBaseRequest, FromID: fromID.AsString(), AssetID: testAssetID.AsString()}, args{cliCommand, constants.TestClientContext}, newTransactionRequest(testBaseRequest, fromID.AsString(), testAssetID.AsString()), false},
+		{"+ve", fields{BaseReq: testBaseRequest, FromID: fromID.AsString(), AssetID: testAssetID.AsString()}, args{cliCommand, base.TestClientContext}, newTransactionRequest(testBaseRequest, fromID.AsString(), testAssetID.AsString()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

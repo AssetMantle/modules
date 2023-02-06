@@ -42,9 +42,9 @@ func Test_Reveal_Request(t *testing.T) {
 	require.Equal(t, transactionRequest{BaseReq: testBaseReq, Data: data}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
-	requestFromCLI, err := transactionRequest{}.FromCLI(cliCommand, constants.TestClientContext)
+	requestFromCLI, err := transactionRequest{}.FromCLI(cliCommand, baseHelpers.TestClientContext)
 	require.Equal(t, nil, err)
-	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: constants.TestClientContext.GetFromAddress().String(), ChainID: constants.TestClientContext.ChainID, Simulate: constants.TestClientContext.Simulate}, Data: ""}, requestFromCLI)
+	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: baseHelpers.TestClientContext.GetFromAddress().String(), ChainID: baseHelpers.TestClientContext.ChainID, Simulate: baseHelpers.TestClientContext.Simulate}, Data: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
 	transactionRequestUnmarshalled, err := transactionRequest{}.FromJSON(jsonMessage)
