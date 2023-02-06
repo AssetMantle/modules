@@ -180,7 +180,7 @@ func Test_message_Type(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:    tt.fields.From),
+				From:    tt.fields.From,
 				FromID:  tt.fields.FromID,
 				AssetID: tt.fields.AssetID,
 			}
