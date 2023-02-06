@@ -1,4 +1,4 @@
 package constants
 
 const PropertyIDAndDataSeparator = ":"
-const BondingIDString = "BondingAmount.S"
+const BondingIDString = "BondingAmount.D"

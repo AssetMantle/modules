@@ -26,7 +26,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	mappable := mappable.GetClassification(classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID)))
 	for _, i := range mappable.GetImmutables().GetImmutablePropertyList().GetList() {
 		if i.Get().GetID().AsString() == constants.BondingIDString {
-			coins, err := sdkTypes.ParseCoinsNormalized(i.Get().(properties.MetaProperty).GetData().Get().AsString())
+			coins, err := sdkTypes.ParseCoinsNormalized(i.Get().(properties.MetaProperty).GetData().Get().AsString() + "stake")
 			if err != nil {
 				fmt.Println("Incorrect format: ", err.Error())
 			}

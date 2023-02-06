@@ -47,8 +47,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	}
 
 	bondedImmutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(baseIDs.NewStringID("BondingAmount"),
-		baseData.NewStringData(
-			func() string {
+		baseData.NewDecData(
+			func() sdkTypes.Dec {
 				val1, _ := sdkTypes.NewDecFromStr(strconv.Itoa(totalSize))
 				result := val1.Mul(func() sdkTypes.Dec {
 					for _, param := range auxiliaryKeeper.parameterList.Get() {
@@ -59,7 +59,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 					}
 					return sdkTypes.ZeroDec()
 				}())
-				return result.String() + "stake"
+				return result
 			}()))))
 
 	classificationID := baseIDs.NewClassificationID(bondedImmutables, auxiliaryRequest.Mutables)
