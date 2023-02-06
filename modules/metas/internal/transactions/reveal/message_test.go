@@ -25,7 +25,7 @@ func Test_Reveal_Message(t *testing.T) {
 	newData, err := utilities.ReadData(data)
 	require.Equal(t, nil, err)
 
-	testMessage := newMessage(fromAccAddress, newData)
+	testMessage := newMessage(fromAccAddress, newData).(*Message)
 	require.Equal(t, &Message{From: fromAccAddress.String(), Data: newData.ToAnyData().(*baseData.AnyData)}, testMessage)
 	require.Equal(t, module.Name, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())

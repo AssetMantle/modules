@@ -66,7 +66,7 @@ func Test_message_GetSignBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, testRate}, types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress, fromID, testRate}))},
+		{"+ve", fields{fromAccAddress.String(), fromID, testRate}, types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), fromID, testRate}))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
