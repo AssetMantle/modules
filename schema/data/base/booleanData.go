@@ -20,7 +20,7 @@ func (booleanData *BooleanData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(booleanData)
 }
 func (boolean *BooleanData) GetWidth() int {
-	return 64
+	return 1
 }
 func (booleanData *BooleanData) Compare(listable traits.Listable) int {
 	compareBooleanData, err := dataFromListable(listable)
