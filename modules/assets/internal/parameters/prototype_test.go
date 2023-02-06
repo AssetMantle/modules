@@ -19,11 +19,11 @@ func TestPrototype(t *testing.T) {
 		want      helpers.ParameterList
 		wantError error
 	}{
-		{"+ve", baseHelpers.NewParameterList(dummy.Parameter), nil},
+		{"+ve", baseHelpers.NewParameterList(dummy.ValidatableParameter), nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); tt.wantError != got.Validate() && !reflect.DeepEqual(got.String(), tt.want.String()) {
+			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Prototype() = %v, want %v", got, tt.want)
 			}
 		})
