@@ -25,16 +25,16 @@ func (mesaProperty *MesaProperty) ScrubData() properties.Property {
 }
 
 func (mesaProperty *MesaProperty) GetID() ids.PropertyID {
-	return mesaProperty.Id
+	return mesaProperty.ID
 }
 func (mesaProperty *MesaProperty) GetDataID() ids.DataID {
 	return mesaProperty.DataID
 }
 func (mesaProperty *MesaProperty) GetKey() ids.StringID {
-	return mesaProperty.Id.GetKey()
+	return mesaProperty.ID.GetKey()
 }
 func (mesaProperty *MesaProperty) GetType() ids.StringID {
-	return mesaProperty.Id.GetType()
+	return mesaProperty.ID.GetType()
 }
 func (mesaProperty *MesaProperty) GetHash() ids.HashID {
 	return mesaProperty.DataID.GetHashID()
@@ -53,15 +53,21 @@ func (mesaProperty *MesaProperty) Compare(listable traits.Listable) int {
 		return mesaProperty.GetID().Compare(compareProperty.GetID())
 	}
 }
-func (mesaProperty *MesaProperty) GetData() data.AnyData {
-	panic("This is meant to be unreachable")
-}
 func (mesaProperty *MesaProperty) ToAnyProperty() properties.AnyProperty {
 	return &AnyProperty{
 		Impl: &AnyProperty_MesaProperty{
 			MesaProperty: mesaProperty,
 		},
 	}
+}
+func (mesaProperty *MesaProperty) ValidateBasic() error {
+	// TODO implement
+	return nil
+}
+
+func (mesaProperty *MesaProperty) Mutate(data data.Data) properties.Property {
+	mesaProperty.DataID = data.GetID().(*baseIDs.DataID)
+	return mesaProperty
 }
 func propertyFromInterface(listable traits.Listable) (properties.Property, error) {
 	switch value := listable.(type) {
@@ -73,12 +79,12 @@ func propertyFromInterface(listable traits.Listable) (properties.Property, error
 }
 func NewEmptyMesaPropertyFromID(propertyID ids.PropertyID) properties.MesaProperty {
 	return &MesaProperty{
-		Id: propertyID.(*baseIDs.PropertyID),
+		ID: propertyID.(*baseIDs.PropertyID),
 	}
 }
 func NewMesaProperty(key ids.StringID, data data.Data) properties.MesaProperty {
 	return &MesaProperty{
-		Id:     baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.PropertyID),
+		ID:     baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.PropertyID),
 		DataID: data.GetID().(*baseIDs.DataID),
 	}
 }
