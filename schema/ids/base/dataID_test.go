@@ -4,12 +4,12 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"reflect"
 	"strconv"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -187,6 +187,11 @@ func Test_dataID_String(t *testing.T) {
 // mocks for decData
 type booleanData struct {
 	Value bool `json:"value"`
+}
+
+func (booleanData booleanData) GetWidth() int {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (booleanData booleanData) Unmarshal(bytes []byte) error {

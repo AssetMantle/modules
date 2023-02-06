@@ -39,7 +39,7 @@ func TestNewAuxiliary(t *testing.T) {
 }
 
 func Test_auxiliary_GetKeeper(t *testing.T) {
-	context, _, _, _ := test.SetupTest(t)
+	context, _, _, := test.SetupTest(t)
 	type fields struct {
 		name            string
 		auxiliaryKeeper helpers.AuxiliaryKeeper
@@ -97,7 +97,7 @@ func Test_auxiliary_GetName(t *testing.T) {
 }
 
 func Test_auxiliary_Initialize(t *testing.T) {
-	_, storeKey, _, _ := test.SetupTest(t)
+	_, storeKey, _, := test.SetupTest(t)
 
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 	Auxiliary := auxiliary{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}
