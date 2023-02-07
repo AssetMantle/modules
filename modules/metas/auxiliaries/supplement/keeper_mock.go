@@ -4,11 +4,13 @@
 package supplement
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type auxiliaryKeeperMock struct {
@@ -20,9 +22,16 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	propertyList := base.NewPropertyList()
+	propertyList := baseLists.NewPropertyList()
 
 	for _, property := range auxiliaryRequest.PropertyList {
+		if property.IsMeta() {
+			propertyList = propertyList.Add(property)
+		} else if property.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) == 0 {
+			propertyList = propertyList.Add(baseProperties.NewMetaProperty(property.GetKey(), utilities.GetZeroValueDataFromID(property.GetType())))
+		} else {
+			propertyList = propertyList.Add(property)
+		}
 		if property.GetID().String() == "supplementError" {
 			return newAuxiliaryResponse(nil, errorConstants.MockError)
 		}

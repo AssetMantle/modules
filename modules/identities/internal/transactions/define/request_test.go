@@ -282,8 +282,8 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{BaseReq: testBaseReq, FromID: "CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=.w1D9MwUD81HdnMXMEn-RjphrPDo76MVVH3EcgA81oVQ=", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, newMessage(fromAccAddress, testIdentity, baseLists.NewPropertyList(immutableMetaProperties), immutableProperties, baseLists.NewPropertyList(mutableMetaProperties), mutableProperties), false},
-		{"-ve wrong Identity", fields{BaseReq: testBaseReq, FromID: "Wrong.Identity", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, nil, true},
+		{"+ve", fields{BaseReq: testBaseReq, FromID: testIdentity.String(), ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, newMessage(fromAccAddress, testIdentity, baseLists.NewPropertyList(immutableMetaProperties), immutableProperties.ScrubData(), baseLists.NewPropertyList(mutableMetaProperties), mutableProperties.ScrubData()), false},
+		{"-ve wrong Identity", fields{BaseReq: testBaseReq, FromID: "WrongIdentity", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
