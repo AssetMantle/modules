@@ -18,7 +18,7 @@ var _ data.StringData = (*StringData)(nil)
 func (stringData *StringData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(stringData)
 }
-func (stringData *StringData) GetWidth() int {
+func (stringData *StringData) GetWeight() int {
 	return dataConstants.StringDataWidth
 }
 func (stringData *StringData) Compare(listable traits.Listable) int {

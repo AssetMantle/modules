@@ -40,17 +40,17 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
-	totalSize := 0
+	totalWeight := 0
 	for _, prop := range append(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...) {
 		if prop.IsMeta() {
-			totalSize += prop.Get().(properties.MetaProperty).GetData().GetWidth()
+			totalWeight += prop.Get().(properties.MetaProperty).GetData().GetWeight()
 		}
 	}
 
 	bondedImmutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(baseIDs.NewStringID("BondingAmount"),
 		baseData.NewDecData(
 			func() sdkTypes.Dec {
-				val1, _ := sdkTypes.NewDecFromStr(strconv.Itoa(totalSize))
+				val1, _ := sdkTypes.NewDecFromStr(strconv.Itoa(totalWeight))
 				result := val1.Mul(func() sdkTypes.Dec {
 					for _, param := range auxiliaryKeeper.parameterList.Get() {
 						if param.GetMetaProperty().GetID().Compare(constansts.BondingWeightageID) == 0 {
