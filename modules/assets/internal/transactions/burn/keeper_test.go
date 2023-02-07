@@ -11,7 +11,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/modules/splits/auxiliaries/burn"
+	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents/base"
@@ -36,7 +36,7 @@ import (
 )
 
 var (
-	burnAuxiliary         helpers.Auxiliary
+	renumerateAuxiliary   helpers.Auxiliary
 	maintainAuxiliary     helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
@@ -78,7 +78,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	burnAuxiliary = burn.AuxiliaryMock.Initialize(Mapper, Parameters)
+	renumerateAuxiliary = renumerate.AuxiliaryMock.Initialize(Mapper, Parameters)
 	maintainAuxiliary = maintain.AuxiliaryMock.Initialize(Mapper, Parameters)
 	supplementAuxiliary = supplement.AuxiliaryMock.Initialize(Mapper, Parameters)
 	authenticateAuxiliary = authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
@@ -110,7 +110,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	_, _, Mapper, Parameters := createTestInput(t)
 	type fields struct {
 		mapper                helpers.Mapper
-		burnAuxiliary         helpers.Auxiliary
+		renumerateAuxiliary   helpers.Auxiliary
 		maintainAuxiliary     helpers.Auxiliary
 		supplementAuxiliary   helpers.Auxiliary
 		authenticateAuxiliary helpers.Auxiliary
@@ -126,13 +126,13 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper, burnAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{Mapper, Parameters, []interface{}{}}, transactionKeeper{Mapper, burnAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}},
+		{"+ve", fields{Mapper, renumerateAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{Mapper, Parameters, []interface{}{}}, transactionKeeper{Mapper, renumerateAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
-				burnAuxiliary:         tt.fields.burnAuxiliary,
+				renumerateAuxiliary:   tt.fields.renumerateAuxiliary,
 				maintainAuxiliary:     tt.fields.maintainAuxiliary,
 				supplementAuxiliary:   tt.fields.supplementAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
@@ -158,7 +158,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	keepers.BurnKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testAsset))
 	type fields struct {
 		mapper                helpers.Mapper
-		burnAuxiliary         helpers.Auxiliary
+		renumerateAuxiliary   helpers.Auxiliary
 		maintainAuxiliary     helpers.Auxiliary
 		supplementAuxiliary   helpers.Auxiliary
 		authenticateAuxiliary helpers.Auxiliary
@@ -173,14 +173,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{Mapper, burnAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, fromID, testAssetID)}, newTransactionResponse(nil)},
-		{"+ve", fields{Mapper, burnAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, fromID, baseIDs.PrototypeAssetID())}, newTransactionResponse(errorConstants.EntityNotFound)},
+		{"+ve", fields{Mapper, renumerateAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, fromID, testAssetID)}, newTransactionResponse(nil)},
+		{"+ve", fields{Mapper, renumerateAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, fromID, baseIDs.PrototypeAssetID())}, newTransactionResponse(errorConstants.EntityNotFound)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
-				burnAuxiliary:         tt.fields.burnAuxiliary,
+				renumerateAuxiliary:   tt.fields.renumerateAuxiliary,
 				maintainAuxiliary:     tt.fields.maintainAuxiliary,
 				supplementAuxiliary:   tt.fields.supplementAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
