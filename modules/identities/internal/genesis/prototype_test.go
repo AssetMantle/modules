@@ -4,7 +4,6 @@
 package genesis
 
 import (
-	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -18,6 +17,6 @@ import (
 
 func TestPrototype(t *testing.T) {
 	require.Panics(t, func() {
-		require.Equal(t, Prototype(), baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{mappable.NewMappable(module.NubIdentity)}, parameters.Prototype().GetList()))
+		require.Equal(t, Prototype(), baseHelpers.NewGenesis(key.Prototype, mappable.Prototype, []helpers.Mappable{}, parameters.Prototype().GetList()))
 	})
 }
