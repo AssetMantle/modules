@@ -1,3 +1,6 @@
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
 package bond
 
 import (
@@ -6,6 +9,7 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/ids/constansts"
@@ -24,10 +28,14 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.ClassificationID))
 
-	mappable := mappable.GetClassification(classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID)))
-	for _, i := range mappable.GetImmutables().GetImmutablePropertyList().GetList() {
-		if i.Get().GetID().Compare(constansts.BondingPropertyID) == 0 {
-			coins, err := sdkTypes.ParseCoinsNormalized(i.Get().(properties.MetaProperty).GetData().Get().AsString() + dataConstants.Denom)
+	classification := mappable.GetClassification(classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID)))
+	if classification == nil {
+		return newAuxiliaryResponse("", errorConstants.EntityNotFound)
+	}
+
+	for _, immutableProperty := range classification.GetImmutables().GetImmutablePropertyList().GetList() {
+		if immutableProperty.Get().GetID().Compare(constansts.BondingPropertyID) == 0 {
+			coins, err := sdkTypes.ParseCoinsNormalized(immutableProperty.Get().(properties.MetaProperty).GetData().Get().AsString() + dataConstants.Denom)
 			if err != nil {
 				fmt.Println("Incorrect format: ", err.Error())
 			}
@@ -35,7 +43,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 				fmt.Println("error")
 			}
 		}
-		return newAuxiliaryResponse(i.Get().(properties.MetaProperty).GetData().AsString(), nil)
+		return newAuxiliaryResponse(immutableProperty.Get().(properties.MetaProperty).GetData().AsString(), nil)
 	}
 	return newAuxiliaryResponse("", nil)
 }
