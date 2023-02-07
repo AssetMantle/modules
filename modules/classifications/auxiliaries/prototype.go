@@ -8,6 +8,7 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
@@ -18,5 +19,6 @@ func Prototype() helpers.Auxiliaries {
 		define.Auxiliary,
 		member.Auxiliary,
 		bond.Auxiliary,
+		unbond.Auxiliary,
 	)
 }

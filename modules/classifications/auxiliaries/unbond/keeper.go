@@ -1,4 +1,4 @@
-package bond
+package unbond
 
 import (
 	"context"
@@ -31,11 +31,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 			if err != nil {
 				fmt.Println("Incorrect format: ", err.Error())
 			}
-			if err := auxiliaryRequest.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.address, auxiliaryRequest.moduleName, coins); err != nil {
+			if err := auxiliaryRequest.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.moduleName, auxiliaryRequest.address, coins); err != nil {
 				fmt.Println("error")
 			}
+			return newAuxiliaryResponse(i.Get().(properties.MetaProperty).GetData().AsString(), nil)
 		}
-		return newAuxiliaryResponse(i.Get().(properties.MetaProperty).GetData().AsString(), nil)
 	}
 	return newAuxiliaryResponse("", nil)
 }

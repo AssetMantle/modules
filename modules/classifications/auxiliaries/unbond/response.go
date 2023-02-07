@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package bond
+package unbond
 
 import (
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -38,7 +38,7 @@ func newAuxiliaryResponse(amount string, error error) helpers.AuxiliaryResponse 
 	}
 }
 
-func GetAmountdValueFromResponse(response helpers.AuxiliaryResponse) (string, error) {
+func GetChargedValueFromResponse(response helpers.AuxiliaryResponse) (string, error) {
 	switch value := response.(type) {
 	case auxiliaryResponse:
 		if value.IsSuccessful() {
