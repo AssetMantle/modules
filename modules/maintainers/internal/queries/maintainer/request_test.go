@@ -212,7 +212,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testMaintainerID}, false},
-		{"+ve with nil", fields{testMaintainerID}, false},
+		{"+ve with nil", fields{testMaintainerID1}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
