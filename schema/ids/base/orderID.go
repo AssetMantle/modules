@@ -3,6 +3,7 @@ package base
 import (
 	"bytes"
 	"strconv"
+	"strings"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -92,14 +93,14 @@ func PrototypeOrderID() ids.OrderID {
 }
 
 func ReadOrderID(orderIDString string) (ids.OrderID, error) {
-	if orderIDStringSplit := stringUtilities.SplitCompositeIDString(orderIDString); len(orderIDStringSplit) == 7 {
+	if orderIDStringSplit := stringUtilities.SplitCompositeIDString(orderIDString); len(orderIDStringSplit) == 8 {
 		if classificationID, err := ReadClassificationID(orderIDStringSplit[0]); err == nil {
 			if makerOwnableID, err := ReadOwnableID(orderIDStringSplit[1]); err == nil {
 				if takerOwnableID, err := ReadOwnableID(orderIDStringSplit[2]); err == nil {
-					if exchangeRate, err := sdkTypes.NewDecFromStr(orderIDStringSplit[3]); err == nil {
-						if creationHeightDec, err := strconv.ParseInt(orderIDStringSplit[4], 10, 64); err == nil {
-							if makerID, err := ReadIdentityID(orderIDStringSplit[5]); err == nil {
-								if hashID, err := ReadHashID(orderIDStringSplit[6]); err == nil {
+					if exchangeRate, err := sdkTypes.NewDecFromStr(strings.Join([]string{orderIDStringSplit[3], orderIDStringSplit[4]}, ".")); err == nil {
+						if creationHeightDec, err := strconv.ParseInt(orderIDStringSplit[5], 10, 64); err == nil {
+							if makerID, err := ReadIdentityID(orderIDStringSplit[6]); err == nil {
+								if hashID, err := ReadHashID(orderIDStringSplit[7]); err == nil {
 									return orderID{
 										ClassificationID: classificationID,
 										MakerOwnableID:   makerOwnableID,
