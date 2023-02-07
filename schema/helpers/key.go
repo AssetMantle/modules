@@ -3,20 +3,15 @@
 
 package helpers
 
-import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/codec/types"
-)
+import "github.com/cosmos/cosmos-sdk/codec"
 
 // Key SHOULD be derivable from the object it is referencing and SHOULD not be totally arbitrary or sequential
 type Key interface {
 	String() string
 	GenerateStoreKeyBytes() []byte
-	// TODO Check is register codec is still required
-	RegisterCodec(*codec.LegacyAmino)
+	// TODO Check is register legacyAmino is still required
+	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 	IsPartial() bool
 	// TODO ** check all key impls
 	Equals(Key) bool
-
-	RegisterInterfaces(registry types.InterfaceRegistry)
 }

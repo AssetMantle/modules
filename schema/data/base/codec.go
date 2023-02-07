@@ -4,23 +4,21 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema"
 	"github.com/cosmos/cosmos-sdk/codec"
+
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-func RegisterCodec(codec *codec.LegacyAmino) {
-	schema.RegisterModuleConcrete(codec, AccAddressData{})
-	schema.RegisterModuleConcrete(codec, BooleanData{})
-	schema.RegisterModuleConcrete(codec, DecData{})
-	schema.RegisterModuleConcrete(codec, HeightData{})
-	schema.RegisterModuleConcrete(codec, IDData{})
-	schema.RegisterModuleConcrete(codec, StringData{})
-	schema.RegisterModuleConcrete(codec, Data_AccAddressData{})
-	schema.RegisterModuleConcrete(codec, Data_BooleanData{})
-	schema.RegisterModuleConcrete(codec, Data_DecData{})
-	schema.RegisterModuleConcrete(codec, Data_HeightData{})
-	schema.RegisterModuleConcrete(codec, Data_IdData{})
-	schema.RegisterModuleConcrete(codec, Data_StringData{})
-	schema.RegisterModuleConcrete(codec, Data{})
-	codec.RegisterInterface((*isData_Impl)(nil), nil)
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AccAddressData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, BooleanData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, DecData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, HeightData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, IDData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, ListData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, StringData{})
+
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyDataList{})
+
 }

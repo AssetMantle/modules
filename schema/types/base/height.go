@@ -10,24 +10,20 @@ import (
 	"github.com/AssetMantle/modules/schema/types"
 )
 
-type height struct {
-	Value int64 `json:"height"`
-}
+var _ types.Height = (*Height)(nil)
 
-func (height height) String() string {
+func (height *Height) StringHeight() string {
 	return strconv.FormatInt(height.Get(), 10)
 }
 
-func (height height) Bytes() []byte {
+func (height *Height) Bytes() []byte {
 	Bytes := make([]byte, 8)
 	binary.LittleEndian.PutUint64(Bytes, uint64(height.Get()))
 	return Bytes
 }
 
-var _ types.Height = (*height)(nil)
-
-func (height height) Get() int64 { return height.Value }
-func (height height) Compare(compareHeight types.Height) int {
+func (height *Height) Get() int64 { return height.Value }
+func (height *Height) Compare(compareHeight types.Height) int {
 	if height.Get() > compareHeight.Get() {
 		return 1
 	} else if height.Get() < compareHeight.Get() {
@@ -42,5 +38,5 @@ func NewHeight(value int64) types.Height {
 		value = -1
 	}
 
-	return height{Value: value}
+	return &Height{Value: value}
 }

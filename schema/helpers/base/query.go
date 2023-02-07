@@ -4,47 +4,47 @@
 package base
 
 import (
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	sdkTypesModule "github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/gogo/protobuf/grpc"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"google.golang.org/grpc"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type query struct {
-	name              string
-	cliCommand        helpers.CLICommand
-	moduleName        string
-	queryKeeper       helpers.QueryKeeper
-	requestPrototype  func() helpers.QueryRequest
-	responsePrototype func() helpers.QueryResponse
-	keeperPrototype   func() helpers.QueryKeeper
-	Configurator      helpers.GRPCConfigurator
+	name                 string
+	cliCommand           helpers.CLICommand
+	moduleName           string
+	queryKeeper          helpers.QueryKeeper
+	requestPrototype     func() helpers.QueryRequest
+	responsePrototype    func() helpers.QueryResponse
+	keeperPrototype      func() helpers.QueryKeeper
+	serviceRegistrar     func(grpc.Server, helpers.QueryKeeper)
+	grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error
 }
 
 var _ helpers.Query = (*query)(nil)
 
-func (query query) GetGRPCConfigurator() helpers.GRPCConfigurator {
-	return query.Configurator
+func (query query) RegisterService(configurator sdkTypesModule.Configurator) {
+	if query.queryKeeper == nil {
+		panic(errorConstants.UninitializedUsage)
+	}
+	query.serviceRegistrar(configurator.QueryServer(), query.queryKeeper)
 }
-
-func (query query) GRPCGatewayHandler(context client.Context) (method string, pattern runtime.Pattern, handlerFunc runtime.HandlerFunc) {
-	// TODO implement me
-	panic("implement me")
+func (query query) RegisterGRPCGatewayRoute(context client.Context, serveMux *runtime.ServeMux) {
+	if err := query.grpcGatewayRegistrar(context, serveMux); err != nil {
+		panic(err)
+	}
 }
-
-func (query query) Service() (*grpc.ServiceDesc, interface{}) {
-	// TODO implement me
-	panic("implement me")
-}
-
 func (query query) GetName() string { return query.name }
 func (query query) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
@@ -86,7 +86,7 @@ func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		responseWriter.Header().Set("Content-Type", "application/json")
 
-		cliContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, context, httpRequest)
+		context, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, context, httpRequest)
 		if !ok {
 			return
 		}
@@ -97,14 +97,14 @@ func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
 			return
 		}
 
-		response, height, err := query.query(queryRequest, cliContext)
+		response, height, err := query.query(queryRequest, context)
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		cliContext = cliContext.WithHeight(height)
-		rest.PostProcessResponse(responseWriter, cliContext, response)
+		context = context.WithHeight(height)
+		rest.PostProcessResponse(responseWriter, context, response)
 	}
 }
 func (query query) Initialize(mapper helpers.Mapper, parameters helpers.Parameters, auxiliaryKeepers ...interface{}) helpers.Query {
@@ -121,14 +121,15 @@ func (query query) query(queryRequest helpers.QueryRequest, context client.Conte
 	return context.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)
 }
 
-func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, configurator helpers.GRPCConfigurator, flagList ...helpers.CLIFlag) helpers.Query {
+func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, serviceRegistrar func(grpc.Server, helpers.QueryKeeper), grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error, flagList ...helpers.CLIFlag) helpers.Query {
 	return query{
-		name:              name,
-		cliCommand:        NewCLICommand(name, short, long, flagList),
-		moduleName:        moduleName,
-		requestPrototype:  requestPrototype,
-		responsePrototype: responsePrototype,
-		keeperPrototype:   keeperPrototype,
-		Configurator:      configurator,
+		name:                 name,
+		cliCommand:           NewCLICommand(name, short, long, flagList),
+		moduleName:           moduleName,
+		requestPrototype:     requestPrototype,
+		responsePrototype:    responsePrototype,
+		keeperPrototype:      keeperPrototype,
+		serviceRegistrar:     serviceRegistrar,
+		grpcGatewayRegistrar: grpcGatewayRegistrar,
 	}
 }

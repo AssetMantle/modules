@@ -1,0 +1,11 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/hashID.v1.proto";
+import "gogoproto/gogo.proto";
+
+message MaintainerID {
+  option (gogoproto.goproto_getters) = false;
+
+  HashID hash_i_d = 1;
+}

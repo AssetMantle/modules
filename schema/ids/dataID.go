@@ -7,4 +7,5 @@ type DataID interface {
 	ID
 	GetHashID() ID
 	IsDataID()
+	DataIDString() string
 }

@@ -7,16 +7,16 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 
-	"github.com/AssetMantle/modules/modules/metas/module/common"
+	"github.com/AssetMantle/modules/modules/metas/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
-// type queryRequest struct {
+//type queryRequest struct {
 //	ids.DataID `json:"dataID" valid:"required~required field dataID missing"`
-// }
+//}
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
@@ -49,10 +49,10 @@ func (*QueryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, erro
 	}
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
-	return common.Codec.MarshalJSON(queryRequest)
+	return common.LegacyAmino.MarshalJSON(queryRequest)
 }
 func (queryRequest *QueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	if err := common.Codec.UnmarshalJSON(bytes, &queryRequest); err != nil {
+	if err := common.LegacyAmino.UnmarshalJSON(bytes, &queryRequest); err != nil {
 		return nil, err
 	}
 
@@ -69,9 +69,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 		return &QueryRequest{}
 	}
 }
-func newQueryRequest(dataID ids.ID) helpers.QueryRequest {
-	if dataID.(*baseIDs.ID).GetDataID() == nil {
-		panic("dataID is nil")
-	}
-	return &QueryRequest{DataID: dataID.(*baseIDs.ID).GetDataID()}
+func newQueryRequest(dataID ids.DataID) helpers.QueryRequest {
+	return &QueryRequest{DataID: dataID.(*baseIDs.DataID)}
 }

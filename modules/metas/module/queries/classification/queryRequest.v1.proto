@@ -1,0 +1,8 @@
+syntax = "proto3";
+package classifications.queries.classification;
+
+import "schema/ids/base/classificationID.v1.proto";
+
+message QueryRequest {
+  ids.ClassificationID classification_i_d = 1;
+}

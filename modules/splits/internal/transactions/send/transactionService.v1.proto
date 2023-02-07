@@ -1,0 +1,12 @@
+syntax = "proto3";
+package splits.transactions.send;
+
+import "google/api/annotations.proto";
+import "modules/splits/internal/transactions/send/message.v1.proto";
+import "modules/splits/internal/transactions/send/transactionResponse.v1.proto";
+
+service Transaction {
+  rpc Send(send.Message) returns (send.TransactionResponse) {
+    option (google.api.http).post = "/mantle/splits/send";
+  }
+}

@@ -2,9 +2,12 @@ package base
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
-func RegisterCodec(codec *codec.LegacyAmino) {
-	//schema.RegisterModuleConcrete(codec, metaProperty{})
-	//schema.RegisterModuleConcrete(codec, mesaProperty{})
+func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyProperty{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, MetaProperty{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, MesaProperty{})
 }

@@ -1,0 +1,22 @@
+syntax = "proto3";
+package orders.transactions.make;
+
+import "gogoproto/gogo.proto";
+
+message TransactionRequest {
+  option (gogoproto.goproto_getters) = false;
+
+  string from = 1;
+  string from_i_d = 2;
+  string classification_i_d = 3;
+  string taker_i_d = 4;
+  string maker_ownable_i_d = 5;
+  string taker_ownable_i_d = 6;
+  int64 expires_in = 7;
+  string maker_ownable_split = 8;
+  string taker_ownable_split = 9;
+  string immutable_meta_properties = 10;
+  string immutable_properties = 11;
+  string mutable_meta_properties = 12;
+  string mutable_properties = 13;
+}

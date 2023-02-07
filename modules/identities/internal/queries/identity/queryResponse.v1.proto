@@ -1,0 +1,12 @@
+syntax = "proto3";
+package identities.queries.identity;
+
+import "gogoproto/gogo.proto";
+import "modules/identities/internal/mappable/mappable.v1.proto";
+
+message QueryResponse {
+  option (gogoproto.goproto_getters) = false;
+  bool success = 1;
+  string error = 2;
+  repeated identities.Mappable list = 3;
+}

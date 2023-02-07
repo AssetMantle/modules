@@ -1,0 +1,10 @@
+syntax = "proto3";
+package data;
+
+import "gogoproto/gogo.proto";
+
+message BooleanData{
+  option (gogoproto.goproto_getters) = false;
+
+  bool value = 1;
+}

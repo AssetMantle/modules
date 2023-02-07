@@ -6,6 +6,7 @@ managed:
     except:
       - buf.build/googleapis/googleapis
       - buf.build/cosmos/gogo-proto
+      - buf.build/cosmos/cosmos-sdk
 plugins:
   - name: gocosmos
     out: .

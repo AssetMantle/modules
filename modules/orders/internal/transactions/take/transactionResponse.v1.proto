@@ -1,0 +1,12 @@
+syntax = "proto3";
+package orders.transactions.take;
+
+import "gogoproto/gogo.proto";
+
+message TransactionResponse{
+  option (gogoproto.goproto_getters) = false;
+
+  bool success = 1;
+  // TODO define error object
+  string error = 2;
+}

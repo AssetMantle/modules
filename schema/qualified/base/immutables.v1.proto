@@ -1,0 +1,10 @@
+syntax = "proto3";
+package qualified;
+
+import "schema/lists/base/propertyList.v1.proto";
+import "gogoproto/gogo.proto";
+
+message Immutables {
+  option (gogoproto.goproto_getters) = false;
+  lists.PropertyList property_list = 1;
+}

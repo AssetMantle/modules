@@ -11,4 +11,5 @@ type ID interface {
 	traits.Listable
 	String() string
 	Bytes() []byte
+	ToAnyID() AnyID
 }

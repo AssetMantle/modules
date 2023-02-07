@@ -1,0 +1,20 @@
+syntax = "proto3";
+package orders.transactions.modify;
+
+import "gogoproto/gogo.proto";
+import "schema/ids/base/classificationID.v1.proto";
+import "schema/ids/base/identityID.v1.proto";
+import "schema/ids/base/orderID.v1.proto";
+import "schema/lists/base/propertyList.v1.proto";
+import "schema/types/base/height.v1.proto";
+
+message Message {
+  string from = 1;
+  ids.IdentityID from_i_d = 2;
+  ids.OrderID order_i_d = 3;
+  string maker_ownable_split = 4 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  string taker_ownable_split = 5 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  types.Height expires_in = 6;
+  lists.PropertyList mutable_meta_properties = 7;
+  lists.PropertyList mutable_properties = 8;
+}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+package data;
+
+import "schema/data/base/anyDataList.proto";
+import "gogoproto/gogo.proto";
+
+message ListData {
+  option (gogoproto.goproto_getters) = false;
+
+  AnyDataList value = 1;
+}

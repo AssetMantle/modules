@@ -1,0 +1,11 @@
+syntax = "proto3";
+package metas.queries.meta;
+
+import "schema/ids/base/dataID.v1.proto";
+import "gogoproto/gogo.proto";
+
+message QueryRequest {
+  option (gogoproto.goproto_getters) = false;
+
+  ids.DataID data_i_d = 1;
+}

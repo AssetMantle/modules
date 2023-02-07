@@ -13,17 +13,12 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var _ data.BooleanData = (*Data_BooleanData)(nil)
+var _ data.BooleanData = (*BooleanData)(nil)
 
-func (booleanData *Data_BooleanData) Unmarshal(bytes []byte) error {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (booleanData *Data_BooleanData) GetID() ids.ID {
+func (booleanData *BooleanData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(booleanData)
 }
-func (booleanData *Data_BooleanData) Compare(listable traits.Listable) int {
+func (booleanData *BooleanData) Compare(listable traits.Listable) int {
 	compareBooleanData, err := dataFromInterface(listable)
 	if err != nil {
 		panic(err)
@@ -37,42 +32,42 @@ func (booleanData *Data_BooleanData) Compare(listable traits.Listable) int {
 		return -1
 	}
 }
-func (booleanData *Data_BooleanData) String() string {
-	return booleanData.BooleanData.String()
-}
-func (booleanData *Data_BooleanData) Bytes() []byte {
+func (booleanData *BooleanData) Bytes() []byte {
 	if booleanData.Get() {
 		return []byte{0x1}
 	}
 	return []byte{0x0}
 }
-func (booleanData *Data_BooleanData) GetType() ids.ID {
+func (booleanData *BooleanData) GetType() ids.StringID {
 	return dataConstants.BooleanDataID
 }
-func (booleanData *Data_BooleanData) ZeroValue() data.Data {
+func (booleanData *BooleanData) ZeroValue() data.Data {
 	return NewBooleanData(false)
 }
-func (booleanData *Data_BooleanData) GenerateHashID() ids.ID {
+func (booleanData *BooleanData) GenerateHashID() ids.HashID {
 	if booleanData.Compare(booleanData.ZeroValue()) == 0 {
 		return baseIDs.GenerateHashID()
 	}
 
 	return baseIDs.GenerateHashID(booleanData.Bytes())
 }
-func (booleanData *Data_BooleanData) Get() bool {
-	return booleanData.BooleanData.Value
+func (booleanData *BooleanData) Get() bool {
+	return booleanData.Value
+}
+func (booleanData *BooleanData) ToAnyData() data.AnyData {
+	return &AnyData{
+		Impl: &AnyData_BooleanData{
+			BooleanData: booleanData,
+		},
+	}
 }
 
 func BooleanDataPrototype() data.Data {
-	return (&Data_BooleanData{}).ZeroValue()
+	return &BooleanData{}
 }
 
 func NewBooleanData(value bool) data.Data {
-	return &Data{
-		Impl: &Data_BooleanData{
-			BooleanData: &BooleanData{
-				Value: value,
-			},
-		},
+	return &BooleanData{
+		Value: value,
 	}
 }

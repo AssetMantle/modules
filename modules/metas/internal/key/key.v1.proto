@@ -1,0 +1,8 @@
+syntax = "proto3";
+package metas;
+
+import "schema/ids/base/dataID.v1.proto";
+
+message Key {
+  ids.DataID data_i_d = 1;
+}

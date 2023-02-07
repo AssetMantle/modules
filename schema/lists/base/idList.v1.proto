@@ -1,0 +1,11 @@
+syntax = "proto3";
+package lists;
+
+import "schema/ids/base/anyID.v1.proto";
+import "gogoproto/gogo.proto";
+
+message IDList {
+  option (gogoproto.goproto_getters) = false;
+
+  repeated ids.AnyID i_d_list = 1;
+}
