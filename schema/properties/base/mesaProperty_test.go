@@ -4,7 +4,10 @@
 package base
 
 import (
+	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -329,5 +332,57 @@ func Test_mesaProperty_IsMeta(t *testing.T) {
 				t.Errorf("IsMeta() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+// MOCKS
+type stringData struct {
+	Value string `json:"value"`
+}
+
+var _ data.StringData = (*stringData)(nil)
+
+func (stringData stringData) GetID() ids.DataID {
+	return base.NewDataID(stringData)
+}
+func (stringData stringData) Compare(listable traits.Listable) int {
+	compareStringData, err := stringDataFromInterface(listable)
+	if err != nil {
+		panic(err)
+	}
+
+	return strings.Compare(stringData.Value, compareStringData.Value)
+}
+func (stringData stringData) String() string {
+	return stringData.Value
+}
+func (stringData stringData) Bytes() []byte {
+	return []byte(stringData.Value)
+}
+func (stringData stringData) GetType() ids.StringID {
+	return dataConstants.StringDataID
+}
+func (stringData stringData) ZeroValue() data.Data {
+	return NewStringData("")
+}
+func (stringData stringData) GenerateHashID() ids.HashID {
+	return base.GenerateHashID(stringData.Bytes())
+}
+func (stringData stringData) Get() string {
+	return stringData.Value
+}
+
+func stringDataFromInterface(listable traits.Listable) (stringData, error) {
+	switch value := listable.(type) {
+	case stringData:
+		return value, nil
+	default:
+		return stringData{}, constants.MetaDataError
+	}
+}
+
+func NewStringData(value string) data.StringData {
+	return stringData{
+		Value: value,
 	}
 }
