@@ -6,7 +6,6 @@ package burn
 import (
 	"context"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
@@ -78,7 +77,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	if auxiliaryResponse := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress, module.Name, transactionKeeper.bankKeeper)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress, module.Name, transactionKeeper.bankKeeper)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
