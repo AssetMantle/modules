@@ -38,7 +38,7 @@ var (
 )
 
 type TestKeepers struct {
-	MutateKeeper helpers.TransactionKeeper
+	QuashKeeper helpers.TransactionKeeper
 }
 
 func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.Parameters) {
@@ -77,7 +77,7 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		MutateKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.TransactionKeeper),
+		QuashKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.TransactionKeeper),
 	}
 
 	return context, keepers, Mapper, Parameters
@@ -147,7 +147,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Nil(t, err)
 	testIdentity := base2.NewIdentity(testClassificationID, immutables, mutables)
 	testIdentity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
-	keepers.MutateKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testIdentity))
+	keepers.QuashKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testIdentity))
 	type fields struct {
 		mapper                helpers.Mapper
 		supplementAuxiliary   helpers.Auxiliary
