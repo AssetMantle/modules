@@ -37,7 +37,7 @@ func TestListDataPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equalf(t, tt.want, ListDataPrototype(), "Prototype(%v)", tt.args.value)
+			assert.Equalf(t, tt.want, PrototypeListData(), "Prototype(%v)", tt.args.value)
 		})
 	}
 }

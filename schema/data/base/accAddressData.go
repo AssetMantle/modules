@@ -10,6 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -28,7 +29,25 @@ func (accAddressData *AccAddressData) Compare(listable traits.Listable) int {
 	return bytes.Compare(accAddressData.Bytes(), compareAccAddressData.Bytes())
 }
 func (accAddressData *AccAddressData) AsString() string {
-	return sdkTypes.AccAddress(accAddressData.Value).String()
+	return joinDataTypeAndValueStrings(accAddressData.GetType().AsString(), sdkTypes.AccAddress(accAddressData.Value).String())
+}
+func (accAddressData *AccAddressData) FromString(dataTypeAndValueString string) (data.Data, error) {
+	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
+
+	if dataTypeString != accAddressData.GetType().AsString() {
+		return PrototypeAccAddressData(), constants.IncorrectFormat
+	}
+
+	if dataString == "" {
+		return PrototypeAccAddressData(), nil
+	}
+
+	accAddress, err := sdkTypes.AccAddressFromBech32(dataString)
+	if err != nil {
+		return PrototypeAccAddressData(), err
+	}
+
+	return NewAccAddressData(accAddress), nil
 }
 func (accAddressData *AccAddressData) Bytes() []byte {
 	return sdkTypes.AccAddress(accAddressData.Value).Bytes()
@@ -37,7 +56,7 @@ func (accAddressData *AccAddressData) GetType() ids.StringID {
 	return dataConstants.AccAddressDataID
 }
 func (accAddressData *AccAddressData) ZeroValue() data.Data {
-	return AccAddressDataPrototype()
+	return PrototypeAccAddressData()
 }
 func (accAddressData *AccAddressData) GenerateHashID() ids.HashID {
 	if accAddressData.Compare(accAddressData.ZeroValue()) == 0 {
@@ -57,7 +76,7 @@ func (accAddressData *AccAddressData) ToAnyData() data.AnyData {
 		}}
 }
 
-func AccAddressDataPrototype() data.Data {
+func PrototypeAccAddressData() data.Data {
 	return NewAccAddressData(sdkTypes.AccAddress{})
 }
 

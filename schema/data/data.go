@@ -15,6 +15,7 @@ type Data interface {
 	Unmarshal([]byte) error
 	MarshalTo([]byte) (int, error)
 	AsString() string
+	FromString(string) (Data, error)
 	Bytes() []byte
 
 	GetType() ids.StringID
