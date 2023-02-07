@@ -32,7 +32,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	immutables := base.NewImmutables(baseLists.NewPropertyList(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...))
+	immutables := base.NewImmutables(baseLists.NewPropertyList(append(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...), constants.ExchangeRateProperty, constants.CreationHeightProperty, constants.MakerOwnableIDProperty, constants.TakerOwnableIDProperty, constants.MakerIDProperty, constants.TakerIDProperty)...))
 
 	mutables := base.NewMutables(baseLists.NewPropertyList(append(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.ExpiryHeightProperty, constants.MakerOwnableSplitProperty)...))
 
