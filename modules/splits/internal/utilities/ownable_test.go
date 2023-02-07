@@ -12,7 +12,7 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
@@ -25,7 +25,7 @@ func TestGetOwnableTotalSplitsValue(t *testing.T) {
 	testOwnerIdentityID := baseIds.NewIdentityID(classificationID, immutables)
 	testOwnableID := baseIds.NewOwnableID(baseIds.NewStringID("OwnerID"))
 	testRate := types.NewDec(10)
-	split := base.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
+	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
 	context, testMapper := createTestInput1(t)
 	testSplits := testMapper.NewCollection(context).Add(mappable.NewMappable(split))
 	type args struct {

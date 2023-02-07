@@ -14,7 +14,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types/base"
+	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -235,7 +235,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, Mapper, Parameters, supplyKeeper := createTestInput(t)
 	testRate1 := sdkTypes.NewCoins(sdkTypes.NewInt64Coin("stake", 1))
 	testOwnableID := baseIds.NewOwnableID(baseIds.NewStringID("stake"))
-	split := base.NewSplit(fromID, testOwnableID, sdkTypes.NewDec(1))
+	split := baseTypes.NewSplit(fromID, testOwnableID, sdkTypes.NewDec(1))
 	keepers.WrapKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
 	type fields struct {
 		mapper                helpers.Mapper
