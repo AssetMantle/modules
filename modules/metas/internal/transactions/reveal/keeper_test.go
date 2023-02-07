@@ -4,7 +4,6 @@
 package reveal
 
 import (
-	"github.com/AssetMantle/modules/schema/data/utilities"
 	"reflect"
 	"testing"
 
@@ -17,6 +16,8 @@ import (
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/schema/data/utilities"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"

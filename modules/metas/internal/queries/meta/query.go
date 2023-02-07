@@ -20,5 +20,5 @@ var Query = baseHelpers.NewQuery(
 	responsePrototype,
 	keeperPrototype,
 
-	constants.MetaID,
+	constants.DataID,
 )

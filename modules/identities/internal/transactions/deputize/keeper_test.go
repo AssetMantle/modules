@@ -12,11 +12,11 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/deputize"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/documents/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	base3 "github.com/AssetMantle/modules/schema/ids/base"
-	base2 "github.com/AssetMantle/modules/schema/lists/base"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -143,16 +143,16 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := types.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
-	immutableMetaProperties := base2.NewPropertyList(baseProperties.NewMetaProperty(base3.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
-	maintainedProperties := base2.NewPropertyList(baseProperties.NewMesaProperty(base3.NewStringID("deputize"), baseData.NewListData(base2.NewDataList())))
-	mutableMetaProperties := base2.NewPropertyList(baseProperties.NewMetaProperty(base3.NewStringID("authentication"), baseData.NewListData(base2.NewDataList())))
+	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
+	maintainedProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("deputize"), baseData.NewListData(baseLists.NewDataList())))
+	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
 	immutables := baseQualified.NewImmutables(immutableMetaProperties)
 	mutables := baseQualified.NewMutables(mutableMetaProperties)
-	classificationID := base3.NewClassificationID(immutables, mutables)
-	identity := base.NewIdentity(classificationID, immutables, mutables)
+	classificationID := baseIds.NewClassificationID(immutables, mutables)
+	identity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 	identity = identity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
-	fromIdentityID := base3.NewIdentityID(classificationID, immutables)
-	toIdentityID := base3.NewIdentityID(classificationID, immutables)
+	fromIdentityID := baseIds.NewIdentityID(classificationID, immutables)
+	toIdentityID := baseIds.NewIdentityID(classificationID, immutables)
 	keepers.DeputizeKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(identity))
 	type fields struct {
 		mapper                helpers.Mapper

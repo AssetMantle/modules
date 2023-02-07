@@ -13,17 +13,17 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/base"
+	baseIds "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 func createTestInput() ids.IdentityID {
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(base.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(base.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := base.NewClassificationID(immutables, mutables)
-	testIdentity := base.NewIdentityID(classificationID, immutables)
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID := baseIds.NewClassificationID(immutables, mutables)
+	testIdentity := baseIds.NewIdentityID(classificationID, immutables)
 
 	return testIdentity
 }
@@ -82,7 +82,7 @@ func Test_keyFromInterface(t *testing.T) {
 		// TODO: Add test cases.
 		{"+ve", args{}, key{}, true},
 		{"+ve", args{NewKey(testIdentity)}, key{testIdentity}, false},
-		{"-ve", args{base.NewStringID("StringID")}, key{}, true},
+		{"-ve", args{baseIds.NewStringID("StringID")}, key{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
