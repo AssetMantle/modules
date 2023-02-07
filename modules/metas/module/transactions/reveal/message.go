@@ -47,7 +47,7 @@ func (message *Message) GetSignBytes() []byte {
 	return sdkTypes.MustSortJSON(codecUtilities.MakeMessageCodec(messagePrototype).MustMarshalJSON(message))
 }
 func (message *Message) GetSigners() []sdkTypes.AccAddress {
-	return []sdkTypes.AccAddress{sdkTypes.AccAddress(message.From)}
+	return []sdkTypes.AccAddress{sdkTypes.MustAccAddressFromBech32(message.From)}
 }
 func (*Message) RegisterCodec(codec *codec.LegacyAmino) {
 	schema.RegisterModuleConcrete(codec, &Message{})
@@ -64,7 +64,7 @@ func messagePrototype() helpers.Message {
 	return &Message{}
 }
 
-func newMessage(from []byte, data data.Data) sdkTypes.Msg {
+func newMessage(from string, data data.Data) sdkTypes.Msg {
 	return &Message{
 		From: from,
 		Data: data,

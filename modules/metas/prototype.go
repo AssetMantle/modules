@@ -4,6 +4,7 @@
 package metas
 
 import (
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries"
 	"github.com/AssetMantle/modules/modules/metas/module/block"
 	"github.com/AssetMantle/modules/modules/metas/module/genesis"
 	"github.com/AssetMantle/modules/modules/metas/module/invariants"
@@ -20,7 +21,7 @@ func Prototype() helpers.Module {
 	return baseHelpers.NewModule(
 		module.Name,
 		1,
-		Prototypee,
+		auxiliaries.Prototype,
 		block.Prototype,
 		genesis.Prototype,
 		invariants.Prototype,
