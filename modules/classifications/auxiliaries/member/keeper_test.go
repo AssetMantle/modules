@@ -10,7 +10,7 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/documents/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
@@ -81,7 +81,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	immutables1 := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("ImmutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	classificationID1 := baseIDs.NewClassificationID(immutables1, mutables)
-	keepers.MemberKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(base.NewClassification(immutables, mutables)))
+	keepers.MemberKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewClassification(immutables, mutables)))
 	type fields struct {
 		mapper helpers.Mapper
 	}
