@@ -4,12 +4,13 @@
 package utilities
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/constansts"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	"reflect"
-	"testing"
 )
 
 func TestSetPermissions(t *testing.T) {

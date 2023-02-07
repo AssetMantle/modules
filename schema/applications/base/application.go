@@ -410,7 +410,6 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
 	)
-
 	var wasmRouter = application.BaseApp.Router()
 
 	wasmDir := filepath.Join(home, wasm.ModuleName)
@@ -517,7 +516,6 @@ func (application application) Initialize(logger log.Logger, db tendermintDB.DB,
 		crisis.ModuleName,
 		genutil.ModuleName,
 		evidence.ModuleName,
-		wasm.ModuleName,
 		assets.Prototype().Name(),
 		classifications.Prototype().Name(),
 		identities.Prototype().Name(),
