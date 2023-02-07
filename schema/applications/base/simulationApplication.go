@@ -12,6 +12,8 @@ import (
 	"github.com/AssetMantle/modules/modules/metas"
 	"github.com/AssetMantle/modules/modules/orders"
 	"github.com/AssetMantle/modules/modules/splits"
+	wasmUtilities "github.com/AssetMantle/modules/utilities/wasm"
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -40,6 +42,7 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 	"io"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/AssetMantle/modules/schema/applications"
@@ -312,6 +315,37 @@ func (simulationApplication SimulationApplication) InitializeSimulationApplicati
 
 	simulationApplication.StakingKeeper = simulationApplication.stakingKeeper
 
+	var wasmRouter = simulationApplication.BaseApp.Router()
+
+	wasmDir := filepath.Join(home, wasm.ModuleName)
+
+	wasmWrap := struct {
+		Wasm wasm.WasmConfig `mapstructure:"wasm"`
+	}{
+		Wasm: wasm.DefaultWasmConfig(),
+	}
+
+	err := viper.Unmarshal(&wasmWrap)
+	if err != nil {
+		panic("error while reading wasm config: " + err.Error())
+	}
+
+	wasmConfig := wasmWrap.Wasm
+
+	wasmKeeper := wasm.NewKeeper(
+		simulationApplication.codec,
+		simulationApplication.keys[wasm.StoreKey],
+		simulationApplication.ParamsKeeper.Subspace(wasm.DefaultParamspace),
+		simulationApplication.AccountKeeper,
+		simulationApplication.BankKeeper,
+		simulationApplication.StakingKeeper,
+		wasmRouter,
+		wasmDir,
+		wasmConfig,
+		staking.ModuleName,
+		&wasm.MessageEncoders{Custom: wasmUtilities.CustomEncoder(assets.Prototype(), classifications.Prototype(), identities.Prototype(), maintainers.Prototype(), metas.Prototype(), orders.Prototype(), splits.Prototype())},
+		nil)
+
 	govRouter := gov.NewRouter().AddRoute(
 		gov.RouterKey,
 		gov.ProposalHandler,
@@ -325,6 +359,10 @@ func (simulationApplication SimulationApplication) InitializeSimulationApplicati
 		upgrade.RouterKey,
 		upgrade.NewSoftwareUpgradeProposalHandler(simulationApplication.UpgradeKeeper),
 	)
+
+	if len(simulationApplication.enabledWasmProposalTypeList) != 0 {
+		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(wasmKeeper, simulationApplication.enabledWasmProposalTypeList))
+	}
 
 	simulationApplication.GovKeeper = gov.NewKeeper(
 		simulationApplication.codec,
@@ -357,14 +395,15 @@ func (simulationApplication SimulationApplication) InitializeSimulationApplicati
 	return &simulationApplication
 }
 
-func NewSimulationApplication(name string, moduleBasicManager module.BasicManager, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.SimulationApplication {
+func NewSimulationApplication(name string, moduleBasicManager module.BasicManager, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.SimulationApplication {
 	return &SimulationApplication{
 		Application: Application{
-			name:                       name,
-			moduleBasicManager:         moduleBasicManager,
-			codec:                      makeCodec(moduleBasicManager),
-			moduleAccountPermissions:   moduleAccountPermissions,
-			tokenReceiveAllowedModules: tokenReceiveAllowedModules,
+			name:                        name,
+			moduleBasicManager:          moduleBasicManager,
+			codec:                       makeCodec(moduleBasicManager),
+			enabledWasmProposalTypeList: enabledWasmProposalTypeList,
+			moduleAccountPermissions:    moduleAccountPermissions,
+			tokenReceiveAllowedModules:  tokenReceiveAllowedModules,
 		},
 	}
 }
