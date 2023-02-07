@@ -1,8 +1,11 @@
 syntax = "proto3";
 package meta;
 
+import "modules/metas/module/mappable/mappable.proto";
+import "gogoproto/gogo.proto";
 
 message QueryResponse{
   bool success = 1;
   string error = 2;
+  repeated mappable.Mappable list = 3;
 }

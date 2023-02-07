@@ -6,7 +6,6 @@ import (
 )
 
 type PropertyList interface {
-	Size() int
 	GetProperty(ids.PropertyID) properties.Property
 	GetList() []properties.Property
 	GetPropertyIDList() IDList
@@ -14,6 +13,6 @@ type PropertyList interface {
 	Add(...properties.Property) PropertyList
 	Remove(...properties.Property) PropertyList
 	Mutate(...properties.Property) PropertyList
-	HasRepeats() bool
+
 	ScrubData() PropertyList
 }
