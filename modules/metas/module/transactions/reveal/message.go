@@ -24,10 +24,6 @@ import (
 var _ helpers.Message = &Message{}
 var _ sdkTypes.Msg = &Message{}
 
-// func init() {
-// 	gogoproto.RegisterType((*Message)(nil), "reveal.Message")
-// 	proto.RegisterType((*Message)(nil), "reveal.Message")
-// }
 func (message *Message) RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdkTypes.Msg)(nil),
 		&Message{},
