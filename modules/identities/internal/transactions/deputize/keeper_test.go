@@ -12,7 +12,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/deputize"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/documents/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
@@ -149,7 +149,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	immutables := baseQualified.NewImmutables(immutableMetaProperties)
 	mutables := baseQualified.NewMutables(mutableMetaProperties)
 	classificationID := baseIds.NewClassificationID(immutables, mutables)
-	identity := base.NewIdentity(classificationID, immutables, mutables)
+	identity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 	identity = identity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
 	fromIdentityID := baseIds.NewIdentityID(classificationID, immutables)
 	toIdentityID := baseIds.NewIdentityID(classificationID, immutables)
