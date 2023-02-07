@@ -1,0 +1,9 @@
+syntax="proto3";
+
+import "schema/data/base/data.proto";
+
+message Mappable {
+  oneof Impl{
+    base.Data mappable = 1;
+  }
+}

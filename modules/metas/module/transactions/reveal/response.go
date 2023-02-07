@@ -13,13 +13,15 @@ func (transactionResponse *TransactionResponse) IsSuccessful() bool {
 	return transactionResponse.Success
 }
 func newTransactionResponse(error error) helpers.TransactionResponse {
-	success := true
 	if error != nil {
-		success = false
+		return &TransactionResponse{
+			Success: false,
+			Error:   error.Error(),
+		}
 	}
 
 	return &TransactionResponse{
-		Success: success,
-		Error:   error.Error(),
+		Success: true,
+		Error:   "",
 	}
 }

@@ -10,11 +10,11 @@ import "schema/data/base/stringData.proto";
 
 message Data{
   oneof impl{
-    AccAddressData accAddressData = 1;
+    AccAddressData accAddressData = 5;
     BooleanData booleanData = 2;
     DecData decData = 3;
     HeightData heightData = 4;
-    IDData idData = 5;
-    StringData stringData = 7;
+    IDData idData = 7;
+    StringData stringData = 1;
   }
 }

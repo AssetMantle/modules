@@ -5,6 +5,7 @@ package utilities
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -30,6 +31,10 @@ func MakeMessageCodec(messagePrototype func() helpers.Message) *codec.LegacyAmin
 	return Codec
 }
 
+func RegisterInterfaces(registry types.InterfaceRegistry) {
+	data.RegisterInterfaces(registry)
+}
+
 func RegisterCodec(codec *codec.LegacyAmino) {
 
 	data.RegisterCodec(codec)
@@ -40,7 +45,7 @@ func RegisterCodec(codec *codec.LegacyAmino) {
 	//
 	// errors.RegisterCodec(codec)
 	//
-	// helpers.RegisterCodec(codec)
+	helpers.RegisterCodec(codec)
 	//
 	// ids.RegisterCodec(codec)
 	// baseIDs.RegisterCodec(codec)

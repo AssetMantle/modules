@@ -4,8 +4,9 @@
 package mappable
 
 import (
-	baseData "github.com/AssetMantle/modules/schema/data/base"
+	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 
 	"github.com/AssetMantle/modules/modules/metas/module/key"
 	"github.com/AssetMantle/modules/schema"
@@ -21,14 +22,18 @@ import (
 var _ helpers.Mappable = (*Mappable)(nil)
 
 func (mappable Mappable) GetKey() helpers.Key {
-	return key.NewKey(base.GenerateDataID(mappable.Data))
+	return key.NewKey(base.GenerateDataID(mappable.Impl.(*Mappable_Data).Data))
 }
 func (Mappable) RegisterCodec(codec *codec.LegacyAmino) {
 	schema.RegisterModuleConcrete(codec, Mappable{})
 }
 
+func (m *Mappable) RegisterInterfaces(registry types.InterfaceRegistry) {
+	registry.RegisterInterface("mappable", (*helpers.Mappable)(nil), &Mappable{})
+}
+
 func NewMappable(data data.Data) helpers.Mappable {
-	return &Mappable{Data: data.(*baseData.Data)}
+	return baseHelpers.NewDataMappable(data)
 }
 
 func Prototype() helpers.Mappable {
