@@ -28,7 +28,6 @@ func TestSetPermissions(t *testing.T) {
 		args args
 		want lists.IDList
 	}{
-		// TODO: Add test cases.
 		{"+ve for can Mint", args{true, false, false, false, false, false}, idList.Add(constansts.Mint)},
 		{"+ve for can Burn", args{false, true, false, false, false, false}, idList.Add(constansts.Burn)},
 		{"+ve for can Remunerate", args{false, false, true, false, false, false}, idList.Add(constansts.Renumerate)},

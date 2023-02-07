@@ -6,14 +6,9 @@ package supplement
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	baseData "github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	"github.com/AssetMantle/modules/schema/properties/constants"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type auxiliaryKeeperMock struct {
@@ -28,16 +23,10 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request help
 	propertyList := base.NewPropertyList()
 
 	for _, property := range auxiliaryRequest.PropertyList {
-		if property.GetID().Compare(constants.BurnHeightProperty.GetID()) == 0 && property.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) == 0 {
-			return newAuxiliaryResponse(propertyList, errorConstants.MockError)
+		if property.GetID().String() == "supplementError" {
+			return newAuxiliaryResponse(nil, errorConstants.MockError)
 		}
 	}
-
-	propertyList = propertyList.Add(baseProperties.NewMetaProperty(constants.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))
-	propertyList = propertyList.Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(sdkTypes.SmallestDec())))
-	propertyList = propertyList.Add(baseProperties.NewMetaProperty(constants.TakerIDProperty.GetKey(), baseData.NewIDData(baseIDs.NewStringID("fromID"))))
-	propertyList = propertyList.Add(baseProperties.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(sdkTypes.OneDec().Quo(sdkTypes.SmallestDec()))))
-	propertyList = propertyList.Add(baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(900))))
 
 	return newAuxiliaryResponse(propertyList, nil)
 }

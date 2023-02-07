@@ -1,41 +1,38 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package maintainer
+package ownable
 
 import (
-	"reflect"
-	"testing"
-
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/modules/maintainers/internal/common"
+	"github.com/AssetMantle/modules/modules/splits/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/stretchr/testify/require"
+	"reflect"
+	"testing"
 )
 
 var (
-	testMaintainerID, _ = createTestData()
-	testMaintainerID1   = baseIds.PrototypeMaintainerID()
+	testOwnableID = baseIds.NewOwnableID(baseIds.NewStringID("OwnerID"))
 )
 
 func Test_newQueryRequest(t *testing.T) {
 	type args struct {
-		maintainerID ids.MaintainerID
+		ownableID ids.OwnableID
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve", args{testMaintainerID}, queryRequest{testMaintainerID}},
-		{"+ve with nil", args{testMaintainerID1}, queryRequest{testMaintainerID1}},
+		// TODO: Add test cases.
+		{"+ve", args{testOwnableID}, newQueryRequest(testOwnableID)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newQueryRequest(tt.args.maintainerID); !reflect.DeepEqual(got, tt.want) {
+			if got := newQueryRequest(tt.args.ownableID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newQueryRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -51,8 +48,8 @@ func Test_queryRequestFromInterface(t *testing.T) {
 		args args
 		want queryRequest
 	}{
-		{"+ve", args{newQueryRequest(testMaintainerID)}, queryRequest{testMaintainerID}},
-		{"+ve with nil", args{newQueryRequest(testMaintainerID1)}, queryRequest{testMaintainerID1}},
+		// TODO: Add test cases.
+		{"+ve", args{newQueryRequest(testOwnableID)}, newQueryRequest(testOwnableID).(queryRequest)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -64,12 +61,12 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedQuery, err := queryRequest{testMaintainerID}.Encode()
+	encodedReq, err := common.Codec.MarshalJSON(newQueryRequest(testOwnableID))
 	require.NoError(t, err)
-	encodedQuery1, err := queryRequest{testMaintainerID1}.Encode()
-	require.NoError(t, err)
+	encodedReq1, err1 := common.Codec.MarshalJSON(newQueryRequest(baseIds.PrototypeOwnableID()))
+	require.NoError(t, err1)
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		OwnableID ids.OwnableID
 	}
 	type args struct {
 		bytes []byte
@@ -81,13 +78,14 @@ func Test_queryRequest_Decode(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testMaintainerID}, args{encodedQuery}, queryRequest{testMaintainerID}, false},
-		{"+ve", fields{testMaintainerID1}, args{encodedQuery1}, queryRequest{testMaintainerID1}, false},
+		// TODO: Add test cases.
+		{"+ve", fields{testOwnableID}, args{encodedReq}, newQueryRequest(testOwnableID), false},
+		{"+ve", fields{baseIds.PrototypeOwnableID()}, args{encodedReq1}, newQueryRequest(baseIds.PrototypeOwnableID()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := queryRequest{
-				MaintainerID: tt.fields.MaintainerID,
+				OwnableID: tt.fields.OwnableID,
 			}
 			got, err := queryRequest.Decode(tt.args.bytes)
 			if (err != nil) != tt.wantErr {
@@ -102,12 +100,12 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := common.Codec.MarshalJSON(queryRequest{testMaintainerID})
+	encodedReq, err := common.Codec.MarshalJSON(newQueryRequest(testOwnableID))
 	require.NoError(t, err)
-	encodedQuery1, err := common.Codec.MarshalJSON(queryRequest{testMaintainerID1})
-	require.NoError(t, err)
+	encodedReq1, err1 := common.Codec.MarshalJSON(newQueryRequest(baseIds.PrototypeOwnableID()))
+	require.NoError(t, err1)
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		OwnableID ids.OwnableID
 	}
 	tests := []struct {
 		name    string
@@ -115,13 +113,14 @@ func Test_queryRequest_Encode(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{"+ve", fields{testMaintainerID}, encodedQuery, false},
-		{"+ve with nil", fields{testMaintainerID1}, encodedQuery1, false},
+		// TODO: Add test cases.
+		{"+ve", fields{testOwnableID}, encodedReq, false},
+		{"+ve", fields{baseIds.PrototypeOwnableID()}, encodedReq1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := queryRequest{
-				MaintainerID: tt.fields.MaintainerID,
+				OwnableID: tt.fields.OwnableID,
 			}
 			got, err := queryRequest.Encode()
 			if (err != nil) != tt.wantErr {
@@ -137,7 +136,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		OwnableID ids.OwnableID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -149,11 +148,13 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		args    args
 		want    helpers.QueryRequest
 		wantErr bool
-	}{}
+	}{
+		// TODO: Add test cases.
+	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			qu := queryRequest{
-				MaintainerID: tt.fields.MaintainerID,
+				OwnableID: tt.fields.OwnableID,
 			}
 			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.in1)
 			if (err != nil) != tt.wantErr {
@@ -169,11 +170,9 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 
 func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
-	vars[Query.GetName()] = testMaintainerID.String()
-	vars1 := make(map[string]string)
-	vars1[Query.GetName()] = testMaintainerID.String()
+	vars[Query.GetName()] = testOwnableID.String()
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		OwnableID ids.OwnableID
 	}
 	type args struct {
 		vars map[string]string
@@ -185,12 +184,13 @@ func Test_queryRequest_FromMap(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testMaintainerID}, args{vars}, newQueryRequest(testMaintainerID), false},
+		// TODO: Add test cases.
+		{"+ve", fields{testOwnableID}, args{vars}, newQueryRequest(testOwnableID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			qu := queryRequest{
-				MaintainerID: tt.fields.MaintainerID,
+				OwnableID: tt.fields.OwnableID,
 			}
 			got, err := qu.FromMap(tt.args.vars)
 			if (err != nil) != tt.wantErr {
@@ -206,20 +206,20 @@ func Test_queryRequest_FromMap(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		MaintainerID ids.MaintainerID
+		OwnableID ids.OwnableID
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testMaintainerID}, false},
-		{"+ve with nil", fields{testMaintainerID1}, false},
+		// TODO: Add test cases.
+		{"+ve", fields{testOwnableID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := queryRequest{
-				MaintainerID: tt.fields.MaintainerID,
+				OwnableID: tt.fields.OwnableID,
 			}
 			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
@@ -233,6 +233,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
+		// TODO: Add test cases.
 		{"+ve", queryRequest{}},
 	}
 	for _, tt := range tests {

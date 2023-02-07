@@ -20,7 +20,7 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/documents/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -73,7 +73,7 @@ func Test_Query_Keeper_Classification(t *testing.T) {
 	require.Equal(t, nil, Error2)
 
 	classificationID := baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))
-	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(base.NewClassification(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))))
+	keepers.(queryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewClassification(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))))
 
 	testQueryRequest := newQueryRequest(classificationID)
 	require.Equal(t, queryResponse{Success: true, Error: nil, List: keepers.(queryKeeper).mapper.NewCollection(context).Fetch(key.NewKey(classificationID)).GetList()}, keepers.(queryKeeper).Enquire(context, testQueryRequest))
