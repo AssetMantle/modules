@@ -15,7 +15,7 @@ import (
 )
 
 type queryRequest struct {
-	ids.MetaID `json:"metaID" valid:"required~required field metaID missing"`
+	ids.DataID `json:"dataID" valid:"required~required field dataID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
@@ -26,26 +26,26 @@ var _ helpers.QueryRequest = (*queryRequest)(nil)
 // @Accept json
 // @Produce json
 // @Tags Metas
-// @Param metaID path string true "Unique identifier of metadata value."
+// @Param dataID path string true "Unique identifier of metadata value."
 // @Success 200 {object} queryResponse "Message for a successful query response"
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
-// @Router /metas/metas/{metaID} [get]
+// @Router /metas/metas/{dataID} [get]
 func (queryRequest queryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
 }
 func (queryRequest) FromCLI(cliCommand helpers.CLICommand, _ context.CLIContext) (helpers.QueryRequest, error) {
-	if metaID, err := baseIDs.ReadMetaID(cliCommand.ReadString(constants.MetaID)); err != nil {
+	if dataID, err := baseIDs.ReadDataID(cliCommand.ReadString(constants.DataID)); err != nil {
 		return queryRequest{}, err
 	} else {
-		return newQueryRequest(metaID), nil
+		return newQueryRequest(dataID), nil
 	}
 }
 func (queryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
-	if metaID, err := baseIDs.ReadMetaID(vars[Query.GetName()]); err != nil {
+	if dataID, err := baseIDs.ReadDataID(vars[Query.GetName()]); err != nil {
 		return queryRequest{}, err
 	} else {
-		return newQueryRequest(metaID), nil
+		return newQueryRequest(dataID), nil
 	}
 }
 func (queryRequest queryRequest) Encode() ([]byte, error) {
@@ -69,6 +69,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 		return queryRequest{}
 	}
 }
-func newQueryRequest(metaID ids.MetaID) helpers.QueryRequest {
-	return queryRequest{MetaID: metaID}
+func newQueryRequest(dataID ids.DataID) helpers.QueryRequest {
+	return queryRequest{DataID: dataID}
 }
