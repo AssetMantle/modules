@@ -20,7 +20,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeperMock)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeperMock) Help(_ sdkTypes.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	if auxiliaryRequest.Mutables.GetMutablePropertyList().GetProperty(baseIDs.NewPropertyID(baseIDs.NewStringID("superError"), constants.IDDataID)) != nil {
+	if auxiliaryRequest.MaintainedMutables.GetMutablePropertyList().GetProperty(baseIDs.NewPropertyID(baseIDs.NewStringID("superError"), constants.IDDataID)) != nil {
 		return newAuxiliaryResponse(errorConstants.MockError)
 	}
 

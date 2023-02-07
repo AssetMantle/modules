@@ -144,7 +144,6 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.AuxiliaryKeeper
 	}{
-		// TODO: Add test cases.
 		{"+ve", auxiliaryKeeper{}},
 	}
 	for _, tt := range tests {

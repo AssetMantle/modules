@@ -26,10 +26,10 @@ func (key) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, key{})
 }
 func (key key) IsPartial() bool {
-	return len(key.MaintainerID.GetClassificationID().Bytes()) == 0
+	return len(key.MaintainerID.Bytes()) == 0
 }
 func (key key) Equals(compareKey helpers.Key) bool {
-	if CompareKey, err := keyFromInterface(key); err != nil {
+	if CompareKey, err := keyFromInterface(compareKey); err != nil {
 		return false
 	} else {
 		return key.MaintainerID.Compare(CompareKey.MaintainerID) == 0
