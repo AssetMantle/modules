@@ -4,6 +4,12 @@
 package mappable
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	documentsSchema "github.com/AssetMantle/modules/schema/documents"
@@ -15,10 +21,6 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, mappable) {
@@ -34,7 +36,6 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		// TODO: Add test cases.
 		{"+ve", mappable{}},
 	}
 	for _, tt := range tests {
@@ -56,7 +57,6 @@ func TestNewMappable(t *testing.T) {
 		args args
 		want documentsSchema.Asset
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{baseDocuments.NewAsset(classificationID, immutables, mutables)}, testMappable},
 	}
 	for _, tt := range tests {
@@ -79,7 +79,6 @@ func Test_mappable_GetKey(t *testing.T) {
 		want      helpers.Key
 		wantPanic bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testMappable}, key.NewKey(baseIDs.NewAssetID(mappable{testMappable}.GetClassificationID(), mappable{testMappable}.GetImmutables())), false},
 		{"panic case nil", fields{mappable{nil}}, nil, true},
 	}
@@ -112,7 +111,6 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testMappable}, args{codec: codec.New()}},
 		{"+ve nil", fields{mappable{nil}}, args{codec: codec.New()}},
 	}

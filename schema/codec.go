@@ -4,6 +4,8 @@
 package schema
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
@@ -24,7 +26,6 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 	typesSchema "github.com/AssetMantle/modules/schema/types"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 func RegisterCodec(codec *codec.Codec) {
