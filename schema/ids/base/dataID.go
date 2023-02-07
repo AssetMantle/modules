@@ -57,3 +57,28 @@ func NewDataID(data data.Data) ids.DataID {
 		HashID: data.GenerateHashID(),
 	}
 }
+
+func PrototypeDataID() ids.DataID {
+	return dataID{
+		Type:   PrototypeStringID(),
+		HashID: PrototypeHashID(),
+	}
+}
+
+func ReadDataID(dataIDString string) (ids.DataID, error) {
+	if metaIDString := stringUtilities.SplitCompositeIDString(dataIDString); len(metaIDString) == 2 {
+		Type := NewStringID(metaIDString[0])
+		if hashID, err := ReadHashID(metaIDString[1]); err == nil {
+			return dataID{
+				Type:   Type,
+				HashID: hashID,
+			}, nil
+		}
+	}
+
+	if dataIDString == "" {
+		return PrototypeDataID(), nil
+	}
+
+	return dataID{}, errorConstants.MetaDataError
+}
