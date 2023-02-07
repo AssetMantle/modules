@@ -33,7 +33,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 	}
 	identity := Mappable.(documents.Identity)
 
-	if identity.IsProvisioned(message.From) {
+	if !identity.IsProvisioned(message.From) {
 		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
