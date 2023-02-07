@@ -88,7 +88,6 @@ func Test_queryRequest_Decode(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{baseIDs.PrototypeClassificationID()}, args{encodedQueryResponse}, queryRequest{createTestInput()}, false},
 		{"+ve", fields{baseIDs.PrototypeClassificationID()}, args{encodedQueryResponse1}, queryRequest{baseIDs.PrototypeClassificationID()}, false},
 	}
@@ -195,7 +194,6 @@ func Test_queryRequest_FromMap(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{createTestInput()}, args{vars}, newQueryRequest(createTestInput()), false},
 	}
 	for _, tt := range tests {
@@ -224,7 +222,6 @@ func Test_queryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{createTestInput()}, false},
 		{"+ve", fields{baseIDs.PrototypeClassificationID()}, false},
 	}

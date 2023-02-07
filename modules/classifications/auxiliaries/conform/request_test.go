@@ -79,7 +79,6 @@ func Test_auxiliaryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, false},
 		{"+ve", fields{classificationID, immutables, mutables}, false},
 	}

@@ -95,7 +95,6 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse(nil)},
 		{"+ve Entity Not found", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID1, immutables, mutables)}, newAuxiliaryResponse(errorConstants.EntityNotFound)},
 		{"+ve IncorrectFormat", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, immutables1, mutables)}, newAuxiliaryResponse(errorConstants.IncorrectFormat)},
@@ -128,7 +127,6 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		// TODO: Add test cases.
 		{"+ve with nil", fields{}, args{}, auxiliaryKeeper{}},
 		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, auxiliaryKeeper{Mapper}},
 	}
