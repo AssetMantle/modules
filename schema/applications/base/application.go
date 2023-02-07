@@ -220,7 +220,6 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 }
 
 func (application application) Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
-
 	application.BaseApp = *baseapp.NewBaseApp(
 		application.name,
 		logger,
