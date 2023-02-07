@@ -37,21 +37,16 @@ func Test_stringIDFromInterface(t *testing.T) {
 		i interface{}
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    stringID
-		wantErr bool
+		name string
+		args args
+		want stringID
 	}{
 
-		{"+ve", args{NewStringID("ID")}, stringID{IDString: "ID"}, false},
+		{"+ve", args{NewStringID("ID")}, stringID{IDString: "ID"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := stringIDFromInterface(tt.args.i)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("stringID}FromInterface() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := stringIDFromInterface(tt.args.i)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("stringID}FromInterface() got = %v, want %v", got, tt.want)
 			}

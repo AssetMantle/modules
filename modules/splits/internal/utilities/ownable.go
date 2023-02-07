@@ -22,8 +22,7 @@ func GetOwnableTotalSplitsValue(collection helpers.Collection, ownableID ids.ID)
 
 		return false
 	}
-	// TODO test nil ID components
-	collection.Iterate(key.NewKey(baseIDs.NewSplitID(nil, nil)), accumulator)
+	collection.Iterate(key.NewKey(baseIDs.PrototypeSplitID()), accumulator)
 
 	return value
 }

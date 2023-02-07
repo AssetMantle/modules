@@ -20,7 +20,7 @@ type mappable struct {
 var _ helpers.Mappable = (*mappable)(nil)
 
 func (mappable mappable) GetKey() helpers.Key {
-	return key.NewKey(base.NewMetaID(mappable.Data.GetType(), mappable.Data.GenerateHashID()))
+	return key.NewKey(base.NewDataID(mappable.Data))
 }
 func (mappable) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, mappable{})

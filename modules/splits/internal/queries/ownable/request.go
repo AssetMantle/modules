@@ -15,7 +15,7 @@ import (
 )
 
 type queryRequest struct {
-	OwnableID ids.ID `json:"ownableID" valid:"required~required field ownableID missing"`
+	ids.OwnableID `json:"ownableID" valid:"required~required field ownableID missing"`
 }
 
 var _ helpers.QueryRequest = (*queryRequest)(nil)
@@ -70,6 +70,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) queryRequest {
 		return queryRequest{}
 	}
 }
-func newQueryRequest(ownableID ids.ID) helpers.QueryRequest {
+func newQueryRequest(ownableID ids.OwnableID) helpers.QueryRequest {
 	return queryRequest{OwnableID: ownableID}
 }
