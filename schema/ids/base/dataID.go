@@ -66,9 +66,9 @@ func PrototypeDataID() ids.DataID {
 }
 
 func ReadDataID(dataIDString string) (ids.DataID, error) {
-	if metaIDString := stringUtilities.SplitCompositeIDString(dataIDString); len(metaIDString) == 2 {
-		Type := NewStringID(metaIDString[0])
-		if hashID, err := ReadHashID(metaIDString[1]); err == nil {
+	if typeAndHashIDString := stringUtilities.SplitCompositeIDString(dataIDString); len(typeAndHashIDString) == 2 {
+		Type := NewStringID(typeAndHashIDString[0])
+		if hashID, err := ReadHashID(typeAndHashIDString[1]); err == nil {
 			return dataID{
 				Type:   Type,
 				HashID: hashID,
