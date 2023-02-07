@@ -16,7 +16,6 @@ func RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, hashID{})
 	codecUtilities.RegisterModuleConcrete(codec, identityID{})
 	codecUtilities.RegisterModuleConcrete(codec, maintainerID{})
-	codecUtilities.RegisterModuleConcrete(codec, metaID{})
 	codecUtilities.RegisterModuleConcrete(codec, orderID{})
 	codecUtilities.RegisterModuleConcrete(codec, ownableID{})
 	codecUtilities.RegisterModuleConcrete(codec, propertyID{})

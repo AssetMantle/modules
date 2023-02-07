@@ -55,9 +55,9 @@ func PrototypeSplitID() ids.SplitID {
 }
 
 func ReadSplitID(splitIDString string) (ids.SplitID, error) {
-	if splitIDStringSplit := stringUtilities.SplitCompositeIDString(splitIDString); len(splitIDStringSplit) == 3 {
-		if ownerID, err := ReadIdentityID(stringUtilities.JoinIDStrings(stringUtilities.SplitCompositeIDString(splitIDString)[:1]...)); err == nil {
-			if ownableID, err := ReadOwnableID(stringUtilities.SplitCompositeIDString(splitIDString)[2]); err == nil {
+	if splitIDStringSplit := stringUtilities.SplitCompositeIDString(splitIDString); len(splitIDStringSplit) == 2 {
+		if ownerID, err := ReadIdentityID(splitIDStringSplit[0]); err == nil {
+			if ownableID, err := ReadOwnableID(splitIDStringSplit[1]); err == nil {
 				return splitID{
 					OwnerID:   ownerID,
 					OwnableID: ownableID,
