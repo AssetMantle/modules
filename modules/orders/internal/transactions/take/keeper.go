@@ -7,7 +7,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
@@ -27,7 +26,6 @@ import (
 type transactionKeeper struct {
 	mapper                helpers.Mapper
 	parameters            helpers.Parameters
-	scrubAuxiliary        helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	transferAuxiliary     helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
@@ -73,11 +71,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		orders.Remove(mappable.NewMappable(order))
 	default:
 		makerReceiveTakerOwnableSplit = message.TakerOwnableSplit
-		mutableProperties, Error := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(updatedMakerOwnableSplit))))))
-
-		if Error != nil {
-			return newTransactionResponse(Error)
-		}
+		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(updatedMakerOwnableSplit)))
 
 		orders.Mutate(mappable.NewMappable(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(mutableProperties.GetList()...))))
 	}
@@ -100,8 +94,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case scrub.Auxiliary.GetName():
-				transactionKeeper.scrubAuxiliary = value
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			case transfer.Auxiliary.GetName():

@@ -7,4 +7,4 @@ import (
 )
 
 var NubImmutables = base.NewImmutables(baseLists.NewPropertyList(constants.NubIDProperty))
-var MaintainerImmutables = base.NewImmutables(baseLists.NewPropertyList(constants.MaintainedClassificationIDProperty))
+var MaintainerImmutables = base.NewImmutables(baseLists.NewPropertyList(constants.IdentityIDProperty, constants.MaintainedClassificationIDProperty))

@@ -27,7 +27,7 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
-	if auxiliaryResponse := transactionKeeper.deputizeAuxiliary.GetKeeper().Help(context, deputize.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID, message.MaintainedProperties, message.AddMaintainer, message.RemoveMaintainer, message.MutateMaintainer)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.deputizeAuxiliary.GetKeeper().Help(context, deputize.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID, message.MaintainedProperties, message.CanMintAsset, message.CanBurnAsset, message.CanRenumerateAsset, message.CanAddMaintainer, message.CanRemoveMaintainer, message.CanMutateMaintainer)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 

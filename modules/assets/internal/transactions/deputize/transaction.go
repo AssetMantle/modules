@@ -21,7 +21,10 @@ var Transaction = baseHelpers.NewTransaction(
 	constants.ToID,
 	constants.ClassificationID,
 	constants.MaintainedProperties,
-	constants.AddMaintainer,
-	constants.RemoveMaintainer,
-	constants.MutateMaintainer,
+	constants.CanMintAsset,
+	constants.CanBurnAsset,
+	constants.CanRenumerateAsset,
+	constants.CanAddMaintainer,
+	constants.CanRemoveMaintainer,
+	constants.CanMutateMaintainer,
 )

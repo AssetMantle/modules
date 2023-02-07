@@ -22,9 +22,9 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-var fromAddress string = "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
+var fromAddress = "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
 
-var accAddress string = NewAccAddressData(sdkTypes.AccAddress(fromAddress)).String()
+var accAddress = NewAccAddressData(sdkTypes.AccAddress(fromAddress)).String()
 
 func TestListDataPrototype(t *testing.T) {
 	type args struct {
@@ -186,8 +186,9 @@ func Test_listData_Compare(t *testing.T) {
 				require.Panics(t, func() {
 					listData.Compare(tt.args.listable)
 				})
+			} else {
+				assert.Equalf(t, tt.want, listData.Compare(tt.args.listable), "Compare(%v)", tt.args.listable)
 			}
-			assert.Equalf(t, tt.want, listData.Compare(tt.args.listable), "Compare(%v)", tt.args.listable)
 		})
 	}
 }

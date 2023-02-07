@@ -8,10 +8,10 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/types"
 )
 
 type auxiliaryKeeperMock struct {
@@ -28,7 +28,7 @@ func (auxiliaryKeeper auxiliaryKeeperMock) Help(context sdkTypes.Context, reques
 		if Mappable == nil {
 			return newAuxiliaryResponse(errorConstants.EntityNotFound)
 		}
-		classification := Mappable.(types.Classification)
+		classification := Mappable.(documents.Classification)
 		if auxiliaryRequest.Mutables != nil {
 			if len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()) > len(classification.GetMutables().GetMutablePropertyList().GetList()) {
 				return newAuxiliaryResponse(errorConstants.IncorrectFormat)

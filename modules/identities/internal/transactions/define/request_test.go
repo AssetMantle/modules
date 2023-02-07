@@ -17,7 +17,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
-	utilities2 "github.com/AssetMantle/modules/schema/properties/utilities"
+	utilitiesProperties "github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -28,33 +28,13 @@ import (
 )
 
 func Test_newTransactionRequest(t *testing.T) {
-	// var Codec = codec.New()
-	// schema.RegisterCodec(Codec)
-	// sdkTypes.RegisterCodec(Codec)
-	// codec.RegisterCrypto(Codec)
-	// codec.RegisterEvidences(Codec)
-	// vesting.RegisterCodec(Codec)
-	// Codec.Seal()
-	// cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
-	// cliContext := context.NewCLIContext().WithCodec(Codec)
 
 	immutableMetaPropertiesString := "defaultImmutableMeta1:S|defaultImmutableMeta1"
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	// immutableMetaProperties, err := utilities.ReadMetaPropertyList(immutableMetaPropertiesString)
-	// require.Equal(t, nil, err)
-	// immutableProperties, err := utilities.ReadMetaPropertyList(immutablePropertiesString)
-	// require.Equal(t, nil, err)
-	// mutableMetaProperties, err := utilities.ReadMetaPropertyList(mutableMetaPropertiesString)
-	// require.Equal(t, nil, err)
-	// mutableProperties, err := utilities.ReadMetaPropertyList(mutablePropertiesString)
-	// require.Equal(t, nil, err)
-
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	// fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	// require.Nil(t, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type args struct {
@@ -100,13 +80,6 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	// var Codec = codec.New()
-	// schema.RegisterCodec(Codec)
-	// sdkTypes.RegisterCodec(Codec)
-	// codec.RegisterCrypto(Codec)
-	// codec.RegisterEvidences(Codec)
-	// vesting.RegisterCodec(Codec)
-	// Codec.Seal()
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
 	cliContext := context.NewCLIContext().WithCodec(codec.Cdc)
 
@@ -276,11 +249,11 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 
-	immutableMetaProperties, err := utilities2.ReadMetaProperty(immutableMetaPropertiesString)
+	immutableMetaProperties, err := utilitiesProperties.ReadMetaProperty(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 	immutableProperties, err := utilities.ReadMetaPropertyList(immutablePropertiesString)
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := utilities2.ReadMetaProperty(mutableMetaPropertiesString)
+	mutableMetaProperties, err := utilitiesProperties.ReadMetaProperty(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 	mutableProperties, err := utilities.ReadMetaPropertyList(mutablePropertiesString)
 	require.Equal(t, nil, err)
@@ -292,7 +265,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 
 	testIdentity := baseIDs.NewIdentityID(baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties)), baseQualified.NewImmutables(immutableProperties))
-	// testIdentity2 := baseIDs.NewIdentityID(baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties)), baseQualified.NewImmutables(immutableProperties))
 
 	type fields struct {
 		BaseReq                 rest.BaseReq

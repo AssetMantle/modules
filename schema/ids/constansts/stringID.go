@@ -1,4 +1,4 @@
-package constants
+package constansts
 
 import (
 	"github.com/AssetMantle/modules/schema/ids/base"
