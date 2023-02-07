@@ -10,8 +10,14 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/schema"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	base2 "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/lists/base"
+	base3 "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/types"
@@ -75,6 +81,18 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
 	context, keepers, Mapper, Parameters := CreateTestInput(t)
+	mutableProperties := base.NewPropertyList(base3.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(base.NewDataList())))
+	immutableProperties := base.NewPropertyList(base3.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(base.NewDataList())))
+	immutables := baseQualified.NewImmutables(immutableProperties)
+	mutables := baseQualified.NewMutables(mutableProperties)
+	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
+	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
+	fromAccAddress, err := types.AccAddressFromBech32(fromAddress)
+	require.Nil(t, err)
+	testIdentity := base2.NewIdentity(testClassificationID, immutables, mutables)
+	testIdentity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
+	keepers.AuthenticateKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testIdentity))
 	type fields struct {
 		mapper              helpers.Mapper
 		parameters          helpers.Parameters
@@ -90,8 +108,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		// TODO: Add test cases.
-		{"+ve", fields{}, args{}},
+		{"+ve", fields{Mapper, Parameters, supplementAuxiliary}, args{context, NewAuxiliaryRequest(fromAccAddress, testFromID)}, newAuxiliaryResponse(nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
