@@ -6,7 +6,7 @@ package burn
 import (
 	"context"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/charge"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -31,7 +31,7 @@ type transactionKeeper struct {
 	maintainAuxiliary     helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
-	chargeAuxiliary       helpers.Auxiliary
+	bondAuxiliary         helpers.Auxiliary
 	bankKeeper            bankKeeper.Keeper
 }
 
@@ -77,7 +77,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	if auxiliaryResponse := transactionKeeper.chargeAuxiliary.GetKeeper().Help(context, charge.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress, module.Name, transactionKeeper.bankKeeper, false)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.bondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress, module.Name, transactionKeeper.bankKeeper, false)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
@@ -103,8 +103,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.supplementAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
-			case charge.Auxiliary.GetName():
-				transactionKeeper.chargeAuxiliary = value
+			case bond.Auxiliary.GetName():
+				transactionKeeper.bondAuxiliary = value
 			}
 		default:
 			panic(errorConstants.UninitializedUsage)

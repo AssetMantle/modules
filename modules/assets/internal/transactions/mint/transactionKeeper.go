@@ -8,7 +8,7 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/charge"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
@@ -34,7 +34,7 @@ type transactionKeeper struct {
 	mintAuxiliary              helpers.Auxiliary
 	authenticateAuxiliary      helpers.Auxiliary
 	maintainersVerifyAuxiliary helpers.Auxiliary
-	chargeAuxiliary            helpers.Auxiliary
+	bondAuxiliary              helpers.Auxiliary
 	bankKeeper                 bankKeeper.Keeper
 }
 
@@ -85,7 +85,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	if auxiliaryResponse := transactionKeeper.chargeAuxiliary.GetKeeper().Help(context, charge.NewAuxiliaryRequest(message.ClassificationID, fromAddress, module.Name, transactionKeeper.bankKeeper, true)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.bondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(message.ClassificationID, fromAddress, module.Name, transactionKeeper.bankKeeper, true)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
@@ -111,8 +111,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.authenticateAuxiliary = value
 			case verify.Auxiliary.GetName():
 				transactionKeeper.maintainersVerifyAuxiliary = value
-			case charge.Auxiliary.GetName():
-				transactionKeeper.chargeAuxiliary = value
+			case bond.Auxiliary.GetName():
+				transactionKeeper.bondAuxiliary = value
 			}
 		default:
 			panic(errorConstants.UninitializedUsage)

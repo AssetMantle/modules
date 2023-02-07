@@ -6,7 +6,7 @@ package base
 import (
 	"encoding/json"
 	"errors"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/charge"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
 	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
 	"io"
 	"log"
@@ -656,7 +656,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-		classificationsModule.GetAuxiliary(charge.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(bond.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 		splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),

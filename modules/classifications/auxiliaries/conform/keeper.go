@@ -10,7 +10,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/modules/schema/ids/constansts"
 )
 
 type auxiliaryKeeper struct {
@@ -35,7 +35,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		}
 
 		for _, immutableProperty := range classification.GetImmutables().GetImmutablePropertyList().GetList() {
-			if immutableProperty.Get().IsMeta() && immutableProperty.Get().GetID().AsString() == constants.BondingIDString {
+			if immutableProperty.Get().IsMeta() && immutableProperty.Get().GetID().Compare(constansts.BondingPropertyID) == 0 {
 				continue
 			}
 			if property := auxiliaryRequest.Immutables.GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) != 0 && property.GetDataID().GetHashID().Compare(immutableProperty.GetDataID().GetHashID()) != 0 {
