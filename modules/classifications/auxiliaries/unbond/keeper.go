@@ -5,7 +5,6 @@ package unbond
 
 import (
 	"context"
-	"fmt"
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
@@ -37,10 +36,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		if immutableProperty.Get().GetID().Compare(constansts.BondingPropertyID) == 0 {
 			coins, err := sdkTypes.ParseCoinsNormalized(immutableProperty.Get().(properties.MetaProperty).GetData().Get().AsString() + dataConstants.Denom)
 			if err != nil {
-				fmt.Println("Incorrect format: ", err.Error())
+				return newAuxiliaryResponse("", err)
 			}
 			if err := auxiliaryRequest.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.moduleName, auxiliaryRequest.address, coins); err != nil {
-				fmt.Println("error")
+				return newAuxiliaryResponse("", err)
 			}
 			return newAuxiliaryResponse(immutableProperty.Get().(properties.MetaProperty).GetData().AsString(), nil)
 		}
