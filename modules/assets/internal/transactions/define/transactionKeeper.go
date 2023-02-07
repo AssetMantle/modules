@@ -5,9 +5,8 @@ package define
 
 import (
 	"context"
-	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
