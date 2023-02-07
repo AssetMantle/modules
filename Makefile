@@ -64,20 +64,28 @@ test-race:
 
 .PHONY: test test-all test-ledger-mock test-ledger test-unit test-race
 
+run-simulations: test-sim-custom-genesis-fast test-sim-nondeterminism test-sim-import-export test-sim-after-import test-sim-custom-genesis-multi-seed test-sim-multi-seed-long test-sim-multi-seed-short test-sim-benchmark-invariants
+
 test-sim-nondeterminism:
 	@echo "Running non-determinism test..."
-	@go test -mod=readonly $(SIMAPP) -run TestAppStateDeterminism -Enabled=true \
+	@go test -mod=readonly $(SIMAPP) -run=TestAppStateDeterminism -Enabled=true \
 		-NumBlocks=100 -BlockSize=200 -Commit=true -Period=0 -v -timeout 24h
 
 test-sim-custom-genesis-fast:
 	@echo "Running custom genesis simulation..."
 	@echo "By default, ${HOME}/.assetNode/config/genesis.json will be used."
-	@go test -mod=readonly $(SIMAPP) -run TestFullAppSimulation -Genesis=${HOME}/.assetNode/config/genesis.json \
+	@go test -mod=readonly $(SIMAPP) -run=TestFullAppSimulation -Genesis=${HOME}/.assetNode/config/genesis.json \
+		-Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Seed=99 -Period=5 -v -timeout 24h
+
+test-sim-full-application:
+	@echo "Running full app..."
+	@go test -mod=readonly $(SIMAPP) -run=TestFullAppSimulation \
 		-Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Seed=99 -Period=5 -v -timeout 24h
 
 test-sim-import-export: runsim
 	@echo "Running application import/export simulation. This may take several minutes..."
 	@$(BINDIR)/runsim -Jobs=4 -SimAppPkg=$(SIMAPP) 50 5 TestAppImportExport
+
 
 test-sim-after-import: runsim
 	@echo "Running application simulation-after-import. This may take several minutes..."
@@ -103,6 +111,7 @@ test-sim-benchmark-invariants:
 	-Period=1 -Commit=true -Seed=57 -v -timeout 24h
 
 .PHONY: \
+test-sim-full-application \
 test-sim-nondeterminism \
 test-sim-custom-genesis-fast \
 test-sim-import-export \
