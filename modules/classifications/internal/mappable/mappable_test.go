@@ -17,15 +17,15 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, mappable) {
-	immutables := baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testMappable := mappable{Classification: baseDocuments.NewDocument(classificationID, immutables, mutables)}
 	return classificationID, immutables, mutables, testMappable
@@ -41,7 +41,6 @@ func TestNewMappable(t *testing.T) {
 		args args
 		want documentsSchema.Document
 	}{
-		// TODO: Add test cases.
 		{"+ve", args{baseDocuments.NewDocument(classificationID, immutables, mutables)}, testMappable},
 	}
 	for _, tt := range tests {
@@ -58,7 +57,6 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		// TODO: Add test cases.
 		{"+ve", mappable{}},
 	}
 	for _, tt := range tests {
@@ -83,7 +81,6 @@ func Test_mappable_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testMappable}, args{codec: codec.New()}},
 		{"+ve nil", fields{mappable{nil}}, args{codec: codec.New()}},
 	}
@@ -108,7 +105,6 @@ func Test_mappable_GetKey(t *testing.T) {
 		want      helpers.Key
 		wantPanic bool
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{testMappable}, key.NewKey(baseIDs.NewClassificationID(testMappable.GetImmutables(), testMappable.GetMutables())), false},
 		{"panic case nil", fields{mappable{nil}}, nil, true},
 	}
