@@ -14,6 +14,10 @@ func (g globals) GetCodec() codec.BinaryCodec {
 	return *g.codec
 }
 
+func (g globals) GetRegistry() types.InterfaceRegistry {
+	return *g.registry
+}
+
 var GlobalInstance *globals
 
 func SetGlobals(codec *codec.Codec, registry *types.InterfaceRegistry) {

@@ -1,11 +1,11 @@
 syntax = "proto3";
 package meta;
 
-import "modules/metas/module/mappable/mappable.proto";
+import "schema/helpers/base/mappable.proto";
 import "gogoproto/gogo.proto";
 
 message QueryResponse{
   bool success = 1;
   string error = 2;
-  repeated mappable.Mappable list = 3;
+  repeated base.Mappable list = 3;
 }

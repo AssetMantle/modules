@@ -1,9 +1,9 @@
 syntax="proto3";
-
-import "schema/data/base/data.proto";
+package base;
+import "schema/helpers/base/dataMappable.proto";
 
 message Mappable {
   oneof Impl{
-    base.Data mappable = 1;
+    DataMappable data_mappable = 1;
   }
 }
