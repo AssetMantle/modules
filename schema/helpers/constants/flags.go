@@ -9,8 +9,13 @@ import (
 
 // Note: Arranged alphabetically
 var (
-	AddMaintainer           = baseHelpers.NewCLIFlag("addMaintainer", false, "AddMaintainer")
 	AssetID                 = baseHelpers.NewCLIFlag("assetID", "", "AssetID")
+	CanAddMaintainer        = baseHelpers.NewCLIFlag("addMaintainer", false, "CanAddMaintainer")
+	CanBurnAsset            = baseHelpers.NewCLIFlag("canBurnAsset", false, "CanBurnAsset")
+	CanMintAsset            = baseHelpers.NewCLIFlag("canMintAsset", false, "CanMintAsset")
+	CanMutateMaintainer     = baseHelpers.NewCLIFlag("canMutateMaintainer", false, "CanMutateMaintainer")
+	CanRemoveMaintainer     = baseHelpers.NewCLIFlag("canRemoveMaintainer", false, "CanRemoveMaintainer")
+	CanRenumerateAsset      = baseHelpers.NewCLIFlag("canRenumerateAsset", false, "CanRenumerateAsset")
 	ClassificationID        = baseHelpers.NewCLIFlag("classificationID", "", "ClassificationID")
 	Coins                   = baseHelpers.NewCLIFlag("coins", "", "Coins")
 	Data                    = baseHelpers.NewCLIFlag("data", "", "Data")
@@ -27,12 +32,10 @@ var (
 	MutableMetaProperties   = baseHelpers.NewCLIFlag("mutableMetaProperties", "", "mutableMetaProperties")
 	MutableProperties       = baseHelpers.NewCLIFlag("mutableProperties", "", "mutableProperties")
 	MetaID                  = baseHelpers.NewCLIFlag("metaID", "", "MetaID")
-	MutateMaintainer        = baseHelpers.NewCLIFlag("mutateMaintainer", false, "MutateMaintainer")
 	NubID                   = baseHelpers.NewCLIFlag("nubID", "", "NubID")
 	OrderID                 = baseHelpers.NewCLIFlag("orderID", "", "OrderID")
 	OwnableID               = baseHelpers.NewCLIFlag("ownableID", "", "MakerOwnableID")
 	Queuing                 = baseHelpers.NewCLIFlag("queuing", false, "Enable kafka queuing and squashing of transactions")
-	RemoveMaintainer        = baseHelpers.NewCLIFlag("removeMaintainer", false, "RemoveMaintainer")
 	Value                   = baseHelpers.NewCLIFlag("value", "0", "Value")
 	SplitID                 = baseHelpers.NewCLIFlag("splitID", "", "SplitID")
 	To                      = baseHelpers.NewCLIFlag("to", "", "To")

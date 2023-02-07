@@ -10,7 +10,6 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
-	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/schema/documents"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -24,7 +23,6 @@ type transactionKeeper struct {
 	mapper                helpers.Mapper
 	authenticateAuxiliary helpers.Auxiliary
 	defineAuxiliary       helpers.Auxiliary
-	scrubAuxiliary        helpers.Auxiliary
 	superAuxiliary        helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 }
@@ -47,26 +45,16 @@ func (transactionKeeper transactionKeeper) Transact(context sdkTypes.Context, ms
 		return newTransactionResponse(errorConstants.NotAuthorized)
 	}
 
-	immutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.ImmutableMetaProperties)))
+	immutables := base.NewImmutables(baseLists.NewPropertyList(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...))
+
+	mutables := base.NewMutables(baseLists.NewPropertyList(append(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.AuthenticationProperty)...))
+
+	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutables, mutables)))
 	if err != nil {
 		return newTransactionResponse(err)
 	}
 
-	immutableProperties := base.NewImmutables(baseLists.NewPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...))
-
-	mutableMetaProperties, err := scrub.GetPropertiesFromResponse(transactionKeeper.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(message.MutableMetaProperties)))
-	if err != nil {
-		return newTransactionResponse(err)
-	}
-
-	mutableProperties := base.NewMutables(baseLists.NewPropertyList(append(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.AuthenticationProperty)...))
-
-	classificationID, err := define.GetClassificationIDFromResponse(transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutableProperties, mutableProperties)))
-	if err != nil {
-		return newTransactionResponse(err)
-	}
-
-	if auxiliaryResponse := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromIdentity, mutableProperties)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromIdentity, mutables)); !auxiliaryResponse.IsSuccessful() {
 		return newTransactionResponse(auxiliaryResponse.GetError())
 	}
 
@@ -84,8 +72,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 				transactionKeeper.authenticateAuxiliary = value
 			case define.Auxiliary.GetName():
 				transactionKeeper.defineAuxiliary = value
-			case scrub.Auxiliary.GetName():
-				transactionKeeper.scrubAuxiliary = value
 			case super.Auxiliary.GetName():
 				transactionKeeper.superAuxiliary = value
 			case supplement.Auxiliary.GetName():

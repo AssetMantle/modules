@@ -55,7 +55,7 @@ func PrototypeMaintainerID() ids.MaintainerID {
 }
 
 func ReadMaintainerID(maintainerIDString string) (ids.MaintainerID, error) {
-	if maintainerIDStringSplit := stringUtilities.SplitCompositeIDString(maintainerIDString); len(maintainerIDStringSplit) == 3 {
+	if maintainerIDStringSplit := stringUtilities.SplitCompositeIDString(maintainerIDString); len(maintainerIDStringSplit) == 2 {
 		if classificationID, err := ReadClassificationID(maintainerIDStringSplit[0]); err == nil {
 			if identityID, err := ReadIdentityID(stringUtilities.JoinIDStrings(maintainerIDStringSplit[1:]...)); err == nil {
 				return maintainerID{

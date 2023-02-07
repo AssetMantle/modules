@@ -25,9 +25,12 @@ type message struct {
 	ToID                 ids.IdentityID      `json:"toID" valid:"required~required field toID missing"`
 	ids.ClassificationID `json:"classificationID" valid:"required~required field classificationID missing"`
 	MaintainedProperties lists.PropertyList `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
-	AddMaintainer        bool               `json:"addMaintainer"`
-	RemoveMaintainer     bool               `json:"removeMaintainer"`
-	MutateMaintainer     bool               `json:"mutateMaintainer"`
+	CanMintAsset         bool               `json:"canMintAsset"`
+	CanBurnAsset         bool               `json:"canBurnAsset"`
+	CanRenumerateAsset   bool               `json:"canRenumerateAsset"`
+	CanAddMaintainer     bool               `json:"canAddMaintainer"`
+	CanRemoveMaintainer  bool               `json:"canRemoveMaintainer"`
+	CanMutateMaintainer  bool               `json:"canMutateMaintainer"`
 }
 
 var _ sdkTypes.Msg = message{}
@@ -65,15 +68,18 @@ func messagePrototype() helpers.Message {
 	return message{}
 }
 
-func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, classificationID ids.ClassificationID, maintainedProperties lists.PropertyList, addMaintainer bool, removeMaintainer bool, mutateMaintainer bool) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, classificationID ids.ClassificationID, maintainedProperties lists.PropertyList, canMintAsset bool, canBurnAsset bool, canRenumerateAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) sdkTypes.Msg {
 	return message{
 		From:                 from,
 		FromID:               fromID,
 		ToID:                 toID,
 		ClassificationID:     classificationID,
 		MaintainedProperties: maintainedProperties,
-		AddMaintainer:        addMaintainer,
-		RemoveMaintainer:     removeMaintainer,
-		MutateMaintainer:     mutateMaintainer,
+		CanMintAsset:         canMintAsset,
+		CanBurnAsset:         canBurnAsset,
+		CanRenumerateAsset:   canRenumerateAsset,
+		CanAddMaintainer:     canAddMaintainer,
+		CanRemoveMaintainer:  canRemoveMaintainer,
+		CanMutateMaintainer:  canMutateMaintainer,
 	}
 }

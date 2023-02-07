@@ -11,7 +11,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	base2 "github.com/AssetMantle/modules/schema/documents/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -74,7 +74,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			auxiliaryKeeper := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			auxiliaryKeeper.mapper.NewCollection(context).Add(mappable.NewMappable(base2.NewMaintainer(classificationID, immutables, mutables)))
+			auxiliaryKeeper.mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewMaintainer(classificationID, immutables, mutables)))
 			if got := auxiliaryKeeper.Help(tt.args.context, tt.args.request); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Help() = %v, want %v", got, tt.want)
 			}
