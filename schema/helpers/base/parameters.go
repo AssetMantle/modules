@@ -7,17 +7,17 @@ import (
 	"strings"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	paramTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	parameters2 "github.com/AssetMantle/modules/schema/parameters"
+	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 )
 
 type parameters struct {
-	parameterList  []parameters2.Parameter
-	paramsSubspace params.Subspace
+	parameterList  []parametersSchema.Parameter
+	paramsSubspace paramTypes.Subspace
 }
 
 var _ helpers.Parameters = (*parameters)(nil)
@@ -48,7 +48,7 @@ func (parameters parameters) Equal(compareParameters helpers.Parameters) bool {
 
 	return true
 }
-func (parameters parameters) Get(id ids.ID) parameters2.Parameter {
+func (parameters parameters) Get(id ids.ID) parametersSchema.Parameter {
 	for _, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(id) == 0 {
 			return parameter
@@ -57,7 +57,7 @@ func (parameters parameters) Get(id ids.ID) parameters2.Parameter {
 
 	return nil
 }
-func (parameters parameters) GetList() []parameters2.Parameter {
+func (parameters parameters) GetList() []parametersSchema.Parameter {
 	return parameters.parameterList
 }
 func (parameters parameters) Fetch(context sdkTypes.Context, id ids.ID) helpers.Parameters {
@@ -73,7 +73,7 @@ func (parameters parameters) Fetch(context sdkTypes.Context, id ids.ID) helpers.
 
 	return parameters
 }
-func (parameters parameters) Mutate(context sdkTypes.Context, newParameter parameters2.Parameter) helpers.Parameters {
+func (parameters parameters) Mutate(context sdkTypes.Context, newParameter parametersSchema.Parameter) helpers.Parameters {
 	for i, parameter := range parameters.parameterList {
 		if parameter.GetID().Compare(newParameter.GetID()) == 0 {
 			parameters.parameterList[i] = newParameter
@@ -85,24 +85,24 @@ func (parameters parameters) Mutate(context sdkTypes.Context, newParameter param
 
 	return parameters
 }
-func (parameters parameters) ParamSetPairs() params.ParamSetPairs {
-	paramSetPairList := make([]params.ParamSetPair, len(parameters.parameterList))
+func (parameters parameters) ParamSetPairs() paramTypes.ParamSetPairs {
+	paramSetPairList := make([]paramTypes.ParamSetPair, len(parameters.parameterList))
 
 	for i, parameter := range parameters.parameterList {
-		paramSetPairList[i] = params.NewParamSetPair(parameter.GetID().Bytes(), parameter.GetData(), parameter.GetValidator())
+		paramSetPairList[i] = paramTypes.NewParamSetPair(parameter.GetID().Bytes(), parameter.GetData(), parameter.GetValidator())
 	}
 
 	return paramSetPairList
 }
-func (parameters parameters) GetKeyTable() params.KeyTable {
-	return params.NewKeyTable().RegisterParamSet(parameters)
+func (parameters parameters) GetKeyTable() paramTypes.KeyTable {
+	return paramTypes.NewKeyTable().RegisterParamSet(parameters)
 }
-func (parameters parameters) Initialize(paramsSubspace params.Subspace) helpers.Parameters {
+func (parameters parameters) Initialize(paramsSubspace paramTypes.Subspace) helpers.Parameters {
 	parameters.paramsSubspace = paramsSubspace
 	return parameters
 }
 
-func NewParameters(parameterList ...parameters2.Parameter) helpers.Parameters {
+func NewParameters(parameterList ...parametersSchema.Parameter) helpers.Parameters {
 	return parameters{
 		parameterList: parameterList,
 	}

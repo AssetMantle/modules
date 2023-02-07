@@ -1,0 +1,30 @@
+syntax = "proto3";
+package ids;
+
+import "schema/ids/base/assetID.proto";
+import "schema/ids/base/classificationID.proto";
+import "schema/ids/base/dataID.proto";
+import "schema/ids/base/hashID.proto";
+import "schema/ids/base/identityID.proto";
+import "schema/ids/base/maintainerID.proto";
+import "schema/ids/base/orderID.proto";
+import "schema/ids/base/ownableID.proto";
+import "schema/ids/base/propertyID.proto";
+import "schema/ids/base/splitID.proto";
+import "schema/ids/base/stringID.proto";
+
+message ID {
+  oneof impl {
+    base.AssetID AssetID = 1;
+    base.ClassificationID ClassificationID = 2;
+    base.DataID DataID = 3;
+    base.HashID HashID = 4;
+    base.IdentityID IdentityID = 5;
+    base.MaintainerID MaintainerID = 6;
+    base.OrderID OrderID = 7;
+    base.OwnableID OwnableID = 8;
+    base.PropertyID PropertyID = 9;
+    base.SplitID SplitID = 10;
+    base.StringID StringID = 11;
+  }
+}

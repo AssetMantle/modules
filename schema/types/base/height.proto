@@ -1,0 +1,6 @@
+syntax = "proto3";
+package base;
+
+message Height{
+  int64 value = 1;
+}

@@ -8,49 +8,46 @@ import (
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-type propertyID struct {
-	Key  ids.StringID
-	Type ids.StringID
-}
+var _ ids.PropertyID = (*ID_PropertyID)(nil)
 
-var _ ids.PropertyID = (*propertyID)(nil)
-
-func (propertyID propertyID) IsPropertyID() {}
-func (propertyID propertyID) GetKey() ids.StringID {
-	return propertyID.Key
+func (propertyID *ID_PropertyID) String() string {
+	return propertyID.PropertyID.String()
 }
-func (propertyID propertyID) GetType() ids.StringID {
-	return propertyID.Type
+func (propertyID *ID_PropertyID) IsPropertyID() {}
+func (propertyID *ID_PropertyID) GetKey() ids.ID {
+	return &ID{Impl: &ID_StringID{StringID: propertyID.PropertyID.KeyID}}
 }
-func (propertyID propertyID) String() string {
-	return stringUtilities.JoinIDStrings(propertyID.Key.String(), propertyID.Type.String())
+func (propertyID *ID_PropertyID) GetType() ids.ID {
+	return &ID{Impl: &ID_StringID{StringID: propertyID.PropertyID.TypeID}}
 }
-func (propertyID propertyID) Bytes() []byte {
+func (propertyID *ID_PropertyID) Bytes() []byte {
 	var Bytes []byte
-	Bytes = append(Bytes, propertyID.Key.Bytes()...)
-	Bytes = append(Bytes, propertyID.Type.Bytes()...)
+	Bytes = append(Bytes, propertyID.PropertyID.KeyID.IdString...)
+	Bytes = append(Bytes, propertyID.PropertyID.TypeID.IdString...)
 
 	return Bytes
 }
-func (propertyID propertyID) Compare(listable traits.Listable) int {
-	return bytes.Compare(propertyID.Bytes(), propertyIDFromInterface(listable).Bytes())
-}
-func propertyIDFromInterface(listable traits.Listable) propertyID {
-	switch value := listable.(type) {
-	case propertyID:
-		return value
-	default:
-		panic(errorConstants.MetaDataError)
-	}
+func (propertyID *ID_PropertyID) Compare(listable traits.Listable) int {
+	return bytes.Compare(propertyID.Bytes(), idFromInterface(listable).Bytes())
 }
 
-func NewPropertyID(key, Type ids.StringID) ids.PropertyID {
-	return propertyID{
-		Key:  key,
-		Type: Type,
+func GeneratePropertyID(key, Type ids.ID) ids.ID {
+	return NewPropertyID(key, Type)
+}
+func NewPropertyID(keyID, typeID ids.ID) ids.ID {
+	if keyID.(*ID).GetStringID() == nil || typeID.(*ID).GetStringID() == nil {
+		panic(errorConstants.MetaDataError)
 	}
+	return &ID{
+		Impl: &ID_PropertyID{
+			PropertyID: &PropertyID{
+				KeyID:  keyID.(*ID).GetStringID(),
+				TypeID: typeID.(*ID).GetStringID(),
+			},
+		},
+	}
+
 }

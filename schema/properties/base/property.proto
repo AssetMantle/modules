@@ -1,0 +1,12 @@
+syntax = "proto3";
+package base;
+
+import "schema/properties/base/mesaProperty.proto";
+import "schema/properties/base/metaProperty.proto";
+
+message Property{
+  oneof impl {
+    MesaProperty mesaProperty = 1;
+    MetaProperty metaProperty = 2;
+  }
+}

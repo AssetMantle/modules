@@ -1,0 +1,13 @@
+syntax = "proto3";
+package reveal;
+
+import "gogoproto/gogo.proto";
+import "schema/data/base/data.proto";
+
+message Message {
+  bytes from = 1;
+  base.Data data = 2 [
+    (gogoproto.customtype) = "github.com/AssetMantle/modules/schema/data.Data",
+    (gogoproto.nullable) = false
+  ];
+}

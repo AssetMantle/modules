@@ -1,3 +1,0 @@
-package string
-
-const listStringSeparator = ","
