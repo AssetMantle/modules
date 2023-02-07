@@ -47,13 +47,16 @@ func Test_stringIDFromInterface(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := stringIDFromInterface(tt.args.i)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("stringID}FromInterface() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := stringIDFromInterface(tt.args.i)
+			defer func() {
+				r := recover()
+
+				if (r != nil) != tt.wantErr {
+					t.Errorf("stringIDFromInterface() error = %v, wantErr %v", r, tt.wantErr)
+				}
+			}()
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("stringID}FromInterface() got = %v, want %v", got, tt.want)
+				t.Errorf("stringIDFromInterface() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
