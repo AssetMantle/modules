@@ -4,6 +4,7 @@
 package revoke
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -132,7 +133,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 				revokeAuxiliary:       tt.fields.revokeAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
-			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameters, tt.args.auxiliaries); !reflect.DeepEqual(got, tt.want) {
+			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameters, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})

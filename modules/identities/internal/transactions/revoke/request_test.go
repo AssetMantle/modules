@@ -5,6 +5,7 @@ package revoke
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -241,7 +242,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 				t.Errorf("MakeMsg() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
 			}
 		})

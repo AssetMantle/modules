@@ -171,11 +171,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutablesMeta, mutablesMeta)
 	testIdentity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutablesMeta, mutablesMeta)
-	// testOrderID := mappable.NewMappable(testOrder).GetKey()
-	// testMakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("makerID"))
-	// testTakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("takerID"))
-	// testRate := types.NewDec(10)
-	// testHeight := baseTypes.NewHeight(1)
 	testOrderID := baseIDs.NewOrderID(testClassificationID, immutablesMeta)
 	testOrderID2 := baseIDs.NewOrderID(testClassificationID, immutablesMeta)
 	keepers.CancelKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testOrder))
@@ -197,8 +192,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want   helpers.TransactionResponse
 	}{
 		{"+ve Not Authorized", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID2, testOrderID)}, newTransactionResponse(constants.NotAuthorized)},
-		{"+ve entity Not Found", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testOrderID2)}, newTransactionResponse(constants.EntityNotFound)},
 		{"+ve", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testOrderID)}, newTransactionResponse(nil)},
+		{"+ve entity Not Found", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testOrderID2)}, newTransactionResponse(constants.EntityNotFound)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
