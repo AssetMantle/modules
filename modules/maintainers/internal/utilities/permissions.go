@@ -10,22 +10,22 @@ func SetPermissions(mint bool, burn bool, renumerate bool, add bool, remove bool
 	permissions := base.NewIDList()
 
 	if mint {
-		permissions.Add(constansts.Mint)
+		permissions = permissions.Add(constansts.Mint)
 	}
 	if burn {
-		permissions.Add(constansts.Burn)
+		permissions = permissions.Add(constansts.Burn)
 	}
 	if renumerate {
-		permissions.Add(constansts.Renumerate)
+		permissions = permissions.Add(constansts.Renumerate)
 	}
 	if add {
-		permissions.Add(constansts.Add)
+		permissions = permissions.Add(constansts.Add)
 	}
 	if remove {
-		permissions.Add(constansts.Remove)
+		permissions = permissions.Add(constansts.Remove)
 	}
 	if mutate {
-		permissions.Add(constansts.Mutate)
+		permissions = permissions.Add(constansts.Mutate)
 	}
 
 	return permissions
