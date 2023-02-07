@@ -12,7 +12,6 @@ import (
 	"github.com/AssetMantle/modules/modules/metas"
 	"github.com/AssetMantle/modules/modules/orders"
 	"github.com/AssetMantle/modules/modules/splits"
-	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -235,7 +234,6 @@ func (simulationApplication SimulationApplication) SetApplication(application Ap
 func (simulationApplication SimulationApplication) InitializeSimulationApplication(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.SimulationApplication {
 	cache := store.NewCommitKVStoreCacheManager()
 	db = tendermintDB.NewMemDB()
-
 	baseAppOptions = append(baseAppOptions, baseapp.SetInterBlockCache(cache), baseapp.SetMinGasPrices(viper.GetString("minimum-gas-prices")))
 	simulationApplication.Application = *simulationApplication.Initialize(logger, db, traceStore, loadLatest, invCheckPeriod, skipUpgradeHeights, home, baseAppOptions...).(*Application)
 
@@ -313,68 +311,6 @@ func (simulationApplication SimulationApplication) InitializeSimulationApplicati
 	simulationApplication.EvidenceKeeper.SetRouter(evidenceRouter)
 
 	simulationApplication.StakingKeeper = simulationApplication.stakingKeeper
-	//
-	//metasModule := metas.Prototype().Initialize(
-	//	simulationApplication.keys[metas.Prototype().Name()],
-	//	simulationApplication.ParamsKeeper.Subspace(metas.Prototype().Name()),
-	//)
-	//classificationsModule := classifications.Prototype().Initialize(
-	//	simulationApplication.keys[classifications.Prototype().Name()],
-	//	simulationApplication.ParamsKeeper.Subspace(classifications.Prototype().Name()),
-	//)
-	//maintainersModule := maintainers.Prototype().Initialize(
-	//	application.keys[metas.Prototype().Name()],
-	//	paramsKeeper.Subspace(maintainers.Prototype().Name()),
-	//	classificationsModule.GetAuxiliary(member.Auxiliary.GetName()),
-	//)
-	//identitiesModule := identities.Prototype().Initialize(
-	//	application.keys[identities.Prototype().Name()],
-	//	paramsKeeper.Subspace(identities.Prototype().Name()),
-	//	classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-	//	classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-	//	metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
-	//)
-	//splitsModule := splits.Prototype().Initialize(
-	//	application.keys[splits.Prototype().Name()],
-	//	paramsKeeper.Subspace(splits.Prototype().Name()),
-	//	supplyKeeper,
-	//	identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
-	//)
-	//assetsModule := assets.Prototype().Initialize(
-	//	simulationApplication.keys[assets.Prototype().Name()],
-	//	simulationApplication.ParamsKeeper.Subspace(assets.Prototype().Name()),
-	//	identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
-	//	splitsModule.GetAuxiliary(burn.Auxiliary.GetName()),
-	//	classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-	//	classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-	//	splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-	//	metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-	//	splitsModule.GetAuxiliary(splitsMint.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
-	//)
-	//ordersModule := orders.Prototype().Initialize(
-	//	simulationApplication.keys[orders.Prototype().Name()],
-	//	simulationApplication.ParamsKeeper.Subspace(orders.Prototype().Name()),
-	//	identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
-	//	classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
-	//	classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-	//	metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
-	//	splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
-	//	maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
-	//)
 
 	govRouter := gov.NewRouter().AddRoute(
 		gov.RouterKey,
@@ -417,27 +353,18 @@ func (simulationApplication SimulationApplication) InitializeSimulationApplicati
 		orders.Prototype(),
 		splits.Prototype(),
 	)
-	//
-	//commitMultiStore := store.NewCommitMultiStore(db)
-	//
-	//for _, key := range simulationApplication.keys {
-	//	commitMultiStore.MountStoreWithDB(key, sdkTypes.StoreTypeIAVL, db)
-	//}
-	//
-	//simulationApplication.Application.BaseApp.SetCMS(commitMultiStore)
 
 	return &simulationApplication
 }
 
-func NewSimulationApplication(name string, moduleBasicManager module.BasicManager, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.SimulationApplication {
+func NewSimulationApplication(name string, moduleBasicManager module.BasicManager, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.SimulationApplication {
 	return &SimulationApplication{
 		Application: Application{
-			name:                        name,
-			moduleBasicManager:          moduleBasicManager,
-			codec:                       makeCodec(moduleBasicManager),
-			enabledWasmProposalTypeList: enabledWasmProposalTypeList,
-			moduleAccountPermissions:    moduleAccountPermissions,
-			tokenReceiveAllowedModules:  tokenReceiveAllowedModules,
+			name:                       name,
+			moduleBasicManager:         moduleBasicManager,
+			codec:                      makeCodec(moduleBasicManager),
+			moduleAccountPermissions:   moduleAccountPermissions,
+			tokenReceiveAllowedModules: tokenReceiveAllowedModules,
 		},
 	}
 }
