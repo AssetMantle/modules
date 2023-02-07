@@ -169,10 +169,10 @@ Release Exception*.
    Correct [v0.43](https://github.com/persistenceone/persistence-sdk/milestone/26) to the issue.
 2. Add a comment to the issue and ensure it contains the following information (see the bug template below):
 
-   * **[Impact]** An explanation of the bug on users and justification for backporting the fix to the stable release.
-   * A **[Test Case]** section containing detailed instructions on how to reproduce the bug.
-   * A **[Regression Potential]** section with a clear assessment on how regressions are most likely to manifest as a
-     result of the pull request that aims to fix the bug in the target stable release.
+    * **[Impact]** An explanation of the bug on users and justification for backporting the fix to the stable release.
+    * A **[Test Case]** section containing detailed instructions on how to reproduce the bug.
+    * A **[Regression Potential]** section with a clear assessment on how regressions are most likely to manifest as a
+      result of the pull request that aims to fix the bug in the target stable release.
 
 3. **Stable Release Managers** will review and discuss the PR. Once *consensus* surrounding the rationale has been
    reached and the technical review has successfully concluded, the pull request will be merged in the respective
