@@ -7,7 +7,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
-	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -28,18 +27,15 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context sdkTypes.Context, request he
 	propertyList := baseLists.NewPropertyList()
 
 	for _, property := range auxiliaryRequest.PropertyList {
-		var meta helpers.Mappable
-
-		if property.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) == 0 {
-			meta = mappable.NewMappable(utilities.GetZeroValueDataFromID(property.GetType()))
+		if property.IsMeta() {
+			propertyList = propertyList.Add(property)
+		} else if property.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) == 0 {
+			propertyList = propertyList.Add(baseProperties.NewMetaProperty(property.GetKey(), utilities.GetZeroValueDataFromID(property.GetType())))
 		} else {
-			metaID := baseIDs.NewMetaID(property.GetType(), property.GetDataID().GetHashID())
-			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(metaID))
-			meta = metas.Get(key.NewKey(metaID))
-		}
-
-		if meta != nil {
-			propertyList = propertyList.Add(baseProperties.NewMetaProperty(property.GetKey(), meta.(data.Data)))
+			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(property.GetDataID()))
+			if Mappable := metas.Get(key.NewKey(property.GetDataID())); Mappable != nil {
+				propertyList = propertyList.Add(baseProperties.NewMetaProperty(property.GetKey(), Mappable.(data.Data)))
+			}
 		}
 	}
 

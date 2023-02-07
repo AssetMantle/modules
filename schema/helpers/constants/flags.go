@@ -20,6 +20,7 @@ var (
 	ClassificationID        = baseHelpers.NewCLIFlag("classificationID", "", "ClassificationID")
 	Coins                   = baseHelpers.NewCLIFlag("coins", "", "Coins")
 	Data                    = baseHelpers.NewCLIFlag("data", "", "Data")
+	DataID                  = baseHelpers.NewCLIFlag("dataID", "", "DataID")
 	ExpiresIn               = baseHelpers.NewCLIFlag("expiresIn", int64(-1), "ExpiresIn")
 	FromID                  = baseHelpers.NewCLIFlag("fromID", "", "FromID")
 	IdentityID              = baseHelpers.NewCLIFlag("identityID", "", "IdentityID")
