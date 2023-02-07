@@ -47,7 +47,7 @@ func (transactionRequest transactionRequest) Validate() error {
 		return err
 	}
 	inputValidator := base.NewInputValidator(constants.PropertyExpression)
-	if !inputValidator.IsValid(transactionRequest.ImmutableProperties) || !inputValidator.IsValid(transactionRequest.ImmutableMetaProperties) || !inputValidator.IsValid(transactionRequest.MutableProperties) || !inputValidator.IsValid(transactionRequest.MutableMetaProperties) {
+	if !inputValidator.IsValid(transactionRequest.ImmutableProperties, transactionRequest.ImmutableMetaProperties, transactionRequest.MutableProperties, transactionRequest.MutableMetaProperties) {
 		return errorConstants.IncorrectFormat
 	}
 	return nil
