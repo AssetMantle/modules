@@ -61,7 +61,7 @@ import (
 	wasmUtilities "github.com/AssetMantle/modules/utilities/wasm"
 )
 
-type Application struct {
+type application struct {
 	name string
 
 	moduleBasicManager module.BasicManager
@@ -84,24 +84,24 @@ type Application struct {
 	baseapp.BaseApp
 }
 
-var _ applications.Application = (*Application)(nil)
+var _ applications.Application = (*application)(nil)
 
-func (application Application) GetDefaultNodeHome() string {
+func (application application) GetDefaultNodeHome() string {
 	return os.ExpandEnv("$HOME/." + application.name + "/Node")
 }
-func (application Application) GetDefaultClientHome() string {
+func (application application) GetDefaultClientHome() string {
 	return os.ExpandEnv("$HOME/." + application.name + "/Client")
 }
-func (application Application) GetModuleBasicManager() module.BasicManager {
+func (application application) GetModuleBasicManager() module.BasicManager {
 	return application.moduleBasicManager
 }
-func (application Application) GetCodec() *codec.Codec {
+func (application application) GetCodec() *codec.Codec {
 	return application.codec
 }
-func (application Application) LoadHeight(height int64) error {
+func (application application) LoadHeight(height int64) error {
 	return application.BaseApp.LoadVersion(height, application.keys[baseapp.MainStoreKey])
 }
-func (application Application) ExportApplicationStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
+func (application application) ExportApplicationStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
 	context := application.BaseApp.NewContext(true, abciTypes.Header{Height: application.BaseApp.LastBlockHeight()})
 
 	if forZeroHeight {
@@ -219,7 +219,7 @@ func (application Application) ExportApplicationStateAndValidators(forZeroHeight
 	return applicationState, staking.WriteValidators(context, application.stakingKeeper), nil
 }
 
-func (application Application) Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
+func (application application) Initialize(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.Application {
 
 	application.BaseApp = *baseapp.NewBaseApp(
 		application.name,
@@ -410,7 +410,6 @@ func (application Application) Initialize(logger log.Logger, db tendermintDB.DB,
 		splitsModule.GetAuxiliary(transfer.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
 	)
-
 	var wasmRouter = application.BaseApp.Router()
 
 	wasmDir := filepath.Join(home, wasm.ModuleName)
@@ -517,7 +516,6 @@ func (application Application) Initialize(logger log.Logger, db tendermintDB.DB,
 		crisis.ModuleName,
 		genutil.ModuleName,
 		evidence.ModuleName,
-		wasm.ModuleName,
 		assets.Prototype().Name(),
 		classifications.Prototype().Name(),
 		identities.Prototype().Name(),
@@ -583,7 +581,7 @@ func makeCodec(moduleBasicManager module.BasicManager) *codec.Codec {
 }
 
 func NewApplication(name string, moduleBasicManager module.BasicManager, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.Application {
-	return &Application{
+	return &application{
 		name:                        name,
 		moduleBasicManager:          moduleBasicManager,
 		codec:                       makeCodec(moduleBasicManager),

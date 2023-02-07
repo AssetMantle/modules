@@ -49,7 +49,7 @@ import (
 )
 
 type SimulationApplication struct {
-	Application
+	application
 
 	transientStoreKeys map[string]*sdkTypes.TransientStoreKey
 	subspaces          map[string]params.Subspace
@@ -217,7 +217,7 @@ func (simulationApplication SimulationApplication) SetupWithGenesisAccounts(acco
 	)
 
 	newSimulationApplication.Commit()
-	newSimulationApplication.BeginBlock(abciTypes.RequestBeginBlock{Header: abciTypes.Header{Height: simulationApplication.Application.BaseApp.LastBlockHeight() + 1}})
+	newSimulationApplication.BeginBlock(abciTypes.RequestBeginBlock{Header: abciTypes.Header{Height: simulationApplication.application.BaseApp.LastBlockHeight() + 1}})
 
 	return newSimulationApplication
 }
@@ -232,7 +232,7 @@ func (simulationApplication SimulationApplication) NewTestApplication(isCheckTx 
 func (simulationApplication SimulationApplication) InitializeSimulationApplication(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.SimulationApplication {
 	cache := store.NewCommitKVStoreCacheManager()
 	baseAppOptions = append(baseAppOptions, baseapp.SetInterBlockCache(cache), baseapp.SetMinGasPrices(viper.GetString("minimum-gas-prices")))
-	simulationApplication.Application = *simulationApplication.Initialize(logger, db, traceStore, loadLatest, invCheckPeriod, skipUpgradeHeights, home, baseAppOptions...).(*Application)
+	simulationApplication.application = *simulationApplication.Initialize(logger, db, traceStore, loadLatest, invCheckPeriod, skipUpgradeHeights, home, baseAppOptions...).(*application)
 
 	simulationApplication.transientStoreKeys = sdkTypes.NewTransientStoreKeys(params.TStoreKey)
 
@@ -391,7 +391,7 @@ func (simulationApplication SimulationApplication) InitializeSimulationApplicati
 
 func NewSimulationApplication(name string, moduleBasicManager module.BasicManager, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.SimulationApplication {
 	return &SimulationApplication{
-		Application: Application{
+		application: application{
 			name:                        name,
 			moduleBasicManager:          moduleBasicManager,
 			codec:                       makeCodec(moduleBasicManager),
