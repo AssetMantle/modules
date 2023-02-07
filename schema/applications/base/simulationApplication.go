@@ -72,27 +72,27 @@ type SimulationApplication struct {
 var _ applications.SimulationApplication = (*SimulationApplication)(nil)
 
 func (simulationApplication SimulationApplication) Codec() *codec.Codec {
-	return simulationApplication.Application.codec
+	return simulationApplication.codec
 }
 
 func (simulationApplication SimulationApplication) BeginBlocker(ctx sdkTypes.Context, req abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
-	return simulationApplication.Application.moduleManager.BeginBlock(ctx, req)
+	return simulationApplication.moduleManager.BeginBlock(ctx, req)
 }
 
 func (simulationApplication SimulationApplication) EndBlocker(ctx sdkTypes.Context, req abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
-	return simulationApplication.Application.moduleManager.EndBlock(ctx, req)
+	return simulationApplication.moduleManager.EndBlock(ctx, req)
 }
 
 func (simulationApplication SimulationApplication) InitChainer(ctx sdkTypes.Context, req abciTypes.RequestInitChain) abciTypes.ResponseInitChain {
 	var genesisState simapp.GenesisState
 
-	simulationApplication.Application.codec.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
+	simulationApplication.codec.MustUnmarshalJSON(req.AppStateBytes, &genesisState)
 
-	return simulationApplication.Application.moduleManager.InitGenesis(ctx, genesisState)
+	return simulationApplication.moduleManager.InitGenesis(ctx, genesisState)
 }
 
 func (simulationApplication SimulationApplication) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tendermintTypes.GenesisValidator, error) {
-	return simulationApplication.Application.ExportApplicationStateAndValidators(forZeroHeight, jailWhiteList)
+	return simulationApplication.ExportApplicationStateAndValidators(forZeroHeight, jailWhiteList)
 }
 
 func (simulationApplication SimulationApplication) ModuleAccountAddrs() map[string]bool {
@@ -104,15 +104,15 @@ func (simulationApplication SimulationApplication) SimulationManager() *module.S
 }
 
 func (simulationApplication SimulationApplication) ModuleManager() *module.Manager {
-	return simulationApplication.Application.moduleManager
+	return simulationApplication.moduleManager
 }
 
 func (simulationApplication SimulationApplication) GetBaseApp() *baseapp.BaseApp {
-	return &simulationApplication.Application.BaseApp
+	return &simulationApplication.BaseApp
 }
 
 func (simulationApplication SimulationApplication) GetKey(storeKey string) *sdkTypes.KVStoreKey {
-	return simulationApplication.Application.keys[storeKey]
+	return simulationApplication.keys[storeKey]
 }
 
 func (simulationApplication SimulationApplication) GetTKey(storeKey string) *sdkTypes.TransientStoreKey {
@@ -124,7 +124,7 @@ func (simulationApplication SimulationApplication) GetSubspace(moduleName string
 }
 
 func (simulationApplication SimulationApplication) GetModuleAccountPermissions() map[string][]string {
-	return simulationApplication.Application.moduleAccountPermissions
+	return simulationApplication.moduleAccountPermissions
 }
 
 func (simulationApplication SimulationApplication) GetBlackListedAddresses() map[string]bool {
@@ -137,7 +137,7 @@ func (simulationApplication SimulationApplication) GetBlackListedAddresses() map
 }
 
 func (simulationApplication SimulationApplication) CheckBalance(t *testing.T, address sdkTypes.AccAddress, coins sdkTypes.Coins) {
-	ctxCheck := simulationApplication.Application.BaseApp.NewContext(true, abciTypes.Header{})
+	ctxCheck := simulationApplication.BaseApp.NewContext(true, abciTypes.Header{})
 	res := simulationApplication.AccountKeeper.GetAccount(ctxCheck, address)
 
 	require.True(t, coins.IsEqual(res.GetCoins()))
@@ -231,7 +231,6 @@ func (simulationApplication SimulationApplication) NewTestApplication(isCheckTx 
 
 func (simulationApplication SimulationApplication) InitializeSimulationApplication(logger log.Logger, db tendermintDB.DB, traceStore io.Writer, loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool, home string, baseAppOptions ...func(*baseapp.BaseApp)) applications.SimulationApplication {
 	cache := store.NewCommitKVStoreCacheManager()
-	db = tendermintDB.NewMemDB()
 	baseAppOptions = append(baseAppOptions, baseapp.SetInterBlockCache(cache), baseapp.SetMinGasPrices(viper.GetString("minimum-gas-prices")))
 	simulationApplication.Application = *simulationApplication.Initialize(logger, db, traceStore, loadLatest, invCheckPeriod, skipUpgradeHeights, home, baseAppOptions...).(*Application)
 
