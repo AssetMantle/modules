@@ -37,25 +37,11 @@ import (
 var (
 	authenticateAuxiliary helpers.Auxiliary
 	delPk1                = ed25519.GenPrivKey().PubKey()
-	delPk2                = ed25519.GenPrivKey().PubKey()
-	delPk3                = ed25519.GenPrivKey().PubKey()
 	delAddr1              = sdkTypes.AccAddress(delPk1.Address())
-	delAddr2              = sdkTypes.AccAddress(delPk2.Address())
-	delAddr3              = sdkTypes.AccAddress(delPk3.Address())
 
-	valOpPk1 = ed25519.GenPrivKey().PubKey()
-	valOpPk2 = ed25519.GenPrivKey().PubKey()
-	valOpPk3 = ed25519.GenPrivKey().PubKey()
-
-	valAccAddr1 = sdkTypes.AccAddress(valOpPk1.Address()) // generate acc addresses for these validator keys too
-	valAccAddr2 = sdkTypes.AccAddress(valOpPk2.Address())
-	valAccAddr3 = sdkTypes.AccAddress(valOpPk3.Address())
-
-	// TODO move to common testing package for all modules
 	// test addresses
 	TestAddrs = []sdkTypes.AccAddress{
-		delAddr1, delAddr2, delAddr3,
-		valAccAddr1, valAccAddr2, valAccAddr3,
+		delAddr1,
 	}
 )
 
