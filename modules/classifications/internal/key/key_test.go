@@ -4,6 +4,7 @@
 package key
 
 import (
+	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -124,7 +125,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{createTestInput()}, []byte{9, 0, 24, 22, 48, 87, 145, 5, 101, 141, 249, 122, 119, 42, 90, 8, 102, 253, 238, 132, 47, 149, 50, 233, 9, 216, 124, 172, 149, 35, 55, 176, 219, 128}},
+		{"+ve", fields{createTestInput()}, module.StoreKeyPrefix.GenerateStoreKey(key{createTestInput()}.Bytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
