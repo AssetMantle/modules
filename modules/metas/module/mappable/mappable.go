@@ -4,7 +4,7 @@
 package mappable
 
 import (
-	base2 "github.com/AssetMantle/modules/schema/data/base"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/metas/module/key"
@@ -28,7 +28,7 @@ func (Mappable) RegisterCodec(codec *codec.LegacyAmino) {
 }
 
 func NewMappable(data data.Data) helpers.Mappable {
-	return &Mappable{Data: data.(*base2.Data)}
+	return &Mappable{Data: data.(*baseData.Data)}
 }
 
 func Prototype() helpers.Mappable {

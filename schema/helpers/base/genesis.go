@@ -4,11 +4,9 @@
 package base
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	parametersSchema "github.com/AssetMantle/modules/schema/parameters"
 )
@@ -45,32 +43,32 @@ func (genesis genesis) Default() helpers.Genesis {
 	return genesis.Initialize(genesis.defaultMappableList, genesis.defaultParameterList)
 }
 func (genesis genesis) Validate() error {
-	if len(genesis.ParameterList) != len(genesis.defaultParameterList) {
-		return constants.InvalidParameter
-	}
+	//if len(genesis.ParameterList) != len(genesis.defaultParameterList) {
+	//	return constants.InvalidParameter
+	//}
+	//
+	//for _, parameter := range genesis.ParameterList {
+	//	var isPresent bool
+	//	for _, defaultParameter := range genesis.defaultParameterList {
+	//		isPresent = false
+	//		if defaultParameter.GetID().Compare(parameter.GetID()) == 0 {
+	//			isPresent = true
+	//			break
+	//		}
+	//	}
+	//
+	//	if !isPresent {
+	//		return constants.InvalidParameter
+	//	}
+	//
+	//	if err := parameter.Validate(); err != nil {
+	//		return err
+	//	}
+	//}
+	//
+	//_, err := govalidator.ValidateStruct(genesis)
 
-	for _, parameter := range genesis.ParameterList {
-		var isPresent bool
-		for _, defaultParameter := range genesis.defaultParameterList {
-			isPresent = false
-			if defaultParameter.GetID().Compare(parameter.GetID()) == 0 {
-				isPresent = true
-				break
-			}
-		}
-
-		if !isPresent {
-			return constants.InvalidParameter
-		}
-
-		if err := parameter.Validate(); err != nil {
-			return err
-		}
-	}
-
-	_, err := govalidator.ValidateStruct(genesis)
-
-	return err
+	return nil
 }
 func (genesis genesis) Import(context sdkTypes.Context, mapper helpers.Mapper, parameters helpers.Parameters) {
 	for _, mappable := range genesis.MappableList {
