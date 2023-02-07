@@ -6,6 +6,7 @@ package base
 import (
 	"bufio"
 	"encoding/json"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"log"
 	"net/http"
 	"reflect"
@@ -53,7 +54,9 @@ func (transaction transaction) Command(codec *codec.Codec) *cobra.Command {
 		}
 
 		var msg sdkTypes.Msg
-
+		if er := transactionRequest.Validate(); er != nil {
+			return errorConstants.IncorrectFormat
+		}
 		msg, err = transactionRequest.MakeMsg()
 		if err != nil {
 			return err

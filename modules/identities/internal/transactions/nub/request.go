@@ -5,7 +5,8 @@ package nub
 
 import (
 	"encoding/json"
-
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -37,7 +38,14 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Router /identities/nub [post]
 func (transactionRequest transactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
-	return err
+	if err != nil {
+		return err
+	}
+	inputValidator := base.NewInputValidator(constants.NubIDExpression)
+	if !inputValidator.IsValid(transactionRequest.NubID) {
+		return errorConstants.IncorrectFormat
+	}
+	return nil
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, cliContext context.CLIContext) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
@@ -59,6 +67,10 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
 	if err != nil {
 		return nil, err
+	}
+
+	if !base.NewInputValidator(constants.NubIDExpression).IsValid(transactionRequest.NubID) {
+		return nil, errorConstants.IncorrectFormat
 	}
 
 	return newMessage(
