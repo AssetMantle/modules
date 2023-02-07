@@ -14,6 +14,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmKeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -94,6 +96,7 @@ import (
 	ibcHost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 	ibcAnte "github.com/cosmos/ibc-go/v3/modules/core/ante"
 	ibcKeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -136,8 +139,9 @@ type application struct {
 
 	codec helpers.Codec
 
-	moduleAccountPermissions   map[string][]string
-	tokenReceiveAllowedModules map[string]bool
+	enabledWasmProposalTypeList []wasm.ProposalType
+	moduleAccountPermissions    map[string][]string
+	tokenReceiveAllowedModules  map[string]bool
 
 	keys map[string]*sdkTypes.KVStoreKey
 
@@ -364,6 +368,11 @@ func (application application) AppCreator(logger tendermintLog.Logger, db tender
 		panic(err)
 	}
 
+	var wasmOpts []wasm.Option
+	if cast.ToBool(appOptions.Get("telemetry.enabled")) {
+		wasmOpts = append(wasmOpts, wasmKeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
+	}
+
 	return application.Initialize(
 		logger,
 		db,
@@ -441,6 +450,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		feegrant.StoreKey,
 		authzKeeper.StoreKey,
 		icaHostTypes.StoreKey,
+		wasm.StoreKey,
 
 		assets.Prototype().Name(),
 		classifications.Prototype().Name(),
@@ -925,13 +935,14 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 	return &application
 }
 
-func NewApplication(name string, moduleBasicManager module.BasicManager, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.Application {
+func NewApplication(name string, moduleBasicManager module.BasicManager, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.Application {
 	return &application{
-		name:                       name,
-		moduleBasicManager:         moduleBasicManager,
-		codec:                      base.CodecPrototype().Initialize(moduleBasicManager),
-		moduleAccountPermissions:   moduleAccountPermissions,
-		tokenReceiveAllowedModules: tokenReceiveAllowedModules,
+		name:                        name,
+		moduleBasicManager:          moduleBasicManager,
+		codec:                       base.CodecPrototype().Initialize(moduleBasicManager),
+		enabledWasmProposalTypeList: enabledWasmProposalTypeList,
+		moduleAccountPermissions:    moduleAccountPermissions,
+		tokenReceiveAllowedModules:  tokenReceiveAllowedModules,
 	}
 }
 
