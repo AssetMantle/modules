@@ -95,7 +95,6 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionKeeper
 	}{
-		// TODO: Add test cases.
 		{"+ve", transactionKeeper{}},
 	}
 	for _, tt := range tests {
@@ -174,7 +173,6 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		// TODO: Add test cases.
 		{"+ve", fields{Mapper, burnAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, fromID, testAssetID)}, newTransactionResponse(nil)},
 		{"+ve", fields{Mapper, burnAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, fromID, baseIDs.PrototypeAssetID())}, newTransactionResponse(errorConstants.EntityNotFound)},
 	}

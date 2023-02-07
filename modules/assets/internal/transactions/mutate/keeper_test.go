@@ -142,7 +142,6 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, Mapper, _ := createTestInput(t)
 	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
-	//immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 	immutables := baseQualified.NewImmutables(immutableMetaProperties)
 	mutableMetaproperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
 	mutableproperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())))
