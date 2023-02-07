@@ -4,8 +4,9 @@
 package scrub
 
 import (
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"testing"
+
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 
 	"github.com/stretchr/testify/require"
 

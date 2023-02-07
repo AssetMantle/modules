@@ -4,9 +4,10 @@
 package base
 
 import (
-	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
@@ -184,8 +185,8 @@ func Test_document_GetProperty(t *testing.T) {
 		{"+ve with nil classificationID for Mutable Property", fields{ClassificationID: nil, Immutables: testImmutables, Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID), false},
 		{"+ve with nil immutables for Mutable Property", fields{ClassificationID: classificationID, Immutables: baseQualified.NewImmutables(baseLists.NewPropertyList()), Mutables: testMutables}, args{testMutablePropertyID}, testMutables.GetMutablePropertyList().GetProperty(testMutablePropertyID), false}, // TODO: panics for empty immutable struct
 		{"+ve with nil mutables for Mutable Property", fields{ClassificationID: classificationID, Immutables: testImmutables, Mutables: baseQualified.NewMutables(baseLists.NewPropertyList())}, args{testMutablePropertyID}, nil, false},
-		//Panics for empty structs
-		//GetProperty() searches by traversing through Immutables and Mutables of a document, hence setting them as nil should cause a fatal panic
+		// Panics for empty structs
+		// GetProperty() searches by traversing through Immutables and Mutables of a document, hence setting them as nil should cause a fatal panic
 		{"panic case nil immutables", fields{classificationID, nil, testMutables}, args{testImmutablePropertyID}, nil, true},
 		{"panic case nil mutables", fields{classificationID, testImmutables, nil}, args{testImmutablePropertyID}, nil, true},
 		{"panic case nil document", fields{nil, nil, nil}, args{testImmutablePropertyID}, nil, true},

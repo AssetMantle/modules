@@ -4,11 +4,12 @@
 package make
 
 import (
+	"os"
+
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
-	"os"
 )
 
 type testingLogging interface {

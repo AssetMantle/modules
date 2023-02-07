@@ -5,9 +5,10 @@ package base
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"

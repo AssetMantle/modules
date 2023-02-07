@@ -26,7 +26,7 @@ func (key) RegisterCodec(codec *codec.Codec) {
 	codecUtilities.RegisterModuleConcrete(codec, key{})
 }
 func (key key) IsPartial() bool {
-	return len(key.GetHashID().Bytes()) == 0
+	return len(key.OrderID.Bytes()) == 0
 }
 func (key key) Equals(compareKey helpers.Key) bool {
 	if compareKey, err := keyFromInterface(compareKey); err != nil {

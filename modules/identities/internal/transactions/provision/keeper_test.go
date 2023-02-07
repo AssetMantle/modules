@@ -5,6 +5,18 @@ package provision
 
 import (
 	"fmt"
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/store"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintDB "github.com/tendermint/tm-db"
+
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
@@ -19,16 +31,6 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -71,9 +73,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	authenticateAuxilary := authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
+	authenticateAuxiliary := authenticate.AuxiliaryMock.Initialize(Mapper, Parameters)
 	keepers := TestKeepers{
-		ProvisionKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxilary}).(helpers.TransactionKeeper),
+		ProvisionKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return context, keepers, Mapper, Parameters
@@ -98,7 +100,7 @@ func Test_keeperPrototype(t *testing.T) {
 
 func Test_transactionKeeper_Initialize(t *testing.T) {
 	_, _, mapper, _parameters := CreateTestInput(t)
-	supplementAuxilary := supplement.AuxiliaryMock.Initialize(mapper, _parameters)
+	supplementAuxiliary := supplement.AuxiliaryMock.Initialize(mapper, _parameters)
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -115,7 +117,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{mapper}, args{mapper, _parameters, []interface{}{supplementAuxilary}}, transactionKeeper{mapper, supplementAuxilary}},
+		{"+ve", fields{mapper}, args{mapper, _parameters, []interface{}{supplementAuxiliary}}, transactionKeeper{mapper, supplementAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

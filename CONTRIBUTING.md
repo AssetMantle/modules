@@ -27,21 +27,21 @@ a smooth workflow for all contributors, the general procedure for contributing h
   some [good first issues](https://github.com/AssetMantle/modules/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
   ?
 
-2. Determine whether a GitHub issue or discussion is more appropriate for your needs:
-1. If you want to propose something new that requires specification or an additional design, or you would like to change
+1. Determine whether a GitHub issue or discussion is more appropriate for your needs:
+2. If you want to propose something new that requires specification or an additional design, or you would like to change
    a process, start with a [new discussion](https://github.com/AssetMantle/modules/discussions/new). With discussions,
    we can better handle the design process using discussion threads. A discussion usually leads to one or more issues.
-2. If the issue you want addressed is a specific proposal or a bug, then open
+3. If the issue you want addressed is a specific proposal or a bug, then open
    a [new issue](https://github.com/AssetMantle/modules/issues/new/choose).
-3. Review existing [issues](https://github.com/AssetMantle/modules/issues) to find an issue you'd like to help with.
-3. Participate in thoughtful discussion on that issue.
-4. If you would like to contribute:
+4. Review existing [issues](https://github.com/AssetMantle/modules/issues) to find an issue you'd like to help with.
+5. Participate in thoughtful discussion on that issue.
+6. If you would like to contribute:
     1. Ensure that the proposal has been accepted.
     2. Ensure that nobody else has already begun working on this issue. If they have, make sure to contact them to
        collaborate.
     3. If nobody has been assigned for the issue, and you would like to work on it, make a comment on the issue to
        inform the community of your intentions to begin work.
-5. To submit your work as a contribution to the repository follow standard GitHub best practices.
+7. To submit your work as a contribution to the repository follow standard GitHub best practices.
    See [pull request guideline](#pull-requests) below.
 
 **Note: ** For very small or blatantly obvious problems such as typos, you are not required to an open issue to submit a
