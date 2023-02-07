@@ -4,6 +4,11 @@
 package mappable
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
@@ -13,9 +18,6 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"reflect"
-	"testing"
 )
 
 func createTestData(t *testing.T) documents.Maintainer {
@@ -74,7 +76,7 @@ func Test_mappable_GetKey(t *testing.T) {
 		fields fields
 		want   helpers.Key
 	}{
-		{"+ve", fields{testMaintainer}, key.NewKey(baseIDs.NewMaintainerID(testMaintainer.GetMaintainedClassificationID(), testMaintainer.GetIdentityID()))},
+		{"+ve", fields{testMaintainer}, key.NewKey(baseIDs.NewMaintainerID(testMaintainer.GetMaintainedClassificationID(), testMaintainer.GetImmutables()))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

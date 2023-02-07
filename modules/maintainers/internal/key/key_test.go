@@ -4,6 +4,11 @@
 package key
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -12,17 +17,14 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"reflect"
-	"testing"
 )
 
 func createTestData() ids.MaintainerID {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testIdentityID := baseIDs.NewIdentityID(testClassificationID, immutables)
-	testMaintainerID := baseIDs.NewMaintainerID(testClassificationID, testIdentityID)
+	// testIdentityID := baseIDs.NewIdentityID(testClassificationID, immutables)
+	testMaintainerID := baseIDs.NewMaintainerID(testClassificationID, immutables)
 	return testMaintainerID
 }
 

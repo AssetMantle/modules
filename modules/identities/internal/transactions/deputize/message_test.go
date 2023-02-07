@@ -4,9 +4,10 @@
 package deputize
 
 import (
-	"github.com/AssetMantle/modules/schema/lists/utilities"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"

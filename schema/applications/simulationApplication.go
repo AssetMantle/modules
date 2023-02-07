@@ -4,9 +4,10 @@
 package applications
 
 import (
-	tendermintDB "github.com/tendermint/tm-db"
 	"io"
 	"testing"
+
+	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth/exported"

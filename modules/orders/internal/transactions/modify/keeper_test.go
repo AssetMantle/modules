@@ -5,6 +5,19 @@ package modify
 
 import (
 	"fmt"
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/store"
+	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/stretchr/testify/require"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tendermintDB "github.com/tendermint/tm-db"
+
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
@@ -22,17 +35,6 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store"
-	"github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/stretchr/testify/require"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tendermintDB "github.com/tendermint/tm-db"
-	"reflect"
-	"testing"
 )
 
 var (
@@ -163,12 +165,12 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData(baseLists.NewDataList())),
 	)
 	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList())))
-	//immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList())))
+	// immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseLists.NewDataList())))
 	immutablesMeta := baseQualified.NewImmutables(immutableMetaProperties)
 	mutablesMeta := baseQualified.NewMutables(mutableMetaProperties)
 	testClassificationID := baseIDs.NewClassificationID(immutablesMeta, mutablesMeta)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutablesMeta)
-	//testFromID2 := baseIDs.PrototypeIdentityID()
+	// testFromID2 := baseIDs.PrototypeIdentityID()
 	mutableMetaProperties.Mutate(
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerID"), baseData.NewIDData(testFromID)),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerID"), baseData.NewIDData(testFromID)))
@@ -178,13 +180,13 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutablesMeta, mutablesMeta)
 	testIdentity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutablesMeta, mutablesMeta)
-	//testorderID := mappable.NewMappable(testOrder).GetKey()
-	testMakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("makerID"))
-	testTakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("takerID"))
+	// testOrderID := mappable.NewMappable(testOrder).GetKey()
+	// testMakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("makerID"))
+	// testTakerOwnableID := baseIDs.NewOwnableID(baseIDs.NewStringID("takerID"))
 	testRate := types.NewDec(10)
 	testHeight := baseTypes.NewHeight(1)
-	testOrderID := baseIDs.NewOrderID(testClassificationID, testMakerOwnableID, testTakerOwnableID, testRate, testHeight, testFromID, immutablesMeta)
-	//testOrderID2 := baseIDs.NewOrderID(testClassificationID, testTakerOwnableID, testTakerOwnableID, testRate, testHeight, testFromID, immutablesMeta)
+	testOrderID := baseIDs.NewOrderID(testClassificationID, immutablesMeta)
+	// testOrderID2 := baseIDs.NewOrderID(testClassificationID, testTakerOwnableID, testTakerOwnableID, testRate, testHeight, testFromID, immutablesMeta)
 	keepers.ModifyKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(testOrder))
 	type fields struct {
 		mapper                helpers.Mapper

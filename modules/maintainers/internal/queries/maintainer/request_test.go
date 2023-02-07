@@ -4,14 +4,16 @@
 package maintainer
 
 import (
+	"reflect"
+	"testing"
+
+	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/stretchr/testify/require"
+
 	"github.com/AssetMantle/modules/modules/maintainers/internal/common"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/stretchr/testify/require"
-	"reflect"
-	"testing"
 )
 
 var (
@@ -29,7 +31,7 @@ func Test_newQueryRequest(t *testing.T) {
 		want helpers.QueryRequest
 	}{
 		{"+ve", args{testMaintainerID}, queryRequest{testMaintainerID}},
-		{"+ve wtih nil", args{testMaintainerID1}, queryRequest{testMaintainerID1}},
+		{"+ve with nil", args{testMaintainerID1}, queryRequest{testMaintainerID1}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
