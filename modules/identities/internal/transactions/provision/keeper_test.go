@@ -157,9 +157,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want   helpers.TransactionResponse
 	}{
 		// TODO: Add test cases.
-		{"+ve", fields{mapper}, args{context, newMessage(fromAccAddress, toAccAddress, testFromID)}, newTransactionResponse(errorConstants.EntityAlreadyExists)},
-		{"+ve already Exists", fields{mapper}, args{context, newMessage(fromAccAddress, fromAccAddress, testFromID)}, newTransactionResponse(nil)},
-		{"+ve Not Authorized", fields{mapper}, args{context, newMessage(toAccAddress, fromAccAddress, testFromID)}, newTransactionResponse(errorConstants.NotAuthorized)},
+		{"+ve Not Authorized", fields{mapper}, args{context, newMessage(fromAccAddress, fromAccAddress, testFromID)}, newTransactionResponse(errorConstants.NotAuthorized)},
+		{"+ve already Exists", fields{mapper}, args{context, newMessage(toAccAddress, fromAccAddress, testFromID)}, newTransactionResponse(nil)},
+		{"+ve", fields{mapper}, args{context, newMessage(toAccAddress, toAccAddress, testFromID)}, newTransactionResponse(errorConstants.EntityAlreadyExists)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
