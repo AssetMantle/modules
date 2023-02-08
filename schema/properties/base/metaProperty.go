@@ -13,35 +13,38 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-// type metaProperty struct {
-//	ID   ids.PropertyID `json:"id"`
-//	Data data.Data      `json:"data"`
-// }
-
 var _ properties.MetaProperty = (*MetaProperty)(nil)
 
 func (metaProperty *MetaProperty) IsMetaProperty() {
 }
+func (metaProperty *MetaProperty) ValidateBasic() error {
+	// TODO implement
+	return nil
+}
 func (metaProperty *MetaProperty) GetData() data.AnyData {
-	return metaProperty.AnyData
+	return metaProperty.Data
 }
 func (metaProperty *MetaProperty) ScrubData() properties.MesaProperty {
 	return NewMesaProperty(metaProperty.GetKey(), metaProperty.GetData())
 }
 func (metaProperty *MetaProperty) GetID() ids.PropertyID {
-	return metaProperty.Id
+	return metaProperty.ID
 }
 func (metaProperty *MetaProperty) GetDataID() ids.DataID {
-	return metaProperty.AnyData.GetID()
+	return metaProperty.Data.GetID()
 }
 func (metaProperty *MetaProperty) GetKey() ids.StringID {
-	return metaProperty.Id.GetKey()
+	return metaProperty.ID.GetKey()
 }
 func (metaProperty *MetaProperty) GetType() ids.StringID {
-	return metaProperty.AnyData.GetType()
+	return metaProperty.Data.GetType()
 }
 func (metaProperty *MetaProperty) IsMeta() bool {
 	return true
+}
+func (metaProperty *MetaProperty) Mutate(data data.Data) properties.Property {
+	metaProperty.Data = data.ToAnyData().(*base.AnyData)
+	return metaProperty
 }
 func (metaProperty *MetaProperty) Compare(listable traits.Listable) int {
 	// NOTE: compare property can be meta or mesa, so listable must only be cast to Property Interface
@@ -60,7 +63,7 @@ func (metaProperty *MetaProperty) ToAnyProperty() properties.AnyProperty {
 }
 func NewEmptyMetaPropertyFromID(propertyID ids.PropertyID) properties.MetaProperty {
 	return &MetaProperty{
-		Id: propertyID.(*baseIDs.PropertyID),
+		ID: propertyID.(*baseIDs.PropertyID),
 	}
 }
 func NewMetaProperty(key ids.StringID, data data.Data) properties.MetaProperty {
@@ -68,7 +71,7 @@ func NewMetaProperty(key ids.StringID, data data.Data) properties.MetaProperty {
 		panic(errorConstants.MetaDataError)
 	}
 	return &MetaProperty{
-		Id:      baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.PropertyID),
-		AnyData: data.ToAnyData().(*base.AnyData),
+		ID:   baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.PropertyID),
+		Data: data.ToAnyData().(*base.AnyData),
 	}
 }

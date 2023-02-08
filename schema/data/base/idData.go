@@ -5,8 +5,10 @@ package base
 
 import (
 	"bytes"
+
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -18,7 +20,20 @@ func (idData *IDData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(idData)
 }
 func (idData *IDData) AsString() string {
-	return idData.Value.AsString()
+	return joinDataTypeAndValueStrings(idData.GetType().AsString(), idData.Value.AsString())
+}
+func (idData *IDData) FromString(dataTypeAndValueString string) (data.Data, error) {
+	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
+
+	if dataTypeString != idData.GetType().AsString() {
+		return PrototypeIDData(), constants.IncorrectFormat
+	}
+
+	if dataString == "" {
+		return PrototypeIDData(), nil
+	}
+
+	return NewIDData(baseIDs.NewStringID(dataString)), nil
 }
 func (idData *IDData) Compare(listable traits.Listable) int {
 	compareIDData, err := dataFromListable(listable)
@@ -35,7 +50,7 @@ func (idData *IDData) GetType() ids.StringID {
 	return dataConstants.IDDataID
 }
 func (idData *IDData) ZeroValue() data.Data {
-	return IDDataPrototype()
+	return PrototypeIDData()
 }
 func (idData *IDData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(idData.Bytes())
@@ -50,7 +65,7 @@ func (idData *IDData) ToAnyData() data.AnyData {
 		},
 	}
 }
-func IDDataPrototype() data.IDData {
+func PrototypeIDData() data.IDData {
 	return NewIDData(baseIDs.NewStringID(""))
 }
 

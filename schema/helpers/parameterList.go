@@ -5,7 +5,9 @@ package helpers
 
 import (
 	"context"
+	"net/http"
 
+	"github.com/cosmos/cosmos-sdk/client"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
@@ -16,6 +18,6 @@ type ParameterList interface {
 	Set(context.Context, ...Parameter)
 
 	GetKeyTable() paramsTypes.KeyTable
-
+	RESTQueryHandler(client.Context) http.HandlerFunc
 	Initialize(paramsTypes.Subspace) ParameterList
 }

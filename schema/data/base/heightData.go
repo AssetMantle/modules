@@ -10,6 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -23,7 +24,25 @@ func (heightData *HeightData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(heightData)
 }
 func (heightData *HeightData) AsString() string {
-	return strconv.FormatInt(heightData.Value.Get(), 10)
+	return joinDataTypeAndValueStrings(heightData.GetType().AsString(), strconv.FormatInt(heightData.Value.Get(), 10))
+}
+func (heightData *HeightData) FromString(dataTypeAndValueString string) (data.Data, error) {
+	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
+
+	if dataTypeString != heightData.GetType().AsString() {
+		return PrototypeHeightData(), constants.IncorrectFormat
+	}
+
+	if dataString == "" {
+		return PrototypeHeightData(), nil
+	}
+
+	Height, err := strconv.ParseInt(dataString, 10, 64)
+	if err != nil {
+		return PrototypeHeightData(), err
+	}
+
+	return NewHeightData(baseTypes.NewHeight(Height)), nil
 }
 func (heightData *HeightData) Compare(listable traits.Listable) int {
 	compareHeightData, err := dataFromListable(listable)
@@ -61,7 +80,7 @@ func (heightData *HeightData) ToAnyData() data.AnyData {
 	}
 }
 
-func HeightDataPrototype() data.HeightData {
+func PrototypeHeightData() data.HeightData {
 	return NewHeightData(baseTypes.NewHeight(0)).ZeroValue().(data.HeightData)
 }
 

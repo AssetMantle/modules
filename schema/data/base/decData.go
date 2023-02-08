@@ -10,6 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -45,7 +46,25 @@ func (decData *DecData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(decData.Bytes())
 }
 func (decData *DecData) AsString() string {
-	return decData.Value.String()
+	return joinDataTypeAndValueStrings(decData.GetType().AsString(), decData.Value.String())
+}
+func (decData *DecData) FromString(dataTypeAndValueString string) (data.Data, error) {
+	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
+
+	if dataTypeString != decData.GetType().AsString() {
+		return PrototypeDecData(), constants.IncorrectFormat
+	}
+
+	if dataString == "" {
+		return PrototypeDecData(), nil
+	}
+
+	dec, err := sdkTypes.NewDecFromStr(dataString)
+	if err != nil {
+		return PrototypeDecData(), err
+	}
+
+	return NewDecData(dec), nil
 }
 func (decData *DecData) Get() sdkTypes.Dec {
 	return decData.Value
@@ -57,7 +76,7 @@ func (decData *DecData) ToAnyData() data.AnyData {
 		}}
 }
 
-func DecDataPrototype() data.DecData {
+func PrototypeDecData() data.DecData {
 	return NewDecData(sdkTypes.ZeroDec()).ZeroValue().(data.DecData)
 }
 

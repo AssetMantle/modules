@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/AssetMantle/modules/schema/data/utilities"
+
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -15,8 +17,8 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//TODO: Test GetID for all Data types; If every data tests GetID() then GenerateID() is automatically tested
-//func TestNewDataID(t *testing.T) {
+// TODO: Test GetID for all Data types; If every data tests GetID() then GenerateID() is automatically tested
+// func TestNewDataID(t *testing.T) {
 //	type args struct {
 //		data data.Data
 //	}
@@ -44,7 +46,7 @@ import (
 //			}
 //		})
 //	}
-//}
+// }
 func Test_dataIDFromInterface(t *testing.T) {
 	type args struct {
 		i interface{}
@@ -190,17 +192,17 @@ type booleanData struct {
 }
 
 func (booleanData booleanData) Unmarshal(bytes []byte) error {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (booleanData booleanData) MarshalTo(bytes []byte) (int, error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (booleanData booleanData) ToAnyData() data.AnyData {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
@@ -224,9 +226,26 @@ func (booleanData booleanData) Compare(listable traits.Listable) int {
 	return -1
 }
 func (booleanData booleanData) AsString() string {
-	return strconv.FormatBool(booleanData.Value)
+	return utilities.JoinDataTypeAndValueStrings(booleanData.GetType().AsString(), strconv.FormatBool(booleanData.Value))
 }
+func (booleanData booleanData) FromString(dataString string) (data.Data, error) {
+	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
+	if dataTypeString != stringData.GetType().AsString() {
+		return PrototypeStringData(), constants.IncorrectFormat
+	}
+
+	if dataString == "" {
+		return BooleanDataPrototype(), nil
+	}
+
+	Bool, err := strconv.ParseBool(dataString)
+	if err != nil {
+		return BooleanDataPrototype(), err
+	}
+
+	return NewBooleanData(Bool), nil
+}
 func (booleanData booleanData) Bytes() []byte {
 	if booleanData.Get() {
 		return []byte{0x1}

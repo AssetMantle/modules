@@ -8,6 +8,6 @@ import "gogoproto/gogo.proto";
 message MesaProperty {
   option (gogoproto.goproto_getters) = false;
 
-  ids.PropertyID id = 1;
+  ids.PropertyID i_d = 1;
   ids.DataID data_i_d = 2;
 }

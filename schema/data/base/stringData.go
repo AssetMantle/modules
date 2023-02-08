@@ -8,6 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -39,7 +40,20 @@ func (stringData *StringData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(stringData.Bytes())
 }
 func (stringData *StringData) AsString() string {
-	return stringData.Value
+	return joinDataTypeAndValueStrings(stringData.GetType().AsString(), stringData.Value)
+}
+func (stringData *StringData) FromString(dataTypeAndValueString string) (data.Data, error) {
+	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
+
+	if dataTypeString != stringData.GetType().AsString() {
+		return PrototypeStringData(), constants.IncorrectFormat
+	}
+
+	if dataString == "" {
+		return PrototypeStringData(), nil
+	}
+
+	return NewStringData(dataString), nil
 }
 func (stringData *StringData) ToAnyData() data.AnyData {
 	return &AnyData{
@@ -49,7 +63,7 @@ func (stringData *StringData) ToAnyData() data.AnyData {
 	}
 }
 
-func StringDataPrototype() data.StringData {
+func PrototypeStringData() data.StringData {
 	return NewStringData("")
 }
 

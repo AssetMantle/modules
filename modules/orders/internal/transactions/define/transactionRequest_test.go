@@ -6,9 +6,10 @@ package define
 import (
 	"encoding/json"
 	"fmt"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"reflect"
 	"testing"
+
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -318,7 +319,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 				MutableProperties:       tt.fields.MutableProperties,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
-				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

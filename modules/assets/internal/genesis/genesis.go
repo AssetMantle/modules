@@ -18,7 +18,7 @@ var _ helpers.Genesis = (*Genesis)(nil)
 func (genesis *Genesis) Default() helpers.Genesis {
 	return Prototype()
 }
-func (genesis *Genesis) Validate() error {
+func (genesis *Genesis) ValidateBasic() error {
 	if len(genesis.Parameters) != len(genesis.Default().(*Genesis).Parameters) {
 		return constants.InvalidParameter
 	}
