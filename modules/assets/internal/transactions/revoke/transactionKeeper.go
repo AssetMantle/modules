@@ -5,13 +5,10 @@ package revoke
 
 import (
 	"context"
-	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/revoke"
-	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -51,8 +48,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
-		case bankKeeper.BaseKeeper:
-			continue
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case revoke.Auxiliary.GetName():
@@ -60,8 +55,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
 			}
-		default:
-			panic(constants.UninitializedUsage)
 		}
 	}
 

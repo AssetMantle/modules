@@ -5,8 +5,6 @@ package renumerate
 
 import (
 	"context"
-	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
@@ -84,8 +82,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
-		case bankKeeper.BaseKeeper:
-			continue
 		case helpers.Auxiliary:
 			switch value.GetName() {
 			case maintain.Auxiliary.GetName():
@@ -97,8 +93,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 
