@@ -29,22 +29,22 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	classification := mappable.GetClassification(classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID)))
 	if classification == nil {
-		return newAuxiliaryResponse("", errorConstants.EntityNotFound)
+		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
 
 	for _, immutableProperty := range classification.GetImmutables().GetImmutablePropertyList().GetList() {
 		if immutableProperty.Get().GetID().Compare(constansts.BondingPropertyID) == 0 {
 			coins, err := sdkTypes.ParseCoinsNormalized(immutableProperty.Get().(properties.MetaProperty).GetData().Get().AsString() + dataConstants.Denom)
 			if err != nil {
-				return newAuxiliaryResponse("", err)
+				return newAuxiliaryResponse(err)
 			}
 			if err := auxiliaryRequest.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.moduleName, auxiliaryRequest.address, coins); err != nil {
-				return newAuxiliaryResponse("", err)
+				return newAuxiliaryResponse(err)
 			}
-			return newAuxiliaryResponse(immutableProperty.Get().(properties.MetaProperty).GetData().AsString(), nil)
+			return newAuxiliaryResponse(nil)
 		}
 	}
-	return newAuxiliaryResponse("", nil)
+	return newAuxiliaryResponse(nil)
 }
 
 func (auxiliaryKeeper auxiliaryKeeper) FetchCollection(context context.Context, classificationID baseIDs.ClassificationID) helpers.Collection {
