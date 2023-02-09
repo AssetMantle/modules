@@ -1,15 +1,18 @@
-package charge
+// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// SPDX-License-Identifier: Apache-2.0
+
+package unbond
 
 import (
 	"context"
-	"fmt"
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/ids/constansts"
 	"github.com/AssetMantle/modules/schema/properties"
-	propertiesConstants "github.com/AssetMantle/modules/schema/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -24,26 +27,24 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.ClassificationID))
 
-	mappable := mappable.GetClassification(classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID)))
-	for _, i := range mappable.GetImmutables().GetImmutablePropertyList().GetList() {
-		if i.Get().GetID().AsString() == propertiesConstants.BondingIDString {
-			coins, err := sdkTypes.ParseCoinsNormalized(i.Get().(properties.MetaProperty).GetData().Get().AsString() + dataConstants.Denom)
+	classification := mappable.GetClassification(classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID)))
+	if classification == nil {
+		return newAuxiliaryResponse(errorConstants.EntityNotFound)
+	}
+
+	for _, immutableProperty := range classification.GetImmutables().GetImmutablePropertyList().GetList() {
+		if immutableProperty.Get().GetID().Compare(constansts.BondingPropertyID) == 0 {
+			coins, err := sdkTypes.ParseCoinsNormalized(immutableProperty.Get().(properties.MetaProperty).GetData().Get().AsString() + dataConstants.Denom)
 			if err != nil {
-				fmt.Println("Incorrect format: ", err.Error())
+				return newAuxiliaryResponse(err)
 			}
-			if auxiliaryRequest.bondingMode {
-				if err := auxiliaryRequest.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.address, auxiliaryRequest.moduleName, coins); err != nil {
-					fmt.Println("error")
-				}
-			} else {
-				if err := auxiliaryRequest.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.moduleName, auxiliaryRequest.address, coins); err != nil {
-					fmt.Println("error")
-				}
+			if err := auxiliaryRequest.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.moduleName, auxiliaryRequest.address, coins); err != nil {
+				return newAuxiliaryResponse(err)
 			}
-			return newAuxiliaryResponse(i.Get().(properties.MetaProperty).GetData().AsString(), nil)
+			return newAuxiliaryResponse(nil)
 		}
 	}
-	return newAuxiliaryResponse("", nil)
+	return newAuxiliaryResponse(nil)
 }
 
 func (auxiliaryKeeper auxiliaryKeeper) FetchCollection(context context.Context, classificationID baseIDs.ClassificationID) helpers.Collection {

@@ -8,7 +8,7 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/charge"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
@@ -28,14 +28,14 @@ import (
 )
 
 type transactionKeeper struct {
+	bankKeeper                 bankKeeper.Keeper
 	mapper                     helpers.Mapper
 	parameters                 helpers.ParameterList
-	conformAuxiliary           helpers.Auxiliary
-	mintAuxiliary              helpers.Auxiliary
 	authenticateAuxiliary      helpers.Auxiliary
+	bondAuxiliary              helpers.Auxiliary
+	conformAuxiliary           helpers.Auxiliary
 	maintainersVerifyAuxiliary helpers.Auxiliary
-	chargeAuxiliary            helpers.Auxiliary
-	bankKeeper                 bankKeeper.Keeper
+	mintAuxiliary              helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -85,7 +85,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	if auxiliaryResponse := transactionKeeper.chargeAuxiliary.GetKeeper().Help(context, charge.NewAuxiliaryRequest(message.ClassificationID, fromAddress, module.Name, transactionKeeper.bankKeeper, true)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.bondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(message.ClassificationID, fromAddress, module.Name, transactionKeeper.bankKeeper)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
@@ -103,19 +103,17 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			transactionKeeper.bankKeeper = value
 		case helpers.Auxiliary:
 			switch value.GetName() {
+			case authenticate.Auxiliary.GetName():
+				transactionKeeper.authenticateAuxiliary = value
+			case bond.Auxiliary.GetName():
+				transactionKeeper.bondAuxiliary = value
 			case conform.Auxiliary.GetName():
 				transactionKeeper.conformAuxiliary = value
 			case mint.Auxiliary.GetName():
 				transactionKeeper.mintAuxiliary = value
-			case authenticate.Auxiliary.GetName():
-				transactionKeeper.authenticateAuxiliary = value
 			case verify.Auxiliary.GetName():
 				transactionKeeper.maintainersVerifyAuxiliary = value
-			case charge.Auxiliary.GetName():
-				transactionKeeper.chargeAuxiliary = value
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

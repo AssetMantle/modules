@@ -26,7 +26,7 @@ func (listData *ListData) Get() []data.AnyData {
 	}
 	return anyDataList
 }
-func (listData *ListData) GetWidth() int {
+func (listData *ListData) GetWeight() int {
 	return dataConstants.ListDataWidth
 }
 func (listData *ListData) AsString() string {

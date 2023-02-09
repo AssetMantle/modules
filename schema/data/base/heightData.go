@@ -25,7 +25,7 @@ func (heightData *HeightData) GetID() ids.DataID {
 func (heightData *HeightData) AsString() string {
 	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
-func (heightData *HeightData) GetWidth() int {
+func (heightData *HeightData) GetWeight() int {
 	return dataConstants.HeightDataWidth
 }
 func (heightData *HeightData) Compare(listable traits.Listable) int {

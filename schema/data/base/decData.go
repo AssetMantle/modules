@@ -20,7 +20,7 @@ var _ data.DecData = (*DecData)(nil)
 func (decData *DecData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(decData)
 }
-func (decData *DecData) GetWidth() int {
+func (decData *DecData) GetWeight() int {
 	return dataConstants.DecDataWidth
 }
 func (decData *DecData) Compare(listable traits.Listable) int {

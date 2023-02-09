@@ -6,7 +6,7 @@ package burn
 import (
 	"context"
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/charge"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -26,13 +26,13 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper                helpers.Mapper
-	renumerateAuxiliary   helpers.Auxiliary
-	maintainAuxiliary     helpers.Auxiliary
-	supplementAuxiliary   helpers.Auxiliary
-	authenticateAuxiliary helpers.Auxiliary
-	chargeAuxiliary       helpers.Auxiliary
 	bankKeeper            bankKeeper.Keeper
+	mapper                helpers.Mapper
+	authenticateAuxiliary helpers.Auxiliary
+	maintainAuxiliary     helpers.Auxiliary
+	renumerateAuxiliary   helpers.Auxiliary
+	supplementAuxiliary   helpers.Auxiliary
+	unbondAuxiliary       helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -77,7 +77,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	if auxiliaryResponse := transactionKeeper.chargeAuxiliary.GetKeeper().Help(context, charge.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress, module.Name, transactionKeeper.bankKeeper, false)); !auxiliaryResponse.IsSuccessful() {
+	if auxiliaryResponse := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress, module.Name, transactionKeeper.bankKeeper)); !auxiliaryResponse.IsSuccessful() {
 		return nil, auxiliaryResponse.GetError()
 	}
 
@@ -95,19 +95,17 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			transactionKeeper.bankKeeper = value
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case renumerate.Auxiliary.GetName():
-				transactionKeeper.renumerateAuxiliary = value
-			case maintain.Auxiliary.GetName():
-				transactionKeeper.maintainAuxiliary = value
-			case supplement.Auxiliary.GetName():
-				transactionKeeper.supplementAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
-			case charge.Auxiliary.GetName():
-				transactionKeeper.chargeAuxiliary = value
+			case maintain.Auxiliary.GetName():
+				transactionKeeper.maintainAuxiliary = value
+			case renumerate.Auxiliary.GetName():
+				transactionKeeper.renumerateAuxiliary = value
+			case supplement.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
+			case unbond.Auxiliary.GetName():
+				transactionKeeper.unbondAuxiliary = value
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

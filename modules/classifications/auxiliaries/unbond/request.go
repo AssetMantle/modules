@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package charge
+package unbond
 
 import (
 	"github.com/AssetMantle/modules/schema/ids"
@@ -17,7 +17,6 @@ type auxiliaryRequest struct {
 	address          sdkTypes.AccAddress
 	moduleName       string
 	bankKeeper       bankKeeper.Keeper
-	bondingMode      bool
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -36,12 +35,11 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress, moduleName string, bankKeeper bankKeeper.Keeper, bondingMode bool) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress, moduleName string, bankKeeper bankKeeper.Keeper) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		ClassificationID: classificationID,
 		address:          fromAddress,
 		moduleName:       moduleName,
 		bankKeeper:       bankKeeper,
-		bondingMode:      bondingMode,
 	}
 }

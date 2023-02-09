@@ -19,7 +19,7 @@ var _ data.BooleanData = (*BooleanData)(nil)
 func (booleanData *BooleanData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(booleanData)
 }
-func (boolean *BooleanData) GetWidth() int {
+func (boolean *BooleanData) GetWeight() int {
 	return dataConstants.BooleanDataWidth
 }
 func (booleanData *BooleanData) Compare(listable traits.Listable) int {

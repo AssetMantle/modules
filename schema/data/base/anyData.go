@@ -63,8 +63,8 @@ func (x *AnyData) ToAnyData() data.AnyData {
 func (x *AnyData) Compare(listable traits.Listable) int {
 	return x.Impl.(getter).get().Compare(listable)
 }
-func (x *AnyData) GetWidth() int {
-	return x.Impl.(getter).get().GetWidth()
+func (x *AnyData) GetWeight() int {
+	return x.Impl.(getter).get().GetWeight()
 }
 
 func dataFromListable(listable traits.Listable) (data.Data, error) {
