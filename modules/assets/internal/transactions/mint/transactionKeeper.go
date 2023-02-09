@@ -28,14 +28,14 @@ import (
 )
 
 type transactionKeeper struct {
+	bankKeeper                 bankKeeper.Keeper
 	mapper                     helpers.Mapper
 	parameters                 helpers.ParameterList
-	conformAuxiliary           helpers.Auxiliary
-	mintAuxiliary              helpers.Auxiliary
 	authenticateAuxiliary      helpers.Auxiliary
-	maintainersVerifyAuxiliary helpers.Auxiliary
 	bondAuxiliary              helpers.Auxiliary
-	bankKeeper                 bankKeeper.Keeper
+	conformAuxiliary           helpers.Auxiliary
+	maintainersVerifyAuxiliary helpers.Auxiliary
+	mintAuxiliary              helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -103,16 +103,16 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			transactionKeeper.bankKeeper = value
 		case helpers.Auxiliary:
 			switch value.GetName() {
+			case authenticate.Auxiliary.GetName():
+				transactionKeeper.authenticateAuxiliary = value
+			case bond.Auxiliary.GetName():
+				transactionKeeper.bondAuxiliary = value
 			case conform.Auxiliary.GetName():
 				transactionKeeper.conformAuxiliary = value
 			case mint.Auxiliary.GetName():
 				transactionKeeper.mintAuxiliary = value
-			case authenticate.Auxiliary.GetName():
-				transactionKeeper.authenticateAuxiliary = value
 			case verify.Auxiliary.GetName():
 				transactionKeeper.maintainersVerifyAuxiliary = value
-			case bond.Auxiliary.GetName():
-				transactionKeeper.bondAuxiliary = value
 			}
 		default:
 			panic(errorConstants.UninitializedUsage)

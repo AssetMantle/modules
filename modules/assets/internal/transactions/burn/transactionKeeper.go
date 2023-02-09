@@ -26,13 +26,13 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper                helpers.Mapper
-	renumerateAuxiliary   helpers.Auxiliary
-	maintainAuxiliary     helpers.Auxiliary
-	supplementAuxiliary   helpers.Auxiliary
-	authenticateAuxiliary helpers.Auxiliary
-	unbondAuxiliary       helpers.Auxiliary
 	bankKeeper            bankKeeper.Keeper
+	mapper                helpers.Mapper
+	authenticateAuxiliary helpers.Auxiliary
+	maintainAuxiliary     helpers.Auxiliary
+	renumerateAuxiliary   helpers.Auxiliary
+	supplementAuxiliary   helpers.Auxiliary
+	unbondAuxiliary       helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -95,14 +95,14 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			transactionKeeper.bankKeeper = value
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case renumerate.Auxiliary.GetName():
-				transactionKeeper.renumerateAuxiliary = value
-			case maintain.Auxiliary.GetName():
-				transactionKeeper.maintainAuxiliary = value
-			case supplement.Auxiliary.GetName():
-				transactionKeeper.supplementAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
+			case maintain.Auxiliary.GetName():
+				transactionKeeper.maintainAuxiliary = value
+			case renumerate.Auxiliary.GetName():
+				transactionKeeper.renumerateAuxiliary = value
+			case supplement.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
 			case unbond.Auxiliary.GetName():
 				transactionKeeper.unbondAuxiliary = value
 			}
