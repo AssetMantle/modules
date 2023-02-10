@@ -26,11 +26,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.ClassificationID))
-
-	classification := mappable.GetClassification(classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID)))
-	if classification == nil {
+	Mappable := classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID))
+	if Mappable == nil {
 		return newAuxiliaryResponse(errorConstants.EntityNotFound)
 	}
+	classification := mappable.GetClassification(Mappable)
 
 	for _, immutableProperty := range classification.GetImmutables().GetImmutablePropertyList().GetList() {
 		if immutableProperty.Get().GetID().Compare(constansts.BondingPropertyID) == 0 {
