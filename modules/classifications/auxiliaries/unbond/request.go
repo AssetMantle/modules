@@ -4,19 +4,18 @@
 package unbond
 
 import (
-	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+
+	"github.com/AssetMantle/modules/schema/ids"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type auxiliaryRequest struct {
-	ClassificationID ids.ClassificationID
-	address          sdkTypes.AccAddress
+	classificationID ids.ClassificationID
+	accAddress       sdkTypes.AccAddress
 	moduleName       string
-	bankKeeper       bankKeeper.Keeper
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -35,11 +34,10 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress, moduleName string, bankKeeper bankKeeper.Keeper) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress, moduleName string) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		ClassificationID: classificationID,
-		address:          fromAddress,
+		classificationID: classificationID,
+		accAddress:       fromAddress,
 		moduleName:       moduleName,
-		bankKeeper:       bankKeeper,
 	}
 }

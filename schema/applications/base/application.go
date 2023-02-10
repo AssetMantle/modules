@@ -6,14 +6,15 @@ package base
 import (
 	"encoding/json"
 	"errors"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
-	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
+	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -624,6 +625,8 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 	classificationsModule := classifications.Prototype().Initialize(
 		application.keys[classifications.Prototype().Name()],
 		ParamsKeeper.Subspace(classifications.Prototype().Name()),
+		BankKeeper,
+		application.stakingKeeper,
 	)
 
 	maintainersModule := maintainers.Prototype().Initialize(
@@ -653,7 +656,6 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 	assetsModule := assets.Prototype().Initialize(
 		application.keys[assets.Prototype().Name()],
 		ParamsKeeper.Subspace(assets.Prototype().Name()),
-		BankKeeper,
 		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
