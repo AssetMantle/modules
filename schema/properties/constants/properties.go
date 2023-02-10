@@ -14,7 +14,7 @@ import (
 
 var (
 	AuthenticationProperty = base.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())
-	BondingProperty        = base.NewMetaProperty(baseIDs.NewStringID("BondingAmount"), baseData.NewDecData(sdkTypes.ZeroDec()))
+	BondAmountProperty     = base.NewMetaProperty(baseIDs.NewStringID("BondAmount"), baseData.NewDecData(sdkTypes.ZeroDec()))
 	BurnHeightProperty     = base.NewMetaProperty(baseIDs.NewStringID("burnHeight"), baseData.NewHeightData(baseTypes.NewHeight(-1)).ZeroValue())
 	// TODO check default value
 	CreationHeightProperty = base.NewMetaProperty(baseIDs.NewStringID("creationHeight"), baseData.NewHeightData(baseTypes.NewHeight(-1)).ZeroValue())
