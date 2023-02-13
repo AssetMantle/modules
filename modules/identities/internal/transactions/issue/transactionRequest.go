@@ -8,9 +8,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers/base"
-
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -51,10 +48,7 @@ func (transactionRequest transactionRequest) Validate() error {
 	if err != nil {
 		return err
 	}
-	inputValidator := base.NewInputValidator(constants.PropertyExpression)
-	if !inputValidator.IsValid(transactionRequest.ImmutableProperties, transactionRequest.ImmutableMetaProperties, transactionRequest.MutableProperties, transactionRequest.MutableMetaProperties) {
-		return errorConstants.IncorrectFormat
-	}
+
 	return nil
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
