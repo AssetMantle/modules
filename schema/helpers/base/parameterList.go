@@ -10,6 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 )
 
 type parameterList struct {
@@ -25,6 +26,14 @@ func (parameterList parameterList) Get() []helpers.Parameter {
 		parameters[i] = validatableParameter.GetParameter()
 	}
 	return parameters
+}
+func (parameterList parameterList) GetParameter(propertyID ids.PropertyID) helpers.Parameter {
+	for _, validatableParameter := range parameterList.validatableParameters {
+		if validatableParameter.GetParameter().GetMetaProperty().GetID().Compare(propertyID) == 0 {
+			return validatableParameter.GetParameter()
+		}
+	}
+	return nil
 }
 func (parameterList parameterList) Fetch(context context.Context) helpers.ParameterList {
 	for i, validatableParameter := range parameterList.validatableParameters {
