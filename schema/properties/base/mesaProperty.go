@@ -4,7 +4,10 @@
 package base
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -12,29 +15,22 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//
-// type mesaProperty struct {
-//	ID     ids.PropertyID
-//	DataID ids.DataID
-// }
-
 var _ properties.MesaProperty = (*MesaProperty)(nil)
 
-func (mesaProperty *MesaProperty) ScrubData() properties.Property {
-	panic("this method should never be called")
-}
-
 func (mesaProperty *MesaProperty) GetID() ids.PropertyID {
-	return mesaProperty.Id
+	return mesaProperty.ID
 }
 func (mesaProperty *MesaProperty) GetDataID() ids.DataID {
 	return mesaProperty.DataID
 }
 func (mesaProperty *MesaProperty) GetKey() ids.StringID {
-	return mesaProperty.Id.GetKey()
+	return mesaProperty.ID.GetKey()
 }
 func (mesaProperty *MesaProperty) GetType() ids.StringID {
-	return mesaProperty.Id.GetType()
+	return mesaProperty.ID.GetType()
+}
+func (mesaProperty *MesaProperty) GetBondWeight() sdkTypes.Dec {
+	return utilities.GetZeroValueDataFromID(mesaProperty.GetType()).GetBondWeight()
 }
 func (mesaProperty *MesaProperty) GetHash() ids.HashID {
 	return mesaProperty.DataID.GetHashID()
@@ -53,9 +49,6 @@ func (mesaProperty *MesaProperty) Compare(listable traits.Listable) int {
 		return mesaProperty.GetID().Compare(compareProperty.GetID())
 	}
 }
-func (mesaProperty *MesaProperty) GetData() data.AnyData {
-	panic("This is meant to be unreachable")
-}
 func (mesaProperty *MesaProperty) ToAnyProperty() properties.AnyProperty {
 	return &AnyProperty{
 		Impl: &AnyProperty_MesaProperty{
@@ -73,12 +66,12 @@ func propertyFromInterface(listable traits.Listable) (properties.Property, error
 }
 func NewEmptyMesaPropertyFromID(propertyID ids.PropertyID) properties.MesaProperty {
 	return &MesaProperty{
-		Id: propertyID.(*baseIDs.PropertyID),
+		ID: propertyID.(*baseIDs.PropertyID),
 	}
 }
 func NewMesaProperty(key ids.StringID, data data.Data) properties.MesaProperty {
 	return &MesaProperty{
-		Id:     baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.PropertyID),
+		ID:     baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.PropertyID),
 		DataID: data.GetID().(*baseIDs.DataID),
 	}
 }
