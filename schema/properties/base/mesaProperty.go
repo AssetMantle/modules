@@ -7,7 +7,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/data/utilities"
+	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -30,7 +30,11 @@ func (mesaProperty *MesaProperty) GetType() ids.StringID {
 	return mesaProperty.ID.GetType()
 }
 func (mesaProperty *MesaProperty) GetBondWeight() sdkTypes.Dec {
-	return utilities.GetZeroValueDataFromID(mesaProperty.GetType()).GetBondWeight()
+	if zeroData, err := base.PrototypeAnyData().FromString(mesaProperty.GetDataID().AsString()); err != nil {
+		panic(err)
+	} else {
+		return zeroData.GetBondWeight()
+	}
 }
 func (mesaProperty *MesaProperty) GetHash() ids.HashID {
 	return mesaProperty.DataID.GetHashID()
