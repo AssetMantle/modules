@@ -20,8 +20,8 @@ var _ data.AccAddressData = (*AccAddressData)(nil)
 func (accAddressData *AccAddressData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(accAddressData)
 }
-func (accAddressData *AccAddressData) GetWeight() int {
-	return dataConstants.AccAddressDataWidth
+func (accAddressData *AccAddressData) GetBondWeight() sdkTypes.Dec {
+	return dataConstants.AccAddressDataWeight
 }
 func (accAddressData *AccAddressData) Compare(listable traits.Listable) int {
 	compareAccAddressData, err := dataFromListable(listable)

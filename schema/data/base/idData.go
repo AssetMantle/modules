@@ -5,6 +5,9 @@ package base
 
 import (
 	"bytes"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -17,8 +20,8 @@ var _ data.IDData = (*IDData)(nil)
 func (idData *IDData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(idData)
 }
-func (idData *IDData) GetWeight() int {
-	return dataConstants.IDDataWidth
+func (idData *IDData) GetBondWeight() sdkTypes.Dec {
+	return dataConstants.IDDataWeight
 }
 func (idData *IDData) AsString() string {
 	return idData.Value.AsString()

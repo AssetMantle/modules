@@ -1,9 +1,15 @@
 package constants
 
-const AccAddressDataWidth = 90
-const BooleanDataWidth = 1
-const StringDataWidth = 255
-const DecDataWidth = 8
-const HeightDataWidth = 8
-const IDDataWidth = 64
-const ListDataWidth = 1024
+import (
+	"github.com/cosmos/cosmos-sdk/types"
+)
+
+var (
+	AccAddressDataWeight = types.NewDec(90)
+	BooleanDataWeight    = types.NewDec(1)
+	StringDataWeight     = types.NewDec(256)
+	DecDataWeight        = types.NewDec(8)
+	HeightDataWeight     = types.NewDec(8)
+	IDDataWeight         = types.NewDec(64)
+	ListDataWeight       = types.NewDec(1024)
+)

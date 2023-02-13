@@ -6,8 +6,11 @@ package base
 import (
 	"bytes"
 	"fmt"
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 	"sort"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
@@ -26,8 +29,8 @@ func (listData *ListData) Get() []data.AnyData {
 	}
 	return anyDataList
 }
-func (listData *ListData) GetWeight() int {
-	return dataConstants.ListDataWidth
+func (listData *ListData) GetBondWeight() sdkTypes.Dec {
+	return dataConstants.ListDataWeight
 }
 func (listData *ListData) AsString() string {
 	dataStrings := make([]string, len(listData.DataList))

@@ -5,7 +5,7 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 )
 
-func GetZeroValueDataFromID(typeID ids.ID) data.Data {
+func GetZeroValueDataFromID(typeID ids.StringID) data.Data {
 	if zeroDataValue, err := ReadData(joinDataTypeAndValueStrings(typeID.AsString(), "")); err != nil {
 		panic(err)
 	} else {
