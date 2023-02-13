@@ -1,6 +1,8 @@
 package base
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"strings"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -101,6 +103,9 @@ func (x *AnyData) ToAnyData() data.AnyData {
 }
 func (x *AnyData) Compare(listable traits.Listable) int {
 	return x.Impl.(getter).get().Compare(listable)
+}
+func (x *AnyData) GetBondWeight() sdkTypes.Dec {
+	return x.Impl.(getter).get().GetBondWeight()
 }
 
 func dataFromListable(listable traits.Listable) (data.Data, error) {

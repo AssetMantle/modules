@@ -71,13 +71,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		Add(baseProperties.NewMetaProperty(constants.MakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.MakerOwnableID))).
 		Add(baseProperties.NewMetaProperty(constants.TakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.TakerOwnableID))).
 		Add(baseProperties.NewMetaProperty(constants.MakerIDProperty.GetKey(), baseData.NewIDData(message.FromID))).
-		Add(baseProperties.NewMetaProperty(constants.TakerIDProperty.GetKey(), baseData.NewIDData(message.TakerID)))
+		Add(baseProperties.NewMetaProperty(constants.TakerIDProperty.GetKey(), baseData.NewIDData(message.TakerID))).
+		Add(constants.BondAmountProperty) // TODO ***** remove BondAmountProperty
 
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(immutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)...))
 
 	orderID := baseIDs.NewOrderID(message.ClassificationID, immutables)
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(orderID))
-
 	if orders.Get(key.NewKey(orderID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists
 	}

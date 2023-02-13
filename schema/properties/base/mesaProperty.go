@@ -4,7 +4,10 @@
 package base
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -12,17 +15,7 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//
-// type mesaProperty struct {
-//	ID     ids.PropertyID
-//	DataID ids.DataID
-// }
-
 var _ properties.MesaProperty = (*MesaProperty)(nil)
-
-func (mesaProperty *MesaProperty) ScrubData() properties.Property {
-	panic("this method should never be called")
-}
 
 func (mesaProperty *MesaProperty) GetID() ids.PropertyID {
 	return mesaProperty.ID
@@ -35,6 +28,13 @@ func (mesaProperty *MesaProperty) GetKey() ids.StringID {
 }
 func (mesaProperty *MesaProperty) GetType() ids.StringID {
 	return mesaProperty.ID.GetType()
+}
+func (mesaProperty *MesaProperty) GetBondWeight() sdkTypes.Dec {
+	if zeroData, err := base.PrototypeAnyData().FromString(mesaProperty.GetDataID().AsString()); err != nil {
+		panic(err)
+	} else {
+		return zeroData.GetBondWeight()
+	}
 }
 func (mesaProperty *MesaProperty) GetHash() ids.HashID {
 	return mesaProperty.DataID.GetHashID()

@@ -16,7 +16,7 @@ import (
 )
 
 func TestMapper(t *testing.T) {
-	context, storeKey, _, _ := test.SetupTest(t)
+	context, storeKey, _ := test.SetupTest(t)
 
 	// NewMapper
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)

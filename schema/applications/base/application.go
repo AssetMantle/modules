@@ -6,15 +6,16 @@ package base
 import (
 	"encoding/json"
 	"errors"
-	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmKeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
+	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -95,7 +96,6 @@ import (
 	ibcHost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 	ibcAnte "github.com/cosmos/ibc-go/v3/modules/core/ante"
 	ibcKeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -138,9 +138,8 @@ type application struct {
 
 	codec helpers.Codec
 
-	enabledWasmProposalTypeList []wasm.ProposalType
-	moduleAccountPermissions    map[string][]string
-	tokenReceiveAllowedModules  map[string]bool
+	moduleAccountPermissions   map[string][]string
+	tokenReceiveAllowedModules map[string]bool
 
 	keys map[string]*sdkTypes.KVStoreKey
 
@@ -367,11 +366,6 @@ func (application application) AppCreator(logger tendermintLog.Logger, db tender
 		panic(err)
 	}
 
-	var wasmOpts []wasm.Option
-	if cast.ToBool(appOptions.Get("telemetry.enabled")) {
-		wasmOpts = append(wasmOpts, wasmKeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
-	}
-
 	return application.Initialize(
 		logger,
 		db,
@@ -449,7 +443,6 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		feegrant.StoreKey,
 		authzKeeper.StoreKey,
 		icaHostTypes.StoreKey,
-		wasm.StoreKey,
 
 		assets.Prototype().Name(),
 		classifications.Prototype().Name(),
@@ -632,6 +625,8 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 	classificationsModule := classifications.Prototype().Initialize(
 		application.keys[classifications.Prototype().Name()],
 		ParamsKeeper.Subspace(classifications.Prototype().Name()),
+		BankKeeper,
+		application.stakingKeeper,
 	)
 
 	maintainersModule := maintainers.Prototype().Initialize(
@@ -664,6 +659,8 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(bond.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(unbond.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
 		splitsModule.GetAuxiliary(renumerate.Auxiliary.GetName()),
@@ -932,14 +929,13 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 	return &application
 }
 
-func NewApplication(name string, moduleBasicManager module.BasicManager, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.Application {
+func NewApplication(name string, moduleBasicManager module.BasicManager, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.Application {
 	return &application{
-		name:                        name,
-		moduleBasicManager:          moduleBasicManager,
-		codec:                       base.CodecPrototype().Initialize(moduleBasicManager),
-		enabledWasmProposalTypeList: enabledWasmProposalTypeList,
-		moduleAccountPermissions:    moduleAccountPermissions,
-		tokenReceiveAllowedModules:  tokenReceiveAllowedModules,
+		name:                       name,
+		moduleBasicManager:         moduleBasicManager,
+		codec:                      base.CodecPrototype().Initialize(moduleBasicManager),
+		moduleAccountPermissions:   moduleAccountPermissions,
+		tokenReceiveAllowedModules: tokenReceiveAllowedModules,
 	}
 }
 

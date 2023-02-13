@@ -7,6 +7,8 @@ import (
 	"bytes"
 	"strconv"
 
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -19,6 +21,9 @@ var _ data.BooleanData = (*BooleanData)(nil)
 
 func (booleanData *BooleanData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(booleanData)
+}
+func (booleanData *BooleanData) GetBondWeight() sdkTypes.Dec {
+	return dataConstants.BooleanDataWeight
 }
 func (booleanData *BooleanData) Compare(listable traits.Listable) int {
 	compareBooleanData, err := dataFromListable(listable)

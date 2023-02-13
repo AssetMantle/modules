@@ -2,7 +2,6 @@ package test
 
 import (
 	"context"
-	"github.com/cosmos/cosmos-sdk/client"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/store"
@@ -13,7 +12,7 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 )
 
-func SetupTest(t *testing.T) (context.Context, *sdkTypes.KVStoreKey, *sdkTypes.TransientStoreKey, client.Context) {
+func SetupTest(t *testing.T) (context.Context, *sdkTypes.KVStoreKey, *sdkTypes.TransientStoreKey) {
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
@@ -30,8 +29,5 @@ func SetupTest(t *testing.T) (context.Context, *sdkTypes.KVStoreKey, *sdkTypes.T
 		ChainID: "test",
 	}, false, log.NewNopLogger()))
 
-	//TODO: Verify client context for testing
-	cliContext := client.Context{ChainID: "test"}
-
-	return context, storeKey, paramsTransientStoreKeys, cliContext
+	return context, storeKey, paramsTransientStoreKeys
 }

@@ -161,7 +161,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testAssetID}, args{cliCommand, constants.TestClientContext}, newQueryRequest(testAssetID), false},
+		{"+ve", fields{testAssetID}, args{cliCommand, base.TestClientContext}, newQueryRequest(testAssetID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

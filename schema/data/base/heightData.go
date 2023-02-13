@@ -8,6 +8,8 @@ import (
 	"encoding/binary"
 	"strconv"
 
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -22,6 +24,9 @@ var _ data.HeightData = (*HeightData)(nil)
 
 func (heightData *HeightData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(heightData)
+}
+func (heightData *HeightData) GetBondWeight() sdkTypes.Dec {
+	return dataConstants.HeightDataWeight
 }
 func (heightData *HeightData) AsString() string {
 	return joinDataTypeAndValueStrings(heightData.GetType().AsString(), strconv.FormatInt(heightData.Value.Get(), 10))

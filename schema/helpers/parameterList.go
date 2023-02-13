@@ -9,10 +9,13 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+
+	"github.com/AssetMantle/modules/schema/ids"
 )
 
 type ParameterList interface {
 	Get() []Parameter
+	GetParameter(ids.PropertyID) Parameter
 
 	Fetch(context.Context) ParameterList
 	Set(context.Context, ...Parameter)

@@ -16,7 +16,7 @@ import (
 )
 
 func TestQuery(t *testing.T) {
-	context, storeKey, _, cliCtx := test.SetupTest(t)
+	context, storeKey, _ := test.SetupTest(t)
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 	Query := NewQuery("test", "t", "testQuery", "test", base.TestQueryRequestPrototype,
 		base.TestQueryResponsePrototype, base.TestQueryKeeperPrototype,
@@ -55,13 +55,13 @@ func TestQuery(t *testing.T) {
 	// require.Equal(t, nil, command.ExecuteContext(context.Context()))
 
 	// RESTQueryHandler
-	Query.RESTQueryHandler(cliCtx)
+	Query.RESTQueryHandler(TestClientContext)
 
 	// RPC ERROR
 	testRequest1, err := http.NewRequest("GET", "/test", nil)
 	require.Nil(t, err)
 	responseRecorder := httptest.NewRecorder()
-	Query.RESTQueryHandler(cliCtx).ServeHTTP(responseRecorder, testRequest1)
+	Query.RESTQueryHandler(TestClientContext).ServeHTTP(responseRecorder, testRequest1)
 	require.Equal(t, responseRecorder.Code, http.StatusInternalServerError)
 
 }

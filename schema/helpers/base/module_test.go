@@ -52,7 +52,7 @@ var transactionsPrototype = func() helpers.Transactions {
 var blockPrototype = func() helpers.Block { return baseTestUtilities.TestBlockPrototype() }
 
 func TestModule(t *testing.T) {
-	context, storeKey, transientStoreKey, cliCtx := test.SetupTest(t)
+	context, storeKey, transientStoreKey := test.SetupTest(t)
 
 	codec := CodecPrototype()
 
@@ -77,7 +77,7 @@ func TestModule(t *testing.T) {
 
 	router := mux.NewRouter()
 	require.NotPanics(t, func() {
-		Module.RegisterRESTRoutes(cliCtx, router)
+		Module.RegisterRESTRoutes(TestClientContext, router)
 	})
 
 	// GetTxCmd

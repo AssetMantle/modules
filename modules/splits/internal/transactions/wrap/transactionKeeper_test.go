@@ -5,6 +5,9 @@ package wrap
 
 import (
 	"fmt"
+	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	"reflect"
 	"testing"
 
@@ -62,6 +65,8 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 
+	codec := baseHelpers.CodecPrototype()
+
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	keyAcc := sdkTypes.NewKVStoreKey(authTypes.StoreKey)
@@ -96,9 +101,9 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	feeCollectorAcc := authTypes.NewEmptyModuleAccount(auth.FeeCollectorName)
-	notBondedPool := authTypes.NewEmptyModuleAccount(staking.NotBondedPoolName, supply.Burner, supply.Staking)
-	bondPool := authTypes.NewEmptyModuleAccount(staking.BondedPoolName, supply.Burner, supply.Staking)
+	feeCollectorAcc := authTypes.NewEmptyModuleAccount(authTypes.FeeCollectorName)
+	notBondedPool := authTypes.NewEmptyModuleAccount(stakingTypes.NotBondedPoolName, authTypes.Burner, authTypes.Staking)
+	bondPool := authTypes.NewEmptyModuleAccount(stakingTypes.BondedPoolName, authTypes.Burner, authTypes.Staking)
 	distrAcc := authTypes.NewEmptyModuleAccount(types.ModuleName)
 	splitAcc := authTypes.NewEmptyModuleAccount(module.Name)
 
@@ -109,22 +114,22 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	blacklistedAddrs[distrAcc.GetAddress().String()] = true
 	blacklistedAddrs[splitAcc.GetAddress().String()] = true
 
-	accountKeeper := keeper.NewAccountKeeper(legacyAmino, keyAcc, paramsKeeper.Subspace(auth.DefaultParamspace), auth.ProtoBaseAccount)
-	bankKeeper := bankKeeper.NewBaseKeeper(accountKeeper, paramsKeeper.Subspace(bank.DefaultParamspace), blacklistedAddrs)
+	accountKeeper := keeper.NewAccountKeeper(codec.GetProtoCodec(), keyAcc, paramsKeeper.Subspace(authTypes.ModuleName), authTypes.ProtoBaseAccount, nil)
+	bankKeeper := bankKeeper.NewBaseKeeper(codec.GetProtoCodec(), keyAcc, accountKeeper, paramsKeeper.Subspace(bankTypes.ModuleName), blacklistedAddrs)
 
 	maccPerms := map[string][]string{
-		auth.FeeCollectorName:          nil,
+		authTypes.FeeCollectorName:     nil,
 		types.ModuleName:               nil,
 		module.Name:                    nil,
-		stakingTypes.NotBondedPoolName: {supply.Burner, supply.Staking},
-		stakingTypes.BondedPoolName:    {supply.Burner, supply.Staking},
+		stakingTypes.NotBondedPoolName: {authTypes.Burner, authTypes.Staking},
+		stakingTypes.BondedPoolName:    {authTypes.Burner, authTypes.Staking},
 	}
 
-	supplyKeeper := supply.NewKeeper(legacyAmino, storeKey, accountKeeper, bankKeeper, maccPerms)
+	supplyKeeper := authKeeper.NewAccountKeeper(codec.GetProtoCodec(), storeKey, paramsKeeper.Subspace(authTypes.ModuleName), authTypes.ProtoBaseAccount, maccPerms)
 
-	sk := staking.NewKeeper(legacyAmino, keyStaking, supplyKeeper, paramsKeeper.Subspace(staking.DefaultParamspace))
-	sk.SetParams(context, staking.DefaultParams())
-	intToken := sdkTypes.TokensFromConsensusPower(100000000)
+	sk := stakingKeeper.NewKeeper(codec.GetProtoCodec(), keyStaking, supplyKeeper, bankKeeper, paramsKeeper.Subspace(stakingTypes.ModuleName))
+	sk.SetParams(context, stakingTypes.DefaultParams())
+	intToken := sdkTypes.TokensFromConsensusPower(1000000, sdkTypes.NewInt(100))
 	initCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(context), intToken))
 	totalSupply := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(context), intToken.MulRaw(int64(len(TestAddrs)))))
 	supplyKeeper.SetSupply(context, supply.NewSupply(totalSupply))
@@ -176,15 +181,15 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	accountKeeper := auth.NewAccountKeeper(
+	accountKeeper := authKeeper.NewAccountKeeper(
 		codec.NewLegacyAmino(), // amino legacyAmino
 		paramsStoreKey,         // target store
 		paramsKeeper.Subspace(auth.DefaultParamspace),
 		auth.ProtoBaseAccount, // prototype
 	)
-	feeCollectorAcc := supply.NewEmptyModuleAccount(auth.FeeCollectorName)
-	notBondedPool := supply.NewEmptyModuleAccount(staking.NotBondedPoolName, supply.Burner, supply.Staking)
-	bondPool := supply.NewEmptyModuleAccount(staking.BondedPoolName, supply.Burner, supply.Staking)
+	feeCollectorAcc := supply.NewEmptyModuleAccount(authTypes.FeeCollectorName)
+	notBondedPool := supply.NewEmptyModuleAccount(staking.NotBondedPoolName, authTypes.Burner, authTypes.Staking)
+	bondPool := supply.NewEmptyModuleAccount(staking.BondedPoolName, authTypes.Burner, authTypes.Staking)
 	distrAcc := supply.NewEmptyModuleAccount(types.ModuleName)
 	blacklistedAddrs := make(map[string]bool)
 	blacklistedAddrs[feeCollectorAcc.GetAddress().String()] = true
@@ -193,10 +198,10 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	blacklistedAddrs[distrAcc.GetAddress().String()] = true
 	bankKeeper := bank.NewBaseKeeper(accountKeeper, paramsKeeper.Subspace(bank.DefaultParamspace), blacklistedAddrs)
 	maccPerms := map[string][]string{
-		auth.FeeCollectorName:     nil,
-		types.ModuleName:          nil,
-		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
-		staking.BondedPoolName:    {supply.Burner, supply.Staking},
+		authTypes.FeeCollectorName: nil,
+		types.ModuleName:           nil,
+		staking.NotBondedPoolName:  {authTypes.Burner, authTypes.Staking},
+		staking.BondedPoolName:     {authTypes.Burner, authTypes.Staking},
 	}
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)

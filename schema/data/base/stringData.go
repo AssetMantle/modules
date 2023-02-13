@@ -6,6 +6,8 @@ package base
 import (
 	"bytes"
 
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -18,6 +20,9 @@ var _ data.StringData = (*StringData)(nil)
 
 func (stringData *StringData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(stringData)
+}
+func (stringData *StringData) GetBondWeight() sdkTypes.Dec {
+	return dataConstants.StringDataWeight
 }
 func (stringData *StringData) Compare(listable traits.Listable) int {
 	compareStringData, err := dataFromListable(listable)

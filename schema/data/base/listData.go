@@ -5,10 +5,9 @@ package base
 
 import (
 	"bytes"
-	"fmt"
 	"sort"
 
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
@@ -16,6 +15,7 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 var _ data.ListData = (*ListData)(nil)
@@ -26,6 +26,9 @@ func (listData *ListData) Get() []data.AnyData {
 		anyDataList[i] = anyData
 	}
 	return anyDataList
+}
+func (listData *ListData) GetBondWeight() sdkTypes.Dec {
+	return dataConstants.ListDataWeight
 }
 func (listData *ListData) AsString() string {
 	dataStrings := make([]string, len(listData.DataList))
@@ -146,8 +149,6 @@ func listDataFromInterface(listable traits.Listable) (*ListData, error) {
 	case *ListData:
 		return value, nil
 	default:
-		x := value
-		fmt.Println(x)
 		return &ListData{}, constants.MetaDataError
 	}
 }
@@ -159,9 +160,5 @@ func PrototypeListData() data.ListData {
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
 func NewListData(data ...data.Data) data.ListData {
-	dataList := make([]*AnyData, 0)
-	for _, datum := range data {
-		dataList = append(dataList, datum.ToAnyData().(*AnyData))
-	}
-	return &ListData{DataList: dataList}
+	return (&ListData{}).Add(data...)
 }

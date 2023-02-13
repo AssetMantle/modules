@@ -175,7 +175,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, auxiliaryKeeper{Mapper}},
+		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, auxiliaryKeeper{Mapper, Parameters}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

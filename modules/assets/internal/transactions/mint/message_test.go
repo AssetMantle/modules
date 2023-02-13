@@ -4,13 +4,13 @@
 package mint
 
 import (
+	"github.com/AssetMantle/modules/utilities/transaction"
 	"reflect"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -19,7 +19,6 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 var (
@@ -168,33 +167,33 @@ func Test_message_RegisterCodec(t *testing.T) {
 	}
 }
 
-func Test_message_Route(t *testing.T) {
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, fromID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, module.Name},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
-				ToID:                    tt.fields.ToID,
-				ClassificationID:        tt.fields.ClassificationID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
-			}
-			if got := message.Route(); got != tt.want {
-				t.Errorf("Route() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+//func Test_message_Route(t *testing.T) {
+//
+//	tests := []struct {
+//		name   string
+//		fields fields
+//		want   string
+//	}{
+//		{"+ve", fields{fromAccAddress.String(), fromID, fromID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, module.Name},
+//	}
+//	for _, tt := range tests {
+//		t.Run(tt.name, func(t *testing.T) {
+//			message := &Message{
+//				From:                    tt.fields.From,
+//				FromID:                  tt.fields.FromID,
+//				ToID:                    tt.fields.ToID,
+//				ClassificationID:        tt.fields.ClassificationID,
+//				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
+//				ImmutableProperties:     tt.fields.ImmutableProperties,
+//				MutableMetaProperties:   tt.fields.MutableMetaProperties,
+//				MutableProperties:       tt.fields.MutableProperties,
+//			}
+//			if got := message.Route(); got != tt.want {
+//				t.Errorf("Route() = %v, want %v", got, tt.want)
+//			}
+//		})
+//	}
+//}
 
 func Test_message_Type(t *testing.T) {
 

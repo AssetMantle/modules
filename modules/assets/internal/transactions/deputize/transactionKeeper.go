@@ -5,12 +5,10 @@ package deputize
 
 import (
 	"context"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/deputize"
-	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -57,8 +55,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
 			}
-		default:
-			panic(constants.UninitializedUsage)
 		}
 	}
 

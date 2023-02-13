@@ -6,6 +6,9 @@ package burn
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/modules/assets/internal/module"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
@@ -24,10 +27,11 @@ import (
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
-	renumerateAuxiliary   helpers.Auxiliary
-	maintainAuxiliary     helpers.Auxiliary
-	supplementAuxiliary   helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
+	maintainAuxiliary     helpers.Auxiliary
+	renumerateAuxiliary   helpers.Auxiliary
+	supplementAuxiliary   helpers.Auxiliary
+	unbondAuxiliary       helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -72,6 +76,10 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
+	if auxiliaryResponse := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress, module.Name)); !auxiliaryResponse.IsSuccessful() {
+		return nil, auxiliaryResponse.GetError()
+	}
+
 	assets.Remove(mappable.NewMappable(asset))
 
 	return &Response{}, nil
@@ -84,17 +92,17 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case renumerate.Auxiliary.GetName():
-				transactionKeeper.renumerateAuxiliary = value
-			case maintain.Auxiliary.GetName():
-				transactionKeeper.maintainAuxiliary = value
-			case supplement.Auxiliary.GetName():
-				transactionKeeper.supplementAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
+			case maintain.Auxiliary.GetName():
+				transactionKeeper.maintainAuxiliary = value
+			case renumerate.Auxiliary.GetName():
+				transactionKeeper.renumerateAuxiliary = value
+			case supplement.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
+			case unbond.Auxiliary.GetName():
+				transactionKeeper.unbondAuxiliary = value
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 
