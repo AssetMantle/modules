@@ -109,7 +109,7 @@ func Test_keeperPrototype(t *testing.T) {
 	}
 }
 
-//func Test_transactionKeeper_Initialize(t *testing.T) {
+// func Test_transactionKeeper_Initialize(t *testing.T) {
 //	_, _, Mapper, Parameters := createTestInput(t)
 //	type fields struct {
 //		mapper                     helpers.Mapper
@@ -147,7 +147,7 @@ func Test_keeperPrototype(t *testing.T) {
 //			}
 //		})
 //	}
-//}
+// }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, Mapper, Parameters := createTestInput(t)
@@ -190,7 +190,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                     tt.fields.mapper,
-				parameters:                 tt.fields.parameters,
+				parameterList:              tt.fields.parameters,
 				conformAuxiliary:           tt.fields.conformAuxiliary,
 				mintAuxiliary:              tt.fields.mintAuxiliary,
 				authenticateAuxiliary:      tt.fields.authenticateAuxiliary,

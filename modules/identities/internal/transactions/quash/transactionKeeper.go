@@ -8,6 +8,7 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
@@ -19,8 +20,9 @@ import (
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
-	supplementAuxiliary   helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
+	supplementAuxiliary   helpers.Auxiliary
+	unbondAuxiliary       helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -53,6 +55,10 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized
 	}
 
+	if auxiliaryResponse := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(identity.GetClassificationID(), fromAddress)); !auxiliaryResponse.IsSuccessful() {
+		return nil, auxiliaryResponse.GetError()
+	}
+
 	identities.Remove(mappable.NewMappable(identity))
 
 	return &Response{}, nil
@@ -65,10 +71,12 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case supplement.Auxiliary.GetName():
-				transactionKeeper.supplementAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
+			case supplement.Auxiliary.GetName():
+				transactionKeeper.supplementAuxiliary = value
+			case unbond.Auxiliary.GetName():
+				transactionKeeper.unbondAuxiliary = value
 			}
 		default:
 			panic(errorConstants.UninitializedUsage)
