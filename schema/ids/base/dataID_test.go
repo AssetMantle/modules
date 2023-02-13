@@ -4,19 +4,22 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/errors/constants"
 	"reflect"
 	"strconv"
 	"testing"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 
 	"github.com/AssetMantle/modules/schema/ids"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//TODO: Test GetID for all Data types; If every data tests GetID() then GenerateID() is automatically tested
-//func TestNewDataID(t *testing.T) {
+// TODO: Test GetID for all Data types; If every data tests GetID() then GenerateID() is automatically tested
+// func TestNewDataID(t *testing.T) {
 //	type args struct {
 //		data data.Data
 //	}
@@ -44,7 +47,7 @@ import (
 //			}
 //		})
 //	}
-//}
+// }
 func Test_dataIDFromInterface(t *testing.T) {
 	type args struct {
 		i interface{}
@@ -190,22 +193,22 @@ type booleanData struct {
 }
 
 func (booleanData booleanData) GetWidth() int {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (booleanData booleanData) Unmarshal(bytes []byte) error {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (booleanData booleanData) MarshalTo(bytes []byte) (int, error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (booleanData booleanData) ToAnyData() data.AnyData {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
@@ -213,6 +216,9 @@ var _ data.BooleanData = (*booleanData)(nil)
 
 func (booleanData booleanData) GetID() ids.DataID {
 	return GenerateDataID(booleanData)
+}
+func (booleanData booleanData) GetBondWeight() sdkTypes.Dec {
+	return sdkTypes.SmallestDec()
 }
 func (booleanData booleanData) Compare(listable traits.Listable) int {
 	compareBooleanData, err := booleanDataFromInterface(listable)
