@@ -5,7 +5,6 @@ package base
 
 import (
 	"bytes"
-	"fmt"
 	"sort"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -150,8 +149,6 @@ func listDataFromInterface(listable traits.Listable) (*ListData, error) {
 	case *ListData:
 		return value, nil
 	default:
-		x := value
-		fmt.Println(x)
 		return &ListData{}, constants.MetaDataError
 	}
 }
