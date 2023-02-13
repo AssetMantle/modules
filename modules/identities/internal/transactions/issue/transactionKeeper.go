@@ -54,6 +54,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
+	// TODO ***** remove bond amount default property
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...), constants.BondAmountProperty.ToAnyProperty())...)...))
 
 	identityID := baseIDs.NewIdentityID(message.ClassificationID, immutables)

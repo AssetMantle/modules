@@ -5,21 +5,22 @@ package define
 
 import (
 	"context"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
+	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/ids/constansts"
-	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"strconv"
 )
 
 type auxiliaryKeeper struct {
@@ -32,44 +33,27 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()) > module.MaxPropertyCount {
+	totalWeight := sdkTypes.ZeroDec()
+	for _, property := range append(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...) {
+		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
+	}
+	immutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewDecData(totalWeight.Mul(auxiliaryKeeper.parameterList.GetParameter(constants.BondWeightProperty.GetID()).GetMetaProperty().GetData().Get().(data.DecData).Get())))))
+
+	if len(immutables.GetImmutablePropertyList().GetList())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()) > module.MaxPropertyCount {
 		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
-	if utilities.IsDuplicate(append(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...)) {
+	if utilities.IsDuplicate(append(immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...)) {
 		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
-	totalWeight := 0
-	for _, prop := range append(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...) {
-		if prop.IsMeta() {
-			totalWeight += prop.Get().(properties.MetaProperty).GetData().GetWeight()
-		}
-	}
-
-	bondedImmutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(baseIDs.NewStringID("BondingAmount"),
-		baseData.NewDecData(
-			func() sdkTypes.Dec {
-				val1, _ := sdkTypes.NewDecFromStr(strconv.Itoa(totalWeight))
-				result := val1.Mul(func() sdkTypes.Dec {
-					for _, param := range auxiliaryKeeper.parameterList.Get() {
-						if param.GetMetaProperty().GetID().Compare(constansts.BondingWeightageID) == 0 {
-							res, _ := sdkTypes.NewDecFromStr(param.GetMetaProperty().GetData().AsString())
-							return res
-						}
-					}
-					return sdkTypes.ZeroDec()
-				}())
-				return result
-			}()))))
-
-	classificationID := baseIDs.NewClassificationID(bondedImmutables, auxiliaryRequest.Mutables)
+	classificationID := baseIDs.NewClassificationID(immutables, auxiliaryRequest.Mutables)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(classificationID))
 	if classifications.Get(key.NewKey(classificationID)) != nil {
 		return newAuxiliaryResponse(classificationID, errorConstants.EntityAlreadyExists)
 	}
 
-	classifications.Add(mappable.NewMappable(base.NewClassification(bondedImmutables, auxiliaryRequest.Mutables)))
+	classifications.Add(mappable.NewMappable(base.NewClassification(immutables, auxiliaryRequest.Mutables)))
 
 	return newAuxiliaryResponse(classificationID, nil)
 }
