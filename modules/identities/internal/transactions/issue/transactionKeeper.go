@@ -8,6 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
@@ -29,6 +30,7 @@ type transactionKeeper struct {
 	mapper                     helpers.Mapper
 	authenticateAuxiliary      helpers.Auxiliary
 	conformAuxiliary           helpers.Auxiliary
+	bondAuxiliary              helpers.Auxiliary
 	maintainersVerifyAuxiliary helpers.Auxiliary
 }
 
@@ -54,8 +56,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
-	// TODO ***** remove bond amount default property
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...), constants.BondAmountProperty.ToAnyProperty())...)...))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)...))
 
 	identityID := baseIDs.NewIdentityID(message.ClassificationID, immutables)
 
@@ -78,6 +79,10 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, auxiliaryResponse.GetError()
 	}
 
+	if auxiliaryResponse := transactionKeeper.bondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(message.ClassificationID, fromAddress)); !auxiliaryResponse.IsSuccessful() {
+		return nil, auxiliaryResponse.GetError()
+	}
+
 	identities.Add(mappable.NewMappable(base.NewIdentity(message.ClassificationID, immutables, mutables)))
 
 	return &Response{}, nil
@@ -90,10 +95,12 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case conform.Auxiliary.GetName():
-				transactionKeeper.conformAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
+			case conform.Auxiliary.GetName():
+				transactionKeeper.conformAuxiliary = value
+			case bond.Auxiliary.GetName():
+				transactionKeeper.bondAuxiliary = value
 			case verify.Auxiliary.GetName():
 				transactionKeeper.maintainersVerifyAuxiliary = value
 			}
