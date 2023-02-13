@@ -12,6 +12,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
+	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
@@ -36,7 +37,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	classification := mappable.GetClassification(Mappable)
 
 	bondCoin, _ := sdkTypes.NewDecCoinFromDec(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), classification.GetBondAmount()).TruncateDecimal()
-	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.moduleName, auxiliaryRequest.accAddress, sdkTypes.NewCoins(bondCoin)); err != nil {
+	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), module.Name, auxiliaryRequest.accAddress, sdkTypes.NewCoins(bondCoin)); err != nil {
 		return newAuxiliaryResponse(err)
 	}
 
@@ -50,10 +51,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpe
 		switch value := auxiliary.(type) {
 		case bankKeeper.Keeper:
 			auxiliaryKeeper.bankKeeper = value
-			return auxiliaryKeeper
 		case stakingKeeper.Keeper:
 			auxiliaryKeeper.stakingKeeper = value
-			return auxiliaryKeeper
 		}
 	}
 
