@@ -15,7 +15,6 @@ import (
 type auxiliaryRequest struct {
 	classificationID ids.ClassificationID
 	accAddress       sdkTypes.AccAddress
-	moduleName       string
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -34,10 +33,9 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress, moduleName string) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		classificationID: classificationID,
 		accAddress:       fromAddress,
-		moduleName:       moduleName,
 	}
 }

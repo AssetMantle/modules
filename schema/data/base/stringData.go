@@ -33,7 +33,7 @@ func (stringData *StringData) Compare(listable traits.Listable) int {
 	return bytes.Compare(stringData.Bytes(), compareStringData.Bytes())
 }
 func (stringData *StringData) Bytes() []byte {
-	return []byte(stringData.AsString())
+	return []byte(stringData.Value)
 }
 func (stringData *StringData) GetType() ids.StringID {
 	return dataConstants.StringDataID

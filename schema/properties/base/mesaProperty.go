@@ -30,7 +30,7 @@ func (mesaProperty *MesaProperty) GetType() ids.StringID {
 	return mesaProperty.ID.GetType()
 }
 func (mesaProperty *MesaProperty) GetBondWeight() sdkTypes.Dec {
-	if zeroData, err := base.PrototypeAnyData().FromString(mesaProperty.GetDataID().AsString()); err != nil {
+	if zeroData, err := base.PrototypeAnyData().FromString(mesaProperty.GetType().AsString()); err != nil {
 		panic(err)
 	} else {
 		return zeroData.GetBondWeight()
