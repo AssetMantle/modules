@@ -21,7 +21,7 @@ var _ data.DecData = (*DecData)(nil)
 func (decData *DecData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(decData)
 }
-func (decData *DecData) GetBondWeight() sdkTypes.Dec {
+func (decData *DecData) GetBondWeight() int64 {
 	return dataConstants.DecDataWeight
 }
 func (decData *DecData) Compare(listable traits.Listable) int {

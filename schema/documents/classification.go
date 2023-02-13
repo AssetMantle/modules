@@ -3,11 +3,7 @@
 
 package documents
 
-import (
-	"github.com/cosmos/cosmos-sdk/types"
-)
-
 type Classification interface {
-	GetBondAmount() types.Dec
+	GetBondAmount() int64
 	Document
 }

@@ -4,8 +4,6 @@
 package data
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -13,7 +11,7 @@ import (
 // TODO URI and PropertyID Data type
 type Data interface {
 	GetID() ids.DataID
-	GetBondWeight() sdkTypes.Dec
+	GetBondWeight() int64
 
 	Unmarshal([]byte) error
 	MarshalTo([]byte) (int, error)
