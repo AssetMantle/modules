@@ -37,7 +37,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	for _, property := range append(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...) {
 		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
 	}
-	immutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewDecData(totalWeight.Mul(auxiliaryKeeper.parameterList.GetParameter(constants.BondWeightProperty.GetID()).GetMetaProperty().GetData().Get().(data.DecData).Get())))))
+	immutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewDecData(totalWeight.Mul(auxiliaryKeeper.parameterList.GetParameter(constants.BondRateProperty.GetID()).GetMetaProperty().GetData().Get().(data.DecData).Get())))))
 
 	if len(immutables.GetImmutablePropertyList().GetList())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()) > module.MaxPropertyCount {
 		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)

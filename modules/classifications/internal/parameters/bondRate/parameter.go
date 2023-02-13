@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package dummy
+package bondRate
 
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -14,7 +14,7 @@ import (
 	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
 )
 
-var ID = constantProperties.BondWeightProperty.GetKey()
+var ID = constantProperties.BondRateProperty.GetKey()
 var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewDecData(sdkTypes.NewDec(2))))
 
 func validator(i interface{}) error {

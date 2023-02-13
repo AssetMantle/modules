@@ -1,11 +1,12 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package dummy
+package bondRate
 
 import (
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"testing"
+
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 
 	"github.com/stretchr/testify/require"
 
