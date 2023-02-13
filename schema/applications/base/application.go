@@ -637,15 +637,17 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 	identitiesModule := identities.Prototype().Initialize(
 		application.keys[identities.Prototype().Name()],
 		ParamsKeeper.Subspace(identities.Prototype().Name()),
+		classificationsModule.GetAuxiliary(bond.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(member.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(unbond.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(maintain.Auxiliary.GetName()),
-		classificationsModule.GetAuxiliary(member.Auxiliary.GetName()),
-		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
-		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(revoke.Auxiliary.GetName()),
+		maintainersModule.GetAuxiliary(super.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(verify.Auxiliary.GetName()),
+		metasModule.GetAuxiliary(supplement.Auxiliary.GetName()),
 	)
 	splitsModule := splits.Prototype().Initialize(
 		application.keys[splits.Prototype().Name()],
