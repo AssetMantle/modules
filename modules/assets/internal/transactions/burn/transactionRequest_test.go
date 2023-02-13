@@ -6,9 +6,10 @@ package burn
 import (
 	"encoding/json"
 	"fmt"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"reflect"
 	"testing"
+
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -253,7 +254,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 				AssetID: tt.fields.AssetID,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
-				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

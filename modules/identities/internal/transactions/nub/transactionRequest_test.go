@@ -5,9 +5,10 @@ package nub
 
 import (
 	"encoding/json"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -262,7 +263,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 				NubID:   tt.fields.NubID,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
-				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

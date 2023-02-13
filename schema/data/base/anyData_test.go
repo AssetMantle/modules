@@ -1,7 +1,4 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
-
-package utilities
+package base
 
 import (
 	"reflect"
@@ -10,17 +7,15 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 var (
-	fromAddress        = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAddress1       = "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
 	fromAccAddress, _  = sdkTypes.AccAddressFromBech32(fromAddress)
 	fromAccAddress1, _ = sdkTypes.AccAddressFromBech32(fromAddress1)
-	dataList           = []data.Data{base.NewAccAddressData(fromAccAddress), base.NewAccAddressData(fromAccAddress1)}
+	dataList           = []data.Data{NewAccAddressData(fromAccAddress), NewAccAddressData(fromAccAddress1)}
 )
 
 func TestReadData(t *testing.T) {
@@ -33,26 +28,24 @@ func TestReadData(t *testing.T) {
 		want    data.Data
 		wantErr bool
 	}{
-		{"String Data", args{"S|newFact"}, base.NewStringData("newFact"), false},
+		{"String Data", args{"S|newFact"}, NewStringData("newFact"), false},
 		{"-ve Unknown Data", args{"SomeRandomData"}, nil, true},
-		{"List Data", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewListData(dataList...), false},
-		{"List Data empty list", args{"L|"}, base.NewListData(), false},
-		{"Id Data", args{"I|data"}, base.NewIDData(baseIDs.NewStringID("data")), false},
-		{"Height Data", args{"H|100"}, base.NewHeightData(baseTypes.NewHeight(100)), false},
-		{"Dec Data", args{"D|100"}, base.NewDecData(sdkTypes.NewDec(100)), false},
-		{"Bool Data", args{"B|true"}, base.NewBooleanData(true), false},
-		{"AccAddress data", args{"A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"}, base.NewAccAddressData(fromAccAddress), false},
-		{"-ve String Data", args{"S|S,|newFact"}, base.NewStringData("S,|newFact"), false},
-		{"-ve List Data String", args{"L|S|,TestData,S|,Test"}, base.NewListData([]data.Data{base.NewStringData("S|,TestData"), base.NewStringData("S|,Test")}...), true},
+		{"List Data", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, NewListData(NewListData(dataList...)), false},
+		{"List Data empty list", args{"L|"}, NewListData(NewListData()), false},
+		{"Id Data", args{"I|data"}, NewIDData(baseIDs.NewStringID("data")), false},
+		{"Height Data", args{"H|100"}, NewHeightData(baseTypes.NewHeight(100)), false},
+		{"Dec Data", args{"D|100"}, NewDecData(sdkTypes.NewDec(100)), false},
+		{"Bool Data", args{"B|true"}, NewBooleanData(true), false},
+		{"AccAddress data", args{"A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"}, NewAccAddressData(fromAccAddress), false},
+		{"-ve String Data", args{"S|S,|newFact"}, NewStringData("S,|newFact"), true},
+		{"-ve List Data String", args{"L|S|,TestData,S|,Test"}, NewListData(NewListData([]data.Data{NewStringData("S|,TestData"), NewStringData("S|,Test")}...)), true},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ReadData(tt.args.dataString)
-			if tt.wantErr {
-				if err == nil {
-					t.Errorf("ReadData() error = %v, wantErr %v", err, tt.wantErr)
-				}
+			got, err := PrototypeAnyData().FromString(tt.args.dataString)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ReadData() error = %v, wantErr %v", err, tt.wantErr)
 			} else if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ReadData() got = %v, want %v", got, tt.want)
 				t.Errorf("ReadData() got = %T, want %T", got, tt.want)
@@ -95,13 +88,13 @@ func Test_readAccAddressData(t *testing.T) {
 		want    data.AccAddressData
 		wantErr bool
 	}{
-		{"+ve nil", args{}, base.AccAddressDataPrototype().(data.AccAddressData), false},
-		{"+ve string", args{"cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"}, base.NewAccAddressData(fromAccAddress), false},
-		{"-ve", args{"testData"}, base.AccAddressDataPrototype().(data.AccAddressData), true},
+		{"+ve nil", args{}, PrototypeAccAddressData().(data.AccAddressData), false},
+		{"+ve string", args{"cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"}, NewAccAddressData(fromAccAddress), false},
+		{"-ve", args{"testData"}, PrototypeAccAddressData().(data.AccAddressData), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := readAccAddressData(tt.args.dataString)
+			got, err := PrototypeAccAddressData().FromString(tt.args.dataString)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("readAccAddressData() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -123,14 +116,14 @@ func Test_readBooleanData(t *testing.T) {
 		want    data.BooleanData
 		wantErr bool
 	}{
-		{"+ve nil", args{}, base.BooleanDataPrototype(), false},
-		{"+ve string", args{"true"}, base.NewBooleanData(true), false},
-		{"+ve string", args{"false"}, base.NewBooleanData(false), false},
-		{"-ve", args{"testData"}, base.BooleanDataPrototype(), true},
+		{"+ve nil", args{}, PrototypeBooleanData(), false},
+		{"+ve string", args{"true"}, NewBooleanData(true), false},
+		{"+ve string", args{"false"}, NewBooleanData(false), false},
+		{"-ve", args{"testData"}, PrototypeBooleanData(), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := readBooleanData(tt.args.dataString)
+			got, err := PrototypeBooleanData().FromString(tt.args.dataString)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("readBooleanData() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -152,14 +145,14 @@ func Test_readDecData(t *testing.T) {
 		want    data.DecData
 		wantErr bool
 	}{
-		{"+ve nil", args{}, base.DecDataPrototype(), false},
-		{"+ve string", args{"100"}, base.NewDecData(sdkTypes.NewDec(100)), false},
-		{"+ve with nil", args{"-100"}, base.NewDecData(sdkTypes.NewDec(-100)), false},
-		{"-ve", args{"testData"}, base.DecDataPrototype(), true},
+		{"+ve nil", args{}, PrototypeDecData(), false},
+		{"+ve string", args{"100"}, NewDecData(sdkTypes.NewDec(100)), false},
+		{"+ve with nil", args{"-100"}, NewDecData(sdkTypes.NewDec(-100)), false},
+		{"-ve", args{"testData"}, PrototypeDecData(), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := readDecData(tt.args.dataString)
+			got, err := PrototypeDecData().FromString(tt.args.dataString)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("readDecData() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -181,14 +174,14 @@ func Test_readHeightData(t *testing.T) {
 		want    data.HeightData
 		wantErr bool
 	}{
-		{"+ve nil", args{}, base.HeightDataPrototype(), false},
-		{"+ve string", args{"100"}, base.NewHeightData(baseTypes.NewHeight(100)), false},
-		{"+ve with nil", args{"-100"}, base.NewHeightData(baseTypes.NewHeight(-100)), false},
-		{"-ve", args{"testData"}, base.HeightDataPrototype(), true},
+		{"+ve nil", args{}, PrototypeHeightData(), false},
+		{"+ve string", args{"100"}, NewHeightData(baseTypes.NewHeight(100)), false},
+		{"+ve with nil", args{"-100"}, NewHeightData(baseTypes.NewHeight(-100)), false},
+		{"-ve", args{"testData"}, PrototypeHeightData(), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := readHeightData(tt.args.dataString)
+			got, err := PrototypeHeightData().FromString(tt.args.dataString)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("readHeightData() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -210,14 +203,14 @@ func Test_readIDData(t *testing.T) {
 		want    data.IDData
 		wantErr bool
 	}{
-		{"+ve nil", args{}, base.IDDataPrototype(), false},
-		{"+ve", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, base.NewIDData(baseIDs.NewStringID("L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")), false},
-		{"-ve string with special char", args{"testDataString|,"}, base.NewIDData(baseIDs.NewStringID("testDataString|,")), false},
-		{"-ve", args{"testData"}, base.NewIDData(baseIDs.NewStringID("testData")), false},
+		{"+ve nil", args{}, PrototypeIDData(), false},
+		{"+ve", args{"L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"}, NewIDData(baseIDs.NewStringID("L|A|cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c,A|cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")), false},
+		{"-ve string with special char", args{"testDataString|,"}, NewIDData(baseIDs.NewStringID("testDataString|,")), false},
+		{"-ve", args{"testData"}, NewIDData(baseIDs.NewStringID("testData")), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := readIDData(tt.args.dataString)
+			got, err := PrototypeIDData().FromString(tt.args.dataString)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("readIDData() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -239,13 +232,13 @@ func Test_readListData(t *testing.T) {
 		want    data.ListData
 		wantErr bool
 	}{
-		{"+ve nil", args{}, base.ListDataPrototype(), false},
-		{"+ve string", args{"S|1,S|2,S|3"}, base.NewListData([]data.Data{base.NewStringData("1"), base.NewStringData("2"), base.NewStringData("3")}...), false},
-		{"-ve", args{"testData"}, base.ListDataPrototype(), true},
+		{"+ve nil", args{}, PrototypeListData(), false},
+		{"+ve string", args{"S|1,S|2,S|3"}, NewListData(NewListData([]data.Data{NewStringData("1"), NewStringData("2"), NewStringData("3")}...)), false},
+		{"-ve", args{"testData"}, PrototypeListData(), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := readListData(tt.args.dataString)
+			got, err := PrototypeListData().FromString(tt.args.dataString)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("readListData() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -267,13 +260,13 @@ func Test_readStringData(t *testing.T) {
 		want    data.StringData
 		wantErr bool
 	}{
-		{"+ve nil", args{}, base.StringDataPrototype(), false},
-		{"+ve string", args{"testDataString"}, base.NewStringData("testDataString"), false},
-		{"-ve", args{"testData"}, base.NewStringData("testData"), false},
+		{"+ve nil", args{}, PrototypeStringData(), false},
+		{"+ve string", args{"testDataString"}, NewStringData("testDataString"), false},
+		{"-ve", args{"testData"}, NewStringData("testData"), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := readStringData(tt.args.dataString)
+			got, err := PrototypeStringData().FromString(tt.args.dataString)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("readStringData() error = %v, wantErr %v", err, tt.wantErr)
 				return

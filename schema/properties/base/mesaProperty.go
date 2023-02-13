@@ -56,6 +56,15 @@ func (mesaProperty *MesaProperty) ToAnyProperty() properties.AnyProperty {
 		},
 	}
 }
+func (mesaProperty *MesaProperty) ValidateBasic() error {
+	// TODO implement
+	return nil
+}
+
+func (mesaProperty *MesaProperty) Mutate(data data.Data) properties.Property {
+	mesaProperty.DataID = data.GetID().(*baseIDs.DataID)
+	return mesaProperty
+}
 func propertyFromInterface(listable traits.Listable) (properties.Property, error) {
 	switch value := listable.(type) {
 	case properties.Property:

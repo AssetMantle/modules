@@ -10,14 +10,13 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	stringUtilities "github.com/AssetMantle/modules/utilities/string"
-
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
+	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
 var _ data.ListData = (*ListData)(nil)
@@ -39,7 +38,33 @@ func (listData *ListData) AsString() string {
 		dataStrings[i] = datum.AsString()
 	}
 
-	return stringUtilities.JoinListStrings(dataStrings...)
+	return joinDataTypeAndValueStrings(listData.GetType().AsString(), stringUtilities.JoinListStrings(dataStrings...))
+}
+func (listData *ListData) FromString(dataTypeAndValueString string) (data.Data, error) {
+	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
+
+	if dataTypeString != listData.GetType().AsString() {
+		return PrototypeListData(), constants.IncorrectFormat
+	}
+
+	if dataString == "" {
+		return PrototypeListData(), nil
+	}
+
+	dataStringList := stringUtilities.SplitListString(dataString)
+	dataList := make([]data.Data, len(dataStringList))
+
+	for i, datumString := range dataStringList {
+		// TODO: check if all data are same type,[T]
+		Data, err := PrototypeAnyData().FromString(datumString)
+		if err != nil {
+			return PrototypeListData(), err
+		}
+
+		dataList[i] = Data
+	}
+
+	return NewListData(dataList...), nil
 }
 func (listData *ListData) Search(data data.Data) (int, bool) {
 	index := sort.Search(
@@ -127,11 +152,11 @@ func listDataFromInterface(listable traits.Listable) (*ListData, error) {
 	default:
 		x := value
 		fmt.Println(x)
-		return &ListData{}, errorConstants.MetaDataError
+		return &ListData{}, constants.MetaDataError
 	}
 }
 
-func ListDataPrototype() data.ListData {
+func PrototypeListData() data.ListData {
 	return (&ListData{}).ZeroValue().(data.ListData)
 }
 

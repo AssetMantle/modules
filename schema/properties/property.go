@@ -6,6 +6,7 @@ package properties
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -18,7 +19,10 @@ type Property interface {
 	GetBondWeight() sdkTypes.Dec
 
 	IsMeta() bool
+	ValidateBasic() error
 
 	ToAnyProperty() AnyProperty
+
+	Mutate(data.Data) Property
 	traits.Listable
 }

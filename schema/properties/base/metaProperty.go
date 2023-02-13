@@ -19,6 +19,10 @@ var _ properties.MetaProperty = (*MetaProperty)(nil)
 
 func (metaProperty *MetaProperty) IsMetaProperty() {
 }
+func (metaProperty *MetaProperty) ValidateBasic() error {
+	// TODO implement
+	return nil
+}
 func (metaProperty *MetaProperty) GetData() data.AnyData {
 	return metaProperty.Data
 }
@@ -42,6 +46,10 @@ func (metaProperty *MetaProperty) GetBondWeight() sdkTypes.Dec {
 }
 func (metaProperty *MetaProperty) IsMeta() bool {
 	return true
+}
+func (metaProperty *MetaProperty) Mutate(data data.Data) properties.Property {
+	metaProperty.Data = data.ToAnyData().(*base.AnyData)
+	return metaProperty
 }
 func (metaProperty *MetaProperty) Compare(listable traits.Listable) int {
 	// NOTE: compare property can be meta or mesa, so listable must only be cast to Property Interface

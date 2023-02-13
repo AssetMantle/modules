@@ -11,6 +11,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -39,7 +40,25 @@ func (booleanData *BooleanData) Compare(listable traits.Listable) int {
 	}
 }
 func (booleanData *BooleanData) AsString() string {
-	return strconv.FormatBool(booleanData.Value)
+	return joinDataTypeAndValueStrings(booleanData.GetType().AsString(), strconv.FormatBool(booleanData.Value))
+}
+func (booleanData *BooleanData) FromString(dataTypeAndValueString string) (data.Data, error) {
+	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
+
+	if dataTypeString != booleanData.GetType().AsString() {
+		return PrototypeBooleanData(), constants.IncorrectFormat
+	}
+
+	if dataString == "" {
+		return PrototypeBooleanData(), nil
+	}
+
+	Bool, err := strconv.ParseBool(dataString)
+	if err != nil {
+		return PrototypeBooleanData(), err
+	}
+
+	return NewBooleanData(Bool), nil
 }
 func (booleanData *BooleanData) Bytes() []byte {
 	if booleanData.Get() {
@@ -71,7 +90,7 @@ func (booleanData *BooleanData) ToAnyData() data.AnyData {
 	}
 }
 
-func BooleanDataPrototype() data.BooleanData {
+func PrototypeBooleanData() data.BooleanData {
 	return &BooleanData{}
 }
 

@@ -3,6 +3,8 @@ package base
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/schema/data"
+
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -50,4 +52,10 @@ func (m *AnyProperty) ToAnyProperty() properties.AnyProperty {
 }
 func (m *AnyProperty) Compare(listable traits.Listable) int {
 	return m.Impl.(getter).get().Compare(listable)
+}
+func (m *AnyProperty) ValidateBasic() error {
+	return m.Impl.(getter).get().ValidateBasic()
+}
+func (m *AnyProperty) Mutate(data data.Data) properties.Property {
+	return m.Impl.(getter).get().Mutate(data)
 }

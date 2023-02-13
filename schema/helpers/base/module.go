@@ -67,9 +67,11 @@ func (module module) DefaultGenesis(jsonCodec sdkCodec.JSONCodec) json.RawMessag
 }
 func (module module) ValidateGenesis(jsonCodec sdkCodec.JSONCodec, _ client.TxEncodingConfig, rawMessage json.RawMessage) error {
 	genesisState := module.genesisPrototype().Decode(jsonCodec, rawMessage)
-	return genesisState.Validate()
+	return genesisState.ValidateBasic()
 }
 func (module module) RegisterRESTRoutes(context client.Context, router *mux.Router) {
+	router.HandleFunc("/"+module.Name()+"/parameters", module.parameterListPrototype().RESTQueryHandler(context)).Methods("GET")
+
 	for _, query := range module.queriesPrototype().GetList() {
 		router.HandleFunc("/"+module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(context)).Methods("GET")
 	}
@@ -170,6 +172,10 @@ func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Quer
 
 		if query := module.queries.Get(path[0]); query != nil {
 			return query.HandleQuery(sdkTypes.WrapSDKContext(context), requestQuery)
+		}
+
+		if path[0] == "parameters" {
+			return CodecPrototype().MarshalJSON(module.parameterList.Fetch(sdkTypes.WrapSDKContext(context)).Get()[0])
 		}
 
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())

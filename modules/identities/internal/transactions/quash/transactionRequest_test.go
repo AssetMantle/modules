@@ -280,7 +280,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 				IdentityID: tt.fields.IdentityID,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
-				t.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
