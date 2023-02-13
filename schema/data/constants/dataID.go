@@ -15,5 +15,6 @@ var (
 	HeightDataID     = baseIDs.NewStringID("H")
 	IDDataID         = baseIDs.NewStringID("I")
 	ListDataID       = baseIDs.NewStringID("L")
+	NumberDataID     = baseIDs.NewStringID("N")
 	StringDataID     = baseIDs.NewStringID("S")
 )
