@@ -4,8 +4,6 @@
 package base
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -29,7 +27,7 @@ func (mesaProperty *MesaProperty) GetKey() ids.StringID {
 func (mesaProperty *MesaProperty) GetType() ids.StringID {
 	return mesaProperty.ID.GetType()
 }
-func (mesaProperty *MesaProperty) GetBondWeight() sdkTypes.Dec {
+func (mesaProperty *MesaProperty) GetBondWeight() int64 {
 	if zeroData, err := base.PrototypeAnyData().FromString(mesaProperty.GetType().AsString()); err != nil {
 		panic(err)
 	} else {

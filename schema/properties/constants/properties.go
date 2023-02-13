@@ -14,8 +14,8 @@ import (
 
 var (
 	AuthenticationProperty = base.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())
-	BondAmountProperty     = base.NewMetaProperty(baseIDs.NewStringID("bondAmount"), baseData.NewDecData(sdkTypes.ZeroDec()))
-	BondRateProperty       = base.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewDecData(sdkTypes.ZeroDec()))
+	BondAmountProperty     = base.NewMetaProperty(baseIDs.NewStringID("bondAmount"), baseData.NewNumberData(0))
+	BondRateProperty       = base.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(0))
 	BurnHeightProperty     = base.NewMetaProperty(baseIDs.NewStringID("burnHeight"), baseData.NewHeightData(baseTypes.NewHeight(-1)).ZeroValue())
 	// TODO check default value
 	CreationHeightProperty = base.NewMetaProperty(baseIDs.NewStringID("creationHeight"), baseData.NewHeightData(baseTypes.NewHeight(-1)).ZeroValue())
@@ -31,6 +31,8 @@ var (
 	// TODO check default value
 	MakerOwnableIDProperty    = base.NewMetaProperty(baseIDs.NewStringID("makerOwnableID"), baseData.NewIDData(baseIDs.PrototypeOwnableID()))
 	MakerOwnableSplitProperty = base.NewMetaProperty(baseIDs.NewStringID("makerOwnableSplit"), baseData.NewDecData(sdkTypes.SmallestDec()))
+	MaxPropertyCountProperty  = base.NewMetaProperty(baseIDs.NewStringID("maxPropertyCountProperty"), baseData.NewNumberData(0))
+
 	// TODO ***** rename to name
 	NubIDProperty       = base.NewMetaProperty(baseIDs.NewStringID("nubID"), baseData.NewIDData(baseIDs.PrototypeStringID()))
 	PermissionsProperty = base.NewMetaProperty(baseIDs.NewStringID("permissions"), baseData.NewListData())

@@ -1,13 +1,14 @@
 syntax = "proto3";
 package data;
 
+import "gogoproto/gogo.proto";
 import "schema/data/base/accAddressData.v1.proto";
 import "schema/data/base/booleanData.v1.proto";
 import "schema/data/base/decData.v1.proto";
 import "schema/data/base/heightData.v1.proto";
 import "schema/data/base/idData.v1.proto";
+import "schema/data/base/numberData.v1.proto";
 import "schema/data/base/stringData.v1.proto";
-import "gogoproto/gogo.proto";
 
 message AnyData {
   option (gogoproto.goproto_getters) = false;
@@ -19,7 +20,8 @@ message AnyData {
     HeightData height_data = 4;
     IDData i_d_data = 5;
     StringData string_data = 6;
-    ListData list_data = 7 [(gogoproto.customtype) = "ListData"];
+    NumberData number_data = 7;
+    ListData list_data = 8;
   }
 }
 

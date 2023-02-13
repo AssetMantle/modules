@@ -36,8 +36,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	}
 	classification := mappable.GetClassification(Mappable)
 
-	bondCoin, _ := sdkTypes.NewDecCoinFromDec(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), classification.GetBondAmount()).TruncateDecimal()
-	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), module.Name, auxiliaryRequest.accAddress, sdkTypes.NewCoins(bondCoin)); err != nil {
+	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), module.Name, auxiliaryRequest.accAddress, sdkTypes.NewCoins(sdkTypes.NewCoin(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), sdkTypes.NewInt(classification.GetBondAmount())))); err != nil {
 		return newAuxiliaryResponse(err)
 	}
 

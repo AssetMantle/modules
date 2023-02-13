@@ -1,0 +1,10 @@
+syntax = "proto3";
+package data;
+
+import "gogoproto/gogo.proto";
+
+message NumberData {
+  option (gogoproto.goproto_getters) = false;
+
+  int64 value = 1;
+}

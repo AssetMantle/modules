@@ -7,8 +7,6 @@ import (
 	"bytes"
 	"sort"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -27,7 +25,7 @@ func (listData *ListData) Get() []data.AnyData {
 	}
 	return anyDataList
 }
-func (listData *ListData) GetBondWeight() sdkTypes.Dec {
+func (listData *ListData) GetBondWeight() int64 {
 	return dataConstants.ListDataWeight
 }
 func (listData *ListData) AsString() string {

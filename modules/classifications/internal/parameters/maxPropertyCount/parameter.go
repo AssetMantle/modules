@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package bondRate
+package maxPropertyCount
 
 import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -12,8 +12,8 @@ import (
 	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
 )
 
-var ID = constantProperties.BondRateProperty.GetKey()
-var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewNumberData(1)))
+var ID = constantProperties.MaxPropertyCountProperty.GetKey()
+var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewNumberData(22)))
 
 func validator(i interface{}) error {
 	if value, ok := i.(baseData.NumberData); ok && value.Get() > 0 {
