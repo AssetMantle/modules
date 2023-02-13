@@ -56,7 +56,6 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpe
 			return auxiliaryKeeper
 		}
 	}
-
 	return auxiliaryKeeper
 }
 
