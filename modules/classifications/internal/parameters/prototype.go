@@ -6,10 +6,11 @@ package parameters
 import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/bondRate"
+	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/maxPropertyCount"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.ParameterList {
-	return baseHelpers.NewParameterList(module.Name, bondRate.ValidatableParameter)
+	return baseHelpers.NewParameterList(module.Name, bondRate.ValidatableParameter, maxPropertyCount.ValidatableParameter)
 }
