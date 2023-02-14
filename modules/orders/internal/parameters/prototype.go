@@ -5,11 +5,11 @@ package parameters
 
 import (
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
-	"github.com/AssetMantle/modules/modules/orders/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/modules/orders/internal/parameters/maxOrderLife"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func Prototype() helpers.ParameterList {
-	return baseHelpers.NewParameterList(module.Name, dummy.ValidatableParameter)
+	return baseHelpers.NewParameterList(module.Name, maxOrderLife.ValidatableParameter)
 }

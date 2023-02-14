@@ -32,6 +32,7 @@ var (
 	MakerOwnableIDProperty    = base.NewMetaProperty(baseIDs.NewStringID("makerOwnableID"), baseData.NewIDData(baseIDs.PrototypeOwnableID()))
 	MakerOwnableSplitProperty = base.NewMetaProperty(baseIDs.NewStringID("makerOwnableSplit"), baseData.NewDecData(sdkTypes.SmallestDec()))
 	MaxPropertyCountProperty  = base.NewMetaProperty(baseIDs.NewStringID("maxPropertyCountProperty"), baseData.NewNumberData(0))
+	MaxOrderLifeProperty      = base.NewMetaProperty(baseIDs.NewStringID("maxOrderLifeProperty"), baseData.NewHeightData(baseTypes.NewHeight(-1)))
 
 	// TODO ***** rename to name
 	NubIDProperty       = base.NewMetaProperty(baseIDs.NewStringID("nubID"), baseData.NewIDData(baseIDs.PrototypeStringID()))

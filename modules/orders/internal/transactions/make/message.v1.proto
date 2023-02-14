@@ -15,7 +15,7 @@ message Message {
   ids.IdentityID taker_i_d = 4;
   ids.AnyOwnableID maker_ownable_i_d = 5;
   ids.AnyOwnableID taker_ownable_i_d = 6;
-  types.Height expires_in = 7;
+  types.Height expiry_height = 7;
   string maker_ownable_split = 8 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
   string taker_ownable_split = 9 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
   lists.PropertyList immutable_meta_properties = 10;
