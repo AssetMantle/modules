@@ -6,7 +6,6 @@ package base
 import (
 	"context"
 	"encoding/binary"
-	"strconv"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -15,16 +14,11 @@ import (
 
 var _ types.Height = (*Height)(nil)
 
-func (height *Height) StringHeight() string {
-	return strconv.FormatInt(height.Get(), 10)
-}
-
 func (height *Height) Bytes() []byte {
 	Bytes := make([]byte, 8)
 	binary.LittleEndian.PutUint64(Bytes, uint64(height.Get()))
 	return Bytes
 }
-
 func (height *Height) Get() int64 { return height.Value }
 func (height *Height) Compare(compareHeight types.Height) int {
 	if height.Get() > compareHeight.Get() {
