@@ -4,8 +4,9 @@
 package documents
 
 import (
-	"github.com/AssetMantle/modules/schema/data"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/schema/data"
 
 	"github.com/AssetMantle/modules/schema/types"
 )
@@ -22,6 +23,7 @@ type Identity interface {
 	GetAuthentication() data.ListData
 
 	IsProvisioned(sdkTypes.AccAddress) bool
+	GetProvisionedAddressCount() int64
 	ProvisionAddress(...sdkTypes.AccAddress) Identity
 	UnprovisionAddress(...sdkTypes.AccAddress) Identity
 
