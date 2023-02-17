@@ -45,6 +45,9 @@ func (identity identity) IsProvisioned(accAddress sdkTypes.AccAddress) bool {
 	_, isProvisioned := identity.GetAuthentication().Search(baseData.NewAccAddressData(accAddress))
 	return isProvisioned
 }
+func (identity identity) GetProvisionedAddressCount() int64 {
+	return int64(len(identity.GetAuthentication().Get()))
+}
 func (identity identity) ProvisionAddress(accAddresses ...sdkTypes.AccAddress) documents.Identity {
 	var accAddressList []data.Data
 	for _, address := range accAddressesToData(accAddresses...) {

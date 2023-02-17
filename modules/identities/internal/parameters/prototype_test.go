@@ -4,11 +4,12 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers"
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/modules/identities/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/schema/helpers"
+
+	"github.com/AssetMantle/modules/modules/identities/internal/parameters/maxProvisionAddressCount"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
@@ -18,7 +19,7 @@ func TestPrototype(t *testing.T) {
 		want helpers.ParameterList
 	}{
 
-		{"+ve", baseHelpers.NewParameterList(dummy.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterList(maxProvisionAddressCount.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
