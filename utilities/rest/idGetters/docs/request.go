@@ -21,6 +21,14 @@ type request struct {
 	ImmutableProperties     string       `json:"immutableProperties" valid:"required~required field immutableProperties missing, matches(^.*$)~invalid field immutableProperties"`
 	MutableMetaProperties   string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`
 	MutableProperties       string       `json:"mutableProperties" valid:"required~required field mutableProperties missing, matches(^.*$)~invalid field mutableProperties"`
+	ClassificationID        string       `json:"classificationID" valid:"optional"`
+	MakerOwnableID          string       `json:"makerOwnableID" valid:"optional"`
+	TakerOwnableID          string       `json:"takerOwnableID" valid:"optional"`
+	MakerOwnableSplit       string       `json:"makerOwnableSplit" valid:"optional"`
+	TakerOwnableSplit       string       `json:"takerOwnableSplit" valid:"optional"`
+	ExpiresIn               string       `json:"expiresIn" valid:"optional"`
+	Height                  string       `json:"height" valid:"optional"`
+	TakerID                 string       `json:"takerID" valid:"optional"`
 }
 
 var _ helpers.TransactionRequest = &request{}
