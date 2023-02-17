@@ -10,8 +10,6 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data/utilities"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -19,8 +17,8 @@ import (
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-//TODO: Test GetID for all Data types; If every data tests GetID() then GenerateID() is automatically tested
-//func TestNewDataID(t *testing.T) {
+// TODO: Test GetID for all Data types; If every data tests GetID() then GenerateID() is automatically tested
+// func TestNewDataID(t *testing.T) {
 //	type args struct {
 //		data data.Data
 //	}
@@ -48,7 +46,7 @@ import (
 //			}
 //		})
 //	}
-//}
+// }
 func Test_dataIDFromInterface(t *testing.T) {
 	type args struct {
 		i interface{}
@@ -218,8 +216,8 @@ var _ data.BooleanData = (*booleanData)(nil)
 func (booleanData booleanData) GetID() ids.DataID {
 	return GenerateDataID(booleanData)
 }
-func (booleanData booleanData) GetBondWeight() sdkTypes.Dec {
-	return sdkTypes.SmallestDec()
+func (booleanData booleanData) GetBondWeight() int64 {
+	return int64(1)
 }
 func (booleanData booleanData) Compare(listable traits.Listable) int {
 	compareBooleanData, err := booleanDataFromInterface(listable)

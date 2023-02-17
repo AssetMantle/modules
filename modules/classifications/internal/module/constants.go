@@ -11,6 +11,3 @@ const Name = "classifications"
 const ConsensusVersion = 1
 
 var StoreKeyPrefix = constants.ClassificationsStoreKeyPrefix
-
-// MaxPropertyCount TODO convert it to module param
-const MaxPropertyCount = 22

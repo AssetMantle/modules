@@ -1,8 +1,6 @@
 package base
 
 import (
-	"github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/ids/base"
@@ -17,12 +15,12 @@ type classification struct {
 
 var _ documents.Classification = (*classification)(nil)
 
-func (classification classification) GetBondAmount() types.Dec {
+func (classification classification) GetBondAmount() int64 {
 	if property := classification.Document.GetProperty(constants.BondAmountProperty.GetID()); property != nil && property.IsMeta() {
-		return property.Get().(properties.MetaProperty).GetData().Get().(data.DecData).Get()
+		return property.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
 	}
 
-	return constants.BondAmountProperty.GetData().Get().(data.DecData).Get()
+	return constants.BondAmountProperty.GetData().Get().(data.NumberData).Get()
 }
 func NewClassification(immutables qualified.Immutables, mutables qualified.Mutables) documents.Classification {
 	return classification{

@@ -4,8 +4,6 @@
 package base
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -41,7 +39,7 @@ func (metaProperty *MetaProperty) GetKey() ids.StringID {
 func (metaProperty *MetaProperty) GetType() ids.StringID {
 	return metaProperty.Data.GetType()
 }
-func (metaProperty *MetaProperty) GetBondWeight() sdkTypes.Dec {
+func (metaProperty *MetaProperty) GetBondWeight() int64 {
 	return metaProperty.Data.GetBondWeight()
 }
 func (metaProperty *MetaProperty) IsMeta() bool {

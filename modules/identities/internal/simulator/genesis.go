@@ -13,7 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/genesis"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	identitiesModule "github.com/AssetMantle/modules/modules/identities/internal/module"
-	"github.com/AssetMantle/modules/modules/identities/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/modules/identities/internal/parameters/maxProvisionAddressCount"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents/base"
@@ -28,7 +28,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		dummy.ID.AsString(),
+		maxProvisionAddressCount.ID.AsString(),
 		&Data,
 		simulationState.Rand,
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
@@ -42,7 +42,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMappable(base.NewIdentity(baseIDs.NewClassificationID(immutables, mutables), immutables, mutables))
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, []helpers.Parameter{dummy.Parameter.Mutate(Data)})
+	genesisState := genesis.Prototype().Initialize(mappableList, []helpers.Parameter{maxProvisionAddressCount.Parameter.Mutate(Data)})
 
 	simulationState.GenState[identitiesModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
 }

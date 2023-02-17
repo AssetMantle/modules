@@ -1,8 +1,6 @@
 package base
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"strings"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -31,6 +29,9 @@ func (x *AnyData_HeightData) get() data.Data {
 }
 func (x *AnyData_IDData) get() data.Data {
 	return x.IDData
+}
+func (x *AnyData_NumberData) get() data.Data {
+	return x.NumberData
 }
 func (x *AnyData_StringData) get() data.Data {
 	return x.StringData
@@ -65,6 +66,8 @@ func (x *AnyData) FromString(dataString string) (data.Data, error) {
 			Data, err = PrototypeIDData().FromString(dataString)
 		case dataConstants.ListDataID.AsString():
 			Data, err = PrototypeListData().FromString(dataString)
+		case dataConstants.NumberDataID.AsString():
+			Data, err = PrototypeNumberData().FromString(dataString)
 		case dataConstants.StringDataID.AsString():
 			Data, err = PrototypeStringData().FromString(dataString)
 		default:
@@ -104,7 +107,7 @@ func (x *AnyData) ToAnyData() data.AnyData {
 func (x *AnyData) Compare(listable traits.Listable) int {
 	return x.Impl.(getter).get().Compare(listable)
 }
-func (x *AnyData) GetBondWeight() sdkTypes.Dec {
+func (x *AnyData) GetBondWeight() int64 {
 	return x.Impl.(getter).get().GetBondWeight()
 }
 

@@ -12,12 +12,15 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/schema/data"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 type transactionKeeper struct {
 	mapper              helpers.Mapper
+	parameterList       helpers.ParameterList
 	supplementAuxiliary helpers.Auxiliary
 }
 
@@ -30,14 +33,16 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
 
-	identityID := message.IdentityID
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
-
-	Mappable := identities.Get(key.NewKey(identityID))
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.IdentityID))
+	Mappable := identities.Get(key.NewKey(message.IdentityID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound
 	}
 	identity := mappable.GetIdentity(Mappable)
+
+	if identity.GetProvisionedAddressCount() >= transactionKeeper.parameterList.GetParameter(constants.MaxProvisionAddressCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get() {
+		return nil, errorConstants.NotAuthorized
+	}
 
 	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
@@ -62,8 +67,9 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	return &Response{}, nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterList helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
+	transactionKeeper.parameterList = parameterList
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {

@@ -1,15 +1,12 @@
 package constants
 
-import (
-	"github.com/cosmos/cosmos-sdk/types"
-)
-
 var (
-	AccAddressDataWeight = types.NewDec(90)
-	BooleanDataWeight    = types.NewDec(1)
-	StringDataWeight     = types.NewDec(256)
-	DecDataWeight        = types.NewDec(8)
-	HeightDataWeight     = types.NewDec(8)
-	IDDataWeight         = types.NewDec(64)
-	ListDataWeight       = types.NewDec(1024)
+	AccAddressDataWeight = int64(90)
+	BooleanDataWeight    = int64(1)
+	DecDataWeight        = int64(16)
+	HeightDataWeight     = int64(8)
+	IDDataWeight         = int64(64)
+	ListDataWeight       = int64(1024)
+	NumberDataWeight     = int64(8)
+	StringDataWeight     = int64(256)
 )
