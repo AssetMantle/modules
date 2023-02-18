@@ -5,11 +5,12 @@ package wrap
 
 import (
 	"fmt"
+	"reflect"
+	"testing"
+
 	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	"reflect"
-	"testing"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -231,7 +232,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
-				parameters:            tt.fields.parameters,
+				parameterList:         tt.fields.parameters,
 				bankKeeper:            tt.fields.supplyKeeper,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
@@ -270,7 +271,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
-				parameters:            tt.fields.parameters,
+				parameterList:         tt.fields.parameters,
 				bankKeeper:            tt.fields.supplyKeeper,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}

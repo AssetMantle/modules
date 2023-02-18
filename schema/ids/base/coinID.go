@@ -28,8 +28,8 @@ func (coinID *CoinID) Compare(listable traits.Listable) int {
 }
 func (coinID *CoinID) ToAnyID() ids.AnyID {
 	return &AnyID{
-		Impl: &AnyID_OwnableID{
-			OwnableID: coinID.ToAnyOwnableID().(*AnyOwnableID),
+		Impl: &AnyID_AnyOwnableID{
+			AnyOwnableID: coinID.ToAnyOwnableID().(*AnyOwnableID),
 		},
 	}
 }

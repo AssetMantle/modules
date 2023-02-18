@@ -17,6 +17,7 @@ func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, HeightData{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, IDData{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, ListData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, NumberData{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, StringData{})
 
 	legacyAmino.RegisterInterface((*isAnyData_Impl)(nil), nil)
@@ -26,5 +27,6 @@ func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_HeightData{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_IDData{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_ListData{})
+	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_NumberData{})
 	codecUtilities.RegisterModuleConcrete(legacyAmino, AnyData_StringData{})
 }

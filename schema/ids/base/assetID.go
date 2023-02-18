@@ -67,5 +67,5 @@ func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 		return PrototypeAssetID(), nil
 	}
 
-	return &AssetID{}, errorConstants.MetaDataError
+	return PrototypeAssetID(), errorConstants.MetaDataError
 }
