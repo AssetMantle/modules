@@ -17,7 +17,7 @@ var _ idGetter = (*AnyID_HashID)(nil)
 var _ idGetter = (*AnyID_IdentityID)(nil)
 var _ idGetter = (*AnyID_MaintainerID)(nil)
 var _ idGetter = (*AnyID_OrderID)(nil)
-var _ idGetter = (*AnyID_OwnableID)(nil)
+var _ idGetter = (*AnyID_AnyOwnableID)(nil)
 var _ idGetter = (*AnyID_PropertyID)(nil)
 var _ idGetter = (*AnyID_SplitID)(nil)
 var _ idGetter = (*AnyID_StringID)(nil)
@@ -43,8 +43,8 @@ func (m *AnyID_MaintainerID) get() ids.ID {
 func (m *AnyID_OrderID) get() ids.ID {
 	return m.OrderID
 }
-func (m *AnyID_OwnableID) get() ids.ID {
-	return m.OwnableID
+func (m *AnyID_AnyOwnableID) get() ids.ID {
+	return m.AnyOwnableID
 }
 func (m *AnyID_PropertyID) get() ids.ID {
 	return m.PropertyID

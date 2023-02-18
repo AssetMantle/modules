@@ -82,8 +82,8 @@ func ReadHashID(hashIDString string) (ids.HashID, error) {
 	}
 
 	if hashIDString == "" {
-		return nil, nil
+		return PrototypeHashID(), nil
 	}
 
-	return &HashID{}, constants.IncorrectFormat
+	return PrototypeHashID(), constants.IncorrectFormat
 }

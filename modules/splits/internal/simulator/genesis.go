@@ -14,7 +14,7 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/genesis"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	splitsModule "github.com/AssetMantle/modules/modules/splits/internal/module"
-	"github.com/AssetMantle/modules/modules/splits/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/modules/splits/internal/parameters/wrapAllowedCoins"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -29,7 +29,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		dummy.ID.AsString(),
+		wrapAllowedCoins.ID.AsString(),
 		&Data,
 		simulationState.Rand,
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
@@ -43,7 +43,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMappable(base.NewSplit(baseIDs.NewIdentityID(baseIDs.NewClassificationID(immutables, mutables), immutables), baseIDs.NewCoinID(baseIDs.NewStringID(simulationTypes.RandStringOfLength(simulationState.Rand, simulationState.Rand.Intn(99)))), simulationTypes.RandomDecAmount(simulationState.Rand, sdkTypes.NewDec(9999999999))))
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, []helpers.Parameter{dummy.Parameter.Mutate(Data)})
+	genesisState := genesis.Prototype().Initialize(mappableList, []helpers.Parameter{wrapAllowedCoins.Parameter.Mutate(Data)})
 
 	simulationState.GenState[splitsModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
 }
