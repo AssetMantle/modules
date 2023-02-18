@@ -4,11 +4,12 @@
 package base
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	"reflect"
-	"testing"
 )
 
 func Test_idList_Add(t *testing.T) {
@@ -124,24 +125,3 @@ func Test_idList_Search(t *testing.T) {
 		})
 	}
 }
-
-//func Test_idsToListables(t *testing.T) {
-//	type args struct {
-//		ids []ids.ID
-//	}
-//	tests := []struct {
-//		name string
-//		args args
-//		want []traits.Listable
-//	}{
-//		{"+ve with nil", args{}, []traits.Listable{}},
-//		{"+ve", args{[]ids.ID{baseIds.NewStringID("ID")}}, []traits.Listable{baseIds.NewStringID("ID")}},
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			if got := idsToListables(tt.args.ids...); !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("idsToListables() = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
