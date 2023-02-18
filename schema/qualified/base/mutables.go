@@ -33,7 +33,7 @@ func (mutables *Mutables) Mutate(propertyList ...properties.Property) qualified.
 
 func NewMutables(propertyList lists.PropertyList) qualified.Mutables {
 	if propertyList == nil {
-		return &Mutables{}
+		return &Mutables{baseLists.NewPropertyList().(*baseLists.PropertyList)}
 	}
 	return &Mutables{
 		PropertyList: propertyList.(*baseLists.PropertyList),
