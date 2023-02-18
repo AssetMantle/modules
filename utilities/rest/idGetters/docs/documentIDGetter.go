@@ -69,10 +69,10 @@ func orderIDHandler(context client.Context) http.HandlerFunc {
 	}
 }
 
-func GetTotalWeight(immutables qualified.Immutables, mutables qualified.Mutables) sdkTypes.Dec {
-	totalWeight := sdkTypes.ZeroDec()
+func GetTotalWeight(immutables qualified.Immutables, mutables qualified.Mutables) int64 {
+	totalWeight := int64(0)
 	for _, property := range append(immutables.GetImmutablePropertyList().GetList(), mutables.GetMutablePropertyList().GetList()...) {
-		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
+		totalWeight += property.Get().GetBondWeight()
 	}
 	return totalWeight
 }
@@ -85,17 +85,17 @@ func identityIDHandler(context client.Context) http.HandlerFunc {
 	}
 }
 
-func classificationHandler(context client.Context) http.HandlerFunc {
+func identityClassificationHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		id, immutables, _ := ReadAndProcess(context, true, responseWriter, httpRequest)
-		rest.PostProcessResponse(responseWriter, context, newResponse(id.AsString(), immutables.GetProperty(constants.BondAmountProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.DecData).AsString(), nil))
+		rest.PostProcessResponse(responseWriter, context, newResponse(id.AsString(), immutables.GetProperty(constants.BondAmountProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.NumberData).AsString(), nil))
 	}
 }
 
 func assetClassificationHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		id, immutables, _ := ReadAndProcess(context, false, responseWriter, httpRequest)
-		rest.PostProcessResponse(responseWriter, context, newResponse(id.AsString(), immutables.GetProperty(constants.BondAmountProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.DecData).AsString(), nil))
+		rest.PostProcessResponse(responseWriter, context, newResponse(id.AsString(), immutables.GetProperty(constants.BondAmountProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.NumberData).AsString(), nil))
 	}
 }
 
@@ -104,8 +104,8 @@ func orderClassificationHandler(context client.Context) http.HandlerFunc {
 		_, _, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties := Read(context, responseWriter, httpRequest)
 		immutables := base.NewImmutables(baseLists.NewPropertyList(propertiesUtilities.AnyPropertyListToPropertyList(append(append(immutableMetaProperties.GetList(), immutableProperties.GetList()...), constants.ExchangeRateProperty.ToAnyProperty(), constants.CreationHeightProperty.ToAnyProperty(), constants.MakerOwnableIDProperty.ToAnyProperty(), constants.TakerOwnableIDProperty.ToAnyProperty(), constants.MakerIDProperty.ToAnyProperty(), constants.TakerIDProperty.ToAnyProperty())...)...))
 		mutables := base.NewMutables(baseLists.NewPropertyList(propertiesUtilities.AnyPropertyListToPropertyList(append(append(mutableMetaProperties.GetList(), mutableProperties.GetList()...), constants.ExpiryHeightProperty.ToAnyProperty(), constants.MakerOwnableSplitProperty.ToAnyProperty())...)...))
-		Immutables := base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewDecData(GetTotalWeight(immutables, mutables).Mul(sdkTypes.NewDec(1))))))
-		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewClassificationID(Immutables, mutables).AsString(), Immutables.GetProperty(constants.BondAmountProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.DecData).AsString(), nil))
+		Immutables := base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewNumberData(GetTotalWeight(immutables, mutables)*baseData.NewNumberData(1).Get()))))
+		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewClassificationID(Immutables, mutables).AsString(), Immutables.GetProperty(constants.BondAmountProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.NumberData).AsString(), nil))
 	}
 }
 
@@ -155,13 +155,13 @@ func Process(immutableMetaProperties, immutableProperties, mutableMetaProperties
 		Mutables = base.NewMutables(baseLists.NewPropertyList(propertiesUtilities.AnyPropertyListToPropertyList(append(mutableMetaProperties.GetList(), mutableProperties.GetList()...)...)...))
 	}
 
-	Immutables := base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewDecData(GetTotalWeight(immutables, Mutables).Mul(sdkTypes.NewDec(1))))))
+	Immutables := base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewNumberData(GetTotalWeight(immutables, Mutables)*baseData.NewNumberData(1).Get()))))
 
 	return Immutables, Mutables
 }
 
 func RegisterRESTRoutes(context client.Context, router *mux.Router) {
-	router.HandleFunc("/get/classification/identity", classificationHandler(context)).Methods("POST")
+	router.HandleFunc("/get/classification/identity", identityClassificationHandler(context)).Methods("POST")
 	router.HandleFunc("/get/classification/asset", assetClassificationHandler(context)).Methods("POST")
 	router.HandleFunc("/get/classification/order", orderClassificationHandler(context)).Methods("POST")
 	router.HandleFunc("/get/document/assetID", assetIDHandler(context)).Methods("POST")
