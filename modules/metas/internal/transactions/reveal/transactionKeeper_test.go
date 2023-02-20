@@ -5,6 +5,7 @@ package reveal
 
 import (
 	"context"
+	"github.com/AssetMantle/modules/schema/data/base"
 	"reflect"
 	"testing"
 
@@ -20,8 +21,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/schema/data/utilities"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
@@ -78,9 +77,9 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
-	data, err := utilities.ReadData("S|default")
+	data, err := base.PrototypeAnyData().FromString("S|default")
 	require.Equal(t, nil, err)
-	newFact, err := utilities.ReadData("S|newFact")
+	newFact, err := base.PrototypeAnyData().FromString("S|newFact")
 	require.Equal(t, nil, err)
 	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(data))
 	t.Run("PositiveCase", func(t *testing.T) {

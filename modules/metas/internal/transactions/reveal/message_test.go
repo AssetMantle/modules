@@ -7,8 +7,6 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/data/utilities"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -22,7 +20,7 @@ func Test_Reveal_Message(t *testing.T) {
 	require.Nil(t, err)
 
 	data := "S|newData"
-	newData, err := utilities.ReadData(data)
+	newData, err := baseData.PrototypeAnyData().FromString(data)
 	require.Equal(t, nil, err)
 
 	testMessage := newMessage(fromAccAddress, newData).(*Message)
