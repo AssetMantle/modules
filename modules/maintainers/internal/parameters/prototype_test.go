@@ -16,9 +16,9 @@ import (
 func TestPrototype(t *testing.T) {
 	tests := []struct {
 		name string
-		want helpers.ParameterList
+		want helpers.ParameterManager
 	}{
-		{"+ve", baseHelpers.NewParameterList(deputizeAllowed.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterManager(deputizeAllowed.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

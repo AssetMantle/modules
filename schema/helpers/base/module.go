@@ -28,23 +28,23 @@ type module struct {
 	name             string
 	consensusVersion uint64
 
-	auxiliariesPrototype   func() helpers.Auxiliaries
-	blockPrototype         func() helpers.Block
-	genesisPrototype       func() helpers.Genesis
-	invariantsPrototype    func() helpers.Invariants
-	mapperPrototype        func() helpers.Mapper
-	parameterListPrototype func() helpers.ParameterList
-	queriesPrototype       func() helpers.Queries
-	simulatorPrototype     func() helpers.Simulator
-	transactionsPrototype  func() helpers.Transactions
+	auxiliariesPrototype      func() helpers.Auxiliaries
+	blockPrototype            func() helpers.Block
+	genesisPrototype          func() helpers.Genesis
+	invariantsPrototype       func() helpers.Invariants
+	mapperPrototype           func() helpers.Mapper
+	parameterManagerPrototype func() helpers.ParameterManager
+	queriesPrototype          func() helpers.Queries
+	simulatorPrototype        func() helpers.Simulator
+	transactionsPrototype     func() helpers.Transactions
 
-	auxiliaries   helpers.Auxiliaries
-	genesis       helpers.Genesis
-	mapper        helpers.Mapper
-	parameterList helpers.ParameterList
-	queries       helpers.Queries
-	transactions  helpers.Transactions
-	block         helpers.Block
+	auxiliaries      helpers.Auxiliaries
+	genesis          helpers.Genesis
+	mapper           helpers.Mapper
+	parameterManager helpers.ParameterManager
+	queries          helpers.Queries
+	transactions     helpers.Transactions
+	block            helpers.Block
 }
 
 var _ helpers.Module = (*module)(nil)
@@ -70,7 +70,7 @@ func (module module) ValidateGenesis(jsonCodec sdkCodec.JSONCodec, _ client.TxEn
 	return genesisState.ValidateBasic()
 }
 func (module module) RegisterRESTRoutes(context client.Context, router *mux.Router) {
-	router.HandleFunc("/"+module.Name()+"/parameters", module.parameterListPrototype().RESTQueryHandler(context)).Methods("GET")
+	router.HandleFunc("/"+module.Name()+"/parameters", module.parameterManagerPrototype().RESTQueryHandler(context)).Methods("GET")
 
 	for _, query := range module.queriesPrototype().GetList() {
 		router.HandleFunc("/"+module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(context)).Methods("GET")
@@ -175,7 +175,7 @@ func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Quer
 		}
 
 		if path[0] == "parameters" {
-			return CodecPrototype().MarshalJSON(module.parameterList.Fetch(sdkTypes.WrapSDKContext(context)).Get()[0])
+			return CodecPrototype().MarshalJSON(module.parameterManager.Fetch(sdkTypes.WrapSDKContext(context)).Get()[0])
 		}
 
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
@@ -196,20 +196,20 @@ func (module module) ConsensusVersion() uint64 {
 func (module module) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
 	genesisState := module.genesisPrototype().Decode(jsonCodec, rawMessage)
 
-	if module.mapper == nil || module.parameterList == nil {
+	if module.mapper == nil || module.parameterManager == nil {
 		panic(constants.UninitializedUsage)
 	}
 
-	genesisState.Import(sdkTypes.WrapSDKContext(context), module.mapper, module.parameterList)
+	genesisState.Import(sdkTypes.WrapSDKContext(context), module.mapper, module.parameterManager)
 
 	return []abciTypes.ValidatorUpdate{}
 }
 func (module module) ExportGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec) json.RawMessage {
-	if module.mapper == nil || module.parameterList == nil {
+	if module.mapper == nil || module.parameterManager == nil {
 		panic(constants.UninitializedUsage)
 	}
 
-	return module.genesisPrototype().Export(sdkTypes.WrapSDKContext(context), module.mapper, module.parameterList).Encode(jsonCodec)
+	return module.genesisPrototype().Export(sdkTypes.WrapSDKContext(context), module.mapper, module.parameterManager).Encode(jsonCodec)
 }
 func (module module) BeginBlock(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock) {
 	module.block.Begin(sdkTypes.WrapSDKContext(context), beginBlockRequest)
@@ -239,12 +239,12 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 
 	module.genesis = module.genesisPrototype()
 
-	module.parameterList = module.parameterListPrototype().Initialize(paramsSubspace.WithKeyTable(module.parameterListPrototype().GetKeyTable()))
+	module.parameterManager = module.parameterManagerPrototype().Initialize(paramsSubspace.WithKeyTable(module.parameterManagerPrototype().GetKeyTable()))
 
 	auxiliaryList := make([]helpers.Auxiliary, len(module.auxiliariesPrototype().GetList()))
 
 	for i, auxiliary := range module.auxiliariesPrototype().GetList() {
-		auxiliaryList[i] = auxiliary.Initialize(module.mapper, module.parameterList, auxiliaryKeepers...)
+		auxiliaryList[i] = auxiliary.Initialize(module.mapper, module.parameterManager, auxiliaryKeepers...)
 	}
 
 	module.auxiliaries = NewAuxiliaries(auxiliaryList...)
@@ -256,7 +256,7 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 	transactionList := make([]helpers.Transaction, len(module.transactionsPrototype().GetList()))
 
 	for i, transaction := range module.transactionsPrototype().GetList() {
-		transactionList[i] = transaction.InitializeKeeper(module.mapper, module.parameterList, auxiliaryKeepers...)
+		transactionList[i] = transaction.InitializeKeeper(module.mapper, module.parameterManager, auxiliaryKeepers...)
 	}
 
 	module.transactions = NewTransactions(transactionList...)
@@ -264,28 +264,28 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 	queryList := make([]helpers.Query, len(module.queriesPrototype().GetList()))
 
 	for i, query := range module.queriesPrototype().GetList() {
-		queryList[i] = query.Initialize(module.mapper, module.parameterList, auxiliaryKeepers...)
+		queryList[i] = query.Initialize(module.mapper, module.parameterManager, auxiliaryKeepers...)
 	}
 
 	module.queries = NewQueries(queryList...)
 
-	module.block = module.blockPrototype().Initialize(module.mapper, module.parameterList, auxiliaryKeepers...)
+	module.block = module.blockPrototype().Initialize(module.mapper, module.parameterManager, auxiliaryKeepers...)
 
 	return module
 }
 
-func NewModule(name string, consensusVersion uint64, auxiliariesPrototype func() helpers.Auxiliaries, blockPrototype func() helpers.Block, genesisPrototype func() helpers.Genesis, invariantsPrototype func() helpers.Invariants, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.ParameterList, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions) helpers.Module {
+func NewModule(name string, consensusVersion uint64, auxiliariesPrototype func() helpers.Auxiliaries, blockPrototype func() helpers.Block, genesisPrototype func() helpers.Genesis, invariantsPrototype func() helpers.Invariants, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.ParameterManager, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions) helpers.Module {
 	return module{
-		name:                   name,
-		consensusVersion:       consensusVersion,
-		auxiliariesPrototype:   auxiliariesPrototype,
-		blockPrototype:         blockPrototype,
-		genesisPrototype:       genesisPrototype,
-		invariantsPrototype:    invariantsPrototype,
-		mapperPrototype:        mapperPrototype,
-		parameterListPrototype: parametersPrototype,
-		queriesPrototype:       queriesPrototype,
-		simulatorPrototype:     simulatorPrototype,
-		transactionsPrototype:  transactionsPrototype,
+		name:                      name,
+		consensusVersion:          consensusVersion,
+		auxiliariesPrototype:      auxiliariesPrototype,
+		blockPrototype:            blockPrototype,
+		genesisPrototype:          genesisPrototype,
+		invariantsPrototype:       invariantsPrototype,
+		mapperPrototype:           mapperPrototype,
+		parameterManagerPrototype: parametersPrototype,
+		queriesPrototype:          queriesPrototype,
+		simulatorPrototype:        simulatorPrototype,
+		transactionsPrototype:     transactionsPrototype,
 	}
 }

@@ -45,7 +45,7 @@ type TestKeepers struct {
 	ClassificationsKeeper helpers.AuxiliaryKeeper
 }
 
-func CreateTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper, helpers.ParameterList) {
+func CreateTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -166,7 +166,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper helpers.Mapper
-		in1    helpers.ParameterList
+		in1    helpers.ParameterManager
 		in2    []interface{}
 	}
 	tests := []struct {

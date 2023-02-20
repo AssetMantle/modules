@@ -4,9 +4,10 @@
 package define
 
 import (
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"reflect"
 	"testing"
+
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"

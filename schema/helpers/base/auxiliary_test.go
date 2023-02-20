@@ -109,7 +109,7 @@ func Test_auxiliary_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper           helpers.Mapper
-		parameters       helpers.ParameterList
+		parameters       helpers.ParameterManager
 		auxiliaryKeepers []interface{}
 	}
 	tests := []struct {
@@ -119,7 +119,7 @@ func Test_auxiliary_Initialize(t *testing.T) {
 		want   helpers.Auxiliary
 	}{
 		// TODO find fix
-		// {"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, args{mapper: Mapper, parameterList: nil, auxiliaryKeepers: nil}, Auxiliary},
+		// {"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, args{mapper: Mapper, parameterManager: nil, auxiliaryKeepers: nil}, Auxiliary},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

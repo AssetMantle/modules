@@ -4,8 +4,9 @@
 package reveal
 
 import (
-	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"testing"
+
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 
 	"github.com/AssetMantle/modules/schema/data/utilities"
 

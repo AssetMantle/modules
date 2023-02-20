@@ -25,11 +25,11 @@ func TestParameters(t *testing.T) {
 	codec := CodecPrototype()
 
 	Parameter := baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
-	ParameterList := []parametersSchema.Parameter{Parameter}
-	Parameters := NewParameterList(ParameterList...).(*parameterList)
+	ParameterManager := []parametersSchema.Parameter{Parameter}
+	Parameters := NewParameterManager(ParameterManager...).(*parameterManager)
 	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
 	subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), Parameters)
-	Parameters = Parameters.Initialize(subspace).(*parameterList)
+	Parameters = Parameters.Initialize(subspace).(*parameterManager)
 
 	require.NotNil(t, Parameters.ParamSetPairs())
 

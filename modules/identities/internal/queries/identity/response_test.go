@@ -5,9 +5,10 @@ package identity
 
 import (
 	"context"
-	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 

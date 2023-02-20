@@ -49,7 +49,7 @@ type TestKeepers struct {
 	MintKeeper helpers.TransactionKeeper
 }
 
-func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterList) {
+func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -113,7 +113,7 @@ func Test_keeperPrototype(t *testing.T) {
 //	_, _, Mapper, Parameters := createTestInput(t)
 //	type fields struct {
 //		mapper                     helpers.Mapper
-//		parameters                 helpers.ParameterList
+//		parameters                 helpers.ParameterManager
 //		conformAuxiliary           helpers.Auxiliary
 //		mintAuxiliary              helpers.Auxiliary
 //		authenticateAuxiliary      helpers.Auxiliary
@@ -121,7 +121,7 @@ func Test_keeperPrototype(t *testing.T) {
 //	}
 //	type args struct {
 //		mapper      helpers.Mapper
-//		parameters  helpers.ParameterList
+//		parameters  helpers.ParameterManager
 //		auxiliaries []interface{}
 //	}
 //	tests := []struct {
@@ -167,7 +167,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	type fields struct {
 		mapper                     helpers.Mapper
-		parameters                 helpers.ParameterList
+		parameters                 helpers.ParameterManager
 		conformAuxiliary           helpers.Auxiliary
 		mintAuxiliary              helpers.Auxiliary
 		authenticateAuxiliary      helpers.Auxiliary
@@ -190,7 +190,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                     tt.fields.mapper,
-				parameterList:              tt.fields.parameters,
+				parameterManager:           tt.fields.parameters,
 				conformAuxiliary:           tt.fields.conformAuxiliary,
 				mintAuxiliary:              tt.fields.mintAuxiliary,
 				authenticateAuxiliary:      tt.fields.authenticateAuxiliary,

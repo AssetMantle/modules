@@ -21,7 +21,7 @@ import (
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
-	parameterList         helpers.ParameterList
+	parameterManager      helpers.ParameterManager
 	bankKeeper            bankKeeper.Keeper
 	authenticateAuxiliary helpers.Auxiliary
 }
@@ -48,7 +48,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	for _, coin := range message.Coins {
-		if _, found := transactionKeeper.parameterList.GetParameter(constants.WrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData).Search(base.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom)))); !found {
+		if _, found := transactionKeeper.parameterManager.GetParameter(constants.WrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData).Search(base.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom)))); !found {
 			return nil, errorConstants.NotAuthorized
 		}
 
@@ -60,8 +60,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	return &Response{}, nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
-	transactionKeeper.mapper, transactionKeeper.parameterList = mapper, parameters
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
+	transactionKeeper.mapper, transactionKeeper.parameterManager = mapper, parameters
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {

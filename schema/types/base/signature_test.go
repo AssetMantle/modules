@@ -23,12 +23,12 @@ type testableStringID struct {
 }
 
 func (t testableStringID) AsString() string {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (t testableStringID) ToAnyID() ids.AnyID {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 

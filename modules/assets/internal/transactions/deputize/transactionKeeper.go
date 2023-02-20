@@ -5,6 +5,7 @@ package deputize
 
 import (
 	"context"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
@@ -14,7 +15,7 @@ import (
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
-	parameters            helpers.ParameterList
+	parameters            helpers.ParameterManager
 	authenticateAuxiliary helpers.Auxiliary
 	deputizeAuxiliary     helpers.Auxiliary
 }
@@ -43,7 +44,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	return &Response{}, nil
 }
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
 
 	for _, auxiliary := range auxiliaries {

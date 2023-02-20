@@ -21,5 +21,5 @@ type Query interface {
 	RESTQueryHandler(client.Context) http.HandlerFunc
 	RegisterService(module.Configurator)
 	RegisterGRPCGatewayRoute(client.Context, *runtime.ServeMux)
-	Initialize(Mapper, ParameterList, ...interface{}) Query
+	Initialize(Mapper, ParameterManager, ...interface{}) Query
 }

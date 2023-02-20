@@ -12,8 +12,8 @@ import (
 )
 
 type block struct {
-	mapper        helpers.Mapper
-	parameterList helpers.ParameterList
+	mapper           helpers.Mapper
+	parameterManager helpers.ParameterManager
 }
 
 var _ helpers.Block = (*block)(nil)
@@ -30,7 +30,7 @@ func Prototype() helpers.Block {
 	return block{}
 }
 
-func (block block) Initialize(mapper helpers.Mapper, parameters helpers.ParameterList, _ ...interface{}) helpers.Block {
-	block.mapper, block.parameterList = mapper, parameters
+func (block block) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, _ ...interface{}) helpers.Block {
+	block.mapper, block.parameterManager = mapper, parameters
 	return block
 }

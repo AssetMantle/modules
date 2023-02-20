@@ -4,9 +4,10 @@
 package take
 
 import (
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"reflect"
 	"testing"
+
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"

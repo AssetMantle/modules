@@ -13,14 +13,14 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 )
 
-type ParameterList interface {
+type ParameterManager interface {
 	Get() []Parameter
 	GetParameter(ids.PropertyID) Parameter
 
-	Fetch(context.Context) ParameterList
+	Fetch(context.Context) ParameterManager
 	Set(context.Context, ...Parameter)
 
 	GetKeyTable() paramsTypes.KeyTable
 	RESTQueryHandler(client.Context) http.HandlerFunc
-	Initialize(paramsTypes.Subspace) ParameterList
+	Initialize(paramsTypes.Subspace) ParameterManager
 }

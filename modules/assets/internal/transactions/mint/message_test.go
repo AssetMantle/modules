@@ -4,9 +4,10 @@
 package mint
 
 import (
-	"github.com/AssetMantle/modules/utilities/transaction"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/utilities/transaction"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -167,7 +168,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 	}
 }
 
-//func Test_message_Route(t *testing.T) {
+// func Test_message_Route(t *testing.T) {
 //
 //	tests := []struct {
 //		name   string
@@ -193,7 +194,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 //			}
 //		})
 //	}
-//}
+// }
 
 func Test_message_Type(t *testing.T) {
 

@@ -4,8 +4,9 @@
 package metas
 
 import (
-	"github.com/AssetMantle/modules/modules/metas/internal/invariants"
 	"testing"
+
+	"github.com/AssetMantle/modules/modules/metas/internal/invariants"
 
 	"github.com/stretchr/testify/require"
 

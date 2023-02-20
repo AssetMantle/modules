@@ -12,6 +12,6 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
-func Prototype() helpers.ParameterList {
-	return baseHelpers.NewParameterList(module.Name, burnEnabled.ValidatableParameter, mintEnabled.ValidatableParameter, renumerateEnabled.ValidatableParameter)
+func Prototype() helpers.ParameterManager {
+	return baseHelpers.NewParameterManager(module.Name, burnEnabled.ValidatableParameter, mintEnabled.ValidatableParameter, renumerateEnabled.ValidatableParameter)
 }

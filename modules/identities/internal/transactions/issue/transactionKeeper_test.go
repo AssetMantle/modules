@@ -5,9 +5,10 @@ package issue
 
 import (
 	"fmt"
-	"github.com/AssetMantle/modules/schema/properties/utilities"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 
@@ -45,7 +46,7 @@ type TestKeepers struct {
 }
 
 var (
-	Parameters                 helpers.ParameterList
+	Parameters                 helpers.ParameterManager
 	authenticateAuxiliary      helpers.Auxiliary
 	conformAuxiliary           helpers.Auxiliary
 	maintainersVerifyAuxiliary helpers.Auxiliary
@@ -119,7 +120,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper      helpers.Mapper
-		in1         helpers.ParameterList
+		in1         helpers.ParameterManager
 		auxiliaries []interface{}
 	}
 	tests := []struct {

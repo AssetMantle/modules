@@ -16,8 +16,8 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper        helpers.Mapper
-	parameterList helpers.ParameterList
+	mapper           helpers.Mapper
+	parameterManager helpers.ParameterManager
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -27,7 +27,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 	return newTransactionResponse(err)
 }
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
-	if !transactionKeeper.parameterList.GetParameter(constantProperties.RevealEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+	if !transactionKeeper.parameterManager.GetParameter(constantProperties.RevealEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
 		return nil, errorConstants.NotAuthorized
 	}
 
@@ -46,8 +46,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	return &Response{}, nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterList, _ []interface{}) helpers.Keeper {
-	transactionKeeper.mapper, transactionKeeper.parameterList = mapper, parameters
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, _ []interface{}) helpers.Keeper {
+	transactionKeeper.mapper, transactionKeeper.parameterManager = mapper, parameters
 	return transactionKeeper
 }
 func keeperPrototype() helpers.TransactionKeeper {

@@ -4,8 +4,9 @@
 package splits
 
 import (
-	"github.com/AssetMantle/modules/modules/splits/internal/invariants"
 	"testing"
+
+	"github.com/AssetMantle/modules/modules/splits/internal/invariants"
 
 	"github.com/stretchr/testify/require"
 

@@ -6,5 +6,5 @@ package helpers
 type Auxiliary interface {
 	GetName() string
 	GetKeeper() AuxiliaryKeeper
-	Initialize(Mapper, ParameterList, ...interface{}) Auxiliary
+	Initialize(Mapper, ParameterManager, ...interface{}) Auxiliary
 }

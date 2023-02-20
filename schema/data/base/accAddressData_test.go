@@ -43,7 +43,7 @@ func TestNewAccAddressData(t *testing.T) {
 }
 
 //
-//func Test_accAddressDataFromInterface(t *testing.T) {
+// func Test_accAddressDataFromInterface(t *testing.T) {
 //	fromAccAddress := sdkTypes.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")
 //	type args struct {
 //		listable traits.Listable
@@ -68,7 +68,7 @@ func TestNewAccAddressData(t *testing.T) {
 //			assert.Equalf(t, tt.want, got, "accAddressDataFromInterface(%v)", tt.args.listable)
 //		})
 //	}
-//}
+// }
 
 func Test_accAddressData_Compare(t *testing.T) {
 	fromAccAddress := sdkTypes.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")

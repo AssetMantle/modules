@@ -6,10 +6,11 @@ package base
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/AssetMantle/modules/schema/helpers"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/AssetMantle/modules/schema/helpers"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"

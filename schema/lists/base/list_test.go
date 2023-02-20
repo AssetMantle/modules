@@ -4,9 +4,10 @@
 package base
 
 import (
-	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"reflect"
 	"testing"
+
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 
 	"github.com/stretchr/testify/assert"
 
