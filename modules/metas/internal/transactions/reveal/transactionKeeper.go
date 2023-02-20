@@ -8,14 +8,16 @@ import (
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/data"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 type transactionKeeper struct {
-	mapper     helpers.Mapper
-	parameters helpers.ParameterList
+	mapper        helpers.Mapper
+	parameterList helpers.ParameterList
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -25,12 +27,16 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 	return newTransactionResponse(err)
 }
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
+	if !transactionKeeper.parameterList.GetParameter(constantProperties.RevealEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+		return nil, errorConstants.NotAuthorized
+	}
+
 	dataID := baseIDs.GenerateDataID(message.Data)
 	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(dataID))
 
 	Mappable := metas.Get(key.NewKey(dataID))
 	if Mappable != nil {
-		return nil, constants.EntityAlreadyExists
+		return nil, errorConstants.EntityAlreadyExists
 	}
 
 	if message.Data.GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {
@@ -41,7 +47,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterList, _ []interface{}) helpers.Keeper {
-	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
+	transactionKeeper.mapper, transactionKeeper.parameterList = mapper, parameters
 	return transactionKeeper
 }
 func keeperPrototype() helpers.TransactionKeeper {

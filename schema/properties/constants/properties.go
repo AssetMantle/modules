@@ -42,6 +42,7 @@ var (
 	NubIDProperty             = base.NewMetaProperty(baseIDs.NewStringID("nubID"), baseData.NewIDData(baseIDs.PrototypeStringID()))
 	PermissionsProperty       = base.NewMetaProperty(baseIDs.NewStringID("permissions"), baseData.NewListData())
 	RenumerateEnabledProperty = base.NewMetaProperty(baseIDs.NewStringID("renumerateEnabled"), baseData.NewBooleanData(false))
+	RevealEnabledProperty     = base.NewMetaProperty(baseIDs.NewStringID("revealEnabled"), baseData.NewBooleanData(false))
 	TakerIDProperty           = base.NewMetaProperty(baseIDs.NewStringID("takerID"), baseData.NewIDData(baseIDs.PrototypeStringID()))
 	// TODO check default value
 	TakerOwnableIDProperty   = base.NewMetaProperty(baseIDs.NewStringID("takerOwnableID"), baseData.NewIDData(baseIDs.PrototypeOwnableID()))
