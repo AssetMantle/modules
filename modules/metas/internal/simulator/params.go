@@ -12,16 +12,16 @@ import (
 
 	"github.com/AssetMantle/modules/modules/metas/internal/common"
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
-	"github.com/AssetMantle/modules/modules/metas/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/modules/metas/internal/parameters/revealEnabled"
 	"github.com/AssetMantle/modules/schema/data/base"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(module.Name,
-			dummy.ID.AsString(),
+			revealEnabled.ID.AsString(),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(dummy.Parameter.Mutate(base.NewDecData(sdk.NewDecWithPrec(int64(r.Intn(99)), 2))))
+				bytes, err := common.LegacyAmino.MarshalJSON(revealEnabled.Parameter.Mutate(base.NewDecData(sdk.NewDecWithPrec(int64(r.Intn(99)), 2))))
 				if err != nil {
 					panic(err)
 				}
