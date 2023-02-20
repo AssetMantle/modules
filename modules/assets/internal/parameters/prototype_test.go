@@ -9,7 +9,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/helpers"
 
-	"github.com/AssetMantle/modules/modules/assets/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/modules/assets/internal/parameters/mintEnabled"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
@@ -19,7 +19,7 @@ func TestPrototype(t *testing.T) {
 		want      helpers.ParameterList
 		wantError error
 	}{
-		{"+ve", baseHelpers.NewParameterList(dummy.ValidatableParameter), nil},
+		{"+ve", baseHelpers.NewParameterList(mintEnabled.ValidatableParameter), nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
