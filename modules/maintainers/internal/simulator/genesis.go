@@ -22,7 +22,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/common"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	maintainersModule "github.com/AssetMantle/modules/modules/maintainers/internal/module"
-	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters/deputizeAllowed"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -33,7 +33,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		dummy.ID.AsString(),
+		deputizeAllowed.ID.AsString(),
 		&Data,
 		simulationState.Rand,
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
@@ -49,7 +49,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMappable(base.NewMaintainer(baseIDs.NewIdentityID(classificationID, immutables), classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool())))
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, []helpers.Parameter{dummy.Parameter.Mutate(Data)})
+	genesisState := genesis.Prototype().Initialize(mappableList, []helpers.Parameter{deputizeAllowed.Parameter.Mutate(Data)})
 
 	simulationState.GenState[maintainersModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
 }
