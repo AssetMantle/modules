@@ -8,7 +8,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/cosmos/cosmos-sdk/store"
@@ -69,7 +68,7 @@ func TestAppImportExport(t *testing.T) {
 
 	require.NoError(t, err, "simulation setup failed")
 
-	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, wasm.EnableAllProposals, moduleAccountPermissions, tokenReceiveAllowedModules).(*base.SimulationApplication)
+	prototype := base.NewSimulationApplication(applicationName, moduleBasicManager, moduleAccountPermissions, tokenReceiveAllowedModules).(*base.SimulationApplication)
 	simulationApplication := prototype.InitializeSimulationApplication(logger, db, nil, true, simapp.FlagPeriodValue, map[int64]bool{}, prototype.GetDefaultNodeHome(), fauxMerkleModeOpt).(*base.SimulationApplication)
 	require.Equal(t, "SimulationApplication", simulationApplication.Name())
 
@@ -127,7 +126,6 @@ func TestAppImportExport(t *testing.T) {
 		{simulationApplication.GetKey(supply.StoreKey), newSimulationApplication.GetKey(supply.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(paramsTypes.StoreKey), newSimulationApplication.GetKey(params.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(gov.StoreKey), newSimulationApplication.GetKey(gov.StoreKey), [][]byte{}},
-		{simulationApplication.GetKey(wasm.StoreKey), newSimulationApplication.GetKey(wasm.StoreKey), [][]byte{}},
 		{simulationApplication.GetKey(assets.Prototype().Name()), newSimulationApplication.GetKey(assets.Prototype().Name()), [][]byte{}},
 		{simulationApplication.GetKey(classifications.Prototype().Name()), newSimulationApplication.GetKey(classifications.Prototype().Name()), [][]byte{}},
 		{simulationApplication.GetKey(identities.Prototype().Name()), newSimulationApplication.GetKey(identities.Prototype().Name()), [][]byte{}},

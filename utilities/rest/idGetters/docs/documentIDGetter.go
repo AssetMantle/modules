@@ -3,8 +3,10 @@ package docs
 import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/modules/schema/ids/constansts"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
@@ -34,6 +36,53 @@ func assetIDHandler(context client.Context) http.HandlerFunc {
 		classificationID, immutables, _ := ReadAndProcess(context, false, responseWriter, httpRequest)
 
 		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewAssetID(classificationID, immutables).AsString(), "", nil))
+	}
+}
+
+func nubIDHandler(context client.Context) http.HandlerFunc {
+	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
+		transactionRequest := Prototype()
+		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
+			panic(errorConstants.IncorrectFormat)
+		}
+
+		if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
+			panic(errorConstants.IncorrectFormat)
+		}
+
+		req := transactionRequest.(request)
+
+		nubID := baseIDs.NewStringID(req.NubID)
+		immutables := base.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.NubIDProperty.GetKey(), baseData.NewIDData(nubID))))
+
+		// TODO ***** add nub classificationID to genesis
+		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewIdentityID(constansts.NubClassificationID, immutables).AsString(), "", nil))
+	}
+}
+
+func splitIDHandler(context client.Context) http.HandlerFunc {
+	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
+		transactionRequest := Prototype()
+		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
+			panic(errorConstants.IncorrectFormat)
+		}
+
+		if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
+			panic(errorConstants.IncorrectFormat)
+		}
+
+		req := transactionRequest.(request)
+
+		fromID, _ := baseIDs.ReadIdentityID(req.FromID)
+
+		coins, _ := sdkTypes.ParseCoinsNormalized(req.Coins)
+
+		var coinID ids.CoinID
+		for _, coin := range coins {
+			coinID = baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom))
+		}
+
+		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewSplitID(fromID, coinID).AsString(), "", nil))
 	}
 }
 
@@ -167,4 +216,6 @@ func RegisterRESTRoutes(context client.Context, router *mux.Router) {
 	router.HandleFunc("/get/document/assetID", assetIDHandler(context)).Methods("POST")
 	router.HandleFunc("/get/document/identityID", identityIDHandler(context)).Methods("POST")
 	router.HandleFunc("/get/document/orderID", orderIDHandler(context)).Methods("POST")
+	router.HandleFunc("/get/document/nubID", nubIDHandler(context)).Methods("POST")
+	router.HandleFunc("/get/document/splitID", splitIDHandler(context)).Methods("POST")
 }

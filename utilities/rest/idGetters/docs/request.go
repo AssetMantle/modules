@@ -16,11 +16,11 @@ import (
 
 type request struct {
 	BaseReq                 rest.BaseReq `json:"baseReq"`
-	FromID                  string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
-	ImmutableMetaProperties string       `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing, matches(^.*$)~invalid field immutableMetaProperties"`
-	ImmutableProperties     string       `json:"immutableProperties" valid:"required~required field immutableProperties missing, matches(^.*$)~invalid field immutableProperties"`
-	MutableMetaProperties   string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`
-	MutableProperties       string       `json:"mutableProperties" valid:"required~required field mutableProperties missing, matches(^.*$)~invalid field mutableProperties"`
+	FromID                  string       `json:"fromID" valid:"optional"`
+	ImmutableMetaProperties string       `json:"immutableMetaProperties" valid:"optional"`
+	ImmutableProperties     string       `json:"immutableProperties" valid:"optional"`
+	MutableMetaProperties   string       `json:"mutableMetaProperties" valid:"optional"`
+	MutableProperties       string       `json:"mutableProperties" valid:"optional"`
 	ClassificationID        string       `json:"classificationID" valid:"optional"`
 	MakerOwnableID          string       `json:"makerOwnableID" valid:"optional"`
 	TakerOwnableID          string       `json:"takerOwnableID" valid:"optional"`
@@ -29,6 +29,7 @@ type request struct {
 	ExpiresIn               string       `json:"expiresIn" valid:"optional"`
 	Height                  string       `json:"height" valid:"optional"`
 	TakerID                 string       `json:"takerID" valid:"optional"`
+	NubID                   string       `json:"nubID" valid:"optional"`
 }
 
 var _ helpers.TransactionRequest = &request{}

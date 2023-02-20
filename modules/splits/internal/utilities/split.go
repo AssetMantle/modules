@@ -4,6 +4,7 @@
 package utilities
 
 import (
+	"fmt"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
@@ -22,7 +23,8 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.
 	}
 
 	splitID := baseIDs.NewSplitID(ownerID, ownableID)
-
+	x := splitID.AsString()
+	fmt.Println(x)
 	Mappable := splits.Fetch(key.NewKey(splitID)).Get(key.NewKey(splitID))
 	if Mappable == nil {
 		splits.Add(mappable.NewMappable(base.NewSplit(ownerID, ownableID, value)))
