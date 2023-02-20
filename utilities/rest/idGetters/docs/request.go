@@ -30,6 +30,7 @@ type request struct {
 	Height                  string       `json:"height" valid:"optional"`
 	TakerID                 string       `json:"takerID" valid:"optional"`
 	NubID                   string       `json:"nubID" valid:"optional"`
+	Coins                   string       `json:"coins" valid:"optional"`
 }
 
 var _ helpers.TransactionRequest = &request{}
