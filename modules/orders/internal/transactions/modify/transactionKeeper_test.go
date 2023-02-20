@@ -51,7 +51,7 @@ type TestKeepers struct {
 	ModifyKeeper helpers.TransactionKeeper
 }
 
-func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterList) {
+func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -115,7 +115,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	_, _, Mapper, Parameters := CreateTestInput(t)
 	type fields struct {
 		mapper                helpers.Mapper
-		parameters            helpers.ParameterList
+		parameters            helpers.ParameterManager
 		conformAuxiliary      helpers.Auxiliary
 		supplementAuxiliary   helpers.Auxiliary
 		transferAuxiliary     helpers.Auxiliary
@@ -123,7 +123,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper      helpers.Mapper
-		parameters  helpers.ParameterList
+		parameters  helpers.ParameterManager
 		auxiliaries []interface{}
 	}
 	tests := []struct {
@@ -192,7 +192,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	keepers.ModifyKeeper.(transactionKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(testOrder))
 	type fields struct {
 		mapper                helpers.Mapper
-		parameters            helpers.ParameterList
+		parameters            helpers.ParameterManager
 		conformAuxiliary      helpers.Auxiliary
 		supplementAuxiliary   helpers.Auxiliary
 		transferAuxiliary     helpers.Auxiliary

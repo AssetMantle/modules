@@ -25,15 +25,15 @@ import (
 )
 
 type auxiliaryKeeper struct {
-	mapper          helpers.Mapper
-	parameterList   helpers.ParameterList
-	memberAuxiliary helpers.Auxiliary
+	mapper           helpers.Mapper
+	parameterManager helpers.ParameterManager
+	memberAuxiliary  helpers.Auxiliary
 }
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
-	if !auxiliaryKeeper.parameterList.GetParameter(constantProperties.DeputizeAllowedProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+	if !auxiliaryKeeper.parameterManager.GetParameter(constantProperties.DeputizeAllowedProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
 		return newAuxiliaryResponse(constants.NotAuthorized)
 	}
 
@@ -98,9 +98,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	return newAuxiliaryResponse(nil)
 }
 
-func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterList helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
+func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
 	auxiliaryKeeper.mapper = mapper
-	auxiliaryKeeper.parameterList = parameterList
+	auxiliaryKeeper.parameterManager = parameterManager
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {

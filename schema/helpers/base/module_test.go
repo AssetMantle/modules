@@ -37,8 +37,8 @@ var genesisPrototype = func() helpers.Genesis {
 var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
 }
-var parametersPrototype = func() helpers.ParameterList {
-	return NewParameterList(baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil }))
+var parametersPrototype = func() helpers.ParameterManager {
+	return NewParameterManager(baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil }))
 }
 var queriesPrototype = func() helpers.Queries {
 	return queries{[]helpers.Query{NewQuery("testQuery", "q", "testQuery", "test", baseTestUtilities.TestQueryRequestPrototype,
@@ -56,8 +56,8 @@ func TestModule(t *testing.T) {
 
 	codec := CodecPrototype()
 
-	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test") // .WithKeyTable(parameterListPrototype().GetKeyTable())
-	// subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), parameterListPrototype())
+	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test") // .WithKeyTable(parameterManagerPrototype().GetKeyTable())
+	// subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), parameterManagerPrototype())
 	Module := NewModule("test", 1, auxiliariesPrototype, blockPrototype, genesisPrototype, nil,
 		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype).Initialize(storeKey, subspace).(module)
 

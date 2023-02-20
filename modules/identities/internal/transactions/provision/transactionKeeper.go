@@ -20,7 +20,7 @@ import (
 
 type transactionKeeper struct {
 	mapper              helpers.Mapper
-	parameterList       helpers.ParameterList
+	parameterManager    helpers.ParameterManager
 	supplementAuxiliary helpers.Auxiliary
 }
 
@@ -40,7 +40,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	identity := mappable.GetIdentity(Mappable)
 
-	if identity.GetProvisionedAddressCount() >= transactionKeeper.parameterList.GetParameter(constants.MaxProvisionAddressCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get() {
+	if identity.GetProvisionedAddressCount() >= transactionKeeper.parameterManager.GetParameter(constants.MaxProvisionAddressCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get() {
 		return nil, errorConstants.NotAuthorized
 	}
 
@@ -67,9 +67,9 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	return &Response{}, nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterList helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
-	transactionKeeper.parameterList = parameterList
+	transactionKeeper.parameterManager = parameterManager
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {

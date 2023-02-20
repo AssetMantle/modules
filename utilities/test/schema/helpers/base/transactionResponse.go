@@ -74,7 +74,7 @@ func (t transactionKeeper) Transact(_ context.Context, _ helpers.Message) helper
 	return transactionResponse{Success: true, Error: nil}
 }
 
-func (t transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterList, _ []interface{}) helpers.Keeper {
+func (t transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {
 	return transactionKeeper{mapper: mapper}
 }
 

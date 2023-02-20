@@ -8,8 +8,9 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/cosmos/cosmos-sdk/client"
+
+	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type TestQueryKeeper struct {
@@ -22,7 +23,7 @@ func (t TestQueryKeeper) Help(_ context.Context, _ helpers.AuxiliaryRequest) hel
 	return nil
 }
 
-func (t TestQueryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterList, _ []interface{}) helpers.Keeper {
+func (t TestQueryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {
 	return TestQueryKeeper{mapper: mapper}
 }
 

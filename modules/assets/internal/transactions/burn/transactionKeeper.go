@@ -26,7 +26,7 @@ import (
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
-	parameterList         helpers.ParameterList
+	parameterManager      helpers.ParameterManager
 	authenticateAuxiliary helpers.Auxiliary
 	maintainAuxiliary     helpers.Auxiliary
 	renumerateAuxiliary   helpers.Auxiliary
@@ -43,7 +43,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
 
-	if !transactionKeeper.parameterList.GetParameter(constants.BurnEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+	if !transactionKeeper.parameterManager.GetParameter(constants.BurnEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
 		return nil, errorConstants.NotAuthorized
 	}
 
@@ -89,9 +89,9 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	return &Response{}, nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterList helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
-	transactionKeeper.parameterList = parameterList
+	transactionKeeper.parameterManager = parameterManager
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {

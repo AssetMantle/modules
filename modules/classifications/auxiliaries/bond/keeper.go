@@ -43,7 +43,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	return newAuxiliaryResponse(nil)
 }
 
-func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
+func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
 	auxiliaryKeeper.mapper = mapper
 
 	for _, auxiliary := range auxiliaries {

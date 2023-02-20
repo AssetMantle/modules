@@ -60,7 +60,7 @@ type TestKeepers struct {
 	WrapKeeper helpers.TransactionKeeper
 }
 
-func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterList, bankKeeper.Keeper) {
+func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager, bankKeeper.Keeper) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -211,13 +211,13 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	supplyKeeper := supply.NewKeeper(legacyAmino, sdkTypes.NewKVStoreKey(supply.StoreKey), accountKeeper, bankKeeper, maccPerms)
 	type fields struct {
 		mapper                helpers.Mapper
-		parameters            helpers.ParameterList
+		parameters            helpers.ParameterManager
 		supplyKeeper          supply.Keeper
 		authenticateAuxiliary helpers.Auxiliary
 	}
 	type args struct {
 		mapper      helpers.Mapper
-		parameters  helpers.ParameterList
+		parameters  helpers.ParameterManager
 		auxiliaries []interface{}
 	}
 	tests := []struct {
@@ -232,7 +232,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
-				parameterList:         tt.fields.parameters,
+				parameterManager:      tt.fields.parameters,
 				bankKeeper:            tt.fields.supplyKeeper,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
@@ -251,7 +251,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	keepers.WrapKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
 	type fields struct {
 		mapper                helpers.Mapper
-		parameters            helpers.ParameterList
+		parameters            helpers.ParameterManager
 		supplyKeeper          supply.Keeper
 		authenticateAuxiliary helpers.Auxiliary
 	}
@@ -271,7 +271,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
-				parameterList:         tt.fields.parameters,
+				parameterManager:      tt.fields.parameters,
 				bankKeeper:            tt.fields.supplyKeeper,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}

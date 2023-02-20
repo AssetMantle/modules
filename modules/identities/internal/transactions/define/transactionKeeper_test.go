@@ -5,9 +5,10 @@ package define
 
 import (
 	"fmt"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 
@@ -49,7 +50,7 @@ var (
 	defineAuxiliary       helpers.Auxiliary
 	superAuxiliary        helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
-	Parameters            helpers.ParameterList
+	Parameters            helpers.ParameterManager
 )
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper) {
@@ -122,7 +123,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper      helpers.Mapper
-		in1         helpers.ParameterList
+		in1         helpers.ParameterManager
 		auxiliaries []interface{}
 	}
 	tests := []struct {

@@ -5,9 +5,10 @@ package send
 
 import (
 	"fmt"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 
@@ -44,7 +45,7 @@ var (
 	authenticateAuxiliary helpers.Auxiliary
 )
 
-func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterList) {
+func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -105,12 +106,12 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	_, _, Mapper, Parameters := createTestInput(t)
 	type fields struct {
 		mapper                helpers.Mapper
-		parameters            helpers.ParameterList
+		parameters            helpers.ParameterManager
 		authenticateAuxiliary helpers.Auxiliary
 	}
 	type args struct {
 		mapper      helpers.Mapper
-		parameters  helpers.ParameterList
+		parameters  helpers.ParameterManager
 		auxiliaries []interface{}
 	}
 	tests := []struct {
@@ -151,7 +152,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	// keepers.SendKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
 	type fields struct {
 		mapper                helpers.Mapper
-		parameters            helpers.ParameterList
+		parameters            helpers.ParameterManager
 		authenticateAuxiliary helpers.Auxiliary
 	}
 	type args struct {
