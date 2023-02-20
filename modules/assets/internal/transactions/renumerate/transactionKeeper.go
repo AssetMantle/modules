@@ -5,6 +5,7 @@ package renumerate
 
 import (
 	"context"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
@@ -24,6 +25,7 @@ import (
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
+	parameterList         helpers.ParameterList
 	maintainAuxiliary     helpers.Auxiliary
 	renumerateAuxiliary   helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
@@ -38,6 +40,9 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
+	if !transactionKeeper.parameterList.GetParameter(constants.RenumerateEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+		return nil, errorConstants.NotAuthorized
+	}
 
 	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
@@ -77,8 +82,9 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	return &Response{}, nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterList helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
+	transactionKeeper.parameterList = parameterList
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {

@@ -16,6 +16,7 @@ var (
 	AuthenticationProperty = base.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())
 	BondAmountProperty     = base.NewMetaProperty(baseIDs.NewStringID("bondAmount"), baseData.NewNumberData(0))
 	BondRateProperty       = base.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(0))
+	BurnEnabledProperty    = base.NewMetaProperty(baseIDs.NewStringID("burnEnabled"), baseData.NewBooleanData(false))
 	BurnHeightProperty     = base.NewMetaProperty(baseIDs.NewStringID("burnHeight"), baseData.NewHeightData(baseTypes.NewHeight(-1)).ZeroValue())
 	// TODO check default value
 	CreationHeightProperty = base.NewMetaProperty(baseIDs.NewStringID("creationHeight"), baseData.NewHeightData(baseTypes.NewHeight(-1)).ZeroValue())
@@ -34,11 +35,13 @@ var (
 	MaxPropertyCountProperty         = base.NewMetaProperty(baseIDs.NewStringID("maxPropertyCount"), baseData.NewNumberData(0))
 	MaxProvisionAddressCountProperty = base.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(0))
 	MaxOrderLifeProperty             = base.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(baseTypes.NewHeight(-1)))
+	MintEnabledProperty              = base.NewMetaProperty(baseIDs.NewStringID("mintEnabled"), baseData.NewBooleanData(false))
 
 	// TODO ***** rename to name
-	NubIDProperty       = base.NewMetaProperty(baseIDs.NewStringID("nubID"), baseData.NewIDData(baseIDs.PrototypeStringID()))
-	PermissionsProperty = base.NewMetaProperty(baseIDs.NewStringID("permissions"), baseData.NewListData())
-	TakerIDProperty     = base.NewMetaProperty(baseIDs.NewStringID("takerID"), baseData.NewIDData(baseIDs.PrototypeStringID()))
+	NubIDProperty             = base.NewMetaProperty(baseIDs.NewStringID("nubID"), baseData.NewIDData(baseIDs.PrototypeStringID()))
+	PermissionsProperty       = base.NewMetaProperty(baseIDs.NewStringID("permissions"), baseData.NewListData())
+	RenumerateEnabledProperty = base.NewMetaProperty(baseIDs.NewStringID("renumerateEnabled"), baseData.NewBooleanData(false))
+	TakerIDProperty           = base.NewMetaProperty(baseIDs.NewStringID("takerID"), baseData.NewIDData(baseIDs.PrototypeStringID()))
 	// TODO check default value
 	TakerOwnableIDProperty   = base.NewMetaProperty(baseIDs.NewStringID("takerOwnableID"), baseData.NewIDData(baseIDs.PrototypeOwnableID()))
 	SupplyProperty           = base.NewMetaProperty(baseIDs.NewStringID("supply"), baseData.NewDecData(sdkTypes.SmallestDec()))
