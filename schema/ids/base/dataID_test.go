@@ -5,13 +5,8 @@ package base
 
 import (
 	"reflect"
-	"strconv"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/data/utilities"
-
-	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -183,116 +178,6 @@ func Test_dataID_String(t *testing.T) {
 				t.Errorf("String() = %v, want %v", got, tt.want)
 			}
 		})
-	}
-}
-
-// mocks for decData
-type booleanData struct {
-	Value bool `json:"value"`
-}
-
-func (booleanData booleanData) GetWidth() int {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (booleanData booleanData) Unmarshal(bytes []byte) error {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (booleanData booleanData) MarshalTo(bytes []byte) (int, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (booleanData booleanData) ToAnyData() data.AnyData {
-	// TODO implement me
-	panic("implement me")
-}
-
-var _ data.BooleanData = (*booleanData)(nil)
-
-func (booleanData booleanData) GetID() ids.DataID {
-	return GenerateDataID(booleanData)
-}
-func (booleanData booleanData) GetBondWeight() int64 {
-	return int64(1)
-}
-func (booleanData booleanData) Compare(listable traits.Listable) int {
-	compareBooleanData, err := booleanDataFromInterface(listable)
-	if err != nil {
-		panic(err)
-	}
-
-	if booleanData.Value == compareBooleanData.Value {
-		return 0
-	} else if booleanData.Value == true {
-		return 1
-	}
-
-	return -1
-}
-func (booleanData booleanData) AsString() string {
-	return utilities.JoinDataTypeAndValueStrings(booleanData.GetType().AsString(), strconv.FormatBool(booleanData.Value))
-}
-func (booleanData booleanData) FromString(dataString string) (data.Data, error) {
-	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
-
-	if dataTypeString != stringData.GetType().AsString() {
-		return PrototypeStringData(), constants.IncorrectFormat
-	}
-
-	if dataString == "" {
-		return BooleanDataPrototype(), nil
-	}
-
-	Bool, err := strconv.ParseBool(dataString)
-	if err != nil {
-		return BooleanDataPrototype(), err
-	}
-
-	return NewBooleanData(Bool), nil
-}
-func (booleanData booleanData) Bytes() []byte {
-	if booleanData.Get() {
-		return []byte{0x1}
-	}
-	return []byte{0x0}
-}
-func (booleanData booleanData) GetType() ids.StringID {
-	return NewStringID("B")
-}
-func (booleanData booleanData) ZeroValue() data.Data {
-	return NewBooleanData(false)
-}
-func (booleanData booleanData) GenerateHashID() ids.HashID {
-	if booleanData.Compare(booleanData.ZeroValue()) == 0 {
-		return GenerateHashID()
-	}
-
-	return GenerateHashID(booleanData.Bytes())
-}
-func (booleanData booleanData) Get() bool {
-	return booleanData.Value
-}
-
-func booleanDataFromInterface(listable traits.Listable) (booleanData, error) {
-	switch value := listable.(type) {
-	case booleanData:
-		return value, nil
-	default:
-		return booleanData{}, constants.MetaDataError
-	}
-}
-
-func BooleanDataPrototype() data.BooleanData {
-	return booleanData{}.ZeroValue().(data.BooleanData)
-}
-
-func NewBooleanData(value bool) data.BooleanData {
-	return booleanData{
-		Value: value,
 	}
 }
 
