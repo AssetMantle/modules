@@ -1,10 +1,11 @@
 package rest
 
 import (
-	"github.com/AssetMantle/modules/utilities/rest/keys/add"
-	"github.com/AssetMantle/modules/utilities/rest/sign"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/gorilla/mux"
+
+	"github.com/AssetMantle/modules/utilities/rest/keys/add"
+	"github.com/AssetMantle/modules/utilities/rest/sign"
 )
 
 func RegisterRESTRoutes(context client.Context, router *mux.Router) {

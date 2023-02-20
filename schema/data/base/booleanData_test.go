@@ -35,7 +35,7 @@ func TestNewBooleanData(t *testing.T) {
 }
 
 //
-//func TestBooleanDataFromInterface(t *testing.T) {
+// func TestBooleanDataFromInterface(t *testing.T) {
 //	type args struct {
 //		dataString data.Data
 //	}
@@ -58,9 +58,9 @@ func TestNewBooleanData(t *testing.T) {
 //			assert.Equalf(t, tt.want, got, "booleanDataFromInterface(%v)", tt.args.dataString)
 //		})
 //	}
-//}
+// }
 //
-//func Test_booleanDataFromInterface(t *testing.T) {
+// func Test_booleanDataFromInterface(t *testing.T) {
 //	type args struct {
 //		listable traits.Listable
 //	}
@@ -84,7 +84,7 @@ func TestNewBooleanData(t *testing.T) {
 //			assert.Equalf(t, tt.want, got, "booleanDataFromInterface(%v)", tt.args.listable)
 //		})
 //	}
-//}
+// }
 
 func Test_booleanData_Compare(t *testing.T) {
 	type fields struct {

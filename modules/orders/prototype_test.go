@@ -4,8 +4,9 @@
 package orders
 
 import (
-	"github.com/AssetMantle/modules/modules/orders/internal/invariants"
 	"testing"
+
+	"github.com/AssetMantle/modules/modules/orders/internal/invariants"
 
 	"github.com/stretchr/testify/require"
 
