@@ -24,7 +24,11 @@ func (coinID *CoinID) Bytes() []byte {
 func (coinID *CoinID) IsOwnableID() {}
 func (coinID *CoinID) Compare(listable traits.Listable) int {
 	// TODO devise a better strategy to compare coinID and coinID
-	return bytes.Compare(coinID.Bytes(), coinIDFromInterface(listable).Bytes())
+	compareID, err := idFromListable(listable)
+	if err != nil {
+		panic(err)
+	}
+	return bytes.Compare(coinID.Bytes(), compareID.Bytes())
 }
 func (coinID *CoinID) ToAnyID() ids.AnyID {
 	return &AnyID{
