@@ -3,6 +3,10 @@
 
 package helpers
 
+import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+)
+
 type TransactionResponse interface {
-	Response
+	GetResult() *sdkTypes.Result
 }

@@ -76,11 +76,11 @@ func (transaction transaction) Command() *cobra.Command {
 	return transaction.cliCommand.CreateCommand(runE)
 }
 func (transaction transaction) HandleMessage(context context.Context, message helpers.Message) (*sdkTypes.Result, error) {
-	if transactionResponse := transaction.keeper.Transact(context, message); !transactionResponse.IsSuccessful() {
-		return nil, transactionResponse.GetError()
+	if transactionResponse, err := transaction.keeper.Transact(context, message); err != nil {
+		return nil, err
+	} else {
+		return transactionResponse.GetResult(), nil
 	}
-
-	return &sdkTypes.Result{Events: message.GenerateOnSuccessEvents().ToABCIEvents()}, nil
 }
 func (transaction transaction) RESTRequestHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {

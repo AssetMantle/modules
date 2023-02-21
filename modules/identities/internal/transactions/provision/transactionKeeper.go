@@ -26,12 +26,11 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
-	_, err := transactionKeeper.Handle(context, message.(*Message))
-	return newTransactionResponse(err)
+func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) (helpers.TransactionResponse, error) {
+	return transactionKeeper.Handle(context, message.(*Message))
 }
 
-func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
+func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.IdentityID))
 	Mappable := identities.Get(key.NewKey(message.IdentityID))
@@ -64,7 +63,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	identities.Mutate(mappable.NewMappable(identity.ProvisionAddress(toAddress)))
 
-	return &Response{}, nil
+	return newTransactionResponse(), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

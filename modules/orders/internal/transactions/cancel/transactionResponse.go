@@ -4,30 +4,17 @@
 package cancel
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-type transactionResponse struct {
-	Success bool  `json:"success"`
-	Error   error `json:"error" swaggertype:"string"`
+var _ helpers.TransactionResponse = (*TransactionResponse)(nil)
+
+func (*TransactionResponse) GetResult() *sdkTypes.Result {
+	return &sdkTypes.Result{}
 }
 
-var _ helpers.TransactionResponse = (*transactionResponse)(nil)
-
-func (transactionResponse transactionResponse) IsSuccessful() bool {
-	return transactionResponse.Success
-}
-func (transactionResponse transactionResponse) GetError() error {
-	return transactionResponse.Error
-}
-func newTransactionResponse(error error) helpers.TransactionResponse {
-	success := true
-	if error != nil {
-		success = false
-	}
-
-	return transactionResponse{
-		Success: success,
-		Error:   error,
-	}
+func newTransactionResponse() *TransactionResponse {
+	return &TransactionResponse{}
 }
