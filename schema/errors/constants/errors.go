@@ -18,7 +18,6 @@ var (
 	InvalidParameter     = base.NewError(projectRoute, 107, "InvalidParameter")
 	InvalidRequest       = base.NewError(projectRoute, 108, "InvalidRequest")
 	MetaDataError        = base.NewError(projectRoute, 109, "MetaDataError")
-	MockError            = base.NewError(projectRoute, 999, "MockError")
 	NotAuthorized        = base.NewError(projectRoute, 110, "NotAuthorized")
 	UninitializedUsage   = base.NewError(projectRoute, 111, "UninitializedUsage")
 	UnsupportedParameter = base.NewError(projectRoute, 112, "UnsupportedParameter")
