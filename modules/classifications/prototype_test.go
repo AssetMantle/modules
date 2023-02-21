@@ -4,8 +4,9 @@
 package classifications
 
 import (
-	"github.com/AssetMantle/modules/modules/classifications/internal/invariants"
 	"testing"
+
+	"github.com/AssetMantle/modules/modules/classifications/internal/invariants"
 
 	"github.com/stretchr/testify/require"
 

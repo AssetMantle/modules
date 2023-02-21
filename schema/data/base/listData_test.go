@@ -55,7 +55,7 @@ func TestNewListData(t *testing.T) {
 		{"+ve for some id", args{NewStringData("Data")}, &ListData{[]*AnyData{NewStringData("Data").ToAnyData().(*AnyData)}}},
 		{"+ve for empty String", args{NewStringData("")}, &ListData{[]*AnyData{NewStringData("").ToAnyData().(*AnyData)}}},
 
-		//{"+ve empty datalist", args{data.Data()}, (&ListData{}).ZeroValue()},
+		// {"+ve empty datalist", args{data.Data()}, (&ListData{}).ZeroValue()},
 		{"+ve address string", args{NewStringData(fromAddress)}, &ListData{[]*AnyData{NewStringData(fromAddress).ToAnyData().(*AnyData)}}},
 		// TODO: Check address format
 		// {"-ve wrong address string format", args{NewListData(NewStringData(fromAddress))}, &ListData{}.ZeroValue()},

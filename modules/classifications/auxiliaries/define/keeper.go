@@ -21,8 +21,8 @@ import (
 )
 
 type auxiliaryKeeper struct {
-	mapper        helpers.Mapper
-	parameterList helpers.ParameterList
+	mapper           helpers.Mapper
+	parameterManager helpers.ParameterManager
 }
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
@@ -34,9 +34,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	for _, property := range append(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...) {
 		totalWeight += property.Get().GetBondWeight()
 	}
-	immutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewNumberData(auxiliaryKeeper.parameterList.GetParameter(constants.BondRateProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()*totalWeight))))
+	immutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewNumberData(auxiliaryKeeper.parameterManager.GetParameter(constants.BondRateProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()*totalWeight))))
 
-	if int64(len(immutables.GetImmutablePropertyList().GetList())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList())) > auxiliaryKeeper.parameterList.GetParameter(constants.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get() {
+	if int64(len(immutables.GetImmutablePropertyList().GetList())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList())) > auxiliaryKeeper.parameterManager.GetParameter(constants.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get() {
 		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 	}
 
@@ -55,8 +55,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	return newAuxiliaryResponse(classificationID, nil)
 }
 
-func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterList helpers.ParameterList, _ []interface{}) helpers.Keeper {
-	return auxiliaryKeeper{mapper: mapper, parameterList: parameterList}
+func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, _ []interface{}) helpers.Keeper {
+	return auxiliaryKeeper{mapper: mapper, parameterManager: parameterManager}
 }
 
 func keeperPrototype() helpers.AuxiliaryKeeper {

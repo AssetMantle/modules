@@ -5,9 +5,10 @@ package mutate
 
 import (
 	"fmt"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
+
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/cosmos/cosmos-sdk/store"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
@@ -43,11 +44,11 @@ type TestKeepers struct {
 	MutateKeeper helpers.TransactionKeeper
 }
 
-func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterList) {
-	//var legacyAmino = codec.NewLegacyAmino()
-	//schema.RegisterLegacyAminoCodec(legacyAmino)
-	//std.RegisterLegacyAminoCodec(legacyAmino)
-	//legacyAmino.Seal()
+func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
+	// var legacyAmino = codec.NewLegacyAmino()
+	// schema.RegisterLegacyAminoCodec(legacyAmino)
+	// std.RegisterLegacyAminoCodec(legacyAmino)
+	// legacyAmino.Seal()
 	codec := baseHelpers.CodecPrototype()
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
@@ -110,7 +111,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper      helpers.Mapper
-		in1         helpers.ParameterList
+		in1         helpers.ParameterManager
 		auxiliaries []interface{}
 	}
 	tests := []struct {

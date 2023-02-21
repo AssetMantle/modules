@@ -5,19 +5,18 @@ package reveal
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/schema/data/base"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"testing"
-
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/std"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_Reveal_Request(t *testing.T) {
@@ -33,7 +32,7 @@ func Test_Reveal_Request(t *testing.T) {
 	require.Nil(t, err)
 
 	data := "S|newData"
-	newData, err := base.PrototypeAnyData().FromString(data)
+	newData, err := baseData.PrototypeAnyData().FromString(data)
 	require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}

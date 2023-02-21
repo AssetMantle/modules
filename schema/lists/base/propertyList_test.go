@@ -4,9 +4,10 @@
 package base
 
 import (
-	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"reflect"
 	"testing"
+
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 
@@ -33,7 +34,7 @@ func TestNewPropertyList(t *testing.T) {
 		want lists.PropertyList
 	}{
 		{"+ve", args{[]properties.Property{baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")), baseProperties.NewMetaProperty(baseIDs.NewStringID("supply"), baseData.NewDecData(sdkTypes.NewDec(1)))}}, &PropertyList{[]*baseProperties.AnyProperty{baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")).ToAnyProperty().(*baseProperties.AnyProperty), baseProperties.NewMetaProperty(baseIDs.NewStringID("supply"), baseData.NewDecData(sdkTypes.NewDec(1))).ToAnyProperty().(*baseProperties.AnyProperty)}}},
-		//Duplicate property must not be added
+		// Duplicate property must not be added
 		{"-ve duplicate supplied", args{[]properties.Property{baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")), baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))}}, &PropertyList{[]*baseProperties.AnyProperty{baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")).ToAnyProperty().(*baseProperties.AnyProperty)}}}, // TODO: Should fail for duplicate Property
 	}
 	for _, tt := range tests {

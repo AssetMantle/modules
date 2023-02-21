@@ -4,5 +4,5 @@
 package helpers
 
 type Keeper interface {
-	Initialize(Mapper, ParameterList, []interface{}) Keeper
+	Initialize(Mapper, ParameterManager, []interface{}) Keeper
 }

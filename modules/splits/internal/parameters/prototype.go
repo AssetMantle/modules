@@ -10,6 +10,6 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
-func Prototype() helpers.ParameterList {
-	return baseHelpers.NewParameterList(module.Name, wrapAllowedCoins.ValidatableParameter)
+func Prototype() helpers.ParameterManager {
+	return baseHelpers.NewParameterManager(module.Name, wrapAllowedCoins.ValidatableParameter)
 }

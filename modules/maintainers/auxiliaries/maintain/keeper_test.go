@@ -50,7 +50,7 @@ var (
 	permissions          = maintainerUtilities.SetPermissions(true, true, true, true, true, true)
 )
 
-func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterList) {
+func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -128,7 +128,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper helpers.Mapper
-		in1    helpers.ParameterList
+		in1    helpers.ParameterManager
 		in2    []interface{}
 	}
 	tests := []struct {

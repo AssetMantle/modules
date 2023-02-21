@@ -14,8 +14,8 @@ type Genesis interface {
 
 	ValidateBasic() error
 
-	Import(context.Context, Mapper, ParameterList)
-	Export(context.Context, Mapper, ParameterList) Genesis
+	Import(context.Context, Mapper, ParameterManager)
+	Export(context.Context, Mapper, ParameterManager) Genesis
 
 	Encode(sdkCodec.JSONCodec) []byte
 	Decode(sdkCodec.JSONCodec, []byte) Genesis

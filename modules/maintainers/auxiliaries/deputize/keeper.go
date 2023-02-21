@@ -10,6 +10,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	internalUtilities "github.com/AssetMantle/modules/modules/maintainers/internal/utilities"
+	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/errors/constants"
@@ -24,13 +25,18 @@ import (
 )
 
 type auxiliaryKeeper struct {
-	mapper          helpers.Mapper
-	memberAuxiliary helpers.Auxiliary
+	mapper           helpers.Mapper
+	parameterManager helpers.ParameterManager
+	memberAuxiliary  helpers.Auxiliary
 }
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+	if !auxiliaryKeeper.parameterManager.GetParameter(constantProperties.DeputizeAllowedProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+		return newAuxiliaryResponse(constants.NotAuthorized)
+	}
+
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	fromMaintainerID := baseIDs.NewMaintainerID(constansts.MaintainerClassificationID,
@@ -92,8 +98,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	return newAuxiliaryResponse(nil)
 }
 
-func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterList, auxiliaries []interface{}) helpers.Keeper {
+func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
 	auxiliaryKeeper.mapper = mapper
+	auxiliaryKeeper.parameterManager = parameterManager
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {

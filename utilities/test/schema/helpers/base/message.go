@@ -5,6 +5,7 @@ package base
 
 import (
 	"encoding/json"
+
 	"github.com/cosmos/cosmos-sdk/codec/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -23,12 +24,12 @@ func NewTestMessage(addr sdkTypes.AccAddress, id string) sdkTypes.Msg {
 }
 
 func (m *TestMessage) RegisterInterface(registry types.InterfaceRegistry) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (m *TestMessage) GenerateOnSuccessEvents() sdkTypes.Events {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 

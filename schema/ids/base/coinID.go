@@ -3,7 +3,6 @@ package base
 import (
 	"bytes"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -45,14 +44,6 @@ func (coinID *CoinID) ToAnyOwnableID() ids.AnyOwnableID {
 	}
 }
 
-func coinIDFromInterface(i interface{}) ids.CoinID {
-	switch value := i.(type) {
-	case ids.CoinID:
-		return value
-	default:
-		panic(constants.MetaDataError)
-	}
-}
 func NewCoinID(stringID ids.StringID) ids.CoinID {
 	return &CoinID{
 		StringID: stringID.(*StringID),

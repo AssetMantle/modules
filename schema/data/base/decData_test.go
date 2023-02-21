@@ -39,7 +39,7 @@ func TestNewDecData(t *testing.T) {
 	}
 }
 
-//func Test_decDataFromInterface(t *testing.T) {
+// func Test_decDataFromInterface(t *testing.T) {
 //	type args struct {
 //		listable traits.Listable
 //	}
@@ -66,7 +66,7 @@ func TestNewDecData(t *testing.T) {
 //			assert.Equalf(t, tt.want, got, "decDataFromInterface(%v)", tt.args.listable)
 //		})
 //	}
-//}
+// }
 
 func Test_decData_Bytes(t *testing.T) {
 	type fields struct {

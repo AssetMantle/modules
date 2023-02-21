@@ -4,10 +4,12 @@
 package base
 
 import (
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 
 	"github.com/AssetMantle/modules/schema/errors/constants"
 

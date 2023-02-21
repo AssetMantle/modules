@@ -4,8 +4,9 @@
 package identities
 
 import (
-	"github.com/AssetMantle/modules/modules/identities/internal/invariants"
 	"testing"
+
+	"github.com/AssetMantle/modules/modules/identities/internal/invariants"
 
 	"github.com/stretchr/testify/require"
 

@@ -4,8 +4,9 @@
 package maintainers
 
 import (
-	"github.com/AssetMantle/modules/modules/maintainers/internal/invariants"
 	"testing"
+
+	"github.com/AssetMantle/modules/modules/maintainers/internal/invariants"
 
 	"github.com/stretchr/testify/require"
 

@@ -7,10 +7,10 @@ import (
 )
 
 // mappable struct, implements helpers.Mappable
-//type *TestMappable struct {
+// type *TestMappable struct {
 //	ID    string
 //	Value string
-//}
+// }
 
 var _ helpers.Mappable = (*TestMappable)(nil)
 

@@ -4,10 +4,11 @@
 package define
 
 import (
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"reflect"
 	"testing"
+
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 
 	"github.com/AssetMantle/modules/utilities/transaction"
 

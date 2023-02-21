@@ -5,9 +5,10 @@ package quash
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"reflect"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/simapp"
 
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
@@ -45,7 +46,7 @@ type TestKeepers struct {
 	QuashKeeper helpers.TransactionKeeper
 }
 
-func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterList) {
+func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -112,7 +113,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper      helpers.Mapper
-		in1         helpers.ParameterList
+		in1         helpers.ParameterManager
 		auxiliaries []interface{}
 	}
 	tests := []struct {

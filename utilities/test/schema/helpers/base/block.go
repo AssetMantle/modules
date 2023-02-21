@@ -12,8 +12,8 @@ import (
 )
 
 type block struct {
-	mapper        helpers.Mapper
-	parameterList helpers.ParameterList
+	mapper           helpers.Mapper
+	parameterManager helpers.ParameterManager
 }
 
 var _ helpers.Block = (*block)(nil)
@@ -26,7 +26,7 @@ func (b block) End(_ context.Context, _ abci.RequestEndBlock) {
 
 }
 
-func (b block) Initialize(mapper helpers.Mapper, parameters helpers.ParameterList, _ ...interface{}) helpers.Block {
+func (b block) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, _ ...interface{}) helpers.Block {
 	return block{mapper, parameters}
 }
 

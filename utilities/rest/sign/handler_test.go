@@ -5,11 +5,12 @@ package sign
 
 import (
 	"bytes"
-	"github.com/cosmos/cosmos-sdk/client"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"

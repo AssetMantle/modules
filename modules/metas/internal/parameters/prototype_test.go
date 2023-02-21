@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/modules/metas/internal/parameters/dummy"
+	"github.com/AssetMantle/modules/modules/metas/internal/parameters/revealEnabled"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
@@ -16,9 +16,9 @@ import (
 func TestPrototype(t *testing.T) {
 	tests := []struct {
 		name string
-		want helpers.ParameterList
+		want helpers.ParameterManager
 	}{
-		{"+ve", baseHelpers.NewParameterList(dummy.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterManager(revealEnabled.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

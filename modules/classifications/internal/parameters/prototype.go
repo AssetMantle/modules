@@ -11,6 +11,6 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
-func Prototype() helpers.ParameterList {
-	return baseHelpers.NewParameterList(module.Name, bondRate.ValidatableParameter, maxPropertyCount.ValidatableParameter)
+func Prototype() helpers.ParameterManager {
+	return baseHelpers.NewParameterManager(module.Name, bondRate.ValidatableParameter, maxPropertyCount.ValidatableParameter)
 }

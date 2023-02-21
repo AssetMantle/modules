@@ -4,8 +4,9 @@
 package assets
 
 import (
-	"github.com/AssetMantle/modules/modules/assets/internal/invariants"
 	"testing"
+
+	"github.com/AssetMantle/modules/modules/assets/internal/invariants"
 
 	"github.com/stretchr/testify/require"
 

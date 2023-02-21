@@ -4,8 +4,9 @@
 package reveal
 
 import (
-	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"testing"
+
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"

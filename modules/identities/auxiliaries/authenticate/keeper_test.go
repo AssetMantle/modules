@@ -44,7 +44,7 @@ type TestKeepers struct {
 	AuthenticateKeeper helpers.AuxiliaryKeeper
 }
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterList) {
+func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -100,7 +100,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	keepers.AuthenticateKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(testIdentity))
 	type fields struct {
 		mapper              helpers.Mapper
-		parameters          helpers.ParameterList
+		parameters          helpers.ParameterManager
 		supplementAuxiliary helpers.Auxiliary
 	}
 	type args struct {
@@ -133,12 +133,12 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	_, _, Mapper, Parameters := CreateTestInput(t)
 	type fields struct {
 		mapper              helpers.Mapper
-		parameters          helpers.ParameterList
+		parameters          helpers.ParameterManager
 		supplementAuxiliary helpers.Auxiliary
 	}
 	type args struct {
 		mapper      helpers.Mapper
-		parameters  helpers.ParameterList
+		parameters  helpers.ParameterManager
 		auxiliaries []interface{}
 	}
 	tests := []struct {
