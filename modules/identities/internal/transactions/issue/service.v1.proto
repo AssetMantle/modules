@@ -3,10 +3,10 @@ package identities.transactions.issue;
 
 import "google/api/annotations.proto";
 import "modules/identities/internal/transactions/issue/message.v1.proto";
-import "modules/identities/internal/transactions/issue/response.v1.proto";
+import "modules/identities/internal/transactions/issue/transactionResponse.v1.proto";
 
 service Service {
-  rpc Handle(Message) returns (Response) {
+  rpc Handle(Message) returns (TransactionResponse) {
     option (google.api.http).post = "/mantle/identities/issue";
   }
 }
