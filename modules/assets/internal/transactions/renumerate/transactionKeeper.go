@@ -34,12 +34,11 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
-	_, err := transactionKeeper.Handle(context, message.(*Message))
-	return newTransactionResponse(err)
+func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) (helpers.TransactionResponse, error) {
+	return transactionKeeper.Handle(context, message.(*Message))
 }
 
-func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
+func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 	if !transactionKeeper.parameterManager.GetParameter(constants.RenumerateEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
 		return nil, errorConstants.NotAuthorized
 	}
@@ -79,7 +78,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.MetaDataError
 	}
 
-	return &Response{}, nil
+	return newTransactionResponse(), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

@@ -1,4 +1,0 @@
-syntax = "proto3";
-package assets.transactions.define;
-
-message Response {}

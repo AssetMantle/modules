@@ -50,19 +50,14 @@ func TestTransactionRequestPrototype() helpers.TransactionRequest {
 }
 
 type transactionResponse struct {
-	Success bool
-	Error   error
+}
+
+func (t transactionResponse) GetResult() *sdkTypes.Result {
+	// TODO implement me
+	panic("implement me")
 }
 
 var _ helpers.TransactionResponse = (*transactionResponse)(nil)
-
-func (t transactionResponse) IsSuccessful() bool {
-	return t.Success
-}
-
-func (t transactionResponse) GetError() error {
-	return t.Error
-}
 
 type transactionKeeper struct {
 	mapper helpers.Mapper
@@ -70,8 +65,8 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (t transactionKeeper) Transact(_ context.Context, _ helpers.Message) helpers.TransactionResponse {
-	return transactionResponse{Success: true, Error: nil}
+func (t transactionKeeper) Transact(_ context.Context, _ helpers.Message) (helpers.TransactionResponse, error) {
+	return transactionResponse{}, nil
 }
 
 func (t transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {

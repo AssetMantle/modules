@@ -1,4 +1,0 @@
-syntax = "proto3";
-package metas.transactions.reveal;
-
-message Response {}

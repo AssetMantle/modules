@@ -30,12 +30,11 @@ type transactionKeeper struct {
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
-func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) helpers.TransactionResponse {
-	_, err := transactionKeeper.Handle(context, message.(*Message))
-	return newTransactionResponse(err)
+func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) (helpers.TransactionResponse, error) {
+	return transactionKeeper.Handle(context, message.(*Message))
 }
 
-func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*Response, error) {
+func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 
 	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
@@ -66,7 +65,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	assets.Mutate(mappable.NewMappable(base.NewAsset(asset.GetClassificationID(), asset.GetImmutables(), asset.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutables.GetMutablePropertyList().GetList()...)...))))
 
-	return &Response{}, nil
+	return newTransactionResponse(), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

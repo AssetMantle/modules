@@ -8,6 +8,6 @@ import (
 )
 
 type TransactionKeeper interface {
-	Transact(context.Context, Message) TransactionResponse
+	Transact(context.Context, Message) (TransactionResponse, error)
 	Keeper
 }

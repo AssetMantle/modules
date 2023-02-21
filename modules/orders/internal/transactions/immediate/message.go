@@ -10,7 +10,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -48,12 +47,7 @@ func (*Message) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 func (message *Message) RegisterInterface(interfaceRegistry types.InterfaceRegistry) {
 	interfaceRegistry.RegisterImplementations((*sdkTypes.Msg)(nil), message)
 }
-func (message *Message) GenerateOnSuccessEvents() sdkTypes.Events {
-	return sdkTypes.Events{sdkTypes.NewEvent(
-		sdkTypes.EventTypeMessage,
-		sdkTypes.NewAttribute(sdkTypes.AttributeKeyModule, module.Name+"."+message.Type()),
-	)}
-}
+
 func messageFromInterface(msg sdkTypes.Msg) *Message {
 	switch value := msg.(type) {
 	case *Message:
