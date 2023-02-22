@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -29,10 +29,10 @@ func Test_Super_Response(t *testing.T) {
 	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
 	require.Equal(t, nil, testAuxiliaryResponse.GetError())
 
-	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList.ScrubData(), constants.IncorrectFormat)
-	require.Equal(t, auxiliaryResponse{Success: false, Error: constants.IncorrectFormat, PropertyList: nil}, testAuxiliaryResponse2)
+	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList.ScrubData(), errorConstants.IncorrectFormat)
+	require.Equal(t, auxiliaryResponse{Success: false, Error: errorConstants.IncorrectFormat, PropertyList: nil}, testAuxiliaryResponse2)
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
-	require.Equal(t, constants.IncorrectFormat, testAuxiliaryResponse2.GetError())
+	require.Equal(t, errorConstants.IncorrectFormat, testAuxiliaryResponse2.GetError())
 
 	propertiesFromResponse, err := GetPropertiesFromResponse(testAuxiliaryResponse)
 	require.Equal(t, propertyList, propertiesFromResponse)
@@ -40,9 +40,9 @@ func Test_Super_Response(t *testing.T) {
 
 	propertiesFromResponse2, err := GetPropertiesFromResponse(testAuxiliaryResponse2)
 	require.Equal(t, nil, propertiesFromResponse2)
-	require.Equal(t, constants.IncorrectFormat, err)
+	require.Equal(t, errorConstants.IncorrectFormat, err)
 
 	propertiesFromResponse3, err := GetPropertiesFromResponse(nil)
 	require.Equal(t, nil, propertiesFromResponse3)
-	require.Equal(t, constants.NotAuthorized, err)
+	require.Equal(t, errorConstants.NotAuthorized, err)
 }

@@ -10,7 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
@@ -21,27 +21,27 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	splitID := baseIDs.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
 	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(splitID))
 
 	Mappable := splits.Get(key.NewKey(splitID))
 	if Mappable == nil {
-		return newAuxiliaryResponse(constants.EntityNotFound)
+		return nil, errorConstants.EntityNotFound
 	}
 	split := mappable.GetSplit(Mappable)
 
 	switch split = split.Send(auxiliaryRequest.Value); {
 	case split.GetValue().LT(sdkTypes.ZeroDec()):
-		return newAuxiliaryResponse(constants.InsufficientBalance)
+		return nil, errorConstants.InsufficientBalance
 	case split.GetValue().Equal(sdkTypes.ZeroDec()):
 		splits.Remove(mappable.NewMappable(split))
 	default:
 		splits.Mutate(mappable.NewMappable(split))
 	}
 
-	return newAuxiliaryResponse(nil)
+	return newAuxiliaryResponse(), nil
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {

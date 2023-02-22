@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -150,7 +150,7 @@ func (module module) RegisterInvariants(invariantRegistry sdkTypes.InvariantRegi
 func (module module) Route() sdkTypes.Route {
 	return sdkTypes.NewRoute(module.Name(), func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
 		if module.transactions == nil {
-			panic(constants.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 
 		if message, ok := msg.(helpers.Message); ok {
@@ -158,7 +158,7 @@ func (module module) Route() sdkTypes.Route {
 				return transaction.HandleMessage(sdkTypes.WrapSDKContext(context.WithEventManager(sdkTypes.NewEventManager())), message)
 			}
 		}
-		return nil, constants.IncorrectMessage
+		return nil, errorConstants.IncorrectMessage
 	})
 }
 func (module module) QuerierRoute() string {
@@ -167,7 +167,7 @@ func (module module) QuerierRoute() string {
 func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Querier {
 	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
 		if module.queries == nil {
-			panic(constants.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 
 		if query := module.queries.Get(path[0]); query != nil {
@@ -197,7 +197,7 @@ func (module module) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JS
 	genesisState := module.genesisPrototype().Decode(jsonCodec, rawMessage)
 
 	if module.mapper == nil || module.parameterManager == nil {
-		panic(constants.UninitializedUsage)
+		panic(errorConstants.UninitializedUsage)
 	}
 
 	genesisState.Import(sdkTypes.WrapSDKContext(context), module.mapper, module.parameterManager)
@@ -206,7 +206,7 @@ func (module module) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JS
 }
 func (module module) ExportGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec) json.RawMessage {
 	if module.mapper == nil || module.parameterManager == nil {
-		panic(constants.UninitializedUsage)
+		panic(errorConstants.UninitializedUsage)
 	}
 
 	return module.genesisPrototype().Export(sdkTypes.WrapSDKContext(context), module.mapper, module.parameterManager).Encode(jsonCodec)
@@ -232,7 +232,7 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 		return transaction.DecodeTransactionRequest(rawMessage)
 	}
 
-	return nil, constants.IncorrectMessage
+	return nil, errorConstants.IncorrectMessage
 }
 func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace paramsTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)

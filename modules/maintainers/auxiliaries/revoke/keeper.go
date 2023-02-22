@@ -25,7 +25,7 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
 
@@ -36,9 +36,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		)))
 
 	if Mappable := maintainers.Fetch(key.NewKey(fromMaintainerID)).Get(key.NewKey(fromMaintainerID)); Mappable == nil {
-		return newAuxiliaryResponse(errorConstants.EntityNotFound)
+		return nil, errorConstants.EntityNotFound
 	} else if !mappable.GetMaintainer(Mappable).CanRemoveMaintainer() {
-		return newAuxiliaryResponse(errorConstants.NotAuthorized)
+		return nil, errorConstants.NotAuthorized
 	}
 
 	toMaintainerID := baseIDs.NewMaintainerID(constansts.MaintainerClassificationID,
@@ -48,12 +48,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		)))
 
 	if Mappable := maintainers.Fetch(key.NewKey(toMaintainerID)).Get(key.NewKey(toMaintainerID)); Mappable == nil {
-		return newAuxiliaryResponse(errorConstants.EntityNotFound)
+		return nil, errorConstants.EntityNotFound
 	} else {
 		maintainers.Remove(Mappable)
 	}
 
-	return newAuxiliaryResponse(nil)
+	return newAuxiliaryResponse(), nil
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {

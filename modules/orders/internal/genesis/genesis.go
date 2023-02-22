@@ -8,7 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 	"github.com/AssetMantle/modules/modules/orders/internal/parameters"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/parameters/base"
 )
@@ -20,7 +20,7 @@ func (genesis *Genesis) Default() helpers.Genesis {
 }
 func (genesis *Genesis) ValidateBasic() error {
 	if len(genesis.Parameters) != len(genesis.Default().(*Genesis).Parameters) {
-		return constants.InvalidParameter
+		return errorConstants.InvalidParameter
 	}
 
 	for _, parameter := range genesis.Parameters {
@@ -34,7 +34,7 @@ func (genesis *Genesis) ValidateBasic() error {
 		}
 
 		if !isPresent {
-			return constants.InvalidParameter
+			return errorConstants.InvalidParameter
 		}
 
 		if err := parameter.ValidateBasic(); err != nil {

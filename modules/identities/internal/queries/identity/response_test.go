@@ -23,7 +23,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/common"
 	"github.com/AssetMantle/modules/modules/identities/internal/mapper"
 	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -66,7 +66,7 @@ func Test_newQueryResponse(t *testing.T) {
 	}{
 
 		{"+ve", args{collection: collection, error: nil}, &QueryResponse{Success: true, Error: ""}},
-		{"-ve with error", args{collection: collection, error: constants.IncorrectFormat}, &QueryResponse{Success: false, Error: constants.IncorrectFormat.Error()}},
+		{"-ve with error", args{collection: collection, error: errorConstants.IncorrectFormat}, &QueryResponse{Success: false, Error: errorConstants.IncorrectFormat.Error()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -123,7 +123,7 @@ func Test_queryResponse_Encode(t *testing.T) {
 	context := CreateTestInputContext(t)
 	collection := mapper.Prototype().NewCollection(context)
 	encodedByte, err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: true, Error: "", List: mappable.MappablesFromInterface(collection.GetList())})
-	encodedByteWithError, _err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: false, Error: constants.IncorrectFormat.Error(), List: mappable.MappablesFromInterface(collection.GetList())})
+	encodedByteWithError, _err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: false, Error: errorConstants.IncorrectFormat.Error(), List: mappable.MappablesFromInterface(collection.GetList())})
 	require.Nil(t, err)
 	type fields struct {
 		Success bool
@@ -172,7 +172,7 @@ func Test_queryResponse_GetError(t *testing.T) {
 	}{
 
 		{"+ve", fields{Success: true, Error: nil}, false},
-		{"-ve", fields{Success: true, Error: constants.IncorrectFormat}, true},
+		{"-ve", fields{Success: true, Error: errorConstants.IncorrectFormat}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

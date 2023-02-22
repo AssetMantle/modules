@@ -8,18 +8,18 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 )
 
 func Test_Deputize_Response(t *testing.T) {
 
-	testTransactionResponse := newTransactionResponse(constants.IncorrectFormat)
+	testTransactionResponse := newTransactionResponse(errorConstants.IncorrectFormat)
 	testTransactionResponse2 := newTransactionResponse(nil)
 
-	require.Equal(t, transactionResponse{Success: false, Error: constants.IncorrectFormat}, testTransactionResponse)
+	require.Equal(t, transactionResponse{Success: false, Error: errorConstants.IncorrectFormat}, testTransactionResponse)
 	require.Equal(t, false, testTransactionResponse.IsSuccessful())
 	require.Equal(t, true, testTransactionResponse2.IsSuccessful())
 
-	require.Equal(t, constants.IncorrectFormat, testTransactionResponse.GetError())
+	require.Equal(t, errorConstants.IncorrectFormat, testTransactionResponse.GetError())
 	require.Equal(t, nil, testTransactionResponse2.GetError())
 }

@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -21,7 +21,7 @@ func Test_newTransactionResponse(t *testing.T) {
 		want helpers.TransactionResponse
 	}{
 		{"+ve", args{nil}, transactionResponse{true, nil}},
-		{"-ve", args{constants.IncorrectFormat}, transactionResponse{false, constants.IncorrectFormat}}}
+		{"-ve", args{errorConstants.IncorrectFormat}, transactionResponse{false, errorConstants.IncorrectFormat}}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := newTransactionResponse(tt.args.error); !reflect.DeepEqual(got, tt.want) {
@@ -42,7 +42,7 @@ func Test_transactionResponse_GetError(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{Success: true, Error: nil}, false},
-		{"-ve", fields{Success: false, Error: constants.IncorrectFormat}, true},
+		{"-ve", fields{Success: false, Error: errorConstants.IncorrectFormat}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -68,7 +68,7 @@ func Test_transactionResponse_IsSuccessful(t *testing.T) {
 		want   bool
 	}{
 		{"+ve", fields{Success: true, Error: nil}, true},
-		{"-ve", fields{Success: false, Error: constants.IncorrectFormat}, false},
+		{"-ve", fields{Success: false, Error: errorConstants.IncorrectFormat}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -3,7 +3,7 @@ package base
 import (
 	"bytes"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -50,7 +50,7 @@ func coinIDFromInterface(i interface{}) ids.CoinID {
 	case ids.CoinID:
 		return value
 	default:
-		panic(constants.MetaDataError)
+		panic(errorConstants.MetaDataError)
 	}
 }
 func NewCoinID(stringID ids.StringID) ids.CoinID {

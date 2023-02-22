@@ -4,50 +4,28 @@
 package define
 
 import (
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 )
 
 type auxiliaryResponse struct {
-	Success              bool  `json:"success"`
-	Error                error `json:"error"`
-	ids.ClassificationID `json:"classificationID"`
+	ids.ClassificationID
 }
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
 
-func (auxiliaryResponse auxiliaryResponse) IsSuccessful() bool {
-	return auxiliaryResponse.Success
-}
-func (auxiliaryResponse auxiliaryResponse) GetError() error {
-	return auxiliaryResponse.Error
-}
-
-func newAuxiliaryResponse(classificationID ids.ClassificationID, error error) helpers.AuxiliaryResponse {
-	if error != nil {
-		return auxiliaryResponse{
-			Success:          false,
-			Error:            error,
-			ClassificationID: classificationID,
-		}
-	}
-
+func newAuxiliaryResponse(classificationID ids.ClassificationID) helpers.AuxiliaryResponse {
 	return auxiliaryResponse{
-		Success:          true,
 		ClassificationID: classificationID,
 	}
 }
 
-func GetClassificationIDFromResponse(response helpers.AuxiliaryResponse) (ids.ClassificationID, error) {
+func GetClassificationIDFromResponse(response helpers.AuxiliaryResponse) ids.ClassificationID {
 	switch value := response.(type) {
 	case auxiliaryResponse:
-		if value.IsSuccessful() {
-			return value.ClassificationID, nil
-		}
-
-		return value.ClassificationID, value.GetError()
+		return value.ClassificationID
 	default:
-		return nil, constants.InvalidRequest
+		panic(errorConstants.InvalidRequest)
 	}
 }

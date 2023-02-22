@@ -6,7 +6,7 @@ package base
 import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -72,7 +72,7 @@ func propertyFromInterface(listable traits.Listable) (properties.Property, error
 	case properties.Property:
 		return value, nil
 	default:
-		return nil, constants.MetaDataError
+		return nil, errorConstants.MetaDataError
 	}
 }
 func NewEmptyMesaPropertyFromID(propertyID ids.PropertyID) properties.MesaProperty {
