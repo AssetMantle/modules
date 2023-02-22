@@ -27,7 +27,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
@@ -92,7 +92,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-Reveal metas again", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(constants.EntityAlreadyExists)
+		want := newTransactionResponse(errorConstants.EntityAlreadyExists)
 		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, data).(*Message)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

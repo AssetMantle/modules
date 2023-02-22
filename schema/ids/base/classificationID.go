@@ -1,7 +1,7 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -32,7 +32,7 @@ func classificationIDFromInterface(i interface{}) *ClassificationID {
 	case *ClassificationID:
 		return value
 	default:
-		panic(constants.MetaDataError)
+		panic(errorConstants.MetaDataError)
 	}
 }
 
@@ -65,5 +65,5 @@ func ReadClassificationID(classificationIDString string) (ids.ClassificationID, 
 		return PrototypeClassificationID(), nil
 	}
 
-	return &ClassificationID{}, constants.MetaDataError
+	return &ClassificationID{}, errorConstants.MetaDataError
 }

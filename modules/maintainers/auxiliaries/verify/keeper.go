@@ -8,7 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/ids/constansts"
@@ -24,7 +24,7 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	maintainerID := base.NewMaintainerID(constansts.MaintainerClassificationID,
 		baseQualified.NewImmutables(baseLists.NewPropertyList(
@@ -36,10 +36,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	maintainer := maintainers.Get(key.NewKey(maintainerID))
 	if maintainer == nil {
-		return newAuxiliaryResponse(constants.EntityNotFound)
+		return nil, errorConstants.EntityNotFound
 	}
 
-	return newAuxiliaryResponse(nil)
+	return newAuxiliaryResponse(), nil
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {

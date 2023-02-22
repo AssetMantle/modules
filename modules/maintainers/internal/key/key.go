@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
@@ -37,7 +37,7 @@ func keyFromInterface(i interface{}) (*Key, error) {
 	case *Key:
 		return value, nil
 	default:
-		return &Key{}, constants.MetaDataError
+		return &Key{}, errorConstants.MetaDataError
 	}
 }
 

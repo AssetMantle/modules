@@ -4,48 +4,28 @@
 package supplement
 
 import (
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/lists"
 )
 
 type auxiliaryResponse struct {
-	Success            bool  `json:"success"`
-	Error              error `json:"error"`
-	lists.PropertyList `json:"propertyList"`
+	lists.PropertyList
 }
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
 
-func (auxiliaryResponse auxiliaryResponse) IsSuccessful() bool {
-	return auxiliaryResponse.Success
-}
-func (auxiliaryResponse auxiliaryResponse) GetError() error {
-	return auxiliaryResponse.Error
-}
-func newAuxiliaryResponse(metaProperties lists.PropertyList, error error) helpers.AuxiliaryResponse {
-	if error != nil {
-		return auxiliaryResponse{
-			Success: false,
-			Error:   error,
-		}
-	}
-
+func newAuxiliaryResponse(metaProperties lists.PropertyList) helpers.AuxiliaryResponse {
 	return auxiliaryResponse{
-		Success:      true,
 		PropertyList: metaProperties,
 	}
 }
 
-func GetMetaPropertiesFromResponse(response helpers.AuxiliaryResponse) (lists.PropertyList, error) {
+func GetMetaPropertiesFromResponse(response helpers.AuxiliaryResponse) lists.PropertyList {
 	switch value := response.(type) {
 	case auxiliaryResponse:
-		if value.IsSuccessful() {
-			return value.PropertyList, nil
-		}
-
-		return nil, value.GetError()
+		return value.PropertyList
 	default:
-		return nil, constants.InvalidRequest
+		panic(errorConstants.InvalidRequest)
 	}
 }

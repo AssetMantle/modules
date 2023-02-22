@@ -10,7 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -33,7 +33,7 @@ func (heightData *HeightData) FromString(dataTypeAndValueString string) (data.Da
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != heightData.GetType().AsString() {
-		return PrototypeHeightData(), constants.IncorrectFormat
+		return PrototypeHeightData(), errorConstants.IncorrectFormat
 	}
 
 	if dataString == "" {
