@@ -6,7 +6,6 @@ import (
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/utilities"
 	stringUtilities "github.com/AssetMantle/modules/utilities/string"
-	"strings"
 )
 
 func ReadMetaPropertyList(metaPropertiesString string) (lists.PropertyList, error) {
@@ -15,7 +14,7 @@ func ReadMetaPropertyList(metaPropertiesString string) (lists.PropertyList, erro
 	metaProperties := stringUtilities.SplitListString(metaPropertiesString)
 	for _, metaPropertyString := range metaProperties {
 		if metaPropertyString != "" {
-			metaProperty, err := utilities.ReadMetaProperty(strings.TrimSpace(metaPropertyString))
+			metaProperty, err := utilities.ReadMetaProperty(metaPropertyString)
 			if err != nil {
 				return nil, err
 			}

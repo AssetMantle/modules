@@ -130,7 +130,7 @@ func splitDataTypeAndValueStrings(dataTypeAndValueString string) (dataType, data
 	if dataTypeAndValue := strings.SplitN(dataTypeAndValueString, dataConstants.DataTypeAndValueSeparator, 2); len(dataTypeAndValue) == 1 {
 		return dataTypeAndValue[0], ""
 	} else if len(dataTypeAndValue) == 2 {
-		return dataTypeAndValue[0], dataTypeAndValue[1]
+		return strings.TrimSpace(dataTypeAndValue[0]), strings.TrimSpace(dataTypeAndValue[1])
 	} else {
 		return "", ""
 	}
