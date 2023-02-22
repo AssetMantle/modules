@@ -19,7 +19,7 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.PropertyList.GetList()))
@@ -37,7 +37,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		}
 	}
 
-	return newAuxiliaryResponse(baseLists.NewPropertyList(scrubbedPropertyList...), nil)
+	return newAuxiliaryResponse(baseLists.NewPropertyList(scrubbedPropertyList...)), nil
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {

@@ -1,6 +1,11 @@
 package docs
 
 import (
+	"net/http"
+
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -11,9 +16,6 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/types/rest"
-	"net/http"
 )
 
 func nubIDHandler(context client.Context) http.HandlerFunc {

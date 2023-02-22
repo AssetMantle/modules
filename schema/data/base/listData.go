@@ -9,7 +9,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -41,7 +41,7 @@ func (listData *ListData) FromString(dataTypeAndValueString string) (data.Data, 
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != listData.GetType().AsString() {
-		return PrototypeListData(), constants.IncorrectFormat
+		return PrototypeListData(), errorConstants.IncorrectFormat
 	}
 
 	if dataString == "" {
@@ -147,7 +147,7 @@ func listDataFromInterface(listable traits.Listable) (*ListData, error) {
 	case *ListData:
 		return value, nil
 	default:
-		return &ListData{}, constants.MetaDataError
+		return &ListData{}, errorConstants.MetaDataError
 	}
 }
 

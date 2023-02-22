@@ -8,28 +8,10 @@ import (
 )
 
 type auxiliaryResponse struct {
-	Success bool  `json:"success"`
-	Error   error `json:"error"`
 }
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
 
-func (auxiliaryResponse auxiliaryResponse) IsSuccessful() bool {
-	return auxiliaryResponse.Success
-}
-func (auxiliaryResponse auxiliaryResponse) GetError() error {
-	return auxiliaryResponse.Error
-}
-
-func newAuxiliaryResponse(error error) helpers.AuxiliaryResponse {
-	if error != nil {
-		return auxiliaryResponse{
-			Success: false,
-			Error:   error,
-		}
-	}
-
-	return auxiliaryResponse{
-		Success: true,
-	}
+func newAuxiliaryResponse() helpers.AuxiliaryResponse {
+	return auxiliaryResponse{}
 }

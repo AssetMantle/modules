@@ -32,7 +32,7 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -112,7 +112,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Classification already present", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(testClassificationID, constants.EntityAlreadyExists)
+		want := newAuxiliaryResponse(testClassificationID, errorConstants.EntityAlreadyExists)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -120,7 +120,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Max Property Count", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(nil, constants.InvalidRequest)
+		want := newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(createTestProperties(10, 5, "immutable")...)), baseQualified.NewMutables(baseLists.NewPropertyList(createTestProperties(5, 5, "mutable")...)))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -128,7 +128,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Duplicate Immutable Property", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(nil, constants.InvalidRequest)
+		want := newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(append(createTestProperties(5, 0, "immutable"), createTestProperties(1, 0, "immutable")[0])...)), baseQualified.NewMutables(baseLists.NewPropertyList(createTestProperties(2, 0, "mutable")...)))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
@@ -136,7 +136,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 
 	t.Run("NegativeCase-Duplicate Immutable and Mutable Property", func(t *testing.T) {
 		t.Parallel()
-		want := newAuxiliaryResponse(nil, constants.InvalidRequest)
+		want := newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(append(createTestProperties(5, 0, "immutable"), createTestProperties(1, 0, "immutable")[0])...)), baseQualified.NewMutables(baseLists.NewPropertyList(append(createTestProperties(2, 0, "mutable"), createTestProperties(1, 0, "mutable")...)...)))); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

@@ -27,7 +27,7 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	totalWeight := int64(0)
@@ -37,22 +37,22 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	immutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewNumberData(auxiliaryKeeper.parameterManager.GetParameter(constants.BondRateProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()*totalWeight))))
 
 	if int64(len(immutables.GetImmutablePropertyList().GetList())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList())) > auxiliaryKeeper.parameterManager.GetParameter(constants.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get() {
-		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
+		return nil, errorConstants.InvalidRequest
 	}
 
 	if utilities.IsDuplicate(append(immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...)) {
-		return newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
+		return nil, errorConstants.InvalidRequest
 	}
 
 	classificationID := baseIDs.NewClassificationID(immutables, auxiliaryRequest.Mutables)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(classificationID))
 	if classifications.Get(key.NewKey(classificationID)) != nil {
-		return newAuxiliaryResponse(classificationID, errorConstants.EntityAlreadyExists)
+		return newAuxiliaryResponse(classificationID), errorConstants.EntityAlreadyExists
 	}
 
 	classifications.Add(mappable.NewMappable(base.NewClassification(immutables, auxiliaryRequest.Mutables)))
 
-	return newAuxiliaryResponse(classificationID, nil)
+	return newAuxiliaryResponse(classificationID), nil
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, _ []interface{}) helpers.Keeper {

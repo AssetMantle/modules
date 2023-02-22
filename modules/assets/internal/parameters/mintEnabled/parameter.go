@@ -5,7 +5,7 @@ package mintEnabled
 
 import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 	"github.com/AssetMantle/modules/schema/properties/base"
@@ -20,7 +20,7 @@ func validator(i interface{}) error {
 		return nil
 	}
 
-	return constants.IncorrectFormat
+	return errorConstants.IncorrectFormat
 
 }
 

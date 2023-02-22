@@ -1,7 +1,7 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -80,6 +80,6 @@ func idFromListable(listable traits.Listable) (ids.ID, error) {
 		return listable.(ids.ID), nil
 
 	default:
-		return nil, constants.MetaDataError
+		return nil, errorConstants.MetaDataError
 	}
 }
