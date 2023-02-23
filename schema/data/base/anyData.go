@@ -128,7 +128,7 @@ func joinDataTypeAndValueStrings(dataType, dataValue string) string {
 }
 func splitDataTypeAndValueStrings(dataTypeAndValueString string) (dataType, dataValue string) {
 	if dataTypeAndValue := strings.SplitN(dataTypeAndValueString, dataConstants.DataTypeAndValueSeparator, 2); len(dataTypeAndValue) == 1 {
-		return dataTypeAndValue[0], ""
+		return strings.TrimSpace(dataTypeAndValue[0]), ""
 	} else if len(dataTypeAndValue) == 2 {
 		return strings.TrimSpace(dataTypeAndValue[0]), strings.TrimSpace(dataTypeAndValue[1])
 	} else {
