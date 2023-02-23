@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 )
 
 func Test_Transfer_Response(t *testing.T) {
@@ -17,8 +17,8 @@ func Test_Transfer_Response(t *testing.T) {
 	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
 	require.Equal(t, nil, testAuxiliaryResponse.GetError())
 
-	testAuxiliaryResponse2 := newAuxiliaryResponse(constants.IncorrectFormat)
-	require.Equal(t, auxiliaryResponse{Success: false, Error: constants.IncorrectFormat}, testAuxiliaryResponse2)
+	testAuxiliaryResponse2 := newAuxiliaryResponse(errorConstants.IncorrectFormat)
+	require.Equal(t, auxiliaryResponse{Success: false, Error: errorConstants.IncorrectFormat}, testAuxiliaryResponse2)
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
-	require.Equal(t, constants.IncorrectFormat, testAuxiliaryResponse2.GetError())
+	require.Equal(t, errorConstants.IncorrectFormat, testAuxiliaryResponse2.GetError())
 }

@@ -51,8 +51,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return nil, auxiliaryResponse.GetError()
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+		return nil, err
 	}
 
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
@@ -63,10 +63,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	asset := mappable.GetAsset(Mappable)
 
-	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetBurn())))
+	auxiliaryResponse, err := transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetBurn()))
 	if err != nil {
 		return nil, err
 	}
+	metaProperties := supplement.GetMetaPropertiesFromResponse(auxiliaryResponse)
 
 	if burnHeightMetaProperty := metaProperties.GetProperty(constants.BurnHeightProperty.GetID()); burnHeightMetaProperty != nil {
 		burnHeight := burnHeightMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.HeightData).Get()
@@ -75,12 +76,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		}
 	}
 
-	if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.ZeroDec())); !auxiliaryResponse.IsSuccessful() {
-		return nil, auxiliaryResponse.GetError()
+	if _, err := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.ZeroDec())); err != nil {
+		return nil, err
 	}
 
-	if auxiliaryResponse := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress)); !auxiliaryResponse.IsSuccessful() {
-		return nil, auxiliaryResponse.GetError()
+	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress)); err != nil {
+		return nil, err
 	}
 
 	assets.Remove(mappable.NewMappable(asset))

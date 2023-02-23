@@ -11,7 +11,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data/utilities"
 
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -240,7 +240,7 @@ func (booleanData booleanData) FromString(dataString string) (data.Data, error) 
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != stringData.GetType().AsString() {
-		return PrototypeStringData(), constants.IncorrectFormat
+		return PrototypeStringData(), errorConstants.IncorrectFormat
 	}
 
 	if dataString == "" {
@@ -282,7 +282,7 @@ func booleanDataFromInterface(listable traits.Listable) (booleanData, error) {
 	case booleanData:
 		return value, nil
 	default:
-		return booleanData{}, constants.MetaDataError
+		return booleanData{}, errorConstants.MetaDataError
 	}
 }
 

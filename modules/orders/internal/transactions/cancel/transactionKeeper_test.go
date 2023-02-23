@@ -30,7 +30,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -194,9 +194,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve Not Authorized", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID2, testOrderID).(*Message)}, newTransactionResponse(constants.NotAuthorized)},
+		{"+ve Not Authorized", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID2, testOrderID).(*Message)}, newTransactionResponse(errorConstants.NotAuthorized)},
 		{"+ve", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testOrderID).(*Message)}, newTransactionResponse(nil)},
-		{"+ve entity Not Found", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testOrderID2).(*Message)}, newTransactionResponse(constants.EntityNotFound)},
+		{"+ve entity Not Found", fields{Mapper, Parameters, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testOrderID2).(*Message)}, newTransactionResponse(errorConstants.EntityNotFound)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

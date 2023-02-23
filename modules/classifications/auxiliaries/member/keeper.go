@@ -19,41 +19,41 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.ClassificationID))
 
 	Mappable := classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID))
 	if Mappable == nil {
-		return newAuxiliaryResponse(errorConstants.EntityNotFound)
+		return nil, errorConstants.EntityNotFound
 	}
 	classification := mappable.GetClassification(Mappable)
 
 	if auxiliaryRequest.Immutables != nil {
 		if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList()) > len(classification.GetImmutables().GetImmutablePropertyList().GetList()) {
-			return newAuxiliaryResponse(errorConstants.IncorrectFormat)
+			return nil, errorConstants.IncorrectFormat
 		}
 
 		for _, immutableProperty := range auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList() {
 			if property := classification.GetImmutables().GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) != 0 && property.GetDataID().GetHashID().Compare(immutableProperty.GetDataID().GetHashID()) != 0 {
-				return newAuxiliaryResponse(errorConstants.IncorrectFormat)
+				return nil, errorConstants.IncorrectFormat
 			}
 		}
 	}
 
 	if auxiliaryRequest.Mutables != nil {
 		if len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()) > len(classification.GetMutables().GetMutablePropertyList().GetList()) {
-			return newAuxiliaryResponse(errorConstants.IncorrectFormat)
+			return nil, errorConstants.IncorrectFormat
 		}
 
 		for _, mutableProperty := range auxiliaryRequest.Mutables.GetMutablePropertyList().GetList() {
 			if property := classification.GetMutables().GetMutablePropertyList().GetProperty(mutableProperty.GetID()); property == nil {
-				return newAuxiliaryResponse(errorConstants.IncorrectFormat)
+				return nil, errorConstants.IncorrectFormat
 			}
 		}
 	}
 
-	return newAuxiliaryResponse(nil)
+	return newAuxiliaryResponse(), nil
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {

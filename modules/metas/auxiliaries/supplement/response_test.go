@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -26,10 +26,10 @@ func Test_Super_Response(t *testing.T) {
 	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
 	require.Equal(t, nil, testAuxiliaryResponse.GetError())
 
-	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList, constants.IncorrectFormat)
-	require.Equal(t, auxiliaryResponse{Success: false, Error: constants.IncorrectFormat, PropertyList: nil}, testAuxiliaryResponse2)
+	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList, errorConstants.IncorrectFormat)
+	require.Equal(t, auxiliaryResponse{Success: false, Error: errorConstants.IncorrectFormat, PropertyList: nil}, testAuxiliaryResponse2)
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
-	require.Equal(t, constants.IncorrectFormat, testAuxiliaryResponse2.GetError())
+	require.Equal(t, errorConstants.IncorrectFormat, testAuxiliaryResponse2.GetError())
 
 	Properties, err := GetMetaPropertiesFromResponse(testAuxiliaryResponse)
 	require.Equal(t, metaPropertyList, Properties)
@@ -37,5 +37,5 @@ func Test_Super_Response(t *testing.T) {
 
 	properties2, err := GetMetaPropertiesFromResponse(testAuxiliaryResponse2)
 	require.Equal(t, nil, properties2)
-	require.Equal(t, constants.IncorrectFormat, err)
+	require.Equal(t, errorConstants.IncorrectFormat, err)
 }

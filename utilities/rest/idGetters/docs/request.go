@@ -5,6 +5,7 @@ package docs
 
 import (
 	"encoding/json"
+
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -36,22 +37,22 @@ type request struct {
 var _ helpers.TransactionRequest = &request{}
 
 func (request request) FromCLI(command helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (request) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (request request) FromJSON(message json.RawMessage) (helpers.TransactionRequest, error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (request request) MakeMsg() (sdkTypes.Msg, error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 

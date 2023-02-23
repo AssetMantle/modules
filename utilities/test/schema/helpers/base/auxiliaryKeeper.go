@@ -15,8 +15,8 @@ type testAuxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*testAuxiliaryKeeper)(nil)
 
-func (t testAuxiliaryKeeper) Help(_ context.Context, _ helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
-	return nil
+func (t testAuxiliaryKeeper) Help(_ context.Context, _ helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	return nil, nil
 }
 
 func (t testAuxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {

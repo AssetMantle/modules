@@ -10,7 +10,7 @@ import (
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 )
 
 func Test_SignTx_Response(t *testing.T) {
@@ -18,7 +18,7 @@ func Test_SignTx_Response(t *testing.T) {
 
 	testStdTx := authTypes.NewStdTx([]sdkTypes.Msg{}, testFee, []authTypes.StdSignature{}, "")
 	require.Equal(t, response{Success: true, Error: nil, StdTx: testStdTx}, newResponse(testStdTx, nil))
-	testResponse := newResponse(testStdTx, constants.IncorrectFormat)
+	testResponse := newResponse(testStdTx, errorConstants.IncorrectFormat)
 	require.Equal(t, false, testResponse.IsSuccessful())
-	require.Equal(t, constants.IncorrectFormat, testResponse.GetError())
+	require.Equal(t, errorConstants.IncorrectFormat, testResponse.GetError())
 }

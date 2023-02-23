@@ -9,7 +9,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/ids/constansts"
@@ -25,7 +25,7 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	maintainerID := baseIDs.NewMaintainerID(constansts.MaintainerClassificationID,
@@ -38,17 +38,17 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	Mappable := maintainers.Get(key.NewKey(maintainerID))
 	if Mappable == nil {
-		return newAuxiliaryResponse(constants.EntityNotFound)
+		return nil, errorConstants.EntityNotFound
 	}
 	maintainer := mappable.GetMaintainer(Mappable)
 
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedMutables.GetMutablePropertyList().GetList() {
 		if !maintainer.MaintainsProperty(maintainedProperty.GetID()) {
-			return newAuxiliaryResponse(constants.NotAuthorized)
+			return nil, errorConstants.NotAuthorized
 		}
 	}
 
-	return newAuxiliaryResponse(nil)
+	return newAuxiliaryResponse(), nil
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {

@@ -48,8 +48,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return nil, auxiliaryResponse.GetError()
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+		return nil, err
 	}
 
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
@@ -60,19 +60,20 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	asset := mappable.GetAsset(Mappable)
 
-	if auxiliaryResponse := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, base.NewMutables(baseLists.NewPropertyList(constants.SupplyProperty)))); !auxiliaryResponse.IsSuccessful() {
-		return nil, auxiliaryResponse.GetError()
-	}
-
-	metaProperties, err := supplement.GetMetaPropertiesFromResponse(transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetSupply())))
-	if err != nil {
+	if _, err := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, base.NewMutables(baseLists.NewPropertyList(constants.SupplyProperty)))); err != nil {
 		return nil, err
 	}
 
+	auxiliaryResponse, err := transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetSupply()))
+	if err != nil {
+		return nil, err
+	}
+	metaProperties := supplement.GetMetaPropertiesFromResponse(auxiliaryResponse)
+
 	if supplyMetaProperty := metaProperties.GetProperty(constants.SupplyProperty.GetID()); supplyMetaProperty != nil && supplyMetaProperty.IsMeta() {
 		value := supplyMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.DecData).Get()
-		if auxiliaryResponse := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); !auxiliaryResponse.IsSuccessful() {
-			return nil, auxiliaryResponse.GetError()
+		if _, err := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); err != nil {
+			return nil, err
 		}
 	} else {
 		return nil, errorConstants.MetaDataError

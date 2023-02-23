@@ -48,8 +48,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return nil, auxiliaryResponse.GetError()
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+		return nil, err
 	}
 
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.OrderID))
@@ -63,12 +63,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	transferMakerOwnableSplit := message.MakerOwnableSplit.Sub(order.GetMakerOwnableSplit())
 
 	if transferMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
-		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), transferMakerOwnableSplit.Abs())); !auxiliaryResponse.IsSuccessful() {
-			return nil, auxiliaryResponse.GetError()
+		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), transferMakerOwnableSplit.Abs())); err != nil {
+			return nil, err
 		}
 	} else if transferMakerOwnableSplit.GT(sdkTypes.ZeroDec()) {
-		if auxiliaryResponse := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, module.ModuleIdentityID, order.GetMakerOwnableID(), transferMakerOwnableSplit)); !auxiliaryResponse.IsSuccessful() {
-			return nil, auxiliaryResponse.GetError()
+		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, module.ModuleIdentityID, order.GetMakerOwnableID(), transferMakerOwnableSplit)); err != nil {
+			return nil, err
 		}
 	}
 
@@ -78,8 +78,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	updatedMutables := order.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...)
 
-	if auxiliaryResponse := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(order.GetClassificationID(), order.GetImmutables(), updatedMutables)); !auxiliaryResponse.IsSuccessful() {
-		return nil, auxiliaryResponse.GetError()
+	if _, err := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(order.GetClassificationID(), order.GetImmutables(), updatedMutables)); err != nil {
+		return nil, err
 	}
 
 	orders.Remove(mappable.NewMappable(order))

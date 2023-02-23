@@ -6,7 +6,7 @@ package base
 import (
 	"strings"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -36,7 +36,7 @@ func stringIDFromInterface(i interface{}) *StringID {
 	case *StringID:
 		return value
 	default:
-		panic(constants.MetaDataError)
+		panic(errorConstants.MetaDataError)
 	}
 }
 

@@ -28,7 +28,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -93,7 +93,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("NegativeCase-Duplicate", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(constants.EntityAlreadyExists)
+		want := newTransactionResponse(errorConstants.EntityAlreadyExists)
 		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), baseIDs.NewStringID("nubID")).(*Message)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -121,7 +121,7 @@ func Test_newAuxiliaryResponse(t *testing.T) {
 		want helpers.AuxiliaryResponse
 	}{
 		{"+ve", args{classificationID, nil}, auxiliaryResponse{true, nil, classificationID}},
-		{"-ve", args{classificationID, constants.EntityNotFound}, auxiliaryResponse{false, constants.EntityNotFound, classificationID}},
+		{"-ve", args{classificationID, errorConstants.EntityNotFound}, auxiliaryResponse{false, errorConstants.EntityNotFound, classificationID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

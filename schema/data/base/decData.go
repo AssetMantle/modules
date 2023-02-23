@@ -10,7 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -55,7 +55,7 @@ func (decData *DecData) FromString(dataTypeAndValueString string) (data.Data, er
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != decData.GetType().AsString() {
-		return PrototypeDecData(), constants.IncorrectFormat
+		return PrototypeDecData(), errorConstants.IncorrectFormat
 	}
 
 	if dataString == "" {
