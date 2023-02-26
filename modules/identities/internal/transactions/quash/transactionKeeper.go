@@ -38,8 +38,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return nil, auxiliaryResponse.GetError()
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+		return nil, err
 	}
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.IdentityID))
@@ -54,8 +54,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized
 	}
 
-	if auxiliaryResponse := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(identity.GetClassificationID(), fromAddress)); !auxiliaryResponse.IsSuccessful() {
-		return nil, auxiliaryResponse.GetError()
+	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(identity.GetClassificationID(), fromAddress)); err != nil {
+		return nil, err
 	}
 
 	identities.Remove(mappable.NewMappable(identity))

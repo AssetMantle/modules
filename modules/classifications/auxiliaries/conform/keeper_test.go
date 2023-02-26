@@ -27,7 +27,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -101,9 +101,9 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve Entity Not Found", fields{Mapper}, args{context, NewAuxiliaryRequest(testClassificationID1, immutables1, mutables1)}, newAuxiliaryResponse(constants.EntityNotFound)},
+		{"+ve Entity Not Found", fields{Mapper}, args{context, NewAuxiliaryRequest(testClassificationID1, immutables1, mutables1)}, newAuxiliaryResponse(errorConstants.EntityNotFound)},
 		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse(nil)},
-		{"+ve Incorrect Format", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, immutables1, mutables)}, newAuxiliaryResponse(constants.IncorrectFormat)},
+		{"+ve Incorrect Format", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, immutables1, mutables)}, newAuxiliaryResponse(errorConstants.IncorrectFormat)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

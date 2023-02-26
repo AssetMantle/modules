@@ -12,7 +12,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/internal/utilities"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -36,8 +36,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if auxiliaryResponse := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); !auxiliaryResponse.IsSuccessful() {
-		return nil, auxiliaryResponse.GetError()
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+		return nil, err
 	}
 
 	splits := transactionKeeper.mapper.NewCollection(context)
@@ -45,7 +45,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	// TODO: Check if roundint() is apt
+	// TODO ******* : Check if roundint() is apt
 	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(types.UnwrapSDKContext(context), module.Name, fromAddress, types.NewCoins(types.NewCoin(message.OwnableID.AsString(), message.Value.RoundInt()))); err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				break
 			}
 		default:
-			panic(constants.UninitializedUsage)
+			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

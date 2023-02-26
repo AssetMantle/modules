@@ -32,7 +32,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
@@ -187,7 +187,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want   helpers.TransactionResponse
 	}{
 		{"+ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress, baseIds.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
-		{"-ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress2, baseIds.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(constants.NotAuthorized)},
+		{"-ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress2, baseIds.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(errorConstants.NotAuthorized)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

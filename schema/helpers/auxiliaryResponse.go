@@ -4,5 +4,4 @@
 package helpers
 
 type AuxiliaryResponse interface {
-	Response
 }

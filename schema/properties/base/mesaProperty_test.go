@@ -9,11 +9,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-
-	"github.com/AssetMantle/modules/schema/errors/constants"
-
 	"github.com/AssetMantle/modules/schema/data"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -114,7 +112,7 @@ func Test_mesaPropertyFromInterface(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := propertyFromInterface(tt.args.listable)
 			if tt.wantErr {
-				assert.ErrorIs(t, err, constants.MetaDataError)
+				assert.ErrorIs(t, err, errorConstants.MetaDataError)
 			} else {
 				if !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("mesaPropertyFromInterface() got = %v, want %v", got, tt.want)

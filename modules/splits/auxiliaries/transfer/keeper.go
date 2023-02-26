@@ -10,7 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types/base"
@@ -22,10 +22,10 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	if auxiliaryRequest.Value.LTE(sdkTypes.ZeroDec()) {
-		return newAuxiliaryResponse(constants.NotAuthorized)
+		return nil, errorConstants.NotAuthorized
 	}
 
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
@@ -33,13 +33,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	fromSplitID := baseIDs.NewSplitID(auxiliaryRequest.FromID, auxiliaryRequest.OwnableID)
 	Mappable := splits.Fetch(key.NewKey(fromSplitID)).Get(key.NewKey(fromSplitID))
 	if Mappable == nil {
-		return newAuxiliaryResponse(constants.EntityNotFound)
+		return nil, errorConstants.EntityNotFound
 	}
 	fromSplit := mappable.GetSplit(Mappable)
 
 	switch fromSplit = fromSplit.Send(auxiliaryRequest.Value); {
 	case fromSplit.GetValue().LT(sdkTypes.ZeroDec()):
-		return newAuxiliaryResponse(constants.NotAuthorized)
+		return nil, errorConstants.NotAuthorized
 	case fromSplit.GetValue().Equal(sdkTypes.ZeroDec()):
 		splits.Remove(mappable.NewMappable(fromSplit))
 	default:
@@ -54,7 +54,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		splits.Mutate(mappable.NewMappable(mappable.GetSplit(Mappable).Receive(auxiliaryRequest.Value)))
 	}
 
-	return newAuxiliaryResponse(nil)
+	return newAuxiliaryResponse(), nil
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {

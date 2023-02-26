@@ -7,7 +7,7 @@ import (
 	"context"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/utilities"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
@@ -17,26 +17,26 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) helpers.AuxiliaryResponse {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
 	switch totalSplitsValue := utilities.GetOwnableTotalSplitsValue(splits, auxiliaryRequest.OwnableID); {
 	case totalSplitsValue.LT(auxiliaryRequest.Value):
 		if _, err := utilities.AddSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value.Sub(totalSplitsValue)); err != nil {
-			return newAuxiliaryResponse(err)
+			return nil, err
 		}
 	case totalSplitsValue.GT(auxiliaryRequest.Value):
 		if _, err := utilities.SubtractSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, totalSplitsValue.Sub(auxiliaryRequest.Value)); err != nil {
-			return newAuxiliaryResponse(err)
+			return nil, err
 		}
 	case totalSplitsValue.IsZero():
-		return newAuxiliaryResponse(constants.EntityNotFound)
+		return nil, errorConstants.EntityNotFound
 	default:
-		return newAuxiliaryResponse(nil)
+		return newAuxiliaryResponse(), nil
 	}
 
-	return newAuxiliaryResponse(nil)
+	return newAuxiliaryResponse(), nil
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {

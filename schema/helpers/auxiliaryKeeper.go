@@ -8,6 +8,6 @@ import (
 )
 
 type AuxiliaryKeeper interface {
-	Help(context.Context, AuxiliaryRequest) AuxiliaryResponse
+	Help(context.Context, AuxiliaryRequest) (AuxiliaryResponse, error)
 	Keeper
 }

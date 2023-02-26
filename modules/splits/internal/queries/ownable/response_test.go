@@ -10,19 +10,19 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 )
 
 func Test_Split_Response(t *testing.T) {
 	split := sdkTypes.SmallestDec()
 
 	testQueryResponse := newQueryResponse(split, nil)
-	testQueryResponseWithError := newQueryResponse(split, constants.IncorrectFormat)
+	testQueryResponseWithError := newQueryResponse(split, errorConstants.IncorrectFormat)
 
 	require.Equal(t, true, testQueryResponse.IsSuccessful())
 	require.Equal(t, false, testQueryResponseWithError.IsSuccessful())
 	require.Equal(t, nil, testQueryResponse.GetError())
-	require.Equal(t, constants.IncorrectFormat, testQueryResponseWithError.GetError())
+	require.Equal(t, errorConstants.IncorrectFormat, testQueryResponseWithError.GetError())
 
 	encodedResponse, _ := testQueryResponse.Encode()
 	bytes, _ := common.LegacyAmino.MarshalJSON(testQueryResponse)

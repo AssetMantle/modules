@@ -7,7 +7,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -28,7 +28,7 @@ func (numberData *NumberData) FromString(dataTypeAndValueString string) (data.Da
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != numberData.GetType().AsString() {
-		return PrototypeStringData(), constants.IncorrectFormat
+		return PrototypeStringData(), errorConstants.IncorrectFormat
 	}
 
 	if dataString == "" {
@@ -37,7 +37,7 @@ func (numberData *NumberData) FromString(dataTypeAndValueString string) (data.Da
 
 	value, err := strconv.ParseInt(dataString, 10, 64)
 	if err != nil {
-		return PrototypeNumberData(), constants.IncorrectFormat
+		return PrototypeNumberData(), errorConstants.IncorrectFormat
 	}
 
 	return NewNumberData(value), nil

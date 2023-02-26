@@ -3,7 +3,7 @@ package base
 import (
 	"bytes"
 
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -81,5 +81,5 @@ func ReadSplitID(splitIDString string) (ids.SplitID, error) {
 		return PrototypeSplitID(), nil
 	}
 
-	return &SplitID{}, constants.MetaDataError
+	return &SplitID{}, errorConstants.MetaDataError
 }

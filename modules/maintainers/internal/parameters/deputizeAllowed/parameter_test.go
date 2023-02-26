@@ -9,13 +9,13 @@ import (
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
 func Test_Validator(t *testing.T) {
-	require.Equal(t, constants.IncorrectFormat, validator(baseIDs.NewStringID("")))
+	require.Equal(t, errorConstants.IncorrectFormat, validator(baseIDs.NewStringID("")))
 	require.Equal(t, nil, validator(Parameter))
-	require.Equal(t, constants.InvalidParameter, validator(baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)))
+	require.Equal(t, errorConstants.InvalidParameter, validator(baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)))
 }

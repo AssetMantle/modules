@@ -8,7 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -29,7 +29,7 @@ func (idData *IDData) FromString(dataTypeAndValueString string) (data.Data, erro
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != idData.GetType().AsString() {
-		return PrototypeIDData(), constants.IncorrectFormat
+		return PrototypeIDData(), errorConstants.IncorrectFormat
 	}
 
 	if dataString == "" {

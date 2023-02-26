@@ -19,7 +19,7 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/common"
 	"github.com/AssetMantle/modules/modules/orders/internal/mapper"
 	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
@@ -52,12 +52,12 @@ func Test_Order_Response(t *testing.T) {
 	collection := mapper.Prototype().NewCollection(sdkTypes.WrapSDKContext(context))
 
 	testQueryResponse := newQueryResponse(collection, nil)
-	testQueryResponseWithError := newQueryResponse(collection, constants.IncorrectFormat)
+	testQueryResponseWithError := newQueryResponse(collection, errorConstants.IncorrectFormat)
 
 	require.Equal(t, true, testQueryResponse.IsSuccessful())
 	require.Equal(t, false, testQueryResponseWithError.IsSuccessful())
 	require.Equal(t, nil, testQueryResponse.GetError())
-	require.Equal(t, constants.IncorrectFormat, testQueryResponseWithError.GetError())
+	require.Equal(t, errorConstants.IncorrectFormat, testQueryResponseWithError.GetError())
 
 	encodedResponse, _ := testQueryResponse.Encode()
 	bytes, _ := common.LegacyAmino.MarshalJSON(testQueryResponse)
