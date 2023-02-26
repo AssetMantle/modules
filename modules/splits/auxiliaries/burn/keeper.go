@@ -28,13 +28,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	Mappable := splits.Get(key.NewKey(splitID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("split with ID %s not found", splitID.AsString())
 	}
 	split := mappable.GetSplit(Mappable)
 
 	switch split = split.Send(auxiliaryRequest.Value); {
 	case split.GetValue().LT(sdkTypes.ZeroDec()):
-		return nil, errorConstants.InsufficientBalance
+		return nil, errorConstants.InvalidRequest.Wrapf("split value cannot be negative")
 	case split.GetValue().Equal(sdkTypes.ZeroDec()):
 		splits.Remove(mappable.NewMappable(split))
 	default:

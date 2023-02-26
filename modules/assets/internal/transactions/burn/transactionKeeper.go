@@ -43,7 +43,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 
 	if !transactionKeeper.parameterManager.GetParameter(constants.BurnEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.NotAuthorized.Wrapf("burning is not enabled")
 	}
 
 	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
@@ -59,7 +59,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	Mappable := assets.Get(key.NewKey(message.AssetID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("asset with ID %s not found", message.AssetID.AsString())
 	}
 	asset := mappable.GetAsset(Mappable)
 
@@ -72,7 +72,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if burnHeightMetaProperty := metaProperties.GetProperty(constants.BurnHeightProperty.GetID()); burnHeightMetaProperty != nil {
 		burnHeight := burnHeightMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.HeightData).Get()
 		if burnHeight.Compare(baseTypes.NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())) > 0 {
-			return nil, errorConstants.NotAuthorized
+			return nil, errorConstants.NotAuthorized.Wrapf("burning is not allowed until height %d", burnHeight.Get())
 		}
 	}
 

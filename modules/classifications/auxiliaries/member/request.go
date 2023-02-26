@@ -30,7 +30,7 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	case auxiliaryRequest:
 		return value
 	default:
-		panic(errorConstants.InvalidRequest)
+		panic(errorConstants.InvalidRequest.Wrapf("invalid request type %T", value))
 	}
 }
 

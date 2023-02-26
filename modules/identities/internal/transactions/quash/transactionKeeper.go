@@ -46,12 +46,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	Mappable := identities.Get(key.NewKey(message.IdentityID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.IdentityID.AsString())
 	}
 	identity := mappable.GetIdentity(Mappable)
 
+	// TODO: Check if identity expired identities must be quashed at the end of block
 	if identity.GetExpiry().Compare(baseTypes.NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())) > 0 {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.NotAuthorized.Wrapf("identity with ID %s is not expired yet", message.IdentityID.AsString())
 	}
 
 	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(identity.GetClassificationID(), fromAddress)); err != nil {
@@ -77,8 +78,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			case unbond.Auxiliary.GetName():
 				transactionKeeper.unbondAuxiliary = value
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

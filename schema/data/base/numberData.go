@@ -28,7 +28,7 @@ func (numberData *NumberData) FromString(dataTypeAndValueString string) (data.Da
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != numberData.GetType().AsString() {
-		return PrototypeStringData(), errorConstants.IncorrectFormat
+		return PrototypeStringData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for NumberData, expected type identifier %s, got %s", numberData.GetType().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {
@@ -37,7 +37,7 @@ func (numberData *NumberData) FromString(dataTypeAndValueString string) (data.Da
 
 	value, err := strconv.ParseInt(dataString, 10, 64)
 	if err != nil {
-		return PrototypeNumberData(), errorConstants.IncorrectFormat
+		return PrototypeNumberData(), errorConstants.IncorrectFormat.Wrapf(err.Error())
 	}
 
 	return NewNumberData(value), nil

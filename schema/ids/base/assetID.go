@@ -67,5 +67,5 @@ func ReadAssetID(assetIDString string) (ids.AssetID, error) {
 		return PrototypeAssetID(), nil
 	}
 
-	return PrototypeAssetID(), errorConstants.MetaDataError
+	return PrototypeAssetID(), errorConstants.MetaDataError.Wrapf("invalid assetID string: %s", assetIDString)
 }

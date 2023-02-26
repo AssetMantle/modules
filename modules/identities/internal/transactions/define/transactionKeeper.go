@@ -47,12 +47,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromID)).Get(key.NewKey(message.FromID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.FromID.AsString())
 	}
 	identity := mappable.GetIdentity(Mappable)
 
 	if !identity.IsProvisioned(fromAddress) {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not authorized to define identity with ID %s", message.From, message.FromID.AsString())
 	}
 
 	immutables := base.NewImmutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...)...)...))
@@ -88,8 +88,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

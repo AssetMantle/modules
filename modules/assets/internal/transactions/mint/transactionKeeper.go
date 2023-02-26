@@ -46,7 +46,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 
 	if !transactionKeeper.parameterManager.GetParameter(constants.MintEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.NotAuthorized.Wrapf("minting is not enabled")
 	}
 
 	if _, err := transactionKeeper.maintainersVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); err != nil {
@@ -68,7 +68,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(assetID))
 	if assets.Get(key.NewKey(assetID)) != nil {
-		return nil, errorConstants.EntityAlreadyExists
+		return nil, errorConstants.EntityAlreadyExists.Wrapf("asset with ID %s already exists", assetID.AsString())
 	}
 
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...))

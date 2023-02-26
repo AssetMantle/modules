@@ -20,7 +20,7 @@ func (genesis *Genesis) Default() helpers.Genesis {
 }
 func (genesis *Genesis) ValidateBasic() error {
 	if len(genesis.Parameters) != len(genesis.Default().(*Genesis).Parameters) {
-		return errorConstants.InvalidParameter
+		return errorConstants.IncorrectFormat.Wrapf("expected %d parameters, got %d", len(genesis.Default().(*Genesis).Parameters), len(genesis.Parameters))
 	}
 
 	for _, parameter := range genesis.Parameters {
@@ -34,7 +34,7 @@ func (genesis *Genesis) ValidateBasic() error {
 		}
 
 		if !isPresent {
-			return errorConstants.InvalidParameter
+			return errorConstants.IncorrectFormat.Wrapf("expected parameter %s not found", parameter.GetMetaProperty().GetKey().AsString())
 		}
 
 		if err := parameter.ValidateBasic(); err != nil {

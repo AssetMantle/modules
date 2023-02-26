@@ -26,6 +26,6 @@ func GetClassificationIDFromResponse(response helpers.AuxiliaryResponse) ids.Cla
 	case auxiliaryResponse:
 		return value.ClassificationID
 	default:
-		panic(errorConstants.InvalidRequest)
+		panic(errorConstants.InvalidRequest.Wrapf("invalid response type %T", value))
 	}
 }

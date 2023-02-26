@@ -55,7 +55,7 @@ func (decData *DecData) FromString(dataTypeAndValueString string) (data.Data, er
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != decData.GetType().AsString() {
-		return PrototypeDecData(), errorConstants.IncorrectFormat
+		return PrototypeDecData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for DecData, expected type identifier %s, got %s", decData.GetType().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {

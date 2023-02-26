@@ -47,7 +47,7 @@ func propertyIDFromInterface(listable traits.Listable) *PropertyID {
 	case *PropertyID:
 		return value
 	default:
-		panic(errorConstants.MetaDataError)
+		panic(errorConstants.IncorrectFormat.Wrapf("expected *PropertyID, got %T", listable))
 	}
 }
 

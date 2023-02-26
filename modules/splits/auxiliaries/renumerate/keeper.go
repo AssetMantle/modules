@@ -31,7 +31,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 			return nil, err
 		}
 	case totalSplitsValue.IsZero():
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("no splits found for ownable %s", auxiliaryRequest.OwnableID.AsString())
 	default:
 		return newAuxiliaryResponse(), nil
 	}

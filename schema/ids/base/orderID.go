@@ -32,7 +32,7 @@ func orderIDFromInterface(i interface{}) *OrderID {
 	case *OrderID:
 		return value
 	default:
-		panic(errorConstants.MetaDataError)
+		panic(errorConstants.IncorrectFormat.Wrapf("expected *OrderID, got %T", i))
 	}
 }
 

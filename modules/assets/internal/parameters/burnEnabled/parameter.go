@@ -20,7 +20,7 @@ func validator(i interface{}) error {
 		return nil
 	}
 
-	return errorConstants.IncorrectFormat
+	return errorConstants.IncorrectFormat.Wrapf("incorrect format for burnEnabled parameter, expected %T, got %T", baseData.NewBooleanData(false), i)
 
 }
 

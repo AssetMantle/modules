@@ -81,5 +81,5 @@ func ReadSplitID(splitIDString string) (ids.SplitID, error) {
 		return PrototypeSplitID(), nil
 	}
 
-	return &SplitID{}, errorConstants.MetaDataError
+	return PrototypeSplitID(), errorConstants.IncorrectFormat.Wrapf("%s is not valid splitID", splitIDString)
 }

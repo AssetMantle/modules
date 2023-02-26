@@ -72,7 +72,7 @@ func propertyFromInterface(listable traits.Listable) (properties.Property, error
 	case properties.Property:
 		return value, nil
 	default:
-		return nil, errorConstants.MetaDataError
+		return nil, errorConstants.IncorrectFormat.Wrapf("expected Property, got %T", listable)
 	}
 }
 func NewEmptyMesaPropertyFromID(propertyID ids.PropertyID) properties.MesaProperty {

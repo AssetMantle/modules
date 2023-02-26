@@ -38,7 +38,7 @@ func (accAddressData *AccAddressData) FromString(dataTypeAndValueString string) 
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != accAddressData.GetType().AsString() {
-		return PrototypeAccAddressData(), errorConstants.IncorrectFormat
+		return PrototypeAccAddressData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for AccAddressData, expected type identifier %s, got %s", accAddressData.GetType().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {
