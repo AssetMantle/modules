@@ -37,7 +37,8 @@ func TestTransaction(t *testing.T) {
 		base.TestTransactionKeeperPrototype, nil, nil).InitializeKeeper(Mapper, parametersPrototype()).(transaction)
 	require.Equal(t, "TestMessage", base.TestMessagePrototype().(*base.TestMessage).Route())
 	require.NotNil(t, base.TestMessagePrototype().(*base.TestMessage).GetSignBytes())
-	require.Equal(t, nil, base.TestTransactionKeeperPrototype().Transact(context, nil).GetError())
+	_, err := base.TestTransactionKeeperPrototype().Transact(context, nil)
+	require.Equal(t, nil, err)
 
 	// GetName
 	require.Equal(t, "test", Transaction.GetName())
