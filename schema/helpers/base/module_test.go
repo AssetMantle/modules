@@ -5,6 +5,7 @@ package base
 
 import (
 	"encoding/json"
+	"github.com/AssetMantle/modules/schema/properties/base"
 	"math/rand"
 	"testing"
 
@@ -38,7 +39,7 @@ var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
 }
 var parametersPrototype = func() helpers.ParameterManager {
-	return NewParameterManager(baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil }))
+	return NewParameterManager("", NewValidatableParameter(baseTypes.NewParameter(base.NewMetaProperty(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"))), func(interface{}) error { return nil }))
 }
 var queriesPrototype = func() helpers.Queries {
 	return queries{[]helpers.Query{NewQuery("testQuery", "q", "testQuery", "test", baseTestUtilities.TestQueryRequestPrototype,
