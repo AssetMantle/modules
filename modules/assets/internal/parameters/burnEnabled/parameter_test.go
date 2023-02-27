@@ -22,7 +22,6 @@ func Test_validator(t *testing.T) {
 		args      args
 		wantError error
 	}{
-
 		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, errorConstants.IncorrectFormat},
 		{"+ve", args{Parameter}, nil},
 		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, errorConstants.IncorrectFormat},
