@@ -19,7 +19,6 @@ func (height *Height) Bytes() []byte {
 	binary.LittleEndian.PutUint64(Bytes, uint64(height.Get()))
 	return Bytes
 }
-func (height *Height) Get() int64 { return height.Value }
 func (height *Height) Compare(compareHeight types.Height) int {
 	if height.Get() > compareHeight.Get() {
 		return 1
@@ -29,6 +28,7 @@ func (height *Height) Compare(compareHeight types.Height) int {
 
 	return 0
 }
+func (height *Height) Get() int64 { return height.Value }
 
 func NewHeight(value int64) types.Height {
 	if value < 0 {
@@ -40,8 +40,4 @@ func NewHeight(value int64) types.Height {
 
 func CurrentHeight(context context.Context) types.Height {
 	return NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())
-}
-
-func NewCurrentOffsetHeight(value int64, context context.Context) types.Height {
-	return NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight() + value)
 }

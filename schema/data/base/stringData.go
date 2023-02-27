@@ -49,7 +49,7 @@ func (stringData *StringData) FromString(dataTypeAndValueString string) (data.Da
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != stringData.GetType().AsString() {
-		return PrototypeStringData(), errorConstants.IncorrectFormat
+		return PrototypeStringData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for StringData, expected type identifier %s, got %s", stringData.GetType().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {

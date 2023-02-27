@@ -49,13 +49,13 @@ func dataIDFromInterface(i interface{}) *DataID {
 	case *DataID:
 		return value
 	default:
-		panic(errorConstants.MetaDataError)
+		panic(errorConstants.IncorrectFormat.Wrapf("expected *DataID, got %T", i))
 	}
 }
 
 func GenerateDataID(data data.Data) ids.DataID {
 	if data == nil {
-		panic(errorConstants.MetaDataError)
+		panic(errorConstants.MetaDataError.Wrapf("data is nil"))
 	}
 
 	return &DataID{
@@ -86,5 +86,5 @@ func ReadDataID(dataIDString string) (ids.DataID, error) {
 		return PrototypeDataID(), nil
 	}
 
-	return &DataID{}, errorConstants.MetaDataError
+	return PrototypeDataID(), errorConstants.MetaDataError.Wrapf("invalid dataIDString: %s", dataIDString)
 }

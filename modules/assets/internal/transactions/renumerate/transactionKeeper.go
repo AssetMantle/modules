@@ -40,7 +40,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 	if !transactionKeeper.parameterManager.GetParameter(constants.RenumerateEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.NotAuthorized.Wrapf("renumerate is not enabled")
 	}
 
 	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
@@ -56,7 +56,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	Mappable := assets.Get(key.NewKey(message.AssetID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("asset with ID %s not found", message.AssetID.AsString())
 	}
 	asset := mappable.GetAsset(Mappable)
 
@@ -76,7 +76,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			return nil, err
 		}
 	} else {
-		return nil, errorConstants.MetaDataError
+		return nil, errorConstants.MetaDataError.Wrapf("meta property %s not found", constants.SupplyProperty.GetID().AsString())
 	}
 
 	return newTransactionResponse(), nil

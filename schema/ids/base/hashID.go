@@ -42,7 +42,7 @@ func hashIDFromInterface(i interface{}) *HashID {
 	case *HashID:
 		return value
 	default:
-		panic(errorConstants.MetaDataError)
+		panic(errorConstants.IncorrectFormat.Wrapf("expected *HashID, got %T", i))
 	}
 }
 
@@ -85,5 +85,5 @@ func ReadHashID(hashIDString string) (ids.HashID, error) {
 		return PrototypeHashID(), nil
 	}
 
-	return PrototypeHashID(), errorConstants.IncorrectFormat
+	return PrototypeHashID(), errorConstants.IncorrectFormat.Wrapf("incorrect format for HashID, expected base64 encoded string, got %s", hashIDString)
 }

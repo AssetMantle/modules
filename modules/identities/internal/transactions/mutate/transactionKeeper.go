@@ -48,7 +48,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	Mappable := identities.Get(key.NewKey(message.IdentityID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.IdentityID.AsString())
 	}
 	identity := mappable.GetIdentity(Mappable)
 
@@ -81,8 +81,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

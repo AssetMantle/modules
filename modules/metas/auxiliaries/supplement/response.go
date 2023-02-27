@@ -26,6 +26,6 @@ func GetMetaPropertiesFromResponse(response helpers.AuxiliaryResponse) lists.Pro
 	case auxiliaryResponse:
 		return value.PropertyList
 	default:
-		panic(errorConstants.InvalidRequest)
+		panic(errorConstants.InvalidRequest.Wrapf("invalid response type %T", value))
 	}
 }

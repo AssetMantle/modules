@@ -54,12 +54,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	Mappable := orders.Get(key.NewKey(message.OrderID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("order with ID %s not found", message.OrderID.AsString())
 	}
 	order := mappable.GetOrder(Mappable)
 
 	if order.GetTakerID().Compare(baseIDs.PrototypeIdentityID()) != 0 && order.GetTakerID().Compare(message.FromID) != 0 {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.NotAuthorized.Wrapf("taker ID %s is not authorized to take private order with ID %s", message.FromID.AsString(), message.OrderID.AsString())
 	}
 
 	makerReceiveTakerOwnableSplit := order.GetMakerOwnableSplit().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
@@ -68,13 +68,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	switch updatedMakerOwnableSplit := order.GetMakerOwnableSplit().Sub(takerReceiveMakerOwnableSplit); {
 	case updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()):
 		if message.TakerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
-			return nil, errorConstants.InsufficientBalance
+			return nil, errorConstants.InsufficientBalance.Wrapf("taker ownable split %s is less than the required amount %s for order execution", message.TakerOwnableSplit.String(), makerReceiveTakerOwnableSplit.String())
 		}
 
 		orders.Remove(mappable.NewMappable(order))
 	case updatedMakerOwnableSplit.LT(sdkTypes.ZeroDec()):
 		if message.TakerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
-			return nil, errorConstants.InsufficientBalance
+			return nil, errorConstants.InsufficientBalance.Wrapf("taker ownable split %s is less than the required amount %s for order execution", message.TakerOwnableSplit.String(), makerReceiveTakerOwnableSplit.String())
 		}
 
 		takerReceiveMakerOwnableSplit = order.GetMakerOwnableSplit()
@@ -112,8 +112,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

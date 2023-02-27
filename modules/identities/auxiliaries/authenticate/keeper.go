@@ -26,12 +26,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	Mappable := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.IdentityID)).Get(key.NewKey(auxiliaryRequest.IdentityID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", auxiliaryRequest.IdentityID.AsString())
 	}
 	identity := mappable.GetIdentity(Mappable)
 
 	if !identity.IsProvisioned(auxiliaryRequest.Address) {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned by identity with ID %s", auxiliaryRequest.Address.String(), auxiliaryRequest.IdentityID.AsString())
 	}
 
 	return newAuxiliaryResponse(), nil
@@ -49,8 +49,6 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, paramet
 			default:
 				break
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

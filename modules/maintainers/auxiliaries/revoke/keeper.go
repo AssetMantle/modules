@@ -36,9 +36,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		)))
 
 	if Mappable := maintainers.Fetch(key.NewKey(fromMaintainerID)).Get(key.NewKey(fromMaintainerID)); Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("maintainer with ID %s not found", fromMaintainerID.AsString())
 	} else if !mappable.GetMaintainer(Mappable).CanRemoveMaintainer() {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.NotAuthorized.Wrapf("maintainer with ID %s is not authorized to remove maintainers", fromMaintainerID.AsString())
 	}
 
 	toMaintainerID := baseIDs.NewMaintainerID(constansts.MaintainerClassificationID,
@@ -48,7 +48,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		)))
 
 	if Mappable := maintainers.Fetch(key.NewKey(toMaintainerID)).Get(key.NewKey(toMaintainerID)); Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("maintainer with ID %s not found", toMaintainerID.AsString())
 	} else {
 		maintainers.Remove(Mappable)
 	}

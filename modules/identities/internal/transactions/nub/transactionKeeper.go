@@ -48,7 +48,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 	if identities.Get(key.NewKey(identityID)) != nil {
-		return nil, errorConstants.EntityAlreadyExists
+		return nil, errorConstants.EntityAlreadyExists.Wrapf("identity with ID %s already exists", identityID.AsString())
 	}
 
 	identities.Add(mappable.NewMappable(base.NewIdentity(constansts.NubClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(address))))))))
@@ -66,8 +66,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			case define.Auxiliary.GetName():
 				transactionKeeper.defineAuxiliary = value
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

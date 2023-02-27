@@ -27,7 +27,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 	if !transactionKeeper.parameterManager.GetParameter(constantProperties.RevealEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.NotAuthorized.Wrapf("revealing is not enabled")
 	}
 
 	dataID := baseIDs.GenerateDataID(message.Data)
@@ -35,7 +35,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	Mappable := metas.Get(key.NewKey(dataID))
 	if Mappable != nil {
-		return nil, errorConstants.EntityAlreadyExists
+		return nil, errorConstants.EntityAlreadyExists.Wrapf("data with ID %s already exists", dataID)
 	}
 
 	if message.Data.GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {

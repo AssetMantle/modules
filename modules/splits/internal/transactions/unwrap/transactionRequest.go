@@ -12,7 +12,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -66,9 +65,9 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	value, ok := sdkTypes.NewIntFromString(transactionRequest.Value)
-	if !ok {
-		return nil, errorConstants.InvalidRequest
+	value, err := sdkTypes.NewDecFromStr(transactionRequest.Value)
+	if err != nil {
+		return nil, err
 	}
 
 	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
@@ -85,7 +84,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		from,
 		fromID,
 		ownableID,
-		sdkTypes.NewDecFromInt(value),
+		value,
 	), nil
 }
 func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {

@@ -78,15 +78,15 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	orderID := baseIDs.NewOrderID(message.ClassificationID, immutables)
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(orderID))
 	if orders.Get(key.NewKey(orderID)) != nil {
-		return nil, errorConstants.EntityAlreadyExists
+		return nil, errorConstants.EntityAlreadyExists.Wrapf("order with ID %s already exists", orderID.AsString())
 	}
 
-	if orderLife := message.ExpiryHeight.Get() - sdkTypes.UnwrapSDKContext(context).BlockHeight(); orderLife < 0 || orderLife > transactionKeeper.parameters.GetParameter(constants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get() {
-		return nil, errorConstants.InvalidRequest
+	if message.ExpiresIn.Get() > transactionKeeper.parameters.GetParameter(constants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get() {
+		return nil, errorConstants.InvalidRequest.Wrapf("order expiry exceeds maximum allowed %d", transactionKeeper.parameters.GetParameter(constants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get())
 	}
 
 	mutableMetaProperties := message.MutableMetaProperties.
-		Add(baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(message.ExpiryHeight))).
+		Add(baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
 		Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(message.MakerOwnableSplit)))
 
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...))
@@ -118,8 +118,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			case verify.Auxiliary.GetName():
 				transactionKeeper.maintainersVerifyAuxiliary = value
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

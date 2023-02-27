@@ -36,7 +36,7 @@ func maintainerIDFromInterface(i interface{}) *MaintainerID {
 	case *MaintainerID:
 		return value
 	default:
-		panic(errorConstants.MetaDataError)
+		panic(errorConstants.IncorrectFormat.Wrapf("expected *MaintainerID, got %T", i))
 	}
 }
 func NewMaintainerID(classificationID ids.ClassificationID, immutables qualified.Immutables) ids.MaintainerID {
@@ -62,5 +62,5 @@ func ReadMaintainerID(maintainerIDString string) (ids.MaintainerID, error) {
 		return PrototypeMaintainerID(), nil
 	}
 
-	return &MaintainerID{}, errorConstants.MetaDataError
+	return &MaintainerID{}, errorConstants.IncorrectFormat.Wrapf("invalid maintainer ID: %s", maintainerIDString)
 }

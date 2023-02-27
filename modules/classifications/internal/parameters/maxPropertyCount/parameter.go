@@ -24,19 +24,19 @@ func validator(i interface{}) error {
 	case helpers.Parameter:
 		number, ok = value.GetMetaProperty().GetData().Get().(*baseData.NumberData)
 		if !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
-			return errorConstants.IncorrectFormat
+			return errorConstants.IncorrectFormat.Wrapf("incorrect format for maxPropertyCount parameter, expected %T, got %T", baseData.NewNumberData(22), i)
 		}
 	case data.NumberData:
 		number, ok = i.(*baseData.NumberData)
 		if !ok {
-			return errorConstants.IncorrectFormat
+			return errorConstants.IncorrectFormat.Wrapf("incorrect format for maxPropertyCount parameter, expected %T, got %T", baseData.NewNumberData(22), i)
 		}
 	default:
-		return errorConstants.IncorrectFormat
+		return errorConstants.IncorrectFormat.Wrapf("incorrect format for maxPropertyCount parameter, expected %T, got %T", baseData.NewNumberData(22), i)
 	}
 
-	if number.Get() < 0 {
-		return errorConstants.IncorrectFormat
+	if number.Get() <= 0 {
+		return errorConstants.IncorrectFormat.Wrapf("incorrect format for maxPropertyCount parameter, expected %T, got %T", baseData.NewNumberData(22), i)
 	}
 
 	return nil

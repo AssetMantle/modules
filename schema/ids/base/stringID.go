@@ -36,7 +36,7 @@ func stringIDFromInterface(i interface{}) *StringID {
 	case *StringID:
 		return value
 	default:
-		panic(errorConstants.MetaDataError)
+		panic(errorConstants.IncorrectFormat.Wrapf("expected *StringID, got %T", i))
 	}
 }
 

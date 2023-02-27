@@ -8,7 +8,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -25,7 +24,7 @@ func (message *Message) Type() string { return Transaction.GetName() }
 func (message *Message) ValidateBasic() error {
 	var _, err = govalidator.ValidateStruct(message)
 	if err != nil {
-		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
+		return errorConstants.IncorrectMessage.Wrapf(err.Error())
 	}
 
 	return nil

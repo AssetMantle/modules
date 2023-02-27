@@ -36,7 +36,7 @@ var _ helpers.Query = (*query)(nil)
 
 func (query query) RegisterService(configurator sdkModuleTypes.Configurator) {
 	if query.queryKeeper == nil {
-		panic(errorConstants.UninitializedUsage)
+		panic(errorConstants.UninitializedUsage.Wrapf("query keeper for query %s not initialized", query.name))
 	}
 	query.serviceRegistrar(configurator.QueryServer(), query.queryKeeper)
 }

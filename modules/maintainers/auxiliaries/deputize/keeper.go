@@ -34,7 +34,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	if !auxiliaryKeeper.parameterManager.GetParameter(constantProperties.DeputizeAllowedProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.NotAuthorized.Wrapf("deputize is not allowed")
 	}
 
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
@@ -49,13 +49,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	Mappable := maintainers.Fetch(key.NewKey(fromMaintainerID)).Get(key.NewKey(fromMaintainerID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("maintainer with ID %s not found", fromMaintainerID.AsString())
 	}
 	fromMaintainer := mappable.GetMaintainer(Mappable)
 
 	// TODO test
 	if !(fromMaintainer.CanAddMaintainer() || !auxiliaryRequest.CanAddMaintainer && fromMaintainer.CanMutateMaintainer() || !auxiliaryRequest.CanMutateMaintainer && fromMaintainer.CanRemoveMaintainer() || !auxiliaryRequest.CanRemoveMaintainer) {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the required permissions")
 	}
 
 	// Checking if the fromMaintainer has access to maintain the requested properties
@@ -65,7 +65,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	// TODO test
 	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.GetList() {
 		if !fromMaintainer.MaintainsProperty(maintainedProperty.GetID()) {
-			return nil, errorConstants.NotAuthorized
+			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have access to maintain property %s", maintainedProperty.GetID().AsString())
 		}
 		removeMaintainedPropertyList = removeMaintainedPropertyList.Remove(maintainedProperty)
 	}
@@ -82,13 +82,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	if Mappable = maintainers.Fetch(key.NewKey(toMaintainerID)).Get(key.NewKey(toMaintainerID)); Mappable == nil {
 		if !fromMaintainer.CanAddMaintainer() {
-			return nil, errorConstants.NotAuthorized
+			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the permission to add maintainers")
 		}
 
 		maintainers.Add(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ToID, auxiliaryRequest.MaintainedClassificationID, auxiliaryRequest.MaintainedProperties.GetPropertyIDList(), internalUtilities.SetPermissions(auxiliaryRequest.CanMintAsset, auxiliaryRequest.CanBurnAsset, auxiliaryRequest.CanRenumerateAsset, auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanRemoveMaintainer, auxiliaryRequest.CanMutateMaintainer))))
 	} else {
 		if !fromMaintainer.CanMutateMaintainer() {
-			return nil, errorConstants.NotAuthorized
+			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the permission to mutate maintainers")
 		}
 
 		maintainedProperties := mappable.GetMaintainer(Mappable).GetMutables().GetMutablePropertyList().Add(propertiesUtilities.AnyPropertyListToPropertyList(auxiliaryRequest.MaintainedProperties.GetList()...)...).Remove(propertiesUtilities.AnyPropertyListToPropertyList(removeMaintainedPropertyList.GetList()...)...)
@@ -108,11 +108,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, paramet
 			switch value.GetName() {
 			case member.Auxiliary.GetName():
 				auxiliaryKeeper.memberAuxiliary = value
-			default:
-				break
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

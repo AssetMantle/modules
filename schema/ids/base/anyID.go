@@ -80,6 +80,6 @@ func idFromListable(listable traits.Listable) (ids.ID, error) {
 		return listable.(ids.ID), nil
 
 	default:
-		return nil, errorConstants.MetaDataError
+		return nil, errorConstants.IncorrectFormat.Wrapf("unsupported type")
 	}
 }

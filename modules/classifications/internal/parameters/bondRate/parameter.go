@@ -35,7 +35,7 @@ func validator(i interface{}) error {
 		return errorConstants.IncorrectFormat
 	}
 
-	if number.Get() < 0 {
+	if number.Get() <= 0 {
 		return errorConstants.IncorrectFormat
 	}
 

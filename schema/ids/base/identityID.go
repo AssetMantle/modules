@@ -35,7 +35,7 @@ func identityIDFromInterface(i interface{}) *IdentityID {
 	case *IdentityID:
 		return value
 	default:
-		panic(errorConstants.MetaDataError)
+		panic(errorConstants.IncorrectFormat.Wrapf("expected *IdentityID, got %T", i))
 	}
 }
 
@@ -52,12 +52,11 @@ func PrototypeIdentityID() ids.IdentityID {
 }
 
 func ReadIdentityID(identityIDString string) (ids.IdentityID, error) {
-
 	if hashID, err := ReadHashID(identityIDString); err == nil {
 		return &IdentityID{
 			HashID: hashID.(*HashID),
 		}, nil
+	} else {
+		return PrototypeIdentityID(), err
 	}
-
-	return &IdentityID{}, errorConstants.IncorrectFormat
 }

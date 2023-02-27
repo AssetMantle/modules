@@ -20,10 +20,9 @@ var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewBool
 func validator(i interface{}) error {
 	switch value := i.(type) {
 	case helpers.Parameter:
-		if _, ok := value.GetMetaProperty().GetData().Get().(*baseData.BooleanData); !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
-			return errorConstants.IncorrectFormat
+		if _, ok := value.GetMetaProperty().GetData().Get().(*baseData.BooleanData); ok && value.GetMetaProperty().GetID().GetKey().Compare(ID) == 0 {
+			return nil
 		}
-		return nil
 	case data.BooleanData:
 		if _, ok := i.(*baseData.BooleanData); ok {
 			return nil

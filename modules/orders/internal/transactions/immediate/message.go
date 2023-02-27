@@ -8,7 +8,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -27,10 +26,10 @@ func (message *Message) Type() string { return Transaction.GetName() }
 func (message *Message) ValidateBasic() error {
 	var _, err = govalidator.ValidateStruct(message)
 	if err != nil {
-		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
+		return errorConstants.IncorrectMessage.Wrapf(err.Error())
 	}
 	if !sdkTypes.ValidSortableDec(message.MakerOwnableSplit) || !sdkTypes.ValidSortableDec(message.TakerOwnableSplit) {
-		return errorConstants.InvalidParameter
+		return errorConstants.IncorrectMessage.Wrapf("invalid split")
 	}
 	return nil
 }
@@ -59,7 +58,7 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, takerID ids.IdentityID, makerOwnableID ids.AnyOwnableID, takerOwnableID ids.AnyOwnableID, expiryHeight typesSchema.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, takerID ids.IdentityID, makerOwnableID ids.AnyOwnableID, takerOwnableID ids.AnyOwnableID, expiresIn typesSchema.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return &Message{
 		From:                    from.String(),
 		FromID:                  fromID.(*baseIds.IdentityID),
@@ -67,7 +66,7 @@ func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationI
 		TakerID:                 takerID.(*baseIds.IdentityID),
 		MakerOwnableID:          makerOwnableID.(*baseIds.AnyOwnableID),
 		TakerOwnableID:          takerOwnableID.(*baseIds.AnyOwnableID),
-		ExpiryHeight:            expiryHeight.(*baseTypes.Height),
+		ExpiresIn:               expiresIn.(*baseTypes.Height),
 		MakerOwnableSplit:       makerOwnableSplit,
 		TakerOwnableSplit:       takerOwnableSplit,
 		ImmutableMetaProperties: immutableMetaProperties.(*baseLists.PropertyList),

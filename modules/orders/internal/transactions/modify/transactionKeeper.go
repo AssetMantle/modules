@@ -56,7 +56,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	Mappable := orders.Get(key.NewKey(message.OrderID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("order with ID %s not found", message.OrderID.AsString())
 	}
 	order := mappable.GetOrder(Mappable)
 
@@ -104,8 +104,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 

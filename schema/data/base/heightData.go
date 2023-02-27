@@ -33,7 +33,7 @@ func (heightData *HeightData) FromString(dataTypeAndValueString string) (data.Da
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != heightData.GetType().AsString() {
-		return PrototypeHeightData(), errorConstants.IncorrectFormat
+		return PrototypeHeightData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for HeightData, expected type identifier %s, got %s", heightData.GetType().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {

@@ -71,7 +71,7 @@ func (x *AnyData) FromString(dataString string) (data.Data, error) {
 		case dataConstants.StringDataID.AsString():
 			Data, err = PrototypeStringData().FromString(dataString)
 		default:
-			Data, err = nil, errorConstants.UnsupportedParameter
+			Data, err = nil, errorConstants.IncorrectFormat.Wrapf("type identifier is not recognised")
 		}
 
 		if err != nil {
@@ -81,7 +81,7 @@ func (x *AnyData) FromString(dataString string) (data.Data, error) {
 		return Data, nil
 	}
 
-	return nil, errorConstants.IncorrectFormat
+	return nil, errorConstants.IncorrectFormat.Wrapf("type identifier is missing")
 }
 func (x *AnyData) Get() data.Data {
 	return x.Impl.(getter).get()
@@ -116,7 +116,7 @@ func dataFromListable(listable traits.Listable) (data.Data, error) {
 	case data.Data:
 		return value, nil
 	default:
-		return nil, errorConstants.MetaDataError
+		return nil, errorConstants.MetaDataError.Wrapf("unsupported type")
 	}
 }
 
@@ -128,7 +128,7 @@ func joinDataTypeAndValueStrings(dataType, dataValue string) string {
 }
 func splitDataTypeAndValueStrings(dataTypeAndValueString string) (dataType, dataValue string) {
 	if dataTypeAndValue := strings.SplitN(dataTypeAndValueString, dataConstants.DataTypeAndValueSeparator, 2); len(dataTypeAndValue) == 1 {
-		return dataTypeAndValue[0], ""
+		return strings.TrimSpace(dataTypeAndValue[0]), ""
 	} else if len(dataTypeAndValue) == 2 {
 		return strings.TrimSpace(dataTypeAndValue[0]), strings.TrimSpace(dataTypeAndValue[1])
 	} else {

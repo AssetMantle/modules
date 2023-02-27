@@ -8,7 +8,6 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
@@ -34,7 +33,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	Mappable := identities.Get(key.NewKey(identityID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", identityID.AsString())
 	}
 	identity := mappable.GetIdentity(Mappable)
 
@@ -49,11 +48,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	if !identity.IsProvisioned(fromAddress) {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned", fromAddress.String())
 	}
 
 	if !identity.IsProvisioned(toAddress) {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("address %s is not provisioned", toAddress.String())
 	}
 
 	identities.Mutate(mappable.NewMappable(identity.UnprovisionAddress(toAddress)))
@@ -67,23 +66,9 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case define.Auxiliary.GetName():
-				transactionKeeper.supplementAuxiliary = value
-			}
-		default:
-			panic(errorConstants.UninitializedUsage)
-		}
-	}
-
-	for _, auxiliary := range auxiliaries {
-		switch value := auxiliary.(type) {
-		case helpers.Auxiliary:
-			switch value.GetName() {
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			}
-		default:
-			panic(errorConstants.UninitializedUsage)
 		}
 	}
 
