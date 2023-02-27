@@ -4,9 +4,8 @@
 package revealEnabled
 
 import (
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -14,8 +13,31 @@ import (
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
-func Test_Validator(t *testing.T) {
-	require.Equal(t, errorConstants.IncorrectFormat, validator(baseIDs.NewStringID("")))
-	require.Equal(t, nil, validator(Parameter))
-	require.Equal(t, errorConstants.InvalidParameter, validator(baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)))
+func Test_validator(t *testing.T) {
+	type args struct {
+		i interface{}
+	}
+	tests := []struct {
+		name      string
+		args      args
+		wantError error
+	}{
+		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, errorConstants.IncorrectFormat},
+		{"+ve", args{Parameter}, nil},
+		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, errorConstants.IncorrectFormat},
+		{"+ve with booleanData", args{baseData.NewBooleanData(false)}, errorConstants.IncorrectFormat},
+		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, errorConstants.IncorrectFormat},
+		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, errorConstants.IncorrectFormat},
+		{"+ve with true booleanData", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("revealEnabled"), baseData.NewBooleanData(true)))}, nil},
+		{"+ve with false booleanData", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("revealEnabled"), baseData.NewBooleanData(false)))}, nil},
+		{"+ve with incorrect ID", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewBooleanData(false)))}, errorConstants.IncorrectFormat},
+		{"-ve nil", args{}, errorConstants.IncorrectFormat},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := validator(tt.args.i); err != tt.wantError {
+				t.Errorf("validator() error = %v, wantErr %v", err, tt.wantError)
+			}
+		})
+	}
 }
