@@ -5,6 +5,7 @@ package base
 
 import (
 	"encoding/json"
+	"github.com/AssetMantle/modules/schema/properties/base"
 	"math/rand"
 	"testing"
 
@@ -22,7 +23,6 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
-	parametersSchema "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
 // TODO: Add grpc gateway handling for tests
@@ -31,14 +31,13 @@ var auxiliariesPrototype = func() helpers.Auxiliaries {
 	return auxiliaries{[]helpers.Auxiliary{NewAuxiliary("testAuxiliary", baseTestUtilities.TestAuxiliaryKeeperPrototype)}}
 }
 var genesisPrototype = func() helpers.Genesis {
-	return NewGenesis(baseTestUtilities.KeyPrototype, baseTestUtilities.PrototypeGenesisState()).Initialize([]helpers.Mappable{baseTestUtilities.NewMappable("test", "testValue")},
-		[]parametersSchema.Parameter{baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })})
+	return baseTestUtilities.Prototype()
 }
 var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
 }
 var parametersPrototype = func() helpers.ParameterManager {
-	return NewParameterManager(baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil }))
+	return NewParameterManager("", NewValidatableParameter(baseTypes.NewParameter(base.NewMetaProperty(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"))), func(interface{}) error { return nil }))
 }
 var queriesPrototype = func() helpers.Queries {
 	return queries{[]helpers.Query{NewQuery("testQuery", "q", "testQuery", "test", baseTestUtilities.TestQueryRequestPrototype,

@@ -4,6 +4,9 @@
 package parameters
 
 import (
+	"github.com/AssetMantle/modules/modules/assets/internal/module"
+	"github.com/AssetMantle/modules/modules/assets/internal/parameters/burnEnabled"
+	"github.com/AssetMantle/modules/modules/assets/internal/parameters/renumerateEnabled"
 	"reflect"
 	"testing"
 
@@ -19,7 +22,7 @@ func TestPrototype(t *testing.T) {
 		want      helpers.ParameterManager
 		wantError error
 	}{
-		{"+ve", baseHelpers.NewParameterManager(mintEnabled.ValidatableParameter), nil},
+		{"+ve", baseHelpers.NewParameterManager(module.Name, burnEnabled.ValidatableParameter, mintEnabled.ValidatableParameter, renumerateEnabled.ValidatableParameter), nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

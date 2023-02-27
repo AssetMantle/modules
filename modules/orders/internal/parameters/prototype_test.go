@@ -4,13 +4,12 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/modules/metas/internal/module"
-	"reflect"
-	"testing"
-
-	"github.com/AssetMantle/modules/modules/metas/internal/parameters/revealEnabled"
+	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	"github.com/AssetMantle/modules/modules/orders/internal/parameters/maxOrderLife"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"reflect"
+	"testing"
 )
 
 func TestPrototype(t *testing.T) {
@@ -18,7 +17,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.ParameterManager
 	}{
-		{"+ve", baseHelpers.NewParameterManager(module.Name, revealEnabled.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterManager(module.Name, maxOrderLife.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

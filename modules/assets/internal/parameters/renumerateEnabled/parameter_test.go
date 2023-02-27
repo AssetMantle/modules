@@ -4,12 +4,10 @@
 package renumerateEnabled
 
 import (
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"testing"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 )
@@ -21,23 +19,21 @@ func Test_validator(t *testing.T) {
 	tests := []struct {
 		name      string
 		args      args
-		wantError error
+		wantError bool
 	}{
-
-		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, errorConstants.IncorrectFormat},
-		{"+ve", args{Parameter}, nil},
-		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)}, errorConstants.InvalidParameter},
-		{"-ve nil", args{}, errorConstants.IncorrectFormat},
-		{"+ve with decData", args{baseData.NewDecData(sdkTypes.NewDec(-1))}, errorConstants.InvalidParameter},
-		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, errorConstants.IncorrectFormat},
-		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)}, errorConstants.InvalidParameter},
-		{"-ve with -ve decData", args{baseTypes.NewParameter(baseIDs.NewStringID("ID"), baseData.NewDecData(sdkTypes.NewDec(-1)), validator)}, errorConstants.InvalidParameter},
-		{"+ve with +ve decData", args{baseTypes.NewParameter(baseIDs.NewStringID("dummy"), baseData.NewDecData(sdkTypes.NewDec(1)), validator)}, nil},
-		{"-ve nil", args{}, errorConstants.IncorrectFormat},
+		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, true},
+		{"+ve", args{Parameter}, false},
+		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
+		{"+ve with booleanData", args{baseData.NewBooleanData(false)}, false},
+		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
+		{"+ve with true booleanData", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("renumerateEnabled"), baseData.NewBooleanData(true)))}, false},
+		{"+ve with false booleanData", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("renumerateEnabled"), baseData.NewBooleanData(false)))}, false},
+		{"+ve with incorrect ID", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewBooleanData(false)))}, true},
+		{"-ve nil", args{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := validator(tt.args.i); err != tt.wantError {
+			if err := validator(tt.args.i); (err != nil) != tt.wantError {
 				t.Errorf("validator() error = %v, wantErr %v", err, tt.wantError)
 			}
 		})

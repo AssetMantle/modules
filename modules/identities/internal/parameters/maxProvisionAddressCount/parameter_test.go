@@ -4,13 +4,11 @@
 package maxProvisionAddressCount
 
 import (
-	"testing"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"testing"
 )
 
 func Test_validator(t *testing.T) {
@@ -22,11 +20,18 @@ func Test_validator(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-
-		{"+ve with nil", args{Parameter}, false},
-		{"-ve wrong Parameter Type", args{baseTypes.NewParameter(baseIDs.NewStringID("newID"), baseData.NewDecData(sdkTypes.NewDec(-1)), validator)}, true},
-		{"-ve wrong Parameter Type", args{baseTypes.NewParameter(baseIDs.NewStringID("newID"), baseData.NewStringData("newStringData"), validator)}, true},
-		{"+ve empty string", args{baseIDs.NewStringID("")}, true},
+		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, true},
+		{"+ve", args{Parameter}, false},
+		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
+		{"+ve with zero NumberData", args{baseData.NewNumberData(0)}, true},
+		{"+ve with positive NumberData", args{baseData.NewNumberData(1)}, false},
+		{"+ve with negative NumberData", args{baseData.NewNumberData(-1)}, true},
+		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
+		{"+ve with positive NumberDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(1)))}, false},
+		{"+ve with negative NumberDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(-1)))}, true},
+		{"+ve with zero NumberDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(0)))}, true},
+		{"+ve with incorrect ID", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewBooleanData(false)))}, true},
+		{"-ve nil", args{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

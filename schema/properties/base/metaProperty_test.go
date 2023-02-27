@@ -1,5 +1,5 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-IDentifier: Apache-2.0
 
 package base
 
@@ -44,7 +44,7 @@ func TestNewEmptyMetaPropertyFromID(t *testing.T) {
 		want    properties.MetaProperty
 		wantErr bool
 	}{
-		{"+ve", args{testPropertyID}, &MetaProperty{Id: testPropertyID.(*base.PropertyID)}, false},
+		{"+ve", args{testPropertyID}, &MetaProperty{ID: testPropertyID.(*base.PropertyID)}, false},
 		{"panic with nil", args{}, nil, true},
 	}
 	for _, tt := range tests {
@@ -105,13 +105,13 @@ func Test_metaProperty_Compare(t *testing.T) {
 		want   int
 	}{
 		{"+ve", fields{testPropertyID, testData}, args{testMetaProperty}, 0},
-		{"+ve compare with metaProperty with no Data", fields{testPropertyID, testData}, args{&MetaProperty{Id: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID)}}, 0},
+		{"+ve compare with metaProperty with no Data", fields{testPropertyID, testData}, args{&MetaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID)}}, 0},
 		{"+ve", fields{testPropertyID, testData}, args{&MetaProperty{base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID), baseData.NewStringData("Data2").ToAnyData().(*baseData.AnyData)}}, 0}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
-				AnyData: ValidatedData(tt.fields.Data),
+				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.Compare(tt.args.listable); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
@@ -137,8 +137,8 @@ func Test_metaProperty_GetData(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
-				AnyData: ValidatedData(tt.fields.Data),
+				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetData(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetData() = %v, want %v", got, tt.want)
@@ -163,8 +163,8 @@ func Test_metaProperty_GetDataID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
-				AnyData: ValidatedData(tt.fields.Data),
+				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetDataID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetDataID() = %v, want %v", got, tt.want)
@@ -185,13 +185,13 @@ func Test_metaProperty_GetID(t *testing.T) {
 		want   ids.PropertyID
 	}{
 		{"+ve", fields{testPropertyID, testData}, testPropertyID},
-		{"+ve", fields{}, (&MetaProperty{}).Id},
+		{"+ve", fields{}, (&MetaProperty{}).ID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
-				AnyData: ValidatedData(tt.fields.Data),
+				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetID() = %v, want %v", got, tt.want)
@@ -216,8 +216,8 @@ func Test_metaProperty_GetKey(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
-				AnyData: ValidatedData(tt.fields.Data),
+				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetKey(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetKey() = %v, want %v", got, tt.want)
@@ -242,8 +242,8 @@ func Test_metaProperty_GetType(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
-				AnyData: ValidatedData(tt.fields.Data),
+				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetType(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetType() = %v, want %v", got, tt.want)
@@ -263,13 +263,13 @@ func Test_metaProperty_RemoveData(t *testing.T) {
 		fields fields
 		want   properties.Property
 	}{
-		{"+ve", fields{testPropertyID, testData}, &MesaProperty{Id: testPropertyID.(*base.PropertyID), DataID: testData.GetID().(*base.DataID)}},
+		{"+ve", fields{testPropertyID, testData}, &MesaProperty{ID: testPropertyID.(*base.PropertyID), DataID: testData.GetID().(*base.DataID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				Id:      ValidatedID[*base.PropertyID](tt.fields.ID),
-				AnyData: ValidatedData(tt.fields.Data),
+				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.ScrubData(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ScrubData() = %v, want %v", got, tt.want)
