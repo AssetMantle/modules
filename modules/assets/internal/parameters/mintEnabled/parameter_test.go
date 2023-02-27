@@ -4,9 +4,8 @@
 package mintEnabled
 
 import (
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"testing"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -26,13 +25,14 @@ func Test_validator(t *testing.T) {
 
 		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, errorConstants.IncorrectFormat},
 		{"+ve", args{Parameter}, nil},
-		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)}, errorConstants.InvalidParameter},
+		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, errorConstants.IncorrectFormat},
 		{"-ve nil", args{}, errorConstants.IncorrectFormat},
-		{"+ve with decData", args{baseData.NewDecData(sdkTypes.NewDec(-1))}, errorConstants.InvalidParameter},
+		{"+ve with booleanData", args{baseData.NewBooleanData(false)}, errorConstants.IncorrectFormat},
 		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, errorConstants.IncorrectFormat},
-		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseIDs.NewStringID(""), baseData.NewStringData(""), validator)}, errorConstants.InvalidParameter},
-		{"-ve with -ve decData", args{baseTypes.NewParameter(baseIDs.NewStringID("ID"), baseData.NewDecData(sdkTypes.NewDec(-1)), validator)}, errorConstants.InvalidParameter},
-		{"+ve with +ve decData", args{baseTypes.NewParameter(baseIDs.NewStringID("dummy"), baseData.NewDecData(sdkTypes.NewDec(1)), validator)}, nil},
+		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, errorConstants.IncorrectFormat},
+		{"+ve with true booleanData", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("mintEnabled"), baseData.NewBooleanData(true)))}, nil},
+		{"+ve with false booleanData", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("mintEnabled"), baseData.NewBooleanData(false)))}, nil},
+		{"+ve with incorrect ID", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewBooleanData(false)))}, errorConstants.IncorrectFormat},
 		{"-ve nil", args{}, errorConstants.IncorrectFormat},
 	}
 	for _, tt := range tests {
