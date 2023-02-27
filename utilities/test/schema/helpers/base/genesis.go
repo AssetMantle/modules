@@ -1,16 +1,16 @@
-package genesis
+package base
 
 import (
 	"context"
-
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
+	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/asaskevich/govalidator"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
-	"github.com/AssetMantle/modules/modules/classifications/internal/parameters"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/parameters/base"
 )
 
 var _ helpers.Genesis = (*Genesis)(nil)
@@ -18,9 +18,9 @@ var _ helpers.Genesis = (*Genesis)(nil)
 func (genesis *Genesis) Default() helpers.Genesis {
 	return Prototype()
 }
-func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager) error {
+func (genesis *Genesis) ValidateBasic() error {
 	if len(genesis.Parameters) != len(genesis.Default().(*Genesis).Parameters) {
-		return errorConstants.IncorrectFormat.Wrapf("expected %d parameters, got %d", len(genesis.Default().(*Genesis).Parameters), len(genesis.Parameters))
+		return constants.InvalidParameter
 	}
 
 	for _, parameter := range genesis.Parameters {
@@ -34,10 +34,10 @@ func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager)
 		}
 
 		if !isPresent {
-			return errorConstants.IncorrectFormat.Wrapf("expected parameter %s not found", parameter.GetMetaProperty().GetKey().AsString())
+			return constants.InvalidParameter
 		}
 
-		if err := parameterManager.ValidateParameter(parameter); err != nil {
+		if err := parameter.ValidateBasic(); err != nil {
 			return err
 		}
 	}
@@ -52,7 +52,7 @@ func (genesis *Genesis) Import(context context.Context, mapper helpers.Mapper, p
 		mapper.Create(context, Mappable)
 	}
 
-	parameterManager.Set(context, base.ParametersToInterface(genesis.Parameters)...)
+	parameterManager.Set(context, baseParameters.ParametersToInterface(genesis.Parameters)...)
 }
 func (genesis *Genesis) Export(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) helpers.Genesis {
 	var mappableList []helpers.Mappable
@@ -84,7 +84,7 @@ func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameters []he
 	if len(mappables) == 0 {
 		genesis.Mappables = genesis.Default().(*Genesis).Mappables
 	} else {
-		genesis.Mappables = mappable.MappablesFromInterface(mappables)
+		genesis.Mappables = MappablesFromInterface(mappables)
 	}
 
 	if len(parameters) == 0 {
@@ -97,7 +97,7 @@ func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameters []he
 				}
 			}
 		}
-		genesis.Parameters = base.ParametersFromInterface(parameters)
+		genesis.Parameters = baseParameters.ParametersFromInterface(parameters)
 	}
 
 	return genesis
@@ -105,7 +105,7 @@ func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameters []he
 
 func Prototype() helpers.Genesis {
 	return &Genesis{
-		Mappables:  []*mappable.Mappable{},
-		Parameters: base.ParametersFromInterface(parameters.Prototype().Get()),
+		Mappables:  []*TestMappable{},
+		Parameters: []*baseParameters.Parameter{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData")))},
 	}
 }

@@ -4,21 +4,24 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/modules/metas/internal/module"
+	"github.com/AssetMantle/modules/modules/classifications/internal/module"
+	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/bondRate"
+	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/maxPropertyCount"
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/modules/metas/internal/parameters/revealEnabled"
 	"github.com/AssetMantle/modules/schema/helpers"
+
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {
 	tests := []struct {
-		name string
-		want helpers.ParameterManager
+		name      string
+		want      helpers.ParameterManager
+		wantError error
 	}{
-		{"+ve", baseHelpers.NewParameterManager(module.Name, revealEnabled.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterManager(module.Name, bondRate.ValidatableParameter, maxPropertyCount.ValidatableParameter), nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

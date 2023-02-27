@@ -4,11 +4,11 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/modules/metas/internal/module"
+	"github.com/AssetMantle/modules/modules/splits/internal/module"
+	"github.com/AssetMantle/modules/modules/splits/internal/parameters/wrapAllowedCoins"
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/modules/metas/internal/parameters/revealEnabled"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
@@ -18,7 +18,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.ParameterManager
 	}{
-		{"+ve", baseHelpers.NewParameterManager(module.Name, revealEnabled.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterManager(module.Name, wrapAllowedCoins.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

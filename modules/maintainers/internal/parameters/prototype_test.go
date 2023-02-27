@@ -4,7 +4,7 @@
 package parameters
 
 import (
-	"fmt"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"reflect"
 	"testing"
 
@@ -18,11 +18,11 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.ParameterManager
 	}{
-		{"+ve", baseHelpers.NewParameterManager(deputizeAllowed.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterManager(module.Name, deputizeAllowed.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Prototype() = %v, want %v", got, tt.want)
 			}
 		})

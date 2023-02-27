@@ -32,7 +32,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	Mappable := classifications.Get(key.NewKey(auxiliaryRequest.classificationID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound.Wrapf("classification with ID %s not found", auxiliaryRequest.classificationID.AsString()
+		return nil, errorConstants.EntityNotFound.Wrapf("classification with ID %s not found", auxiliaryRequest.classificationID.AsString())
 	}
 	classification := mappable.GetClassification(Mappable)
 

@@ -4,6 +4,7 @@
 package parameters
 
 import (
+	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"reflect"
 	"testing"
 
@@ -19,7 +20,7 @@ func TestPrototype(t *testing.T) {
 		want helpers.ParameterManager
 	}{
 
-		{"+ve", baseHelpers.NewParameterManager(maxProvisionAddressCount.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterManager(module.Name, maxProvisionAddressCount.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
