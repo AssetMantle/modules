@@ -37,7 +37,7 @@ func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager)
 			return errorConstants.IncorrectFormat.Wrapf("expected parameter %s not found", parameter.GetMetaProperty().GetKey().AsString())
 		}
 
-		if err := parameterManager.GetValidator(parameter.GetMetaProperty().GetID())(parameter); err != nil {
+		if err := parameterManager.ValidateParameter(parameter); err != nil {
 			return err
 		}
 	}
