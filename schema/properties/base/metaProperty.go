@@ -71,7 +71,7 @@ func NewEmptyMetaPropertyFromID(propertyID ids.PropertyID) properties.MetaProper
 }
 func NewMetaProperty(key ids.StringID, data data.Data) properties.MetaProperty {
 	if data == nil || key == nil {
-		panic(errorConstants.MetaDataError)
+		panic(errorConstants.IncorrectFormat.Wrapf("meta property data or key cannot be nil"))
 	}
 	return &MetaProperty{
 		ID:   baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.PropertyID),

@@ -34,9 +34,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(maintainerID))
 
-	maintainer := maintainers.Get(key.NewKey(maintainerID))
-	if maintainer == nil {
-		return nil, errorConstants.EntityNotFound
+	if Mappable := maintainers.Get(key.NewKey(maintainerID)); Mappable == nil {
+		return nil, errorConstants.EntityNotFound.Wrapf("maintainer with ID %s not found", maintainerID.AsString())
 	}
 
 	return newAuxiliaryResponse(), nil

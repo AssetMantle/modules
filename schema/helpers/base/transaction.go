@@ -88,7 +88,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
 			return
 		} else if reflect.TypeOf(transaction.requestPrototype()) != reflect.TypeOf(transactionRequest) {
-			rest.CheckBadRequestError(responseWriter, errorConstants.InvalidRequest)
+			rest.CheckBadRequestError(responseWriter, errorConstants.InvalidRequest.Wrapf("expected %s, got %s", reflect.TypeOf(transaction.requestPrototype()), reflect.TypeOf(transactionRequest)))
 			return
 		}
 
@@ -239,7 +239,7 @@ func (transaction transaction) RegisterInterfaces(interfaceRegistry codecTypes.I
 }
 func (transaction transaction) RegisterService(configurator sdkModuleTypes.Configurator) {
 	if transaction.keeper == nil {
-		panic(errorConstants.UninitializedUsage)
+		panic(errorConstants.UninitializedUsage.Wrapf("keeper for transaction %s is not initialized", transaction.name))
 	}
 	transaction.serviceRegistrar(configurator.MsgServer(), transaction.keeper)
 }

@@ -32,7 +32,7 @@ func classificationIDFromInterface(i interface{}) *ClassificationID {
 	case *ClassificationID:
 		return value
 	default:
-		panic(errorConstants.MetaDataError)
+		panic(errorConstants.IncorrectFormat.Wrapf("Expected ClassificationID, got %T", i))
 	}
 }
 
@@ -65,5 +65,5 @@ func ReadClassificationID(classificationIDString string) (ids.ClassificationID, 
 		return PrototypeClassificationID(), nil
 	}
 
-	return &ClassificationID{}, errorConstants.MetaDataError
+	return &ClassificationID{}, errorConstants.IncorrectFormat.Wrapf("Invalid ClassificationID: %s", classificationIDString)
 }

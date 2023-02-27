@@ -18,7 +18,7 @@ import (
 
 func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) (helpers.Collection, error) {
 	if value.LTE(sdkTypes.ZeroDec()) {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.InvalidRequest.Wrapf("value must be greater than zero")
 	}
 
 	splitID := baseIDs.NewSplitID(ownerID, ownableID)
@@ -35,20 +35,20 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.
 
 func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) (helpers.Collection, error) {
 	if value.LTE(sdkTypes.ZeroDec()) {
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.InvalidRequest.Wrapf("value must be greater than zero")
 	}
 
-	splitsKey := key.NewKey(baseIDs.NewSplitID(ownerID, ownableID))
+	splitID := baseIDs.NewSplitID(ownerID, ownableID)
 
-	Mappable := splits.Fetch(splitsKey).Get(splitsKey)
+	Mappable := splits.Fetch(key.NewKey(splitID)).Get(key.NewKey(splitID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound
+		return nil, errorConstants.EntityNotFound.Wrapf("split with ID %s not found", splitID.AsString())
 	}
 	split := mappable.GetSplit(Mappable)
 
 	switch split = split.Send(value); {
 	case split.GetValue().LT(sdkTypes.ZeroDec()):
-		return nil, errorConstants.NotAuthorized
+		return nil, errorConstants.InvalidRequest.Wrapf("split value cannot be negative")
 	case split.GetValue().Equal(sdkTypes.ZeroDec()):
 		splits.Remove(mappable.NewMappable(split))
 	default:

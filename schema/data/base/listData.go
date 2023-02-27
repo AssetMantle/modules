@@ -41,7 +41,7 @@ func (listData *ListData) FromString(dataTypeAndValueString string) (data.Data, 
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != listData.GetType().AsString() {
-		return PrototypeListData(), errorConstants.IncorrectFormat
+		return PrototypeListData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for ListData, expected type identifier %s, got %s", listData.GetType().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {
@@ -147,7 +147,7 @@ func listDataFromInterface(listable traits.Listable) (*ListData, error) {
 	case *ListData:
 		return value, nil
 	default:
-		return &ListData{}, errorConstants.MetaDataError
+		return &ListData{}, errorConstants.IncorrectFormat.Wrapf("unsupported type")
 	}
 }
 

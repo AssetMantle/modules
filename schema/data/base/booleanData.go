@@ -44,7 +44,7 @@ func (booleanData *BooleanData) FromString(dataTypeAndValueString string) (data.
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != booleanData.GetType().AsString() {
-		return PrototypeBooleanData(), errorConstants.IncorrectFormat
+		return PrototypeBooleanData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for BooleanData, expected type identifier %s, got %s", booleanData.GetType().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {

@@ -29,7 +29,7 @@ func (idData *IDData) FromString(dataTypeAndValueString string) (data.Data, erro
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
 	if dataTypeString != idData.GetType().AsString() {
-		return PrototypeIDData(), errorConstants.IncorrectFormat
+		return PrototypeIDData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for IDData, expected type identifier %s, got %s", idData.GetType().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {

@@ -38,7 +38,7 @@ func keyFromInterface(i interface{}) (*Key, error) {
 	case *Key:
 		return value, nil
 	default:
-		return &Key{}, errorConstants.MetaDataError
+		return &Key{}, errorConstants.IncorrectFormat.Wrapf("incorrect key type")
 	}
 }
 

@@ -1,6 +1,7 @@
 package errors
 
-// TODO implement errors through the project
 type Error interface {
+	Wrapf(string, ...interface{}) error
+
 	error
 }
