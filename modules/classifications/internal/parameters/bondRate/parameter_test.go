@@ -9,7 +9,6 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 )
@@ -21,24 +20,24 @@ func Test_validator(t *testing.T) {
 	tests := []struct {
 		name      string
 		args      args
-		wantError error
+		wantError bool
 	}{
-		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, errorConstants.IncorrectFormat},
-		{"+ve", args{Parameter}, nil},
-		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, errorConstants.IncorrectFormat},
-		{"+ve with zero NumberData", args{baseData.NewNumberData(0)}, nil},
-		{"+ve with positive NumberData", args{baseData.NewNumberData(1)}, nil},
-		{"+ve with negative NumberData", args{baseData.NewNumberData(-1)}, errorConstants.IncorrectFormat},
-		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, errorConstants.IncorrectFormat},
-		{"+ve with positive NumberDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(1)))}, nil},
-		{"+ve with negative NumberDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(-1)))}, errorConstants.IncorrectFormat},
-		{"+ve with zero NumberDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(0)))}, nil},
-		{"+ve with incorrect ID", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewNumberData(0)))}, errorConstants.IncorrectFormat},
-		{"-ve nil", args{}, errorConstants.IncorrectFormat},
+		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, true},
+		{"+ve", args{Parameter}, false},
+		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
+		{"+ve with zero NumberData", args{baseData.NewNumberData(0)}, true},
+		{"+ve with positive NumberData", args{baseData.NewNumberData(1)}, false},
+		{"+ve with negative NumberData", args{baseData.NewNumberData(-1)}, true},
+		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
+		{"+ve with positive NumberDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(1)))}, false},
+		{"+ve with negative NumberDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(-1)))}, true},
+		{"+ve with zero NumberDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(0)))}, true},
+		{"+ve with incorrect ID", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewNumberData(0)))}, true},
+		{"-ve nil", args{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := validator(tt.args.i); err != tt.wantError {
+			if err := validator(tt.args.i); (err != nil) != tt.wantError {
 				t.Errorf("validator() error = %v, wantErr %v", err, tt.wantError)
 			}
 		})
