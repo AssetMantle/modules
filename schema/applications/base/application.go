@@ -6,6 +6,7 @@ package base
 import (
 	"encoding/json"
 	"errors"
+	documentIDGetters "github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
 	"io"
 	"log"
 	"net/http"
@@ -321,6 +322,7 @@ func (application application) RegisterAPIRoutes(server *api.Server, apiConfig c
 	authRest.RegisterTxRoutes(clientCtx, server.Router)
 	authTx.RegisterGRPCGatewayRoutes(clientCtx, server.GRPCGatewayRouter)
 	tmservice.RegisterGRPCGatewayRoutes(clientCtx, server.GRPCGatewayRouter)
+	documentIDGetters.RegisterRESTRoutes(clientCtx, server.Router)
 	application.moduleBasicManager.RegisterRESTRoutes(clientCtx, server.Router)
 	application.moduleBasicManager.RegisterGRPCGatewayRoutes(clientCtx, server.GRPCGatewayRouter)
 	utilitiesRest.RegisterRESTRoutes(clientCtx, server.Router)

@@ -34,7 +34,7 @@ func handler(context client.Context) http.HandlerFunc {
 			return
 		}
 
-		Keyring, err := keyring.New(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
+		Keyring, err := keyring.New(sdkTypes.KeyringServiceName(), flags.DefaultKeyringBackend, viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
