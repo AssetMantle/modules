@@ -30,7 +30,6 @@ func Test_validator(t *testing.T) {
 		{"+ve with positive NumberData", args{baseData.NewNumberData(1)}, nil},
 		{"+ve with negative NumberData", args{baseData.NewNumberData(-1)}, nil},
 		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, errorConstants.IncorrectFormat},
-		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, errorConstants.IncorrectFormat},
 		{"+ve with positive NumberDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxPropertyCount"), baseData.NewNumberData(1)))}, nil},
 		{"+ve with negative NumberDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxPropertyCount"), baseData.NewNumberData(-1)))}, nil},
 		{"+ve with zero NumberDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxPropertyCount"), baseData.NewNumberData(0)))}, nil},

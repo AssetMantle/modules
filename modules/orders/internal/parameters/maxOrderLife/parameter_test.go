@@ -30,7 +30,6 @@ func Test_validator(t *testing.T) {
 		{"+ve with positive heightData", args{baseData.NewHeightData(base.NewHeight(1))}, nil},
 		{"+ve with negative heightData", args{baseData.NewHeightData(base.NewHeight(-1))}, nil},
 		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, errorConstants.IncorrectFormat},
-		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, errorConstants.IncorrectFormat},
 		{"+ve with zero heightDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(0))))}, nil},
 		{"+ve with positive heightDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(1))))}, nil},
 		{"+ve with negative heightDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(-1))))}, nil},

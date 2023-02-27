@@ -4,6 +4,8 @@
 package wrapAllowedCoins
 
 import (
+	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/helpers"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -18,18 +20,33 @@ import (
 var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()
 var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewListData(baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(sdkTypes.DefaultBondDenom))))))
 
-func validator(i interface{}) error {
-	if value, ok := i.(baseData.ListData); ok {
-		return errorConstants.IncorrectFormat
-	} else {
-		for _, anyData := range value.Get() {
-			if idData, ok := anyData.Get().(*baseData.IDData); !ok {
-				return errorConstants.IncorrectFormat
-			} else if _, ok := idData.Get().Get().(*baseIDs.CoinID); !ok {
-				return errorConstants.IncorrectFormat
-			}
+func validData(listData *baseData.ListData) bool {
+	for _, anyData := range listData.Get() {
+		if idData, ok := anyData.Get().(*baseData.IDData); !ok {
+			return false
+		} else if _, ok := idData.Get().Get().(*baseIDs.CoinID); !ok {
+			return false
 		}
 	}
+	return true
+}
+
+func validator(i interface{}) error {
+	switch value := i.(type) {
+	case helpers.Parameter:
+		if listData, ok := value.GetMetaProperty().GetData().Get().(*baseData.ListData); !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
+			return errorConstants.IncorrectFormat
+		} else if !validData(listData) {
+			return errorConstants.IncorrectFormat
+		}
+	case data.ListData:
+		if listData, ok := i.(*baseData.ListData); !ok {
+			return errorConstants.IncorrectFormat
+		} else if !validData(listData) {
+			return errorConstants.IncorrectFormat
+		}
+	}
+
 	return nil
 }
 
