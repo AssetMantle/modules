@@ -18,19 +18,28 @@ var ID = constantProperties.MaxProvisionAddressCountProperty.GetKey()
 var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewNumberData(16)))
 
 func validator(i interface{}) error {
+	var number *baseData.NumberData
+	var ok bool
 	switch value := i.(type) {
 	case helpers.Parameter:
-		if _, ok := value.GetMetaProperty().GetData().Get().(*baseData.NumberData); !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
+		number, ok = value.GetMetaProperty().GetData().Get().(*baseData.NumberData)
+		if !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
 			return errorConstants.IncorrectFormat
 		}
-		return nil
 	case data.NumberData:
-		if _, ok := i.(*baseData.NumberData); ok {
-			return nil
+		number, ok = i.(*baseData.NumberData)
+		if !ok {
+			return errorConstants.IncorrectFormat
 		}
+	default:
+		return errorConstants.IncorrectFormat
 	}
 
-	return errorConstants.IncorrectFormat
+	if number.Get() < 0 {
+		return errorConstants.IncorrectFormat
+	}
+
+	return nil
 }
 
 var ValidatableParameter = baseHelpers.NewValidatableParameter(Parameter, validator)

@@ -19,18 +19,28 @@ var ID = constantProperties.MaxOrderLifeProperty.GetKey()
 var Parameter = baseParameters.NewParameter(baseProperties.NewMetaProperty(ID, baseData.NewHeightData(baseTypes.NewHeight(43210))))
 
 func validator(i interface{}) error {
+	var height *baseData.HeightData
+	var ok bool
 	switch value := i.(type) {
 	case helpers.Parameter:
-		if _, ok := value.GetMetaProperty().GetData().Get().(*baseData.HeightData); !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
+		height, ok = value.GetMetaProperty().GetData().Get().(*baseData.HeightData)
+		if !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
 			return errorConstants.IncorrectFormat
 		}
-		return nil
 	case data.HeightData:
-		if _, ok := i.(*baseData.HeightData); ok {
-			return nil
+		height, ok = i.(*baseData.HeightData)
+		if !ok {
+			return errorConstants.IncorrectFormat
 		}
+	default:
+		return errorConstants.IncorrectFormat
 	}
-	return errorConstants.IncorrectFormat
+
+	if height.Get().Get() < 0 {
+		return errorConstants.IncorrectFormat
+	}
+
+	return nil
 }
 
 var ValidatableParameter = baseHelpers.NewValidatableParameter(Parameter, validator)

@@ -28,11 +28,11 @@ func Test_validator(t *testing.T) {
 		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, errorConstants.IncorrectFormat},
 		{"+ve with zero heightData", args{baseData.NewHeightData(base.NewHeight(0))}, nil},
 		{"+ve with positive heightData", args{baseData.NewHeightData(base.NewHeight(1))}, nil},
-		{"+ve with negative heightData", args{baseData.NewHeightData(base.NewHeight(-1))}, nil},
+		{"+ve with negative heightData", args{baseData.NewHeightData(base.NewHeight(-1))}, errorConstants.IncorrectFormat},
 		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, errorConstants.IncorrectFormat},
 		{"+ve with zero heightDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(0))))}, nil},
 		{"+ve with positive heightDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(1))))}, nil},
-		{"+ve with negative heightDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(-1))))}, nil},
+		{"+ve with negative heightDataParam", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(-1))))}, errorConstants.IncorrectFormat},
 		{"+ve with incorrect ID", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewHeightData(base.NewHeight(0))))}, errorConstants.IncorrectFormat},
 		{"-ve nil", args{}, errorConstants.IncorrectFormat},
 	}
