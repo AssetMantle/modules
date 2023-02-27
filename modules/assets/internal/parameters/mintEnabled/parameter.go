@@ -31,7 +31,6 @@ func validator(i interface{}) error {
 	}
 
 	return errorConstants.IncorrectFormat
-
 }
 
 var ValidatableParameter = baseHelpers.NewValidatableParameter(Parameter, validator)
