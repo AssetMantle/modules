@@ -5,6 +5,7 @@ package base
 
 import (
 	"fmt"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -33,20 +34,25 @@ func (parameterManager parameterManager) Get() []helpers.Parameter {
 	return parameters
 }
 func (parameterManager parameterManager) GetParameter(propertyID ids.PropertyID) helpers.Parameter {
+	if validatableParameter := parameterManager.GetValidatableParameter(propertyID); validatableParameter != nil {
+		return validatableParameter.GetParameter()
+	}
+	return nil
+}
+func (parameterManager parameterManager) GetValidatableParameter(propertyID ids.PropertyID) helpers.ValidatableParameter {
 	for _, validatableParameter := range parameterManager.validatableParameters {
 		if validatableParameter.GetParameter().GetMetaProperty().GetID().Compare(propertyID) == 0 {
-			return validatableParameter.GetParameter()
+			return validatableParameter
 		}
 	}
 	return nil
 }
-func (parameterManager parameterManager) GetValidator(propertyID ids.PropertyID) func(interface{}) error {
-	for _, validatableParameter := range parameterManager.validatableParameters {
-		if validatableParameter.GetParameter().GetMetaProperty().GetID().Compare(propertyID) == 0 {
-			return validatableParameter.GetValidator()
-		}
+func (parameterManager parameterManager) ValidateParameter(parameter helpers.Parameter) error {
+	validator := parameterManager.GetValidatableParameter(parameter.GetMetaProperty().GetID())
+	if validator != nil {
+		return validator.GetValidator()(parameter)
 	}
-	return nil
+	return errorConstants.EntityNotFound.Wrapf("Parameter with id %s not found", parameter.GetMetaProperty().GetID().AsString())
 }
 func (parameterManager parameterManager) Fetch(context context.Context) helpers.ParameterManager {
 	for _, validatableParameter := range parameterManager.validatableParameters {

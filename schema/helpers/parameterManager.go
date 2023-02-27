@@ -15,8 +15,9 @@ import (
 
 type ParameterManager interface {
 	Get() []Parameter
+	GetValidatableParameter(ids.PropertyID) ValidatableParameter
 	GetParameter(ids.PropertyID) Parameter
-	GetValidator(ids.PropertyID) func(interface{}) error
+	ValidateParameter(Parameter) error
 
 	Fetch(context.Context) ParameterManager
 	Set(context.Context, ...Parameter)
