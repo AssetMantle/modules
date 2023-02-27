@@ -18,7 +18,7 @@ var _ helpers.Genesis = (*Genesis)(nil)
 func (genesis *Genesis) Default() helpers.Genesis {
 	return Prototype()
 }
-func (genesis *Genesis) ValidateBasic() error {
+func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager) error {
 	if len(genesis.Parameters) != len(genesis.Default().(*Genesis).Parameters) {
 		return errorConstants.IncorrectFormat.Wrapf("expected %d parameters, got %d", len(genesis.Default().(*Genesis).Parameters), len(genesis.Parameters))
 	}
@@ -37,7 +37,7 @@ func (genesis *Genesis) ValidateBasic() error {
 			return errorConstants.IncorrectFormat.Wrapf("expected parameter %s not found", parameter.GetMetaProperty().GetKey().AsString())
 		}
 
-		if err := parameter.ValidateBasic(); err != nil {
+		if err := parameterManager.GetValidator(parameter.GetMetaProperty().GetID())(parameter); err != nil {
 			return err
 		}
 	}

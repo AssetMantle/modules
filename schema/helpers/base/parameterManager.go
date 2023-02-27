@@ -40,6 +40,14 @@ func (parameterManager parameterManager) GetParameter(propertyID ids.PropertyID)
 	}
 	return nil
 }
+func (parameterManager parameterManager) GetValidator(propertyID ids.PropertyID) func(interface{}) error {
+	for _, validatableParameter := range parameterManager.validatableParameters {
+		if validatableParameter.GetParameter().GetMetaProperty().GetID().Compare(propertyID) == 0 {
+			return validatableParameter.GetValidator()
+		}
+	}
+	return nil
+}
 func (parameterManager parameterManager) Fetch(context context.Context) helpers.ParameterManager {
 	for _, validatableParameter := range parameterManager.validatableParameters {
 		parameterManager.paramsSubspace.Get(sdkTypes.UnwrapSDKContext(context), validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes(), validatableParameter.GetParameter().GetMetaProperty().GetData().Get())

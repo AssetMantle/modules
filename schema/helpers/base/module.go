@@ -67,7 +67,7 @@ func (module module) DefaultGenesis(jsonCodec sdkCodec.JSONCodec) json.RawMessag
 }
 func (module module) ValidateGenesis(jsonCodec sdkCodec.JSONCodec, _ client.TxEncodingConfig, rawMessage json.RawMessage) error {
 	genesisState := module.genesisPrototype().Decode(jsonCodec, rawMessage)
-	return genesisState.ValidateBasic()
+	return genesisState.ValidateBasic(module.parameterManagerPrototype())
 }
 func (module module) RegisterRESTRoutes(context client.Context, router *mux.Router) {
 	router.HandleFunc("/"+module.Name()+"/parameters", module.parameterManagerPrototype().RESTQueryHandler(context)).Methods("GET")

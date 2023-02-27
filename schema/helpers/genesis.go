@@ -12,7 +12,7 @@ type Genesis interface {
 
 	Default() Genesis
 
-	ValidateBasic() error
+	ValidateBasic(ParameterManager) error
 
 	Import(context.Context, Mapper, ParameterManager)
 	Export(context.Context, Mapper, ParameterManager) Genesis
