@@ -36,7 +36,7 @@ func validator(i interface{}) error {
 		return errorConstants.IncorrectFormat
 	}
 
-	if height.Get().Get() < 0 {
+	if height.Get().Get() < -1 {
 		return errorConstants.IncorrectFormat
 	}
 
