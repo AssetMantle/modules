@@ -4,13 +4,12 @@
 package maxProvisionAddressCount
 
 import (
-	"testing"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"testing"
 )
 
 func Test_validator(t *testing.T) {
@@ -20,17 +19,23 @@ func Test_validator(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		wantErr bool
+		wantErr error
 	}{
-
-		{"+ve with nil", args{Parameter}, false},
-		{"-ve wrong Parameter Type", args{baseTypes.NewParameter(baseIDs.NewStringID("newID"), baseData.NewDecData(sdkTypes.NewDec(-1)), validator)}, true},
-		{"-ve wrong Parameter Type", args{baseTypes.NewParameter(baseIDs.NewStringID("newID"), baseData.NewStringData("newStringData"), validator)}, true},
-		{"+ve empty string", args{baseIDs.NewStringID("")}, true},
+		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, errorConstants.IncorrectFormat},
+		{"+ve", args{Parameter}, nil},
+		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, errorConstants.IncorrectFormat},
+		{"+ve with booleanData", args{baseData.NewBooleanData(false)}, errorConstants.IncorrectFormat},
+		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, errorConstants.IncorrectFormat},
+		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, errorConstants.IncorrectFormat},
+		{"+ve with positive NumberData", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(1)))}, nil},
+		{"+ve with negative NumberData", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(-1)))}, nil},
+		{"+ve with zero NumberData", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(0)))}, nil},
+		{"+ve with incorrect ID", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewBooleanData(false)))}, errorConstants.IncorrectFormat},
+		{"-ve nil", args{}, errorConstants.IncorrectFormat},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := validator(tt.args.i); (err != nil) != tt.wantErr {
+			if err := validator(tt.args.i); err != tt.wantErr {
 				t.Errorf("validator() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
