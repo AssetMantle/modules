@@ -20,33 +20,28 @@ import (
 var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()
 var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewListData(baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(sdkTypes.DefaultBondDenom))))))
 
-func validData(listData *baseData.ListData) bool {
-	for _, anyData := range listData.Get() {
-		if idData, ok := anyData.Get().(*baseData.IDData); !ok {
-			return false
-		} else if _, ok := idData.Get().Get().(ids.AnyOwnableID).Get().(*baseIDs.CoinID); !ok {
-			return false
-		}
-	}
-	return true
-}
-
 func validator(i interface{}) error {
+	var listData *baseData.ListData
+	var ok bool
 	switch value := i.(type) {
 	case helpers.Parameter:
-		if listData, ok := value.GetMetaProperty().GetData().Get().(*baseData.ListData); !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
-			return errorConstants.IncorrectFormat
-		} else if !validData(listData) {
+		if listData, ok = value.GetMetaProperty().GetData().Get().(*baseData.ListData); !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
 			return errorConstants.IncorrectFormat
 		}
 	case data.ListData:
-		if listData, ok := i.(*baseData.ListData); !ok {
-			return errorConstants.IncorrectFormat
-		} else if !validData(listData) {
+		if listData, ok = i.(*baseData.ListData); !ok {
 			return errorConstants.IncorrectFormat
 		}
 	default:
 		return errorConstants.IncorrectFormat
+	}
+
+	for _, anyData := range listData.Get() {
+		if idData, ok := anyData.Get().(*baseData.IDData); !ok {
+			return errorConstants.IncorrectFormat
+		} else if _, ok := idData.Get().Get().(ids.AnyOwnableID).Get().(*baseIDs.CoinID); !ok {
+			return errorConstants.IncorrectFormat
+		}
 	}
 
 	return nil
