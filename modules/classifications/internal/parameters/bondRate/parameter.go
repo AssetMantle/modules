@@ -25,7 +25,7 @@ func validator(i interface{}) error {
 		}
 		return nil
 	case data.NumberData:
-		if _, ok := i.(baseData.NumberData); ok {
+		if _, ok := i.(*baseData.NumberData); ok {
 			return nil
 		}
 	}
