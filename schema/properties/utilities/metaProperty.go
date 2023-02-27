@@ -29,7 +29,7 @@ func SplitMetaProperty(metaPropertyString string) (propertyIDString, dataString 
 	if propertyIDAndData := strings.Split(metaPropertyString, constants.PropertyIDAndDataSeparator); len(propertyIDAndData) < 2 {
 		return "", ""
 	} else {
-		return propertyIDAndData[0], propertyIDAndData[1]
+		return strings.TrimSpace(propertyIDAndData[0]), propertyIDAndData[1]
 	}
 
 }

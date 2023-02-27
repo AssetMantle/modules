@@ -1,6 +1,7 @@
 package base
 
 import (
+	documentIDGetters "github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
 	sdkClient "github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkCodecTypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -34,6 +35,7 @@ func (codec codec) Initialize(moduleBasicManager sdkModuleTypes.BasicManager) he
 	std.RegisterLegacyAminoCodec(codec.legacyAmino)
 	std.RegisterInterfaces(codec.interfaceRegistry)
 	schema.RegisterLegacyAminoCodec(codec.legacyAmino)
+	documentIDGetters.RegisterLegacyAminoCodec(codec.legacyAmino)
 	moduleBasicManager.RegisterLegacyAminoCodec(codec.legacyAmino)
 	moduleBasicManager.RegisterInterfaces(codec.interfaceRegistry)
 	return codec
