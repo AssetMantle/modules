@@ -5,16 +5,16 @@ package wrapAllowedCoins
 
 import (
 	"github.com/AssetMantle/modules/schema/data"
-	"github.com/AssetMantle/modules/schema/helpers"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 	"github.com/AssetMantle/modules/schema/properties/base"
 	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()
@@ -24,7 +24,7 @@ func validData(listData *baseData.ListData) bool {
 	for _, anyData := range listData.Get() {
 		if idData, ok := anyData.Get().(*baseData.IDData); !ok {
 			return false
-		} else if _, ok := idData.Get().Get().(*baseIDs.CoinID); !ok {
+		} else if _, ok := idData.Get().Get().(ids.AnyOwnableID).Get().(*baseIDs.CoinID); !ok {
 			return false
 		}
 	}
@@ -45,6 +45,8 @@ func validator(i interface{}) error {
 		} else if !validData(listData) {
 			return errorConstants.IncorrectFormat
 		}
+	default:
+		return errorConstants.IncorrectFormat
 	}
 
 	return nil
