@@ -5,8 +5,10 @@ package base
 
 import (
 	"fmt"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"net/http"
+
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/parameters/base"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -26,12 +28,12 @@ type parameterManager struct {
 
 var _ helpers.ParameterManager = (*parameterManager)(nil)
 
-func (parameterManager parameterManager) Get() []helpers.Parameter {
+func (parameterManager parameterManager) Get() helpers.ParameterList {
 	parameters := make([]helpers.Parameter, len(parameterManager.validatableParameters))
 	for i, validatableParameter := range parameterManager.validatableParameters {
 		parameters[i] = validatableParameter.GetParameter()
 	}
-	return parameters
+	return base.NewParameterList(parameters...)
 }
 func (parameterManager parameterManager) GetParameter(propertyID ids.PropertyID) helpers.Parameter {
 	if validatableParameter := parameterManager.GetValidatableParameter(propertyID); validatableParameter != nil {
@@ -52,7 +54,7 @@ func (parameterManager parameterManager) ValidateParameter(parameter helpers.Par
 	if validator != nil {
 		return validator.GetValidator()(parameter)
 	}
-	return errorConstants.EntityNotFound.Wrapf("Parameter with id %s not found", parameter.GetMetaProperty().GetID().AsString())
+	return errorConstants.EntityNotFound.Wrapf("parameter with id %s not found", parameter.GetMetaProperty().GetID().AsString())
 }
 func (parameterManager parameterManager) Fetch(context context.Context) helpers.ParameterManager {
 	for _, validatableParameter := range parameterManager.validatableParameters {
@@ -61,8 +63,8 @@ func (parameterManager parameterManager) Fetch(context context.Context) helpers.
 
 	return parameterManager
 }
-func (parameterManager parameterManager) Set(context context.Context, parameters ...helpers.Parameter) {
-	for _, parameter := range parameters {
+func (parameterManager parameterManager) Set(context context.Context, parameterList helpers.ParameterList) {
+	for _, parameter := range parameterList.Get() {
 		parameterManager.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData().Get())
 	}
 }
