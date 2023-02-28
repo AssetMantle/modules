@@ -48,5 +48,5 @@ func NewKey(orderID ids.OrderID) helpers.Key {
 }
 
 func Prototype() helpers.Key {
-	return &Key{}
+	return &Key{base.PrototypeOrderID().(*base.OrderID)}
 }
