@@ -49,5 +49,5 @@ func NewKey(assetID ids.AssetID) helpers.Key {
 }
 
 func Prototype() helpers.Key {
-	return &Key{}
+	return &Key{base.PrototypeAssetID().(*base.AssetID)}
 }

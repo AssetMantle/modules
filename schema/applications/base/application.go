@@ -267,7 +267,7 @@ func (application application) ExportApplicationStateAndValidators(forZeroHeight
 		counter := int16(0)
 
 		for ; kvStoreReversePrefixIterator.Valid(); kvStoreReversePrefixIterator.Next() {
-			addr := sdkTypes.ValAddress(kvStoreReversePrefixIterator.Key()[1:])
+			addr := sdkTypes.ValAddress(stakingTypes.AddressFromValidatorsKey(kvStoreReversePrefixIterator.Key()))
 			validator, found := application.stakingKeeper.GetValidator(context, addr)
 
 			if !found {

@@ -49,5 +49,5 @@ func NewKey(classificationID ids.ClassificationID) helpers.Key {
 }
 
 func Prototype() helpers.Key {
-	return &Key{}
+	return &Key{base.PrototypeClassificationID().(*base.ClassificationID)}
 }

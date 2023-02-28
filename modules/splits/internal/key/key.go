@@ -48,5 +48,5 @@ func NewKey(splitID ids.SplitID) helpers.Key {
 }
 
 func Prototype() helpers.Key {
-	return &Key{}
+	return &Key{base.PrototypeSplitID().(*base.SplitID)}
 }
