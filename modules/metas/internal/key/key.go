@@ -47,4 +47,4 @@ func NewKey(dataID ids.DataID) helpers.Key {
 	}
 }
 
-func Prototype() helpers.Key { return &Key{} }
+func Prototype() helpers.Key { return &Key{base.PrototypeDataID().(*base.DataID)} }

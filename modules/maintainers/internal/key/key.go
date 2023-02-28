@@ -48,5 +48,5 @@ func NewKey(maintainerID ids.MaintainerID) helpers.Key {
 }
 
 func Prototype() helpers.Key {
-	return &Key{}
+	return &Key{base.PrototypeMaintainerID().(*base.MaintainerID)}
 }

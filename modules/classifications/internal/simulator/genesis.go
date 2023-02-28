@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/maxPropertyCount"
 	"math/rand"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -41,7 +42,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMappable(base.NewClassification(immutables, mutables))
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, []helpers.Parameter{bondRate.Parameter.Mutate(Data)})
+	genesisState := genesis.Prototype().Initialize(mappableList, []helpers.Parameter{bondRate.Parameter.Mutate(Data), maxPropertyCount.Parameter.Mutate(Data)})
 
 	simulationState.GenState[classificationsModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
 }

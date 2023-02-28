@@ -47,5 +47,5 @@ func NewKey(identityID ids.IdentityID) helpers.Key {
 }
 
 func Prototype() helpers.Key {
-	return &Key{}
+	return &Key{base.PrototypeIdentityID().(*base.IdentityID)}
 }
