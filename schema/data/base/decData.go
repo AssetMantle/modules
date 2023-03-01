@@ -18,6 +18,12 @@ import (
 
 var _ data.DecData = (*DecData)(nil)
 
+func (decData *DecData) ValidateBasic() error {
+	if !sdkTypes.ValidSortableDec(decData.Value) {
+		return errorConstants.IncorrectFormat
+	}
+	return nil
+}
 func (decData *DecData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(decData)
 }
