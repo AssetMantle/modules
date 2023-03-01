@@ -22,4 +22,6 @@ type Mutables interface {
 	GetProperty(ids.PropertyID) properties.AnyProperty
 
 	Mutate(...properties.Property) Mutables
+
+	ValidateBasic() error
 }

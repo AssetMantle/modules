@@ -17,4 +17,6 @@ type Immutables interface {
 	GetProperty(id ids.PropertyID) properties.AnyProperty
 
 	GenerateHashID() ids.ID
+
+	ValidateBasic() error
 }
