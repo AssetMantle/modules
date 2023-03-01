@@ -17,12 +17,15 @@ var _ helpers.Message = (*Message)(nil)
 
 func (message *Message) Type() string { return Transaction.GetName() }
 func (message *Message) ValidateBasic() error {
-	_, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
+	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
 		return err
 	}
-
-	if err :=
+	if err := message.FromID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.AssetID.ValidateBasic(); err != nil {
+		return err
+	}
 	return nil
 }
 func (message *Message) GetSigners() []sdkTypes.AccAddress {
