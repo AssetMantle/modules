@@ -18,9 +18,6 @@ import (
 var _ data.BooleanData = (*BooleanData)(nil)
 
 func (booleanData *BooleanData) ValidateBasic() error {
-	if booleanData.Value != true || booleanData.Value != false {
-		return errorConstants.IncorrectFormat
-	}
 	return nil
 }
 func (booleanData *BooleanData) GetID() ids.DataID {
