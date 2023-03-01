@@ -9,7 +9,6 @@ import (
 	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	"github.com/asaskevich/govalidator"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 )
 
@@ -42,10 +41,7 @@ func (genesis *Genesis) ValidateBasic() error {
 		}
 	}
 
-	// TODO ***** define validation for mappable list
-	_, err := govalidator.ValidateStruct(genesis)
-
-	return err
+	return nil
 }
 func (genesis *Genesis) Import(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) {
 	for _, Mappable := range genesis.Mappables {
