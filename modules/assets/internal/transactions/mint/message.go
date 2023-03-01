@@ -26,6 +26,9 @@ func (message *Message) ValidateBasic() error {
 	if err := message.FromID.ValidateBasic(); err != nil {
 		return err
 	}
+	if err := message.ToID.ValidateBasic(); err != nil {
+		return err
+	}
 	if err := message.ClassificationID.ValidateBasic(); err != nil {
 		return err
 	}
