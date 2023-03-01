@@ -10,6 +10,7 @@ import (
 func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	legacyAmino.RegisterInterface((*AssetID)(nil), nil)
 	legacyAmino.RegisterInterface((*ClassificationID)(nil), nil)
+	legacyAmino.RegisterInterface((*CoinID)(nil), nil)
 	legacyAmino.RegisterInterface((*DataID)(nil), nil)
 	legacyAmino.RegisterInterface((*HashID)(nil), nil)
 	legacyAmino.RegisterInterface((*ID)(nil), nil)

@@ -175,7 +175,7 @@ func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Quer
 		}
 
 		if path[0] == "parameters" {
-			return CodecPrototype().MarshalJSON(module.parameterManager.Fetch(sdkTypes.WrapSDKContext(context)).Get()[0])
+			return CodecPrototype().MarshalJSON(module.parameterManager.Fetch(sdkTypes.WrapSDKContext(context)).Get())
 		}
 
 		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())

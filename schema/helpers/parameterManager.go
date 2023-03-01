@@ -14,13 +14,13 @@ import (
 )
 
 type ParameterManager interface {
-	Get() []Parameter
+	Get() ParameterList
 	GetValidatableParameter(ids.PropertyID) ValidatableParameter
 	GetParameter(ids.PropertyID) Parameter
 	ValidateParameter(Parameter) error
 
 	Fetch(context.Context) ParameterManager
-	Set(context.Context, ...Parameter)
+	Set(context.Context, ParameterList)
 
 	GetKeyTable() paramsTypes.KeyTable
 	RESTQueryHandler(client.Context) http.HandlerFunc
