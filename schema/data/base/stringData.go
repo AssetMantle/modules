@@ -5,6 +5,7 @@ package base
 
 import (
 	"bytes"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
@@ -15,6 +16,13 @@ import (
 )
 
 var _ data.StringData = (*StringData)(nil)
+
+func (stringData *StringData) ValidateBasic() error {
+	if !utilities.IsValidStringData(stringData.AsString()) {
+		return errorConstants.IncorrectFormat
+	}
+	return nil
+}
 
 func (stringData *StringData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(stringData)

@@ -18,6 +18,14 @@ import (
 
 var _ data.ListData = (*ListData)(nil)
 
+func (listData *ListData) ValidateBasic() error {
+	for _, data := range listData.DataList {
+		if err := data.ValidateBasic(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 func (listData *ListData) Get() []data.AnyData {
 	anyDataList := make([]data.AnyData, len(listData.DataList))
 	for i, anyData := range listData.DataList {

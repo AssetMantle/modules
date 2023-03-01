@@ -20,6 +20,9 @@ import (
 
 var _ data.HeightData = (*HeightData)(nil)
 
+func (heightData *HeightData) ValidateBasic() error {
+	return heightData.Value.ValidateBasic()
+}
 func (heightData *HeightData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(heightData)
 }

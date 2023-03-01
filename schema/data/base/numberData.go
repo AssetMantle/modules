@@ -15,6 +15,12 @@ import (
 
 var _ data.NumberData = (*NumberData)(nil)
 
+func (numberData *NumberData) ValidateBasic() error {
+	if numberData.Value < 0 {
+		return errorConstants.IncorrectFormat
+	}
+	return nil
+}
 func (numberData *NumberData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(numberData)
 }
