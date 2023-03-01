@@ -139,3 +139,27 @@ func Test_stringID_String(t *testing.T) {
 		})
 	}
 }
+
+func Test_stringID_ValidateBasic(t *testing.T) {
+	type fields struct {
+		IDString string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   error
+	}{
+
+		{"+ve", fields{"ID"}, nil},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			stringID := &StringID{
+				IDString: tt.fields.IDString,
+			}
+			if got := stringID.ValidateBasic(); got != tt.want {
+				t.Errorf("String() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
