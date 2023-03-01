@@ -13,6 +13,7 @@ type Data interface {
 	GetID() ids.DataID
 	GetBondWeight() int64
 
+	ValidateBasic() error
 	Unmarshal([]byte) error
 	MarshalTo([]byte) (int, error)
 	AsString() string

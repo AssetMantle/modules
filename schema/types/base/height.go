@@ -6,6 +6,7 @@ package base
 import (
 	"context"
 	"encoding/binary"
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -14,6 +15,12 @@ import (
 
 var _ types.Height = (*Height)(nil)
 
+func (height *Height) ValidateBasic() error {
+	if height.Value < -1 {
+		return errorConstants.IncorrectFormat
+	}
+	return nil
+}
 func (height *Height) Bytes() []byte {
 	Bytes := make([]byte, 8)
 	binary.LittleEndian.PutUint64(Bytes, uint64(height.Get()))

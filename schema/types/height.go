@@ -9,6 +9,7 @@ package types
 type Height interface {
 	Bytes() []byte
 	Get() int64
+	ValidateBasic() error
 
 	Compare(Height) int
 }

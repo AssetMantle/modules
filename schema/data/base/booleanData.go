@@ -17,6 +17,9 @@ import (
 
 var _ data.BooleanData = (*BooleanData)(nil)
 
+func (booleanData *BooleanData) ValidateBasic() error {
+	return nil
+}
 func (booleanData *BooleanData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(booleanData)
 }

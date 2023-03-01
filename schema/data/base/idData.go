@@ -16,6 +16,9 @@ import (
 
 var _ data.IDData = (*IDData)(nil)
 
+func (idData *IDData) ValidateBasic() error {
+	return idData.Value.ValidateBasic()
+}
 func (idData *IDData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(idData)
 }

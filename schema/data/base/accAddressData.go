@@ -18,6 +18,9 @@ import (
 
 var _ data.AccAddressData = (*AccAddressData)(nil)
 
+func (accAddressData *AccAddressData) ValidateBasic() error {
+	return sdkTypes.VerifyAddressFormat(accAddressData.Value)
+}
 func (accAddressData *AccAddressData) GetID() ids.DataID {
 	return baseIDs.GenerateDataID(accAddressData)
 }
