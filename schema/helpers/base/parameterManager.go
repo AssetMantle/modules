@@ -58,21 +58,27 @@ func (parameterManager parameterManager) ValidateParameter(parameter helpers.Par
 }
 func (parameterManager parameterManager) Fetch(context context.Context) helpers.ParameterManager {
 	for _, validatableParameter := range parameterManager.validatableParameters {
-		parameterManager.paramsSubspace.Get(sdkTypes.UnwrapSDKContext(context), validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes(), validatableParameter.GetParameter().GetMetaProperty().GetData().Get())
+		var value string
+		parameterManager.paramsSubspace.Get(sdkTypes.UnwrapSDKContext(context), validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes(), &value)
+		if data, err := validatableParameter.GetParameter().GetMetaProperty().GetData().Get().FromString(value); err != nil {
+			panic(err)
+		} else {
+			validatableParameter = validatableParameter.Mutate(data)
+		}
 	}
 
 	return parameterManager
 }
 func (parameterManager parameterManager) Set(context context.Context, parameterList helpers.ParameterList) {
 	for _, parameter := range parameterList.Get() {
-		parameterManager.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData().Get())
+		parameterManager.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData().Get().AsString())
 	}
 }
 func (parameterManager parameterManager) ParamSetPairs() paramsTypes.ParamSetPairs {
 	paramSetPairList := make([]paramsTypes.ParamSetPair, len(parameterManager.validatableParameters))
 
 	for i, validatableParameter := range parameterManager.validatableParameters {
-		paramSetPairList[i] = paramsTypes.NewParamSetPair(validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes(), validatableParameter.GetParameter().GetMetaProperty().GetData().Get(), validatableParameter.GetValidator())
+		paramSetPairList[i] = paramsTypes.NewParamSetPair(validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes(), validatableParameter.GetParameter().GetMetaProperty().GetData().Get().AsString(), validatableParameter.GetValidator())
 	}
 
 	return paramSetPairList
