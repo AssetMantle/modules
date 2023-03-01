@@ -9,7 +9,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/parameters/base"
+	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
 var _ helpers.Genesis = (*Genesis)(nil)
@@ -18,13 +18,13 @@ func (genesis *Genesis) Default() helpers.Genesis {
 	return Prototype()
 }
 func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager) error {
-	if len(genesis.Parameters) != len(genesis.Default().(*Genesis).Parameters) {
-		return errorConstants.IncorrectFormat.Wrapf("expected %d parameters, got %d", len(genesis.Default().(*Genesis).Parameters), len(genesis.Parameters))
+	if len(genesis.ParameterList.Get()) != len(genesis.Default().(*Genesis).ParameterList.Get()) {
+		return errorConstants.IncorrectFormat.Wrapf("expected %d parameters, got %d", len(genesis.Default().(*Genesis).ParameterList.Get()), len(genesis.ParameterList.Get()))
 	}
 
-	for _, parameter := range genesis.Parameters {
+	for _, parameter := range genesis.ParameterList.Get() {
 		var isPresent bool
-		for _, defaultParameter := range genesis.Default().(*Genesis).Parameters {
+		for _, defaultParameter := range genesis.Default().(*Genesis).ParameterList.Get() {
 			isPresent = false
 			if defaultParameter.GetMetaProperty().Compare(parameter.GetMetaProperty()) == 0 {
 				isPresent = true
@@ -54,7 +54,7 @@ func (genesis *Genesis) Import(context context.Context, mapper helpers.Mapper, p
 		mapper.Create(context, Mappable)
 	}
 
-	parameterManager.Set(context, base.ParametersToInterface(genesis.Parameters)...)
+	parameterManager.Set(context, genesis.ParameterList)
 }
 func (genesis *Genesis) Export(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) helpers.Genesis {
 	var mappableList []helpers.Mappable
@@ -82,24 +82,25 @@ func (genesis *Genesis) Decode(jsonCodec sdkCodec.JSONCodec, byte []byte) helper
 
 	return genesis
 }
-func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameters []helpers.Parameter) helpers.Genesis {
+func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList helpers.ParameterList) helpers.Genesis {
 	if len(mappables) == 0 {
 		genesis.Mappables = genesis.Default().(*Genesis).Mappables
 	} else {
 		genesis.Mappables = mappable.MappablesFromInterface(mappables)
 	}
 
-	if len(parameters) == 0 {
-		genesis.Parameters = genesis.Default().(*Genesis).Parameters
+	if len(parameterList.Get()) == 0 {
+		genesis.ParameterList = genesis.Default().(*Genesis).ParameterList
 	} else {
-		for _, defaultParameter := range genesis.Default().(*Genesis).Parameters {
-			for i, parameter := range parameters {
+		Parameters := parameterList.Get()
+		for _, defaultParameter := range genesis.Default().(*Genesis).ParameterList.Get() {
+			for i, parameter := range Parameters {
 				if defaultParameter.GetMetaProperty().GetID().Compare(parameter.GetMetaProperty().GetID()) == 0 {
-					parameters[i] = defaultParameter.Mutate(parameter.GetMetaProperty().GetData())
+					Parameters[i] = defaultParameter.Mutate(parameter.GetMetaProperty().GetData())
 				}
 			}
 		}
-		genesis.Parameters = base.ParametersFromInterface(parameters)
+		genesis.ParameterList = baseParameters.NewParameterList(Parameters...).(*baseParameters.ParameterList)
 	}
 
 	return genesis
@@ -107,7 +108,7 @@ func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameters []he
 
 func Prototype() helpers.Genesis {
 	return &Genesis{
-		Mappables:  []*mappable.Mappable{},
-		Parameters: base.ParametersFromInterface(parameters.Prototype().Get()),
+		Mappables:     []*mappable.Mappable{},
+		ParameterList: parameters.Prototype().Get().(*baseParameters.ParameterList),
 	}
 }
