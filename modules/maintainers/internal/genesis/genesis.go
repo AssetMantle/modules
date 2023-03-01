@@ -42,6 +42,12 @@ func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager)
 		}
 	}
 
+	for _, mappable := range genesis.Mappables {
+		if err := mappable.ValidateBasic(); err != nil {
+			return err
+		}
+	}
+
 	// TODO ***** define validation for mappable list
 	_, err := govalidator.ValidateStruct(genesis)
 
