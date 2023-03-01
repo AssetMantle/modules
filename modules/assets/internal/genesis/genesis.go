@@ -3,7 +3,6 @@ package genesis
 import (
 	"context"
 
-	"github.com/asaskevich/govalidator"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
@@ -48,10 +47,7 @@ func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager)
 		}
 	}
 
-	// TODO ***** define validation for mappable list
-	_, err := govalidator.ValidateStruct(genesis)
-
-	return err
+	return nil
 }
 func (genesis *Genesis) Import(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) {
 	for _, Mappable := range genesis.Mappables {
