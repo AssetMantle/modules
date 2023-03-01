@@ -14,6 +14,18 @@ import (
 
 var _ documents.Document = (*Document)(nil)
 
+func (document *Document) ValidateBasic() error {
+	if err := document.ClassificationID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := document.Immutables.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := document.Mutables.ValidateBasic(); err != nil {
+		return err
+	}
+	return nil
+}
 func (document *Document) Get() documents.Document {
 	return document
 }

@@ -16,6 +16,9 @@ import (
 
 var _ helpers.Mappable = (*Mappable)(nil)
 
+func (mappable *Mappable) ValidateBasic() error {
+	return mappable.Split.ValidateBasic()
+}
 func (mappable *Mappable) GetKey() helpers.Key {
 	return key.NewKey(base.NewSplitID(mappable.Split.GetOwnerID(), mappable.Split.GetOwnableID()))
 }

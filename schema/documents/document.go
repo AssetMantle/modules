@@ -19,5 +19,6 @@ type Document interface {
 	GetImmutables() qualified.Immutables
 	GetMutables() qualified.Mutables
 
+	ValidateBasic() error
 	Mutate(...properties.Property) Document
 }

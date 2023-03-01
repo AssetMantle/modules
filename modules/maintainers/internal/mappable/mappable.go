@@ -22,6 +22,9 @@ import (
 
 var _ helpers.Mappable = (*Mappable)(nil)
 
+func (mappable *Mappable) ValidateBasic() error {
+	return mappable.Maintainer.ValidateBasic()
+}
 func (mappable *Mappable) GetKey() helpers.Key {
 	return key.NewKey(base.NewMaintainerID(constansts.MaintainerClassificationID,
 		baseQualified.NewImmutables(baseLists.NewPropertyList(

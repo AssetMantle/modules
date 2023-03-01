@@ -16,6 +16,9 @@ import (
 
 var _ helpers.Mappable = (*Mappable)(nil)
 
+func (mappable *Mappable) ValidateBasic() error {
+	return mappable.Identity.ValidateBasic()
+}
 func (mappable *Mappable) GetKey() helpers.Key {
 	return key.NewKey(baseIDs.NewIdentityID(mappable.GetIdentity().GetClassificationID(), mappable.GetIdentity().GetImmutables()))
 }

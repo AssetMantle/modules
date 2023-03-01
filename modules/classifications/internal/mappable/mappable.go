@@ -15,13 +15,15 @@ import (
 
 var _ helpers.Mappable = (*Mappable)(nil)
 
+func (mappable *Mappable) ValidateBasic() error {
+	return mappable.Classification.ValidateBasic()
+}
 func (mappable *Mappable) GetKey() helpers.Key {
 	return key.NewKey(mappable.Classification.GetClassificationID())
 }
 func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, Mappable{})
 }
-
 func NewMappable(classification documents.Classification) helpers.Mappable {
 	return &Mappable{
 		Classification: classification.Get().(*base.Document),
