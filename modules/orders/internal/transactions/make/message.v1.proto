@@ -2,6 +2,7 @@ syntax = "proto3";
 package orders.transactions.make;
 
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
 import "schema/ids/base/classificationID.v1.proto";
 import "schema/ids/base/identityID.v1.proto";
 import "schema/ids/base/anyOwnableID.v1.proto";
@@ -17,8 +18,8 @@ message Message {
   ids.AnyOwnableID maker_ownable_i_d = 5;
   ids.AnyOwnableID taker_ownable_i_d = 6;
   types.Height expires_in = 7;
-  data.DecData maker_ownable_split = 8;// [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
-  data.DecData taker_ownable_split = 9;// [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  data.DecData maker_ownable_split = 8 [(cosmos_proto.scalar) = "cosmos.Dec", (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  data.DecData taker_ownable_split = 9 [(cosmos_proto.scalar) = "cosmos.Dec", (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
   lists.PropertyList immutable_meta_properties = 10;
   lists.PropertyList immutable_properties = 11;
   lists.PropertyList mutable_meta_properties = 12;
