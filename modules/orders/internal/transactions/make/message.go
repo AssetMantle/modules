@@ -4,6 +4,7 @@
 package make
 
 import (
+	"github.com/AssetMantle/modules/schema/data/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -28,7 +29,7 @@ func (message *Message) ValidateBasic() error {
 	if err != nil {
 		return errorConstants.IncorrectMessage.Wrapf(err.Error())
 	}
-	if !sdkTypes.ValidSortableDec(message.MakerOwnableSplit) || !sdkTypes.ValidSortableDec(message.TakerOwnableSplit) {
+	if !sdkTypes.ValidSortableDec(message.MakerOwnableSplit.Get()) || !sdkTypes.ValidSortableDec(message.TakerOwnableSplit.Get()) {
 		return errorConstants.IncorrectMessage.Wrapf("invalid split")
 	}
 	return nil
@@ -67,8 +68,8 @@ func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationI
 		MakerOwnableID:          makerOwnableID.(*baseIds.AnyOwnableID),
 		TakerOwnableID:          takerOwnableID.(*baseIds.AnyOwnableID),
 		ExpiresIn:               expiresIn.(*baseTypes.Height),
-		MakerOwnableSplit:       makerOwnableSplit,
-		TakerOwnableSplit:       takerOwnableSplit,
+		MakerOwnableSplit:       base.NewDecData(makerOwnableSplit).(*base.DecData),
+		TakerOwnableSplit:       base.NewDecData(takerOwnableSplit).(*base.DecData),
 		ImmutableMetaProperties: immutableMetaProperties.(*baseLists.PropertyList),
 		ImmutableProperties:     immutableProperties.(*baseLists.PropertyList),
 		MutableMetaProperties:   mutableMetaProperties.(*baseLists.PropertyList),
