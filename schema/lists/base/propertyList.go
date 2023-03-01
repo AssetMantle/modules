@@ -13,6 +13,14 @@ import (
 
 var _ lists.PropertyList = (*PropertyList)(nil)
 
+func (propertyList *PropertyList) ValidateBasic() error {
+	for _, property := range propertyList.PropertyList {
+		if err := property.ValidateBasic(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 func (propertyList *PropertyList) GetProperty(propertyID ids.PropertyID) properties.AnyProperty {
 	if i, found := propertyList.Search(base.NewEmptyMesaPropertyFromID(propertyID)); found {
 		return propertyList.GetList()[i]
