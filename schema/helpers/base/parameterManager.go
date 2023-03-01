@@ -5,8 +5,10 @@ package base
 
 import (
 	"fmt"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"net/http"
+
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/parameters/base"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -26,12 +28,12 @@ type parameterManager struct {
 
 var _ helpers.ParameterManager = (*parameterManager)(nil)
 
-func (parameterManager parameterManager) Get() []helpers.Parameter {
+func (parameterManager parameterManager) Get() helpers.ParameterList {
 	parameters := make([]helpers.Parameter, len(parameterManager.validatableParameters))
 	for i, validatableParameter := range parameterManager.validatableParameters {
 		parameters[i] = validatableParameter.GetParameter()
 	}
-	return parameters
+	return base.NewParameterList(parameters...)
 }
 func (parameterManager parameterManager) GetParameter(propertyID ids.PropertyID) helpers.Parameter {
 	if validatableParameter := parameterManager.GetValidatableParameter(propertyID); validatableParameter != nil {
@@ -52,25 +54,31 @@ func (parameterManager parameterManager) ValidateParameter(parameter helpers.Par
 	if validator != nil {
 		return validator.GetValidator()(parameter)
 	}
-	return errorConstants.EntityNotFound.Wrapf("Parameter with id %s not found", parameter.GetMetaProperty().GetID().AsString())
+	return errorConstants.EntityNotFound.Wrapf("parameter with id %s not found", parameter.GetMetaProperty().GetID().AsString())
 }
 func (parameterManager parameterManager) Fetch(context context.Context) helpers.ParameterManager {
 	for _, validatableParameter := range parameterManager.validatableParameters {
-		parameterManager.paramsSubspace.Get(sdkTypes.UnwrapSDKContext(context), validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes(), validatableParameter.GetParameter().GetMetaProperty().GetData().Get())
+		var value string
+		parameterManager.paramsSubspace.Get(sdkTypes.UnwrapSDKContext(context), validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes(), &value)
+		if data, err := validatableParameter.GetParameter().GetMetaProperty().GetData().Get().FromString(value); err != nil {
+			panic(err)
+		} else {
+			validatableParameter = validatableParameter.Mutate(data)
+		}
 	}
 
 	return parameterManager
 }
-func (parameterManager parameterManager) Set(context context.Context, parameters ...helpers.Parameter) {
-	for _, parameter := range parameters {
-		parameterManager.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData().Get())
+func (parameterManager parameterManager) Set(context context.Context, parameterList helpers.ParameterList) {
+	for _, parameter := range parameterList.Get() {
+		parameterManager.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData().Get().AsString())
 	}
 }
 func (parameterManager parameterManager) ParamSetPairs() paramsTypes.ParamSetPairs {
 	paramSetPairList := make([]paramsTypes.ParamSetPair, len(parameterManager.validatableParameters))
 
 	for i, validatableParameter := range parameterManager.validatableParameters {
-		paramSetPairList[i] = paramsTypes.NewParamSetPair(validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes(), validatableParameter.GetParameter().GetMetaProperty().GetData().Get(), validatableParameter.GetValidator())
+		paramSetPairList[i] = paramsTypes.NewParamSetPair(validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes(), validatableParameter.GetParameter().GetMetaProperty().GetData().Get().AsString(), validatableParameter.GetValidator())
 	}
 
 	return paramSetPairList
