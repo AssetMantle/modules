@@ -17,10 +17,10 @@ var _ ids.DataID = (*DataID)(nil)
 
 func (dataID *DataID) ValidateBasic() error {
 	if err := dataID.TypeID.ValidateBasic(); err != nil {
-		return nil
+		return err
 	}
 	if err := dataID.HashID.ValidateBasic(); err != nil {
-		return nil
+		return err
 	}
 	return nil
 }

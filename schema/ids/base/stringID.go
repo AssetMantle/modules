@@ -15,7 +15,6 @@ import (
 var _ ids.StringID = (*StringID)(nil)
 
 func (stringID *StringID) ValidateBasic() error {
-	utilities.IsValidStringID(stringID.AsString())
 	if !utilities.IsValidStringID(stringID.AsString()) {
 		return errorConstants.IncorrectFormat
 	}
