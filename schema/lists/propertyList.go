@@ -15,4 +15,5 @@ type PropertyList interface {
 	Mutate(...properties.Property) PropertyList
 
 	ScrubData() PropertyList
+	ValidateBasic() error
 }
