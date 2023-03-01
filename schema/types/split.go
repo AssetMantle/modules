@@ -17,4 +17,5 @@ type Split interface {
 
 	Send(sdkTypes.Dec) Split
 	Receive(sdkTypes.Dec) Split
+	ValidateBasic() error
 }

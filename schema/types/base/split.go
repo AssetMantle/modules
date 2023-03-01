@@ -1,6 +1,7 @@
 package base
 
 import (
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/ids/base"
@@ -17,6 +18,18 @@ import (
 
 var _ types.Split = (*Split)(nil)
 
+func (split *Split) ValidateBasic() error {
+	if err := split.OwnerID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := split.OwnableID.ValidateBasic(); err != nil {
+		return err
+	}
+	if !sdkTypes.ValidSortableDec(split.Value) {
+		return errorConstants.IncorrectFormat
+	}
+	return nil
+}
 func (split *Split) GetOwnerID() ids.IdentityID {
 	return split.OwnerID
 }
