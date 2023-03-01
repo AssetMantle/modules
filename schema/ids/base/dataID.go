@@ -15,6 +15,15 @@ import (
 
 var _ ids.DataID = (*DataID)(nil)
 
+func (dataID *DataID) ValidateBasic() error {
+	if err := dataID.TypeID.ValidateBasic(); err != nil {
+		return nil
+	}
+	if err := dataID.HashID.ValidateBasic(); err != nil {
+		return nil
+	}
+	return nil
+}
 func (dataID *DataID) AsString() string {
 	return stringUtilities.JoinIDStrings(dataID.TypeID.AsString(), dataID.HashID.AsString())
 }

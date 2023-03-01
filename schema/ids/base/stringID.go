@@ -4,6 +4,7 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/schema/ids/constansts"
 	"strings"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
@@ -13,6 +14,13 @@ import (
 
 var _ ids.StringID = (*StringID)(nil)
 
+func (stringID *StringID) ValidateBasic() error {
+	constansts.IsValidStringID(stringID.AsString())
+	if !constansts.IsValidStringID(stringID.AsString()) {
+		return errorConstants.IncorrectFormat
+	}
+	return nil
+}
 func (stringID *StringID) IsStringID() {}
 func (stringID *StringID) AsString() string {
 	return stringID.IDString

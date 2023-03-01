@@ -9,6 +9,9 @@ import (
 
 var _ ids.OrderID = (*OrderID)(nil)
 
+func (orderID *OrderID) ValidateBasic() error {
+	return orderID.HashID.ValidateBasic()
+}
 func (orderID *OrderID) AsString() string {
 	return orderID.HashID.AsString()
 }

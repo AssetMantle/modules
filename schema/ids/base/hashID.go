@@ -18,6 +18,12 @@ import (
 var _ ids.HashID = (*HashID)(nil)
 
 func (hashID *HashID) IsHashID() {}
+func (hashID *HashID) ValidateBasic() error {
+	if len(hashID.IDBytes) != 32 {
+		return errorConstants.IncorrectFormat
+	}
+	return nil
+}
 
 // TODO test if nil and empty result in ""
 func (hashID *HashID) AsString() string {

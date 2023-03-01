@@ -14,6 +14,9 @@ import (
 
 var _ ids.AssetID = (*AssetID)(nil)
 
+func (assetID *AssetID) ValidateBasic() error {
+	return assetID.HashID.ValidateBasic()
+}
 func (assetID *AssetID) AsString() string {
 	return assetID.HashID.AsString()
 }
