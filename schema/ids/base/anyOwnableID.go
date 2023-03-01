@@ -44,6 +44,10 @@ func (m *AnyOwnableID) ToAnyOwnableID() ids.AnyOwnableID {
 func (m *AnyOwnableID) IsAnyOwnableID() {
 }
 
+func (m *AnyOwnableID) ValidateBasic() error {
+	return m.Impl.(ownableIDGetter).get().ValidateBasic()
+}
+
 func PrototypeOwnableID() ids.AnyOwnableID {
 	return PrototypeAssetID().ToAnyOwnableID()
 }

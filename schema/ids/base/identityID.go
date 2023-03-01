@@ -9,6 +9,9 @@ import (
 
 var _ ids.IdentityID = (*IdentityID)(nil)
 
+func (identityID *IdentityID) ValidateBasic() error {
+	return identityID.HashID.ValidateBasic()
+}
 func (identityID *IdentityID) IsIdentityID() {}
 func (identityID *IdentityID) AsString() string {
 	return identityID.HashID.AsString()

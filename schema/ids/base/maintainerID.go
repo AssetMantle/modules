@@ -13,6 +13,10 @@ import (
 
 var _ ids.MaintainerID = (*MaintainerID)(nil)
 
+func (maintainerID *MaintainerID) ValidateBasic() error {
+	return maintainerID.HashID.ValidateBasic()
+}
+
 func (maintainerID *MaintainerID) AsString() string {
 	return maintainerID.HashID.AsString()
 }

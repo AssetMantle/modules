@@ -9,6 +9,7 @@ import (
 
 type ID interface {
 	traits.Listable
+	ValidateBasic() error
 	AsString() string
 	Bytes() []byte
 	ToAnyID() AnyID
