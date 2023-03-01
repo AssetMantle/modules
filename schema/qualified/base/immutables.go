@@ -14,6 +14,10 @@ import (
 
 var _ qualified.Immutables = (*Immutables)(nil)
 
+func (immutables *Immutables) ValidateBasic() error {
+	return immutables.PropertyList.ValidateBasic()
+}
+
 // TODO write test case
 func (immutables *Immutables) GetImmutablePropertyList() lists.PropertyList {
 	if immutables.PropertyList.GetList() == nil {

@@ -13,6 +13,9 @@ import (
 
 var _ qualified.Mutables = (*Mutables)(nil)
 
+func (mutables *Mutables) ValidateBasic() error {
+	return mutables.PropertyList.ValidateBasic()
+}
 func (mutables *Mutables) GetMutablePropertyList() lists.PropertyList {
 	if mutables.PropertyList == nil {
 		return baseLists.NewPropertyList()
