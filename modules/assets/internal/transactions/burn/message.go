@@ -4,28 +4,28 @@
 package burn
 
 import (
-	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/codec/types"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
-
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var _ helpers.Message = (*Message)(nil)
 
 func (message *Message) Type() string { return Transaction.GetName() }
 func (message *Message) ValidateBasic() error {
-	var _, err = govalidator.ValidateStruct(message)
-	if err != nil {
-		return sdkErrors.Wrap(errorConstants.IncorrectMessage, err.Error())
+	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
+		return err
 	}
-
+	if err := message.FromID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.AssetID.ValidateBasic(); err != nil {
+		return err
+	}
 	return nil
 }
 func (message *Message) GetSigners() []sdkTypes.AccAddress {

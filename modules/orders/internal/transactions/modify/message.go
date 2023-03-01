@@ -4,7 +4,6 @@
 package modify
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -24,12 +23,26 @@ var _ helpers.Message = (*Message)(nil)
 
 func (message *Message) Type() string { return Transaction.GetName() }
 func (message *Message) ValidateBasic() error {
-	var _, err = govalidator.ValidateStruct(message)
-	if err != nil {
-		return errorConstants.IncorrectMessage.Wrapf(err.Error())
+	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
+		return err
+	}
+	if err := message.FromID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.OrderID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.ExpiresIn.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.MutableMetaProperties.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.MutableProperties.ValidateBasic(); err != nil {
+		return err
 	}
 	if !sdkTypes.ValidSortableDec(message.MakerOwnableSplit) || !sdkTypes.ValidSortableDec(message.TakerOwnableSplit) {
-		return errorConstants.InvalidParameter.Wrapf("invalid split")
+		return errorConstants.IncorrectMessage.Wrapf("invalid split")
 	}
 	return nil
 }
