@@ -10,6 +10,9 @@ import (
 // TODO rename to something more appropriate
 var _ ids.CoinID = (*CoinID)(nil)
 
+func (coinID *CoinID) ValidateBasic() error {
+	return coinID.StringID.ValidateBasic()
+}
 func (coinID *CoinID) IsCoinID() {
 }
 func (coinID *CoinID) AsString() string {

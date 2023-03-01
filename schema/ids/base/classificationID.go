@@ -9,6 +9,9 @@ import (
 
 var _ ids.ClassificationID = (*ClassificationID)(nil)
 
+func (classificationID *ClassificationID) ValidateBasic() error {
+	return classificationID.HashID.ValidateBasic()
+}
 func (classificationID *ClassificationID) AsString() string {
 	return classificationID.HashID.AsString()
 }

@@ -14,6 +14,16 @@ import (
 
 var _ ids.PropertyID = (*PropertyID)(nil)
 
+func (propertyID *PropertyID) ValidateBasic() error {
+	if err := propertyID.KeyID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := propertyID.TypeID.ValidateBasic(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (propertyID *PropertyID) AsString() string {
 	return stringUtilities.JoinIDStrings(propertyID.KeyID.AsString(), propertyID.TypeID.AsString())
 }

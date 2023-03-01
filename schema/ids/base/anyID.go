@@ -73,6 +73,9 @@ func (m *AnyID) Bytes() []byte {
 func (m *AnyID) ToAnyID() ids.AnyID {
 	return m.Impl.(idGetter).get().ToAnyID()
 }
+func (m *AnyID) ValidateBasic() error {
+	return m.Impl.(idGetter).get().ValidateBasic()
+}
 
 func idFromListable(listable traits.Listable) (ids.ID, error) {
 	switch listable.(type) {

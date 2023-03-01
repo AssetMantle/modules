@@ -16,6 +16,15 @@ import (
 
 var _ ids.SplitID = (*SplitID)(nil)
 
+func (splitID *SplitID) ValidateBasic() error {
+	if err := splitID.OwnerID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := splitID.OwnableID.ValidateBasic(); err != nil {
+		return err
+	}
+	return nil
+}
 func (splitID *SplitID) AsString() string {
 	return stringUtilities.JoinIDStrings(splitID.OwnerID.AsString(), splitID.OwnableID.AsString())
 }
