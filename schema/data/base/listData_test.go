@@ -25,6 +25,23 @@ var fromAddress = "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
 
 var accAddress = NewAccAddressData(sdkTypes.AccAddress(fromAddress)).AsString()
 
+func TestListDataValidateBasic(t *testing.T) {
+	type args struct {
+		value data.ListData
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{"+ve", args{NewListData(NewListData(NewStringData("Data")))}, true},
+	}
+	for _, tt := range tests {
+		if err := tt.args.value.ValidateBasic(); (err != nil) != tt.want {
+			t.Errorf("got = %v, want = %v", err, tt.want)
+		}
+	}
+}
 func TestListDataPrototype(t *testing.T) {
 	type args struct {
 		value data.ListData
