@@ -37,12 +37,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	splits := transactionKeeper.mapper.NewCollection(context)
-
-	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, message.Value); err != nil {
+	value, err := sdkTypes.NewDecFromStr(message.Value)
+	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, value); err != nil {
 		return nil, err
 	}
 
-	if _, err := utilities.AddSplits(splits, message.ToID, message.OwnableID, message.Value); err != nil {
+	if _, err := utilities.AddSplits(splits, message.ToID, message.OwnableID, value); err != nil {
 		return nil, err
 	}
 

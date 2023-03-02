@@ -61,27 +61,27 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if order.GetTakerID().Compare(baseIDs.PrototypeIdentityID()) != 0 && order.GetTakerID().Compare(message.FromID) != 0 {
 		return nil, errorConstants.NotAuthorized.Wrapf("taker ID %s is not authorized to take private order with ID %s", message.FromID.AsString(), message.OrderID.AsString())
 	}
-
+	takerOwnableSplit, err := sdkTypes.NewDecFromStr(message.TakerOwnableSplit)
 	makerReceiveTakerOwnableSplit := order.GetMakerOwnableSplit().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
-	takerReceiveMakerOwnableSplit := message.TakerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(order.GetExchangeRate())
+	takerReceiveMakerOwnableSplit := takerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(order.GetExchangeRate())
 
 	switch updatedMakerOwnableSplit := order.GetMakerOwnableSplit().Sub(takerReceiveMakerOwnableSplit); {
 	case updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()):
-		if message.TakerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
-			return nil, errorConstants.InsufficientBalance.Wrapf("taker ownable split %s is less than the required amount %s for order execution", message.TakerOwnableSplit.String(), makerReceiveTakerOwnableSplit.String())
+		if takerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
+			return nil, errorConstants.InsufficientBalance.Wrapf("taker ownable split %s is less than the required amount %s for order execution", message.TakerOwnableSplit, makerReceiveTakerOwnableSplit.String())
 		}
 
 		orders.Remove(mappable.NewMappable(order))
 	case updatedMakerOwnableSplit.LT(sdkTypes.ZeroDec()):
-		if message.TakerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
-			return nil, errorConstants.InsufficientBalance.Wrapf("taker ownable split %s is less than the required amount %s for order execution", message.TakerOwnableSplit.String(), makerReceiveTakerOwnableSplit.String())
+		if takerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
+			return nil, errorConstants.InsufficientBalance.Wrapf("taker ownable split %s is less than the required amount %s for order execution", message.TakerOwnableSplit, makerReceiveTakerOwnableSplit.String())
 		}
 
 		takerReceiveMakerOwnableSplit = order.GetMakerOwnableSplit()
 
 		orders.Remove(mappable.NewMappable(order))
 	default:
-		makerReceiveTakerOwnableSplit = message.TakerOwnableSplit
+		makerReceiveTakerOwnableSplit = takerOwnableSplit
 		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(updatedMakerOwnableSplit)))
 
 		orders.Mutate(mappable.NewMappable(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutableProperties.GetList()...)...))))

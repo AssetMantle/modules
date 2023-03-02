@@ -59,8 +59,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityNotFound.Wrapf("order with ID %s not found", message.OrderID.AsString())
 	}
 	order := mappable.GetOrder(Mappable)
-
-	transferMakerOwnableSplit := message.MakerOwnableSplit.Sub(order.GetMakerOwnableSplit())
+	makerOwnableSplit, err := sdkTypes.NewDecFromStr(message.MakerOwnableSplit)
+	transferMakerOwnableSplit := makerOwnableSplit.Sub(order.GetMakerOwnableSplit())
 
 	if transferMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
 		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), transferMakerOwnableSplit.Abs())); err != nil {
@@ -73,7 +73,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	mutableMetaProperties := message.MutableMetaProperties.
-		Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(message.MakerOwnableSplit))).
+		Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(makerOwnableSplit))).
 		Add(baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+sdkTypes.UnwrapSDKContext(context).BlockHeight()))))
 
 	updatedMutables := order.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...)

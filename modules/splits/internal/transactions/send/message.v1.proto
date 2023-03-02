@@ -10,5 +10,5 @@ message Message {
   ids.IdentityID from_i_d = 2;
   ids.IdentityID to_i_d = 3;
   ids.AnyOwnableID ownable_i_d = 4;
-  string value = 5 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  string value = 5 ;
 }

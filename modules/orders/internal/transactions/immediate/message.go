@@ -56,7 +56,11 @@ func (message *Message) ValidateBasic() error {
 	if err := message.MutableProperties.ValidateBasic(); err != nil {
 		return err
 	}
-	if !sdkTypes.ValidSortableDec(message.MakerOwnableSplit) || !sdkTypes.ValidSortableDec(message.TakerOwnableSplit) {
+	if makerOwnableSplit, err := sdkTypes.NewDecFromStr(message.MakerOwnableSplit); err != nil {
+		return err
+	} else if takerOwnableSplit, err := sdkTypes.NewDecFromStr(message.TakerOwnableSplit); err != nil {
+		return err
+	} else if !sdkTypes.ValidSortableDec(makerOwnableSplit) || !sdkTypes.ValidSortableDec(takerOwnableSplit) {
 		return errorConstants.IncorrectMessage.Wrapf("invalid split")
 	}
 	return nil
@@ -95,8 +99,8 @@ func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationI
 		MakerOwnableID:          makerOwnableID.(*baseIds.AnyOwnableID),
 		TakerOwnableID:          takerOwnableID.(*baseIds.AnyOwnableID),
 		ExpiresIn:               expiresIn.(*baseTypes.Height),
-		MakerOwnableSplit:       makerOwnableSplit,
-		TakerOwnableSplit:       takerOwnableSplit,
+		MakerOwnableSplit:       makerOwnableSplit.String(),
+		TakerOwnableSplit:       takerOwnableSplit.String(),
 		ImmutableMetaProperties: immutableMetaProperties.(*baseLists.PropertyList),
 		ImmutableProperties:     immutableProperties.(*baseLists.PropertyList),
 		MutableMetaProperties:   mutableMetaProperties.(*baseLists.PropertyList),

@@ -12,8 +12,8 @@ message Message {
   string from = 1;
   ids.IdentityID from_i_d = 2;
   ids.OrderID order_i_d = 3;
-  string maker_ownable_split = 4 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
-  string taker_ownable_split = 5 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  string maker_ownable_split = 4 ;
+  string taker_ownable_split = 5 ;
   types.Height expires_in = 6;
   lists.PropertyList mutable_meta_properties = 7;
   lists.PropertyList mutable_properties = 8;

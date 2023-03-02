@@ -8,5 +8,5 @@ message QueryResponse {
 
   bool success = 1;
   string error = 2;
-  string value = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  string value = 3 ;
 }

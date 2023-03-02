@@ -25,7 +25,9 @@ func (split *Split) ValidateBasic() error {
 	if err := split.OwnableID.ValidateBasic(); err != nil {
 		return err
 	}
-	if !sdkTypes.ValidSortableDec(split.Value) {
+	if value, err := sdkTypes.NewDecFromStr(split.Value); err != nil {
+		return err
+	} else if !sdkTypes.ValidSortableDec(value) {
 		return errorConstants.IncorrectFormat
 	}
 	return nil
@@ -37,24 +39,28 @@ func (split *Split) GetOwnableID() ids.OwnableID {
 	return split.OwnableID
 }
 func (split *Split) GetValue() sdkTypes.Dec {
-	return split.Value
+	value, _ := sdkTypes.NewDecFromStr(split.Value)
+	return value
 }
 func (split *Split) Send(outValue sdkTypes.Dec) types.Split {
-	split.Value = split.Value.Sub(outValue)
+	value, _ := sdkTypes.NewDecFromStr(split.Value)
+	split.Value = value.Sub(outValue).String()
 	return split
 }
 func (split *Split) Receive(inValue sdkTypes.Dec) types.Split {
-	split.Value = split.Value.Add(inValue)
+	value, _ := sdkTypes.NewDecFromStr(split.Value)
+	split.Value = value.Add(inValue).String()
 	return split
 }
 func (split *Split) CanSend(outValue sdkTypes.Dec) bool {
-	return split.Value.GTE(outValue)
+	value, _ := sdkTypes.NewDecFromStr(split.Value)
+	return value.GTE(outValue)
 }
 
 func NewSplit(ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) types.Split {
 	return &Split{
 		OwnerID:   ownerID.(*base.IdentityID),
 		OwnableID: ownableID.ToAnyOwnableID().(*base.AnyOwnableID),
-		Value:     value,
+		Value:     value.String(),
 	}
 }

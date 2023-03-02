@@ -8,6 +8,6 @@ import "schema/ids/base/orderID.v1.proto";
 message Message {
   string from = 1;
   ids.IdentityID from_i_d = 2;
-  string taker_ownable_split = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  string taker_ownable_split = 3 ;
   ids.OrderID order_i_d = 4;
 }

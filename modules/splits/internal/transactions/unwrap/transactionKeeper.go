@@ -38,14 +38,14 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err
 	}
-
+	value, err := types.NewDecFromStr(message.Value)
 	splits := transactionKeeper.mapper.NewCollection(context)
-	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, message.Value); err != nil {
+	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, value); err != nil {
 		return nil, err
 	}
 
 	// TODO ******* : Check if roundint() is apt
-	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(types.UnwrapSDKContext(context), module.Name, fromAddress, types.NewCoins(types.NewCoin(message.OwnableID.AsString(), message.Value.RoundInt()))); err != nil {
+	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(types.UnwrapSDKContext(context), module.Name, fromAddress, types.NewCoins(types.NewCoin(message.OwnableID.AsString(), value.RoundInt()))); err != nil {
 		return nil, err
 	}
 
