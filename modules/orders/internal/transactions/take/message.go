@@ -28,7 +28,9 @@ func (message *Message) ValidateBasic() error {
 	if err := message.OrderID.ValidateBasic(); err != nil {
 		return err
 	}
-	if !sdkTypes.ValidSortableDec(message.TakerOwnableSplit) {
+	if takerOwnableSplit, err := sdkTypes.NewDecFromStr(message.TakerOwnableSplit); err != nil {
+		return err
+	} else if !sdkTypes.ValidSortableDec(takerOwnableSplit) {
 		return errorConstants.IncorrectMessage.Wrapf("invalid split")
 	}
 	return nil
@@ -62,7 +64,7 @@ func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, takerOwnableSpl
 	return &Message{
 		From:              from.String(),
 		FromID:            fromID.(*baseIds.IdentityID),
-		TakerOwnableSplit: takerOwnableSplit,
+		TakerOwnableSplit: takerOwnableSplit.String(),
 		OrderID:           orderID.(*baseIds.OrderID),
 	}
 }

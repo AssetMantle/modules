@@ -44,13 +44,13 @@ func newQueryResponse(value sdkTypes.Dec, error error) *QueryResponse {
 		return &QueryResponse{
 			Success: false,
 			Error:   error.Error(),
-			Value:   value,
+			Value:   value.String(),
 		}
 	}
 
 	return &QueryResponse{
 		Success: true,
 		Error:   "",
-		Value:   value,
+		Value:   value.String(),
 	}
 }
