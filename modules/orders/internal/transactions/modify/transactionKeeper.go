@@ -59,7 +59,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityNotFound.Wrapf("order with ID %s not found", message.OrderID.AsString())
 	}
 	order := mappable.GetOrder(Mappable)
-	makerOwnableSplit, err := sdkTypes.NewDecFromStr(message.MakerOwnableSplit)
+	makerOwnableSplit, _ := sdkTypes.NewDecFromStr(message.MakerOwnableSplit)
 	transferMakerOwnableSplit := makerOwnableSplit.Sub(order.GetMakerOwnableSplit())
 
 	if transferMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {

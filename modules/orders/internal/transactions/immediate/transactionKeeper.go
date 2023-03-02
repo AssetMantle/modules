@@ -54,8 +54,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err
 	}
-	makerOwnableSplit, err := sdkTypes.NewDecFromStr(message.MakerOwnableSplit)
-	takerOwnableSplit, err := sdkTypes.NewDecFromStr(message.TakerOwnableSplit)
+	makerOwnableSplit, _ := sdkTypes.NewDecFromStr(message.MakerOwnableSplit)
+	takerOwnableSplit, _ := sdkTypes.NewDecFromStr(message.TakerOwnableSplit)
 	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, module.ModuleIdentityID, message.MakerOwnableID, makerOwnableSplit)); err != nil {
 		return nil, err
 	}
