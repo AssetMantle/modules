@@ -8,7 +8,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIds "github.com/AssetMantle/modules/schema/ids/base"
@@ -28,10 +27,8 @@ func (message *Message) ValidateBasic() error {
 	if err := message.OrderID.ValidateBasic(); err != nil {
 		return err
 	}
-	if takerOwnableSplit, err := sdkTypes.NewDecFromStr(message.TakerOwnableSplit); err != nil {
+	if _, err := sdkTypes.NewDecFromStr(message.TakerOwnableSplit); err != nil {
 		return err
-	} else if !sdkTypes.ValidSortableDec(takerOwnableSplit) {
-		return errorConstants.IncorrectMessage.Wrapf("invalid split")
 	}
 	return nil
 }

@@ -4,7 +4,6 @@
 package send
 
 import (
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -31,10 +30,8 @@ func (message *Message) ValidateBasic() error {
 	if err := message.OwnableID.ValidateBasic(); err != nil {
 		return err
 	}
-	if value, err := sdkTypes.NewDecFromStr(message.Value); err != nil {
+	if _, err := sdkTypes.NewDecFromStr(message.Value); err != nil {
 		return err
-	} else if !sdkTypes.ValidSortableDec(value) {
-		return errorConstants.IncorrectMessage.Wrapf("invalid split")
 	}
 	return nil
 }
