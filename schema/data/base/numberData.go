@@ -25,13 +25,13 @@ func (numberData *NumberData) GetBondWeight() int64 {
 	return dataConstants.NumberDataWeight
 }
 func (numberData *NumberData) AsString() string {
-	return joinDataTypeAndValueStrings(numberData.GetType().AsString(), strconv.FormatInt(numberData.Value, 10))
+	return joinDataTypeAndValueStrings(numberData.GetTypeID().AsString(), strconv.FormatInt(numberData.Value, 10))
 }
 func (numberData *NumberData) FromString(dataTypeAndValueString string) (data.Data, error) {
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
-	if dataTypeString != numberData.GetType().AsString() {
-		return PrototypeStringData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for NumberData, expected type identifier %s, got %s", numberData.GetType().AsString(), dataTypeString)
+	if dataTypeString != numberData.GetTypeID().AsString() {
+		return PrototypeStringData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for NumberData, expected type identifier %s, got %s", numberData.GetTypeID().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {
@@ -50,8 +50,8 @@ func (numberData *NumberData) Bytes() []byte {
 	binary.LittleEndian.PutUint64(Bytes, uint64(numberData.Get()))
 	return Bytes
 }
-func (numberData *NumberData) GetType() ids.StringID {
-	return dataConstants.NumberDataID
+func (numberData *NumberData) GetTypeID() ids.StringID {
+	return dataConstants.NumberDataTypeID
 }
 func (numberData *NumberData) ZeroValue() data.Data {
 	return NewNumberData(0)

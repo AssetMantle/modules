@@ -12,8 +12,29 @@ var _ ids.ClassificationID = (*ClassificationID)(nil)
 func (classificationID *ClassificationID) ValidateBasic() error {
 	return classificationID.HashID.ValidateBasic()
 }
+func (classificationID *ClassificationID) GetTypeID() ids.StringID {
+}
+func (classificationID *ClassificationID) FromString(idTypeAndValueString string) (ids.ID, error) {
+	idTypeString, idString := splitIDTypeAndValueStrings(idTypeAndValueString)
+
+	if idTypeString != classificationID.GetTypeID().AsString() {
+		return PrototypeClassificationID(), errorConstants.IncorrectFormat.Wrapf("expected id type %s, got %s", classificationID.GetTypeID().AsString(), idTypeString)
+	}
+
+	if idString == "" {
+		return PrototypeClassificationID(), nil
+	}
+
+	if hashID, err := PrototypeHashID().FromString(idString); err != nil {
+		return PrototypeClassificationID(), err
+	} else {
+		return &ClassificationID{
+			HashID: hashID.(*HashID),
+		}, nil
+	}
+}
 func (classificationID *ClassificationID) AsString() string {
-	return classificationID.HashID.AsString()
+	return joinIDTypeAndValueStrings(classificationID.GetTypeID().AsString(), classificationID.HashID.AsString())
 }
 func (classificationID *ClassificationID) Bytes() []byte {
 	return classificationID.HashID.IDBytes

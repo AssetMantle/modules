@@ -191,16 +191,16 @@ func Test_booleanData_GetType(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		{"+ve", fields{}, idsConstants.BooleanDataID},
-		{"+ve", fields{true}, idsConstants.BooleanDataID},
-		{"+ve", fields{false}, idsConstants.BooleanDataID},
+		{"+ve", fields{}, idsConstants.BooleanDataTypeID},
+		{"+ve", fields{true}, idsConstants.BooleanDataTypeID},
+		{"+ve", fields{false}, idsConstants.BooleanDataTypeID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			booleanData := &BooleanData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, booleanData.GetType(), "GetType()")
+			assert.Equalf(t, tt.want, booleanData.GetTypeID(), "GetTypeID()")
 		})
 	}
 }

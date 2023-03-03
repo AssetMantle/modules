@@ -19,7 +19,7 @@ import (
 )
 
 var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()
-var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewListData(baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(sdkTypes.DefaultBondDenom))))))
+var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewListData(baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(sdkTypes.DefaultBondDenom)).ToAnyID()))))
 
 func validator(i interface{}) error {
 	var listData *baseData.ListData

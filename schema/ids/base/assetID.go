@@ -17,8 +17,29 @@ var _ ids.AssetID = (*AssetID)(nil)
 func (assetID *AssetID) ValidateBasic() error {
 	return assetID.HashID.ValidateBasic()
 }
+func (assetID *AssetID) GetTypeID() ids.StringID {
+}
+func (assetID *AssetID) FromString(idTypeAndValueString string) (ids.ID, error) {
+	idTypeString, idString := splitIDTypeAndValueStrings(idTypeAndValueString)
+
+	if idTypeString != assetID.GetTypeID().AsString() {
+		return PrototypeAssetID(), errorConstants.IncorrectFormat.Wrapf("expected id type %s, got %s", assetID.GetTypeID().AsString(), idTypeString)
+	}
+
+	if idString == "" {
+		return PrototypeAssetID(), nil
+	}
+
+	if hashID, err := PrototypeHashID().FromString(idString); err != nil {
+		return PrototypeAssetID(), err
+	} else {
+		return &AssetID{
+			HashID: hashID.(*HashID),
+		}, nil
+	}
+}
 func (assetID *AssetID) AsString() string {
-	return assetID.HashID.AsString()
+	return joinIDTypeAndValueStrings(assetID.GetTypeID().AsString(), assetID.HashID.AsString())
 }
 func (assetID *AssetID) Bytes() []byte {
 	return assetID.HashID.IDBytes

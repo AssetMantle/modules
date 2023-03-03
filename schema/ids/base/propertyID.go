@@ -23,16 +23,16 @@ func (propertyID *PropertyID) ValidateBasic() error {
 	}
 	return nil
 }
-
+func (propertyID *PropertyID) GetTypeID() ids.StringID {
+}
+func (propertyID *PropertyID) FromString(idTypeAndValueString string) (ids.ID, error) {
+}
 func (propertyID *PropertyID) AsString() string {
-	return stringUtilities.JoinIDStrings(propertyID.KeyID.AsString(), propertyID.TypeID.AsString())
+	return joinIDTypeAndValueStrings(propertyID.GetTypeID().AsString(), stringUtilities.JoinIDStrings(propertyID.KeyID.AsString(), propertyID.TypeID.AsString()))
 }
 func (propertyID *PropertyID) IsPropertyID() {}
 func (propertyID *PropertyID) GetKey() ids.StringID {
 	return propertyID.KeyID
-}
-func (propertyID *PropertyID) GetType() ids.StringID {
-	return propertyID.TypeID
 }
 func (propertyID *PropertyID) Bytes() []byte {
 	var Bytes []byte
@@ -58,6 +58,12 @@ func propertyIDFromInterface(listable traits.Listable) *PropertyID {
 		return value
 	default:
 		panic(errorConstants.IncorrectFormat.Wrapf("expected *PropertyID, got %T", listable))
+	}
+}
+func PrototypePropertyID() *PropertyID {
+	return &PropertyID{
+		KeyID:  PrototypeStringID().(*StringID),
+		TypeID: PrototypeStringID().(*StringID),
 	}
 }
 

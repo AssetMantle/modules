@@ -9,7 +9,9 @@ import (
 
 type ID interface {
 	traits.Listable
+	GetTypeID() StringID
 	ValidateBasic() error
+	FromString(string) (ID, error)
 	AsString() string
 	Bytes() []byte
 	ToAnyID() AnyID

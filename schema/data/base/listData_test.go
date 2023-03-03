@@ -253,13 +253,13 @@ func Test_listData_GetType(t *testing.T) {
 		fields fields
 		want   ids.StringID
 	}{
-		{"+ve for some id", fields{NewListData(NewStringData("Data"))}, dataConstants.ListDataID},
-		{"+ve for empty String", fields{NewListData(NewStringData(""))}, dataConstants.ListDataID},
+		{"+ve for some id", fields{NewListData(NewStringData("Data"))}, dataConstants.ListDataTypeID},
+		{"+ve for empty String", fields{NewListData(NewStringData(""))}, dataConstants.ListDataTypeID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			listData := tt.fields.Value
-			assert.Equalf(t, tt.want, listData.GetType(), "GetType()")
+			assert.Equalf(t, tt.want, listData.GetTypeID(), "GetTypeID()")
 		})
 	}
 }

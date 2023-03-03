@@ -28,7 +28,7 @@ func ValidatedData(value data.Data) *baseData.AnyData {
 func createTestInput() (ids.StringID, ids.PropertyID, data.Data, properties.MetaProperty) {
 	testKey := base.NewStringID("ID")
 	testData := baseData.NewStringData("Data")
-	testPropertyID := base.NewPropertyID(testKey, testData.GetType())
+	testPropertyID := base.NewPropertyID(testKey, testData.GetTypeID())
 	testMetaProperty := NewMetaProperty(testKey, testData)
 	return testKey, testPropertyID, testData, testMetaProperty
 }
@@ -237,7 +237,7 @@ func Test_metaProperty_GetType(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		{"+ve", fields{testPropertyID, testData}, testData.GetType()},
+		{"+ve", fields{testPropertyID, testData}, testData.GetTypeID()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -246,7 +246,7 @@ func Test_metaProperty_GetType(t *testing.T) {
 				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetType(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetType() = %v, want %v", got, tt.want)
+				t.Errorf("GetTypeID() = %v, want %v", got, tt.want)
 			}
 		})
 	}

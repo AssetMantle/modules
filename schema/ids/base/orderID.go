@@ -12,8 +12,12 @@ var _ ids.OrderID = (*OrderID)(nil)
 func (orderID *OrderID) ValidateBasic() error {
 	return orderID.HashID.ValidateBasic()
 }
+func (orderID *OrderID) GetTypeID() ids.StringID {
+}
+func (orderID *OrderID) FromString(idTypeAndValueString string) (ids.ID, error) {
+}
 func (orderID *OrderID) AsString() string {
-	return orderID.HashID.AsString()
+	return joinIDTypeAndValueStrings(orderID.GetTypeID().AsString(), orderID.HashID.AsString())
 }
 func (orderID *OrderID) Bytes() []byte {
 	return orderID.HashID.IDBytes

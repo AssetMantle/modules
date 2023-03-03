@@ -176,15 +176,15 @@ func Test_accAddressData_GetType(t *testing.T) {
 		fields fields
 		want   ids.ID
 	}{
-		{"+ve with nil", fields{}, idsConstants.AccAddressDataID},
-		{"+ve", fields{fromAccAddress}, idsConstants.AccAddressDataID},
+		{"+ve with nil", fields{}, idsConstants.AccAddressDataTypeID},
+		{"+ve", fields{fromAccAddress}, idsConstants.AccAddressDataTypeID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			accAddressData := &AccAddressData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, accAddressData.GetType(), "GetType()")
+			assert.Equalf(t, tt.want, accAddressData.GetTypeID(), "GetTypeID()")
 		})
 	}
 }

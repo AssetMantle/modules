@@ -41,13 +41,13 @@ func (booleanData *BooleanData) Compare(listable traits.Listable) int {
 	}
 }
 func (booleanData *BooleanData) AsString() string {
-	return joinDataTypeAndValueStrings(booleanData.GetType().AsString(), strconv.FormatBool(booleanData.Value))
+	return joinDataTypeAndValueStrings(booleanData.GetTypeID().AsString(), strconv.FormatBool(booleanData.Value))
 }
 func (booleanData *BooleanData) FromString(dataTypeAndValueString string) (data.Data, error) {
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
-	if dataTypeString != booleanData.GetType().AsString() {
-		return PrototypeBooleanData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for BooleanData, expected type identifier %s, got %s", booleanData.GetType().AsString(), dataTypeString)
+	if dataTypeString != booleanData.GetTypeID().AsString() {
+		return PrototypeBooleanData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for BooleanData, expected type identifier %s, got %s", booleanData.GetTypeID().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {
@@ -67,8 +67,8 @@ func (booleanData *BooleanData) Bytes() []byte {
 	}
 	return []byte{0x0}
 }
-func (booleanData *BooleanData) GetType() ids.StringID {
-	return dataConstants.BooleanDataID
+func (booleanData *BooleanData) GetTypeID() ids.StringID {
+	return dataConstants.BooleanDataTypeID
 }
 func (booleanData *BooleanData) ZeroValue() data.Data {
 	return NewBooleanData(false)

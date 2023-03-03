@@ -35,13 +35,13 @@ func (accAddressData *AccAddressData) Compare(listable traits.Listable) int {
 	return bytes.Compare(accAddressData.Bytes(), compareAccAddressData.Bytes())
 }
 func (accAddressData *AccAddressData) AsString() string {
-	return joinDataTypeAndValueStrings(accAddressData.GetType().AsString(), sdkTypes.AccAddress(accAddressData.Value).String())
+	return joinDataTypeAndValueStrings(accAddressData.GetTypeID().AsString(), sdkTypes.AccAddress(accAddressData.Value).String())
 }
 func (accAddressData *AccAddressData) FromString(dataTypeAndValueString string) (data.Data, error) {
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
-	if dataTypeString != accAddressData.GetType().AsString() {
-		return PrototypeAccAddressData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for AccAddressData, expected type identifier %s, got %s", accAddressData.GetType().AsString(), dataTypeString)
+	if dataTypeString != accAddressData.GetTypeID().AsString() {
+		return PrototypeAccAddressData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for AccAddressData, expected type identifier %s, got %s", accAddressData.GetTypeID().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {
@@ -58,8 +58,8 @@ func (accAddressData *AccAddressData) FromString(dataTypeAndValueString string) 
 func (accAddressData *AccAddressData) Bytes() []byte {
 	return sdkTypes.AccAddress(accAddressData.Value).Bytes()
 }
-func (accAddressData *AccAddressData) GetType() ids.StringID {
-	return dataConstants.AccAddressDataID
+func (accAddressData *AccAddressData) GetTypeID() ids.StringID {
+	return dataConstants.AccAddressDataTypeID
 }
 func (accAddressData *AccAddressData) ZeroValue() data.Data {
 	return PrototypeAccAddressData()

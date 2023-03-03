@@ -13,8 +13,29 @@ func (identityID *IdentityID) ValidateBasic() error {
 	return identityID.HashID.ValidateBasic()
 }
 func (identityID *IdentityID) IsIdentityID() {}
+func (identityID *IdentityID) GetTypeID() ids.StringID {
+}
+func (identityID *IdentityID) FromString(idTypeAndValueString string) (ids.ID, error) {
+	idTypeString, idString := splitIDTypeAndValueStrings(idTypeAndValueString)
+
+	if idTypeString != identityID.GetTypeID().AsString() {
+		return PrototypeIdentityID(), errorConstants.IncorrectFormat.Wrapf("expected id type %s, got %s", identityID.GetTypeID().AsString(), idTypeString)
+	}
+
+	if idString == "" {
+		return PrototypeIdentityID(), nil
+	}
+
+	if hashID, err := PrototypeHashID().FromString(idString); err != nil {
+		return PrototypeIdentityID(), err
+	} else {
+		return &IdentityID{
+			HashID: hashID.(*HashID),
+		}, nil
+	}
+}
 func (identityID *IdentityID) AsString() string {
-	return identityID.HashID.AsString()
+	return joinIDTypeAndValueStrings(identityID.GetTypeID().AsString(), identityID.HashID.AsString())
 }
 func (identityID *IdentityID) GetHashID() ids.HashID {
 	return identityID.HashID

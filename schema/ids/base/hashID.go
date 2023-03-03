@@ -24,10 +24,31 @@ func (hashID *HashID) ValidateBasic() error {
 	}
 	return nil
 }
+func (hashID *HashID) GetTypeID() ids.StringID {
+}
+func (hashID *HashID) FromString(idTypeAndValueString string) (ids.ID, error) {
+	idTypeString, idString := splitIDTypeAndValueStrings(idTypeAndValueString)
+
+	if idTypeString != hashID.GetTypeID().AsString() {
+		return PrototypeHashID(), errorConstants.IncorrectFormat.Wrapf("expected id type %s, got %s", hashID.GetTypeID().AsString(), idTypeString)
+	}
+
+	if idString == "" {
+		return PrototypeHashID(), nil
+	}
+
+	if hashBytes, err := base64.URLEncoding.DecodeString(idString); err != nil {
+		return PrototypeHashID(), err
+	} else {
+		return &HashID{
+			IDBytes: hashBytes,
+		}, nil
+	}
+}
 
 // TODO test if nil and empty result in ""
 func (hashID *HashID) AsString() string {
-	return base64.URLEncoding.EncodeToString(hashID.IDBytes)
+	return joinIDTypeAndValueStrings(hashID.GetTypeID().AsString(), base64.URLEncoding.EncodeToString(hashID.IDBytes))
 }
 func (hashID *HashID) Bytes() []byte {
 	return hashID.IDBytes

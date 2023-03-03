@@ -21,14 +21,15 @@ message AnyID {
   oneof impl {
     AnyOwnableID any_ownable_i_d = 1;
     AssetID asset_i_d = 2;
-    ClassificationID classification_i_d = 3;
-    DataID data_i_d = 4;
-    HashID hash_i_d = 5;
-    IdentityID identity_i_d = 6;
-    MaintainerID maintainer_i_d = 7;
-    OrderID order_i_d = 8;
-    PropertyID property_i_d = 9;
-    SplitID split_i_d = 10;
-    StringID string_i_d = 11;
+    CoinID coin_i_d = 3;
+    ClassificationID classification_i_d = 4;
+    DataID data_i_d = 5;
+    HashID hash_i_d = 6;
+    IdentityID identity_i_d = 7;
+    MaintainerID maintainer_i_d = 8;
+    OrderID order_i_d = 9;
+    PropertyID property_i_d = 10;
+    SplitID split_i_d = 11;
+    StringID string_i_d = 12;
   }
 }

@@ -30,13 +30,13 @@ func (heightData *HeightData) GetBondWeight() int64 {
 	return dataConstants.HeightDataWeight
 }
 func (heightData *HeightData) AsString() string {
-	return joinDataTypeAndValueStrings(heightData.GetType().AsString(), strconv.FormatInt(heightData.Value.Get(), 10))
+	return joinDataTypeAndValueStrings(heightData.GetTypeID().AsString(), strconv.FormatInt(heightData.Value.Get(), 10))
 }
 func (heightData *HeightData) FromString(dataTypeAndValueString string) (data.Data, error) {
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
-	if dataTypeString != heightData.GetType().AsString() {
-		return PrototypeHeightData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for HeightData, expected type identifier %s, got %s", heightData.GetType().AsString(), dataTypeString)
+	if dataTypeString != heightData.GetTypeID().AsString() {
+		return PrototypeHeightData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for HeightData, expected type identifier %s, got %s", heightData.GetTypeID().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {
@@ -63,8 +63,8 @@ func (heightData *HeightData) Bytes() []byte {
 	binary.LittleEndian.PutUint64(Bytes, uint64(heightData.Get().Get()))
 	return Bytes
 }
-func (heightData *HeightData) GetType() ids.StringID {
-	return dataConstants.HeightDataID
+func (heightData *HeightData) GetTypeID() ids.StringID {
+	return dataConstants.HeightDataTypeID
 }
 func (heightData *HeightData) ZeroValue() data.Data {
 	return NewHeightData(baseTypes.NewHeight(-1))

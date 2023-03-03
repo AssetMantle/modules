@@ -1,6 +1,7 @@
 package base
 
 import (
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -28,6 +29,33 @@ func (m *AnyOwnableID) Get() ids.OwnableID {
 }
 func (m *AnyOwnableID) Compare(listable traits.Listable) int {
 	return m.Impl.(ownableIDGetter).get().Compare(listable)
+}
+func (m *AnyOwnableID) GetTypeID() ids.StringID {
+	return m.Impl.(ownableIDGetter).get().GetTypeID()
+}
+func (m *AnyOwnableID) FromString(idString string) (ids.ID, error) {
+	idTypeString, _ := splitIDTypeAndValueStrings(idString)
+	if idTypeString != "" {
+		var id ids.ID
+		var err error
+
+		switch NewStringID(idTypeString).AsString() {
+		case PrototypeAssetID().GetTypeID().AsString():
+			id, err = PrototypeAssetID().FromString(idString)
+		case PrototypeCoinID().GetTypeID().AsString():
+			id, err = PrototypeCoinID().FromString(idString)
+		default:
+			id, err = nil, errorConstants.IncorrectFormat.Wrapf("type identifier is not recognised")
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		return id, nil
+	}
+
+	return nil, errorConstants.IncorrectFormat.Wrapf("type identifier is missing")
 }
 func (m *AnyOwnableID) AsString() string {
 	return m.Impl.(ownableIDGetter).get().AsString()

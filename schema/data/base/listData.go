@@ -43,13 +43,13 @@ func (listData *ListData) AsString() string {
 		dataStrings[i] = datum.AsString()
 	}
 
-	return joinDataTypeAndValueStrings(listData.GetType().AsString(), stringUtilities.JoinListStrings(dataStrings...))
+	return joinDataTypeAndValueStrings(listData.GetTypeID().AsString(), stringUtilities.JoinListStrings(dataStrings...))
 }
 func (listData *ListData) FromString(dataTypeAndValueString string) (data.Data, error) {
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
-	if dataTypeString != listData.GetType().AsString() {
-		return PrototypeListData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for ListData, expected type identifier %s, got %s", listData.GetType().AsString(), dataTypeString)
+	if dataTypeString != listData.GetTypeID().AsString() {
+		return PrototypeListData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for ListData, expected type identifier %s, got %s", listData.GetTypeID().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {
@@ -130,8 +130,8 @@ func (listData *ListData) Bytes() []byte {
 	// TODO see if separator required
 	return bytes.Join(bytesList, nil)
 }
-func (listData *ListData) GetType() ids.StringID {
-	return dataConstants.ListDataID
+func (listData *ListData) GetTypeID() ids.StringID {
+	return dataConstants.ListDataTypeID
 }
 func (listData *ListData) ZeroValue() data.Data {
 	return NewListData([]data.Data{}...)

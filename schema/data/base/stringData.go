@@ -5,6 +5,7 @@ package base
 
 import (
 	"bytes"
+
 	"github.com/AssetMantle/modules/schema/data/utilities"
 
 	"github.com/AssetMantle/modules/schema/data"
@@ -41,8 +42,8 @@ func (stringData *StringData) Compare(listable traits.Listable) int {
 func (stringData *StringData) Bytes() []byte {
 	return []byte(stringData.Value)
 }
-func (stringData *StringData) GetType() ids.StringID {
-	return dataConstants.StringDataID
+func (stringData *StringData) GetTypeID() ids.StringID {
+	return dataConstants.StringDataTypeID
 }
 func (stringData *StringData) ZeroValue() data.Data {
 	return NewStringData("")
@@ -51,13 +52,13 @@ func (stringData *StringData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(stringData.Bytes())
 }
 func (stringData *StringData) AsString() string {
-	return joinDataTypeAndValueStrings(stringData.GetType().AsString(), stringData.Value)
+	return joinDataTypeAndValueStrings(stringData.GetTypeID().AsString(), stringData.Value)
 }
 func (stringData *StringData) FromString(dataTypeAndValueString string) (data.Data, error) {
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
-	if dataTypeString != stringData.GetType().AsString() {
-		return PrototypeStringData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for StringData, expected type identifier %s, got %s", stringData.GetType().AsString(), dataTypeString)
+	if dataTypeString != stringData.GetTypeID().AsString() {
+		return PrototypeStringData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for StringData, expected type identifier %s, got %s", stringData.GetTypeID().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {

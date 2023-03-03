@@ -3,11 +3,11 @@ package base
 import (
 	"bytes"
 
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
-// TODO rename to something more appropriate
 var _ ids.CoinID = (*CoinID)(nil)
 
 func (coinID *CoinID) ValidateBasic() error {
@@ -15,8 +15,29 @@ func (coinID *CoinID) ValidateBasic() error {
 }
 func (coinID *CoinID) IsCoinID() {
 }
+func (coinID *CoinID) GetTypeID() ids.StringID {
+}
+func (coinID *CoinID) FromString(idTypeAndValueString string) (ids.ID, error) {
+	idTypeString, idString := splitIDTypeAndValueStrings(idTypeAndValueString)
+
+	if idTypeString != coinID.GetTypeID().AsString() {
+		return PrototypeCoinID(), errorConstants.IncorrectFormat.Wrapf("expected id type %s, got %s", coinID.GetTypeID().AsString(), idTypeString)
+	}
+
+	if idString == "" {
+		return PrototypeCoinID(), nil
+	}
+
+	if stringID, err := PrototypeStringID().FromString(idString); err != nil {
+		return PrototypeCoinID(), err
+	} else {
+		return &CoinID{
+			StringID: stringID.(*StringID),
+		}, nil
+	}
+}
 func (coinID *CoinID) AsString() string {
-	return coinID.StringID.AsString()
+	return joinIDTypeAndValueStrings(coinID.GetTypeID().AsString(), coinID.StringID.AsString())
 }
 
 // TODO: Verify

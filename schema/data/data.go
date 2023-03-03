@@ -20,7 +20,7 @@ type Data interface {
 	FromString(string) (Data, error)
 	Bytes() []byte
 
-	GetType() ids.StringID
+	GetTypeID() ids.StringID
 	ZeroValue() Data
 	// GenerateHash returns the hash of the Data as an PropertyID
 	// * Returns PropertyID of empty bytes when the value of Data is that Data type's zero value

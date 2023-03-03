@@ -4,11 +4,11 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/ids/utilities"
 	"strings"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
@@ -21,8 +21,12 @@ func (stringID *StringID) ValidateBasic() error {
 	return nil
 }
 func (stringID *StringID) IsStringID() {}
+func (stringID *StringID) GetTypeID() ids.StringID {
+}
+func (stringID *StringID) FromString(idTypeAndValueString string) (ids.ID, error) {
+}
 func (stringID *StringID) AsString() string {
-	return stringID.IDString
+	return joinIDTypeAndValueStrings(stringID.GetTypeID().AsString(), stringID.IDString)
 }
 func (stringID *StringID) Bytes() []byte {
 	return []byte(stringID.IDString)

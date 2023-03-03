@@ -28,7 +28,7 @@ func ValidatedID[V *base.PropertyID | *base.DataID](value any) V {
 func createTestInputForMesaProperty() (ids.StringID, ids.PropertyID, data.Data, properties.Property) {
 	testKey := base.NewStringID("ID")
 	testData := baseData.NewStringData("Data")
-	testPropertyID := base.NewPropertyID(testKey, testData.GetType())
+	testPropertyID := base.NewPropertyID(testKey, testData.GetTypeID())
 	testProperty := NewMesaProperty(testKey, testData)
 	return testKey, testPropertyID, testData, testProperty
 }
@@ -324,7 +324,7 @@ func Test_mesaProperty_GetType(t *testing.T) {
 				}
 			}()
 			if got := mesaProperty.GetType(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetType() = %v, want %v", got, tt.want)
+				t.Errorf("GetTypeID() = %v, want %v", got, tt.want)
 			}
 		})
 	}

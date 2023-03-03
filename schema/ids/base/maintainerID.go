@@ -16,9 +16,12 @@ var _ ids.MaintainerID = (*MaintainerID)(nil)
 func (maintainerID *MaintainerID) ValidateBasic() error {
 	return maintainerID.HashID.ValidateBasic()
 }
-
+func (maintainerID *MaintainerID) GetTypeID() ids.StringID {
+}
+func (maintainerID *MaintainerID) FromString(idTypeAndValueString string) (ids.ID, error) {
+}
 func (maintainerID *MaintainerID) AsString() string {
-	return maintainerID.HashID.AsString()
+	return joinIDTypeAndValueStrings(maintainerID.GetTypeID().AsString(), maintainerID.HashID.AsString())
 }
 func (maintainerID *MaintainerID) Bytes() []byte {
 	return maintainerID.HashID.IDBytes

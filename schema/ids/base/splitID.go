@@ -25,8 +25,12 @@ func (splitID *SplitID) ValidateBasic() error {
 	}
 	return nil
 }
+func (splitID *SplitID) GetTypeID() ids.StringID {
+}
+func (splitID *SplitID) FromString(idTypeAndValueString string) (ids.ID, error) {
+}
 func (splitID *SplitID) AsString() string {
-	return stringUtilities.JoinIDStrings(splitID.OwnerID.AsString(), splitID.OwnableID.AsString())
+	return joinIDTypeAndValueStrings(splitID.GetTypeID().AsString(), stringUtilities.JoinIDStrings(splitID.OwnerID.AsString(), splitID.OwnableID.AsString()))
 }
 func (splitID *SplitID) GetOwnableID() ids.OwnableID {
 	return splitID.OwnableID

@@ -41,8 +41,8 @@ func (decData *DecData) Compare(listable traits.Listable) int {
 func (decData *DecData) Bytes() []byte {
 	return sdkTypes.SortableDecBytes(decData.Value)
 }
-func (decData *DecData) GetType() ids.StringID {
-	return dataConstants.DecDataID
+func (decData *DecData) GetTypeID() ids.StringID {
+	return dataConstants.DecDataTypeID
 }
 func (decData *DecData) ZeroValue() data.Data {
 	return NewDecData(sdkTypes.ZeroDec())
@@ -55,13 +55,13 @@ func (decData *DecData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(decData.Bytes())
 }
 func (decData *DecData) AsString() string {
-	return joinDataTypeAndValueStrings(decData.GetType().AsString(), decData.Value.String())
+	return joinDataTypeAndValueStrings(decData.GetTypeID().AsString(), decData.Value.String())
 }
 func (decData *DecData) FromString(dataTypeAndValueString string) (data.Data, error) {
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
-	if dataTypeString != decData.GetType().AsString() {
-		return PrototypeDecData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for DecData, expected type identifier %s, got %s", decData.GetType().AsString(), dataTypeString)
+	if dataTypeString != decData.GetTypeID().AsString() {
+		return PrototypeDecData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for DecData, expected type identifier %s, got %s", decData.GetTypeID().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {

@@ -1,8 +1,11 @@
 package base
 
 import (
+	"strings"
+
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	idsConstants "github.com/AssetMantle/modules/schema/ids/constansts"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
@@ -11,8 +14,9 @@ type idGetter interface {
 }
 
 var _ idGetter = (*AnyID_AnyOwnableID)(nil)
-var _ idGetter = (*AnyID_ClassificationID)(nil)
 var _ idGetter = (*AnyID_AssetID)(nil)
+var _ idGetter = (*AnyID_CoinID)(nil)
+var _ idGetter = (*AnyID_ClassificationID)(nil)
 var _ idGetter = (*AnyID_DataID)(nil)
 var _ idGetter = (*AnyID_HashID)(nil)
 var _ idGetter = (*AnyID_IdentityID)(nil)
@@ -25,11 +29,14 @@ var _ idGetter = (*AnyID_StringID)(nil)
 func (m *AnyID_AnyOwnableID) get() ids.ID {
 	return m.AnyOwnableID
 }
-func (m *AnyID_ClassificationID) get() ids.ID {
-	return m.ClassificationID
-}
 func (m *AnyID_AssetID) get() ids.ID {
 	return m.AssetID
+}
+func (m *AnyID_CoinID) get() ids.ID {
+	return m.CoinID
+}
+func (m *AnyID_ClassificationID) get() ids.ID {
+	return m.ClassificationID
 }
 func (m *AnyID_DataID) get() ids.ID {
 	return m.DataID
@@ -58,6 +65,51 @@ func (m *AnyID_StringID) get() ids.ID {
 
 var _ ids.AnyID = (*AnyID)(nil)
 
+func (m *AnyID) GetTypeID() ids.StringID {
+	return m.Impl.(idGetter).get().GetTypeID()
+}
+func (m *AnyID) FromString(idString string) (ids.ID, error) {
+	idTypeString, _ := splitIDTypeAndValueStrings(idString)
+	if idTypeString != "" {
+		var id ids.ID
+		var err error
+
+		switch NewStringID(idTypeString).AsString() {
+		case PrototypeAssetID().GetTypeID().AsString():
+			id, err = PrototypeAssetID().FromString(idString)
+		case PrototypeCoinID().GetTypeID().AsString():
+			id, err = PrototypeCoinID().FromString(idString)
+		case PrototypeClassificationID().GetTypeID().AsString():
+			id, err = PrototypeClassificationID().FromString(idString)
+		case PrototypeDataID().GetTypeID().AsString():
+			id, err = PrototypeDataID().FromString(idString)
+		case PrototypeHashID().GetTypeID().AsString():
+			id, err = PrototypeHashID().FromString(idString)
+		case PrototypeIdentityID().GetTypeID().AsString():
+			id, err = PrototypeIdentityID().FromString(idString)
+		case PrototypeMaintainerID().GetTypeID().AsString():
+			id, err = PrototypeMaintainerID().FromString(idString)
+		case PrototypeOrderID().GetTypeID().AsString():
+			id, err = PrototypeOrderID().FromString(idString)
+		case PrototypePropertyID().GetTypeID().AsString():
+			id, err = PrototypePropertyID().FromString(idString)
+		case PrototypeSplitID().GetTypeID().AsString():
+			id, err = PrototypeSplitID().FromString(idString)
+		case PrototypeStringID().GetTypeID().AsString():
+			id, err = PrototypeStringID().FromString(idString)
+		default:
+			id, err = nil, errorConstants.IncorrectFormat.Wrapf("type identifier is not recognised")
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		return id, nil
+	}
+
+	return nil, errorConstants.IncorrectFormat.Wrapf("type identifier is missing")
+}
 func (m *AnyID) AsString() string {
 	return m.Impl.(idGetter).get().AsString()
 }
@@ -84,5 +136,17 @@ func idFromListable(listable traits.Listable) (ids.ID, error) {
 
 	default:
 		return nil, errorConstants.IncorrectFormat.Wrapf("unsupported type")
+	}
+}
+func joinIDTypeAndValueStrings(idTypes, idValue string) string {
+	return strings.Join([]string{idTypes, idValue}, idsConstants.IDTypeAndValueSeparator)
+}
+func splitIDTypeAndValueStrings(idTypeAndValueString string) (idType, idValue string) {
+	if idTypeAndValue := strings.SplitN(idTypeAndValueString, idsConstants.IDTypeAndValueSeparator, 2); len(idTypeAndValue) == 1 {
+		return strings.TrimSpace(idTypeAndValue[0]), ""
+	} else if len(idTypeAndValue) == 2 {
+		return strings.TrimSpace(idTypeAndValue[0]), strings.TrimSpace(idTypeAndValue[1])
+	} else {
+		return "", ""
 	}
 }

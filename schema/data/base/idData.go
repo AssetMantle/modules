@@ -26,13 +26,13 @@ func (idData *IDData) GetBondWeight() int64 {
 	return dataConstants.IDDataWeight
 }
 func (idData *IDData) AsString() string {
-	return joinDataTypeAndValueStrings(idData.GetType().AsString(), idData.Value.AsString())
+	return joinDataTypeAndValueStrings(idData.GetTypeID().AsString(), idData.Value.AsString())
 }
 func (idData *IDData) FromString(dataTypeAndValueString string) (data.Data, error) {
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
 
-	if dataTypeString != idData.GetType().AsString() {
-		return PrototypeIDData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for IDData, expected type identifier %s, got %s", idData.GetType().AsString(), dataTypeString)
+	if dataTypeString != idData.GetTypeID().AsString() {
+		return PrototypeIDData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for IDData, expected type identifier %s, got %s", idData.GetTypeID().AsString(), dataTypeString)
 	}
 
 	if dataString == "" {
@@ -52,8 +52,8 @@ func (idData *IDData) Compare(listable traits.Listable) int {
 func (idData *IDData) Bytes() []byte {
 	return idData.Value.Bytes()
 }
-func (idData *IDData) GetType() ids.StringID {
-	return dataConstants.IDDataID
+func (idData *IDData) GetTypeID() ids.StringID {
+	return dataConstants.IDDataTypeID
 }
 func (idData *IDData) ZeroValue() data.Data {
 	return PrototypeIDData()

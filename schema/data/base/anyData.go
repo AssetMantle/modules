@@ -57,21 +57,21 @@ func (x *AnyData) FromString(dataString string) (data.Data, error) {
 		var err error
 
 		switch baseIDs.NewStringID(dataTypeString).AsString() {
-		case dataConstants.AccAddressDataID.AsString():
+		case PrototypeAccAddressData().GetTypeID().AsString():
 			Data, err = PrototypeAccAddressData().FromString(dataString)
-		case dataConstants.BooleanDataID.AsString():
+		case PrototypeBooleanData().GetTypeID().AsString():
 			Data, err = PrototypeBooleanData().FromString(dataString)
-		case dataConstants.DecDataID.AsString():
+		case PrototypeDecData().GetTypeID().AsString():
 			Data, err = PrototypeDecData().FromString(dataString)
-		case dataConstants.HeightDataID.AsString():
+		case PrototypeHeightData().GetTypeID().AsString():
 			Data, err = PrototypeHeightData().FromString(dataString)
-		case dataConstants.IDDataID.AsString():
+		case PrototypeIDData().GetTypeID().AsString():
 			Data, err = PrototypeIDData().FromString(dataString)
-		case dataConstants.ListDataID.AsString():
+		case PrototypeListData().GetTypeID().AsString():
 			Data, err = PrototypeListData().FromString(dataString)
-		case dataConstants.NumberDataID.AsString():
+		case PrototypeNumberData().GetTypeID().AsString():
 			Data, err = PrototypeNumberData().FromString(dataString)
-		case dataConstants.StringDataID.AsString():
+		case PrototypeStringData().GetTypeID().AsString():
 			Data, err = PrototypeStringData().FromString(dataString)
 		default:
 			Data, err = nil, errorConstants.IncorrectFormat.Wrapf("type identifier is not recognised")
@@ -95,8 +95,8 @@ func (x *AnyData) GetID() ids.DataID {
 func (x *AnyData) Bytes() []byte {
 	return x.Impl.(getter).get().Bytes()
 }
-func (x *AnyData) GetType() ids.StringID {
-	return x.Impl.(getter).get().GetType()
+func (x *AnyData) GetTypeID() ids.StringID {
+	return x.Impl.(getter).get().GetTypeID()
 }
 func (x *AnyData) ZeroValue() data.Data {
 	return x.Impl.(getter).get().ZeroValue()

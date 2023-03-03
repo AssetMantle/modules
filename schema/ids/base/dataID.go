@@ -24,8 +24,36 @@ func (dataID *DataID) ValidateBasic() error {
 	}
 	return nil
 }
+func (dataID *DataID) GetTypeID() ids.StringID {
+}
+func (dataID *DataID) FromString(idTypeAndValueString string) (ids.ID, error) {
+	idTypeString, idString := splitIDTypeAndValueStrings(idTypeAndValueString)
+
+	if idTypeString != dataID.GetTypeID().AsString() {
+		return PrototypeDataID(), errorConstants.IncorrectFormat.Wrapf("expected id type %s, got %s", dataID.GetTypeID().AsString(), idTypeString)
+	}
+
+	if idString == "" {
+		return PrototypeDataID(), nil
+	}
+
+	typeIDAndHashID := stringUtilities.SplitCompositeIDString(idString)
+	if len(typeIDAndHashID) != 2 {
+		return PrototypeDataID(), errorConstants.IncorrectFormat.Wrapf("expected composite id")
+	} else if typeID, err := PrototypeStringID().FromString(typeIDAndHashID[0]); err != nil {
+		return PrototypeDataID(), err
+
+	} else if hashID, err := PrototypeHashID().FromString(typeIDAndHashID[1]); err != nil {
+		return PrototypeDataID(), err
+	} else {
+		return &DataID{
+			TypeID: typeID.(*StringID),
+			HashID: hashID.(*HashID),
+		}, nil
+	}
+}
 func (dataID *DataID) AsString() string {
-	return stringUtilities.JoinIDStrings(dataID.TypeID.AsString(), dataID.HashID.AsString())
+	return joinIDTypeAndValueStrings(dataID.GetTypeID().AsString(), stringUtilities.JoinIDStrings(dataID.TypeID.AsString(), dataID.HashID.AsString()))
 }
 func (dataID *DataID) GetHashID() ids.HashID {
 	return dataID.HashID
@@ -68,7 +96,7 @@ func GenerateDataID(data data.Data) ids.DataID {
 	}
 
 	return &DataID{
-		TypeID: data.GetType().(*StringID),
+		TypeID: data.GetTypeID().(*StringID),
 		HashID: data.GenerateHashID().(*HashID),
 	}
 }

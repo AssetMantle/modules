@@ -172,7 +172,7 @@ func Test_propertyID_GetType(t *testing.T) {
 				TypeID: tt.fields.Type.(*StringID),
 			}
 			if got := propertyID.GetType(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetType() = %v, want %v", got, tt.want)
+				t.Errorf("GetTypeID() = %v, want %v", got, tt.want)
 			}
 		})
 	}
