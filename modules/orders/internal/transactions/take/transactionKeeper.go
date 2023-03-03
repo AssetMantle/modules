@@ -5,6 +5,7 @@ package take
 
 import (
 	"context"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -31,6 +32,7 @@ type transactionKeeper struct {
 	supplementAuxiliary   helpers.Auxiliary
 	transferAuxiliary     helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
+	unbondAuxiliary       helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -86,6 +88,9 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 		orders.Mutate(mappable.NewMappable(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutableProperties.GetList()...)...))))
 	}
+	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(order.GetClassificationID(), order.GetMakerID()); err != nil {
+		return nil, err
+	}
 
 	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), makerReceiveTakerOwnableSplit)); err != nil {
 		return nil, err
@@ -111,6 +116,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.transferAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
+			case unbond.Auxiliary.GetName():
+				transactionKeeper.unbondAuxiliary = value
 			}
 		}
 	}
