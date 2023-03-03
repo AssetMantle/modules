@@ -4,7 +4,6 @@
 package make
 
 import (
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -56,12 +55,10 @@ func (message *Message) ValidateBasic() error {
 	if err := message.MutableProperties.ValidateBasic(); err != nil {
 		return err
 	}
-	if makerOwnableSplit, err := sdkTypes.NewDecFromStr(message.MakerOwnableSplit); err != nil {
+	if _, err := sdkTypes.NewDecFromStr(message.MakerOwnableSplit); err != nil {
 		return err
-	} else if takerOwnableSplit, err := sdkTypes.NewDecFromStr(message.TakerOwnableSplit); err != nil {
+	} else if _, err := sdkTypes.NewDecFromStr(message.TakerOwnableSplit); err != nil {
 		return err
-	} else if !sdkTypes.ValidSortableDec(makerOwnableSplit) || !sdkTypes.ValidSortableDec(takerOwnableSplit) {
-		return errorConstants.IncorrectMessage.Wrapf("invalid split")
 	}
 	return nil
 }

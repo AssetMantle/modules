@@ -64,7 +64,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("identity with ID %s already exists", identityID.AsString())
 	}
 
-	toAddress, err := types.AccAddressFromBech32(message.From)
+	toAddress, err := types.AccAddressFromBech32(message.To)
 	if err != nil {
 		panic("Could not get from address from Bech32 string")
 	}
