@@ -5,10 +5,7 @@ package take
 
 import (
 	"context"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/burn"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
@@ -24,15 +21,16 @@ import (
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/properties/utilities"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
 	parameters            helpers.ParameterManager
+	authenticateAuxiliary helpers.Auxiliary
+	burnAuxiliary         helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	transferAuxiliary     helpers.Auxiliary
-	authenticateAuxiliary helpers.Auxiliary
-	unbondAuxiliary       helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -88,15 +86,16 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 		orders.Mutate(mappable.NewMappable(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutableProperties.GetList()...)...))))
 	}
-	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(order.GetClassificationID(), order.GetMakerID()); err != nil {
-		return nil, err
-	}
 
 	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), makerReceiveTakerOwnableSplit)); err != nil {
 		return nil, err
 	}
 
 	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), takerReceiveMakerOwnableSplit)); err != nil {
+		return nil, err
+	}
+
+	if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(order.GetClassificationID(), address)); err != nil {
 		return nil, err
 	}
 
@@ -116,8 +115,9 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.transferAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
-			case unbond.Auxiliary.GetName():
-				transactionKeeper.unbondAuxiliary = value
+				transactionKeeper.authenticateAuxiliary = value
+			case burn.Auxiliary.GetName():
+				transactionKeeper.burnAuxiliary = value
 			}
 		}
 	}
