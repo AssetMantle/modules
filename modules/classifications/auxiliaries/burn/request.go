@@ -4,17 +4,14 @@
 package burn
 
 import (
-	"github.com/asaskevich/govalidator"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/asaskevich/govalidator"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type auxiliaryRequest struct {
 	classificationID ids.ClassificationID
-	accAddress       sdkTypes.AccAddress
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -33,9 +30,8 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ClassificationID) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		classificationID: classificationID,
-		accAddress:       fromAddress,
 	}
 }
