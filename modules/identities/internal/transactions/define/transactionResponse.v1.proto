@@ -1,4 +1,6 @@
 syntax = "proto3";
 package identities.transactions.define;
 
-message TransactionResponse {}
+message TransactionResponse {
+  string classification_id = 1;
+}

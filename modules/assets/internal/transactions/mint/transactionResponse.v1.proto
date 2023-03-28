@@ -1,4 +1,6 @@
 syntax = "proto3";
 package assets.transactions.mint;
 
-message TransactionResponse {}
+message TransactionResponse {
+  string asset_id = 1;
+}
