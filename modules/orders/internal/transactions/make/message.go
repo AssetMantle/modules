@@ -43,7 +43,7 @@ func (message *Message) ValidateBasic() error {
 	if err := message.ExpiresIn.ValidateBasic(); err != nil {
 		return err
 	}
-	if err := message.ImmutableProperties.ValidateBasic(); err != nil {
+	if err := message.ImmutableMetaProperties.ValidateBasic(); err != nil {
 		return err
 	}
 	if err := message.MutableMetaProperties.ValidateBasic(); err != nil {
