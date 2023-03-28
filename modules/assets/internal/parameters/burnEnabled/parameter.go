@@ -15,7 +15,7 @@ import (
 )
 
 var ID = constantProperties.BurnEnabledProperty.GetKey()
-var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(false))) // NOTE: must always be set to false, legacy amino doesn't unmarshall false value well
+var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(true))) // NOTE: must always be set to false, legacy amino doesn't unmarshall false value well
 
 func validator(i interface{}) error {
 	switch value := i.(type) {

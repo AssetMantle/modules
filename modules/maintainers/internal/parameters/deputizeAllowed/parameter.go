@@ -15,7 +15,7 @@ import (
 )
 
 var ID = constantProperties.DeputizeAllowedProperty.GetKey()
-var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(false)))
+var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(true)))
 
 func validator(i interface{}) error {
 	switch value := i.(type) {
