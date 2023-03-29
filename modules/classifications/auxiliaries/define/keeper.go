@@ -5,6 +5,7 @@ package define
 
 import (
 	"context"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/schema/data"
@@ -48,6 +49,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	if classifications.Get(key.NewKey(classificationID)) != nil {
 		return newAuxiliaryResponse(classificationID), errorConstants.EntityAlreadyExists.Wrapf("classification with ID %s already exists", classificationID.AsString())
 	}
+
+	bond.Auxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(classificationID, auxiliaryRequest.AccAddress))
 
 	classifications.Add(mappable.NewMappable(base.NewClassification(immutables, auxiliaryRequest.Mutables)))
 
