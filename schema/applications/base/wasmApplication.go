@@ -12,13 +12,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/AssetMantle/modules/schema/applications/constants"
-	documentIDGetters "github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
-
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
-	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
-
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmKeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -99,6 +94,7 @@ import (
 	ibcHost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 	ibcAnte "github.com/cosmos/ibc-go/v3/modules/core/ante"
 	ibcKeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -111,9 +107,11 @@ import (
 
 	"github.com/AssetMantle/modules/modules/assets"
 	"github.com/AssetMantle/modules/modules/classifications"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
 	"github.com/AssetMantle/modules/modules/identities"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers"
@@ -130,8 +128,11 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	"github.com/AssetMantle/modules/schema/applications"
+	"github.com/AssetMantle/modules/schema/applications/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/helpers/base"
+	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
+	documentIDGetters "github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
 )
 
 type wasmApplication struct {
@@ -141,8 +142,9 @@ type wasmApplication struct {
 
 	codec helpers.Codec
 
-	moduleAccountPermissions   map[string][]string
-	tokenReceiveAllowedModules map[string]bool
+	enabledWasmProposalTypeList []wasm.ProposalType
+	moduleAccountPermissions    map[string][]string
+	tokenReceiveAllowedModules  map[string]bool
 
 	keys map[string]*sdkTypes.KVStoreKey
 
@@ -370,6 +372,11 @@ func (wasmApplication wasmApplication) AppCreator(logger tendermintLog.Logger, d
 		panic(err)
 	}
 
+	var wasmOpts []wasm.Option
+	if cast.ToBool(appOptions.Get("telemetry.enabled")) {
+		wasmOpts = append(wasmOpts, wasmKeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
+	}
+
 	return wasmApplication.Initialize(
 		logger,
 		db,
@@ -447,6 +454,8 @@ func (wasmApplication wasmApplication) Initialize(logger tendermintLog.Logger, d
 		feegrant.StoreKey,
 		authzKeeper.StoreKey,
 		icaHostTypes.StoreKey,
+
+		wasm.StoreKey,
 
 		assets.Prototype().Name(),
 		classifications.Prototype().Name(),
@@ -935,12 +944,13 @@ func (wasmApplication wasmApplication) Initialize(logger tendermintLog.Logger, d
 	return &wasmApplication
 }
 
-func NewWasmApplication(name string, moduleBasicManager module.BasicManager, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.Application {
-	return &application{
-		name:                       name,
-		moduleBasicManager:         moduleBasicManager,
-		codec:                      base.CodecPrototype().Initialize(moduleBasicManager),
-		moduleAccountPermissions:   moduleAccountPermissions,
-		tokenReceiveAllowedModules: tokenReceiveAllowedModules,
+func NewWasmApplication(name string, moduleBasicManager module.BasicManager, enabledWasmProposalTypeList []wasm.ProposalType, moduleAccountPermissions map[string][]string, tokenReceiveAllowedModules map[string]bool) applications.Application {
+	return &wasmApplication{
+		name:                        name,
+		moduleBasicManager:          moduleBasicManager,
+		codec:                       base.CodecPrototype().Initialize(moduleBasicManager),
+		enabledWasmProposalTypeList: enabledWasmProposalTypeList,
+		moduleAccountPermissions:    moduleAccountPermissions,
+		tokenReceiveAllowedModules:  tokenReceiveAllowedModules,
 	}
 }
