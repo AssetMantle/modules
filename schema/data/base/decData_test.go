@@ -78,7 +78,7 @@ func Test_decData_Bytes(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{"+ve with nil", fields{}, []byte{0x1}, true}, // TODO: Update test after fixing the bug
+		{"+ve with nil", fields{}, []byte{0x3c, 0x6e, 0x69, 0x6c, 0x3e}, false}, // TODO: Update test after fixing the bug
 		{"+ve with zero dec", fields{sdkTypes.ZeroDec()}, (&DecData{sdkTypes.ZeroDec().String()}).Bytes(), false},
 		{"+ve", fields{sdkTypes.NewDec(100)}, (&DecData{sdkTypes.NewDec(100).String()}).Bytes(), false},
 		{"+ve with -ve Dec", fields{sdkTypes.NewDec(-100)}, (&DecData{sdkTypes.NewDec(-100).String()}).Bytes(), false},

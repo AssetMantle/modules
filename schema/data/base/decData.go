@@ -19,10 +19,8 @@ import (
 var _ data.DecData = (*DecData)(nil)
 
 func (decData *DecData) ValidateBasic() error {
-	if value, err := sdkTypes.NewDecFromStr(decData.Value); err != nil {
+	if _, err := sdkTypes.NewDecFromStr(decData.Value); err != nil {
 		return err
-	} else if !sdkTypes.ValidSortableDec(value) {
-		return errorConstants.IncorrectFormat
 	}
 	return nil
 }
@@ -41,8 +39,7 @@ func (decData *DecData) Compare(listable traits.Listable) int {
 	return bytes.Compare(decData.Bytes(), compareDecData.Bytes())
 }
 func (decData *DecData) Bytes() []byte {
-	value, _ := sdkTypes.NewDecFromStr(decData.Value)
-	return sdkTypes.SortableDecBytes(value)
+	return []byte(decData.Value)
 }
 func (decData *DecData) GetType() ids.StringID {
 	return dataConstants.DecDataID
