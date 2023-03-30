@@ -12,7 +12,6 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/properties/utilities"
 	"github.com/AssetMantle/modules/schema/qualified/base"
@@ -43,9 +42,31 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	immutables := base.NewImmutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(append(message.ImmutableMetaProperties.GetList(), message.ImmutableProperties.GetList()...), constants.ExchangeRateProperty.ToAnyProperty(), constants.CreationHeightProperty.ToAnyProperty(), constants.MakerOwnableIDProperty.ToAnyProperty(), constants.TakerOwnableIDProperty.ToAnyProperty(), constants.MakerIDProperty.ToAnyProperty(), constants.TakerIDProperty.ToAnyProperty())...)...))
+	immutables := base.NewImmutables(
+		message.ImmutableMetaProperties.Add(
+			utilities.AnyPropertyListToPropertyList(
+				message.ImmutableProperties.Add(
+					constants.ExchangeRateProperty.ToAnyProperty(),
+					constants.CreationHeightProperty.ToAnyProperty(),
+					constants.MakerOwnableIDProperty.ToAnyProperty(),
+					constants.TakerOwnableIDProperty.ToAnyProperty(),
+					constants.MakerIDProperty.ToAnyProperty(),
+					constants.TakerIDProperty.ToAnyProperty(),
+				).GetList()...,
+			)...,
+		),
+	)
 
-	mutables := base.NewMutables(baseLists.NewPropertyList(utilities.AnyPropertyListToPropertyList(append(append(message.MutableMetaProperties.GetList(), message.MutableProperties.GetList()...), constants.ExpiryHeightProperty.ToAnyProperty(), constants.MakerOwnableSplitProperty.ToAnyProperty())...)...))
+	mutables := base.NewMutables(
+		message.MutableMetaProperties.Add(
+			utilities.AnyPropertyListToPropertyList(
+				message.MutableProperties.Add(
+					constants.ExpiryHeightProperty.ToAnyProperty(),
+					constants.MakerOwnableSplitProperty.ToAnyProperty(),
+				).GetList()...,
+			)...,
+		),
+	)
 
 	auxiliaryResponse, err := transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutables, mutables))
 	if err != nil {
@@ -57,7 +78,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	return newTransactionResponse(), nil
+	return newTransactionResponse(classificationID.AsString()), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

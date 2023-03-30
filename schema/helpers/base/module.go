@@ -74,6 +74,7 @@ func (module module) RegisterRESTRoutes(context client.Context, router *mux.Rout
 
 	for _, query := range module.queriesPrototype().GetList() {
 		router.HandleFunc("/"+module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(context)).Methods("GET")
+		router.HandleFunc("/"+module.Name()+"/"+query.GetName(), query.RESTQueryHandler(context)).Methods("GET")
 	}
 
 	for _, transaction := range module.transactionsPrototype().GetList() {

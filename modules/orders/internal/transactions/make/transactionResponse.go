@@ -15,6 +15,6 @@ func (*TransactionResponse) GetResult() *sdkTypes.Result {
 	return &sdkTypes.Result{}
 }
 
-func newTransactionResponse() *TransactionResponse {
-	return &TransactionResponse{}
+func newTransactionResponse(orderID string) *TransactionResponse {
+	return &TransactionResponse{orderID}
 }
