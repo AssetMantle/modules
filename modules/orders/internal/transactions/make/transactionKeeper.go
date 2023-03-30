@@ -5,6 +5,7 @@ package make
 
 import (
 	"context"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -33,6 +34,7 @@ import (
 type transactionKeeper struct {
 	mapper                     helpers.Mapper
 	parameters                 helpers.ParameterManager
+	bondAuxiliary              helpers.Auxiliary
 	conformAuxiliary           helpers.Auxiliary
 	supplementAuxiliary        helpers.Auxiliary
 	transferAuxiliary          helpers.Auxiliary
@@ -96,6 +98,10 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
+	if _, err := transactionKeeper.bondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(message.ClassificationID, fromAddress)); err != nil {
+		return nil, err
+	}
+
 	orders.Add(mappable.NewMappable(base.NewOrder(message.ClassificationID, immutables, mutables)))
 
 	return newTransactionResponse(orderID.AsString()), nil
@@ -108,6 +114,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 		switch value := externalKeeper.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
+			case bond.Auxiliary.GetName():
+				transactionKeeper.bondAuxiliary = value
 			case conform.Auxiliary.GetName():
 				transactionKeeper.conformAuxiliary = value
 			case supplement.Auxiliary.GetName():
