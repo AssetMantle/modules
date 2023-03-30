@@ -5,6 +5,7 @@ package auxiliaries
 
 import (
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/burn"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
@@ -19,6 +20,7 @@ func Prototype() helpers.Auxiliaries {
 		define.Auxiliary,
 		member.Auxiliary,
 		bond.Auxiliary,
+		burn.Auxiliary,
 		unbond.Auxiliary,
 	)
 }
