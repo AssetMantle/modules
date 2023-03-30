@@ -6,6 +6,7 @@ package base
 import (
 	"encoding/json"
 	"errors"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/burn"
 	documentIDGetters "github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
 	"io"
 	"log"
@@ -678,6 +679,9 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		application.keys[orders.Prototype().Name()],
 		ParamsKeeper.Subspace(orders.Prototype().Name()),
 		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(bond.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(burn.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(unbond.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
