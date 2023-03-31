@@ -10,7 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -58,6 +58,6 @@ func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, identityID ids
 	return &Message{
 		From:       from.String(),
 		To:         to.String(),
-		IdentityID: identityID.(*baseIds.IdentityID),
+		IdentityID: identityID.(*baseIDs.IdentityID),
 	}
 }

@@ -15,16 +15,16 @@ import (
 	"github.com/AssetMantle/modules/schema/documents"
 	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 var (
-	immutables       = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables         = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID = baseIds.NewClassificationID(immutables, mutables)
+	immutables       = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables         = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID = baseIDs.NewClassificationID(immutables, mutables)
 	testOrder        = baseDocuments.NewOrder(classificationID, immutables, mutables)
 	// testIdentity     = baseDocuments.NewIdentity(classificationID, immutables, mutables)
 )
@@ -75,7 +75,7 @@ func Test_mappable_GetKey(t *testing.T) {
 		want      helpers.Key
 		wantPanic bool
 	}{
-		{"+ve", fields{testOrder}, key.NewKey(baseIds.NewOrderID(classificationID, immutables)), false},
+		{"+ve", fields{testOrder}, key.NewKey(baseIDs.NewOrderID(classificationID, immutables)), false},
 		{"panic case nil", fields{nil}, nil, true},
 	}
 	for _, tt := range tests {

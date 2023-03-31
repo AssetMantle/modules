@@ -10,7 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -65,8 +65,8 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, assetID ids.AssetID, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return &Message{
 		From:                  from.String(),
-		FromID:                fromID.(*baseIds.IdentityID),
-		AssetID:               assetID.(*baseIds.AssetID),
+		FromID:                fromID.(*baseIDs.IdentityID),
+		AssetID:               assetID.(*baseIDs.AssetID),
 		MutableMetaProperties: mutableMetaProperties.(*baseLists.PropertyList),
 		MutableProperties:     mutableProperties.(*baseLists.PropertyList),
 	}

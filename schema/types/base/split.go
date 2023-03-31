@@ -3,9 +3,8 @@ package base
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/schema/ids/base"
-
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/types"
 )
 
@@ -56,8 +55,8 @@ func (split *Split) CanSend(outValue sdkTypes.Dec) bool {
 
 func NewSplit(ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) types.Split {
 	return &Split{
-		OwnerID:   ownerID.(*base.IdentityID),
-		OwnableID: ownableID.ToAnyOwnableID().(*base.AnyOwnableID),
+		OwnerID:   ownerID.(*baseIDs.IdentityID),
+		OwnableID: ownableID.ToAnyOwnableID().(*baseIDs.AnyOwnableID),
 		Value:     value.String(),
 	}
 }

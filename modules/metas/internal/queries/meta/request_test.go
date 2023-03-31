@@ -17,11 +17,11 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 var (
-	testDataID = base.GenerateDataID(baseData.NewStringData("Data")).(*base.DataID)
+	testDataID = baseIDs.GenerateDataID(baseData.NewStringData("Data")).(*baseIDs.DataID)
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -33,7 +33,7 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve with nil", args{base.PrototypeDataID().(*base.DataID)}, &QueryRequest{base.PrototypeDataID().(*base.DataID)}},
+		{"+ve with nil", args{baseIDs.PrototypeDataID().(*baseIDs.DataID)}, &QueryRequest{baseIDs.PrototypeDataID().(*baseIDs.DataID)}},
 		{"+ve", args{testDataID}, &QueryRequest{testDataID}},
 	}
 	for _, tt := range tests {
@@ -68,10 +68,10 @@ func Test_queryRequestFromInterface(t *testing.T) {
 func Test_queryRequest_Decode(t *testing.T) {
 	encodedQuery, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testDataID))
 	require.NoError(t, err)
-	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(base.PrototypeDataID().(*base.DataID)))
+	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)))
 	require.NoError(t, err)
 	type fields struct {
-		DataID *base.DataID
+		DataID *baseIDs.DataID
 	}
 	type args struct {
 		bytes []byte
@@ -84,7 +84,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testDataID}, args{encodedQuery}, newQueryRequest(testDataID), false},
-		{"+ve with nil", fields{base.PrototypeDataID().(*base.DataID)}, args{encodedQuery1}, newQueryRequest(base.PrototypeDataID().(*base.DataID)), false},
+		{"+ve with nil", fields{baseIDs.PrototypeDataID().(*baseIDs.DataID)}, args{encodedQuery1}, newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -106,10 +106,10 @@ func Test_queryRequest_Decode(t *testing.T) {
 func Test_queryRequest_Encode(t *testing.T) {
 	encodedQuery, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testDataID))
 	require.NoError(t, err)
-	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(base.PrototypeDataID().(*base.DataID)))
+	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)))
 	require.NoError(t, err)
 	type fields struct {
-		DataID *base.DataID
+		DataID *baseIDs.DataID
 	}
 	tests := []struct {
 		name    string
@@ -118,7 +118,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testDataID}, encodedQuery, false},
-		{"+ve with nil", fields{base.PrototypeDataID().(*base.DataID)}, encodedQuery1, false},
+		{"+ve with nil", fields{baseIDs.PrototypeDataID().(*baseIDs.DataID)}, encodedQuery1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -141,7 +141,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.DataID})
 	viper.Set(constants.DataID.GetName(), testDataID.AsString())
 	type fields struct {
-		DataID *base.DataID
+		DataID *baseIDs.DataID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -179,7 +179,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	vars1 := make(map[string]string)
 	vars1[Query.GetName()] = testDataID.AsString()
 	type fields struct {
-		DataID *base.DataID
+		DataID *baseIDs.DataID
 	}
 	type args struct {
 		vars map[string]string
@@ -212,7 +212,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		DataID *base.DataID
+		DataID *baseIDs.DataID
 	}
 	tests := []struct {
 		name    string
@@ -220,7 +220,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testDataID}, false},
-		{"+ve", fields{base.PrototypeDataID().(*base.DataID)}, false},
+		{"+ve", fields{baseIDs.PrototypeDataID().(*baseIDs.DataID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
