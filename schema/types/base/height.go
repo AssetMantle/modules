@@ -6,10 +6,10 @@ package base
 import (
 	"context"
 	"encoding/binary"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/types"
 )
 

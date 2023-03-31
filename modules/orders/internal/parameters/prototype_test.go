@@ -4,12 +4,13 @@
 package parameters
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/orders/internal/parameters/maxOrderLife"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"reflect"
-	"testing"
 )
 
 func TestPrototype(t *testing.T) {

@@ -4,10 +4,10 @@
 package burn
 
 import (
-	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/asaskevich/govalidator"
 
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 )
 
 type auxiliaryRequest struct {

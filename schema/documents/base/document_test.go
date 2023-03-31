@@ -21,10 +21,10 @@ import (
 )
 
 func ValidatedParameter[V *baseIDs.ClassificationID | *baseQualified.Immutables | *baseQualified.Mutables](value any) V {
-	if value == nil {
-		return nil
-	}
-	return value.(V)
+if value == nil {
+return nil
+}
+return value.(V)
 }
 
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, documents.Document) {

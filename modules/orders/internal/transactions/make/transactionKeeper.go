@@ -5,10 +5,10 @@ package make
 
 import (
 	"context"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"

@@ -4,11 +4,11 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/modules/splits/internal/module"
-	"github.com/AssetMantle/modules/modules/splits/internal/parameters/wrapAllowedCoins"
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/modules/splits/internal/module"
+	"github.com/AssetMantle/modules/modules/splits/internal/parameters/wrapAllowedCoins"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )

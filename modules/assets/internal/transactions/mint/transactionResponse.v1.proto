@@ -2,5 +2,5 @@ syntax = "proto3";
 package assets.transactions.mint;
 
 message TransactionResponse {
-  string asset_i_d =1;
+  string asset_i_d = 1;
 }
