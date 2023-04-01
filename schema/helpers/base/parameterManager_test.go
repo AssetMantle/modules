@@ -15,7 +15,7 @@ import (
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 	parametersSchema "github.com/AssetMantle/modules/schema/parameters/base"
 )
 
@@ -24,7 +24,7 @@ func TestParameters(t *testing.T) {
 
 	codec := CodecPrototype()
 
-	Parameter := baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
+	Parameter := baseParameters.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
 	parameters := []parametersSchema.Parameter{Parameter}
 	ParameterManager := NewParameterManager(parameters...).(*parameterManager)
 	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test").WithKeyTable(ParameterManager.GetKeyTable())
@@ -48,5 +48,5 @@ func TestParameters(t *testing.T) {
 	})
 
 	require.Equal(t, "testData123", ParameterManager.Mutate(context,
-		baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData123"), func(interface{}) error { return nil })).Get(baseIDs.NewStringID("testParameter")).GetData().AsString())
+		baseParameters.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData123"), func(interface{}) error { return nil })).Get(baseIDs.NewStringID("testParameter")).GetData().AsString())
 }

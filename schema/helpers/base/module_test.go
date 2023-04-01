@@ -18,7 +18,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 	"github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/utilities/test"
 	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
@@ -36,7 +36,7 @@ var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
 }
 var parameterManagerPrototype = func() helpers.ParameterManager {
-	return NewParameterManager("", NewValidatableParameter(baseTypes.NewParameter(base.NewMetaProperty(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"))), func(interface{}) error { return nil }))
+	return NewParameterManager("", NewValidatableParameter(baseParameters.NewParameter(base.NewMetaProperty(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"))), func(interface{}) error { return nil }))
 }
 var queriesPrototype = func() helpers.Queries {
 	return queries{[]helpers.Query{NewQuery("testQuery", "q", "testQuery", "test", baseTestUtilities.TestQueryRequestPrototype,

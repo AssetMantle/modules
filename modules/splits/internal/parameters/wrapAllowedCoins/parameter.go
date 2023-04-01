@@ -13,13 +13,13 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 	"github.com/AssetMantle/modules/schema/properties/base"
 	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()
-var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewListData(baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(sdkTypes.DefaultBondDenom))))))
+var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewListData(baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(sdkTypes.DefaultBondDenom))))))
 
 func validator(i interface{}) error {
 	var listData *baseData.ListData
