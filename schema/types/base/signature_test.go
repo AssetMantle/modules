@@ -136,7 +136,7 @@ func Test_signature_GetID(t *testing.T) {
 		baseSignature types.Signature
 		want          ids.ID
 	}{
-		{"Test to get Id", baseSignature, id},
+		{"Test to get ID", baseSignature, id},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

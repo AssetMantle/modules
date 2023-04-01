@@ -10,7 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	typesSchema "github.com/AssetMantle/modules/schema/types"
@@ -90,11 +90,11 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, takerID ids.IdentityID, makerOwnableID ids.AnyOwnableID, takerOwnableID ids.AnyOwnableID, expiresIn typesSchema.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return &Message{
 		From:                    from.String(),
-		FromID:                  fromID.(*baseIds.IdentityID),
-		ClassificationID:        classificationID.(*baseIds.ClassificationID),
-		TakerID:                 takerID.(*baseIds.IdentityID),
-		MakerOwnableID:          makerOwnableID.(*baseIds.AnyOwnableID),
-		TakerOwnableID:          takerOwnableID.(*baseIds.AnyOwnableID),
+		FromID:                  fromID.(*baseIDs.IdentityID),
+		ClassificationID:        classificationID.(*baseIDs.ClassificationID),
+		TakerID:                 takerID.(*baseIDs.IdentityID),
+		MakerOwnableID:          makerOwnableID.(*baseIDs.AnyOwnableID),
+		TakerOwnableID:          takerOwnableID.(*baseIDs.AnyOwnableID),
 		ExpiresIn:               expiresIn.(*baseTypes.Height),
 		MakerOwnableSplit:       makerOwnableSplit.String(),
 		TakerOwnableSplit:       takerOwnableSplit.String(),

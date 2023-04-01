@@ -4,12 +4,12 @@
 package deputizeAllowed
 
 import (
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"testing"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 )
 
 func Test_validator(t *testing.T) {

@@ -17,19 +17,19 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 var (
-	immutables          = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables            = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID    = baseIds.NewClassificationID(immutables, mutables)
-	testOwnerIdentityID = baseIds.NewIdentityID(classificationID, immutables)
-	testOwnableID       = baseIds.NewCoinID(baseIds.NewStringID("OwnerID"))
-	splitID             = baseIds.NewSplitID(testOwnerIdentityID, testOwnableID).(*baseIds.SplitID)
+	immutables          = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables            = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID    = baseIDs.NewClassificationID(immutables, mutables)
+	testOwnerIdentityID = baseIDs.NewIdentityID(classificationID, immutables)
+	testOwnableID       = baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
+	splitID             = baseIDs.NewSplitID(testOwnerIdentityID, testOwnableID).(*baseIDs.SplitID)
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -75,10 +75,10 @@ func Test_queryRequestFromInterface(t *testing.T) {
 func Test_queryRequest_Decode(t *testing.T) {
 	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(splitID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeSplitID()))
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeSplitID()))
 	require.NoError(t, err1)
 	type fields struct {
-		SplitID *baseIds.SplitID
+		SplitID *baseIDs.SplitID
 	}
 	type args struct {
 		bytes []byte
@@ -91,7 +91,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{splitID}, args{encodedReq}, newQueryRequest(splitID), false},
-		{"+ve", fields{baseIds.PrototypeSplitID().(*baseIds.SplitID)}, args{encodedReq1}, newQueryRequest(baseIds.PrototypeSplitID()), false},
+		{"+ve", fields{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}, args{encodedReq1}, newQueryRequest(baseIDs.PrototypeSplitID()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -113,10 +113,10 @@ func Test_queryRequest_Decode(t *testing.T) {
 func Test_queryRequest_Encode(t *testing.T) {
 	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(splitID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeSplitID()))
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeSplitID()))
 	require.NoError(t, err1)
 	type fields struct {
-		SplitID *baseIds.SplitID
+		SplitID *baseIDs.SplitID
 	}
 	tests := []struct {
 		name    string
@@ -125,7 +125,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{splitID}, encodedReq, false},
-		{"+ve", fields{baseIds.PrototypeSplitID().(*baseIds.SplitID)}, encodedReq1, false},
+		{"+ve", fields{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}, encodedReq1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -149,7 +149,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 
 	viper.Set(constants.SplitID.GetName(), splitID.AsString())
 	type fields struct {
-		SplitID *baseIds.SplitID
+		SplitID *baseIDs.SplitID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -185,7 +185,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
 	vars[Query.GetName()] = splitID.AsString()
 	type fields struct {
-		SplitID *baseIds.SplitID
+		SplitID *baseIDs.SplitID
 	}
 	type args struct {
 		vars map[string]string
@@ -218,7 +218,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		SplitID *baseIds.SplitID
+		SplitID *baseIDs.SplitID
 	}
 	tests := []struct {
 		name    string

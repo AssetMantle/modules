@@ -3,7 +3,7 @@ package base
 import (
 	"github.com/AssetMantle/modules/schema/data"
 	"github.com/AssetMantle/modules/schema/documents"
-	"github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -24,7 +24,7 @@ func (classification classification) GetBondAmount() int64 {
 }
 func NewClassification(immutables qualified.Immutables, mutables qualified.Mutables) documents.Classification {
 	return classification{
-		Document: NewDocument(base.NewClassificationID(immutables, mutables), immutables, mutables),
+		Document: NewDocument(baseIDs.NewClassificationID(immutables, mutables), immutables, mutables),
 	}
 }
 

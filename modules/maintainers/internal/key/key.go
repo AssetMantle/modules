@@ -10,7 +10,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -43,10 +43,10 @@ func keyFromInterface(i interface{}) (*Key, error) {
 
 func NewKey(maintainerID ids.MaintainerID) helpers.Key {
 	return &Key{
-		MaintainerID: maintainerID.(*base.MaintainerID),
+		MaintainerID: maintainerID.(*baseIDs.MaintainerID),
 	}
 }
 
 func Prototype() helpers.Key {
-	return &Key{base.PrototypeMaintainerID().(*base.MaintainerID)}
+	return &Key{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}
 }

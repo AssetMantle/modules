@@ -13,19 +13,19 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
-func createTestInput() *baseIds.IdentityID {
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := baseIds.NewClassificationID(immutables, mutables)
-	testIdentity := baseIds.NewIdentityID(classificationID, immutables)
+func createTestInput() *baseIDs.IdentityID {
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testIdentity := baseIDs.NewIdentityID(classificationID, immutables)
 
-	return testIdentity.(*baseIds.IdentityID)
+	return testIdentity.(*baseIDs.IdentityID)
 }
 
 func TestNewKey(t *testing.T) {
@@ -81,7 +81,7 @@ func Test_keyFromInterface(t *testing.T) {
 		{"-ve", args{NewKey(nil)}, &Key{nil}, false},
 		{"-ve", args{testIdentity}, &Key{nil}, true},
 		{"+ve", args{NewKey(testIdentity)}, &Key{testIdentity}, false},
-		{"-ve", args{baseIds.NewStringID("StringID")}, &Key{}, true},
+		{"-ve", args{baseIDs.NewStringID("StringID")}, &Key{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -100,7 +100,7 @@ func Test_keyFromInterface(t *testing.T) {
 func Test_key_Equals(t *testing.T) {
 	testIdentity := createTestInput()
 	type fields struct {
-		IdentityID *baseIds.IdentityID
+		IdentityID *baseIDs.IdentityID
 	}
 	type args struct {
 		compareKey helpers.Key
@@ -132,7 +132,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 	testIdentity := createTestInput()
 
 	type fields struct {
-		IdentityID *baseIds.IdentityID
+		IdentityID *baseIDs.IdentityID
 	}
 	tests := []struct {
 		name   string
@@ -157,7 +157,7 @@ func Test_key_IsPartial(t *testing.T) {
 	testIdentity := createTestInput()
 
 	type fields struct {
-		IdentityID *baseIds.IdentityID
+		IdentityID *baseIDs.IdentityID
 	}
 	tests := []struct {
 		name   string
@@ -182,7 +182,7 @@ func Test_key_RegisterCodec(t *testing.T) {
 	testIdentity := createTestInput()
 
 	type fields struct {
-		IdentityID *baseIds.IdentityID
+		IdentityID *baseIDs.IdentityID
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino

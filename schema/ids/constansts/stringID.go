@@ -1,14 +1,14 @@
 package constansts
 
 import (
-	"github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 var (
-	Mint       = base.NewStringID("mint")
-	Burn       = base.NewStringID("burn")
-	Renumerate = base.NewStringID("renumerate")
-	Add        = base.NewStringID("add")
-	Remove     = base.NewStringID("remove")
-	Mutate     = base.NewStringID("mutate")
+	Mint       = baseIDs.NewStringID("mint")
+	Burn       = baseIDs.NewStringID("burn")
+	Renumerate = baseIDs.NewStringID("renumerate")
+	Add        = baseIDs.NewStringID("add")
+	Remove     = baseIDs.NewStringID("remove")
+	Mutate     = baseIDs.NewStringID("mutate")
 )

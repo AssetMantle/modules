@@ -16,11 +16,11 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 var (
-	testOwnableID = baseIds.NewCoinID(baseIds.NewStringID("OwnerID")).ToAnyOwnableID().(*baseIds.AnyOwnableID)
+	testOwnableID = baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID")).ToAnyOwnableID().(*baseIDs.AnyOwnableID)
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -66,10 +66,10 @@ func Test_queryRequestFromInterface(t *testing.T) {
 func Test_queryRequest_Decode(t *testing.T) {
 	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testOwnableID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeOwnableID()))
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeOwnableID()))
 	require.NoError(t, err1)
 	type fields struct {
-		OwnableID *baseIds.AnyOwnableID
+		OwnableID *baseIDs.AnyOwnableID
 	}
 	type args struct {
 		bytes []byte
@@ -82,7 +82,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testOwnableID}, args{encodedReq}, newQueryRequest(testOwnableID), false},
-		{"+ve", fields{baseIds.PrototypeOwnableID().(*baseIds.AnyOwnableID)}, args{encodedReq1}, newQueryRequest(baseIds.PrototypeOwnableID()), false},
+		{"+ve", fields{baseIDs.PrototypeOwnableID().(*baseIDs.AnyOwnableID)}, args{encodedReq1}, newQueryRequest(baseIDs.PrototypeOwnableID()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -104,10 +104,10 @@ func Test_queryRequest_Decode(t *testing.T) {
 func Test_queryRequest_Encode(t *testing.T) {
 	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testOwnableID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIds.PrototypeOwnableID()))
+	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeOwnableID()))
 	require.NoError(t, err1)
 	type fields struct {
-		OwnableID *baseIds.AnyOwnableID
+		OwnableID *baseIDs.AnyOwnableID
 	}
 	tests := []struct {
 		name    string
@@ -116,7 +116,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testOwnableID}, encodedReq, false},
-		{"+ve", fields{baseIds.PrototypeOwnableID().(*baseIds.AnyOwnableID)}, encodedReq1, false},
+		{"+ve", fields{baseIDs.PrototypeOwnableID().(*baseIDs.AnyOwnableID)}, encodedReq1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -140,7 +140,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 
 	viper.Set(constants.OwnableID.GetName(), testOwnableID.AsString())
 	type fields struct {
-		OwnableID *baseIds.AnyOwnableID
+		OwnableID *baseIDs.AnyOwnableID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -176,7 +176,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	vars := make(map[string]string)
 	vars[Query.GetName()] = testOwnableID.AsString()
 	type fields struct {
-		OwnableID *baseIds.AnyOwnableID
+		OwnableID *baseIDs.AnyOwnableID
 	}
 	type args struct {
 		vars map[string]string
@@ -209,7 +209,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		OwnableID *baseIds.AnyOwnableID
+		OwnableID *baseIDs.AnyOwnableID
 	}
 	tests := []struct {
 		name    string

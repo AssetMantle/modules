@@ -31,7 +31,7 @@ import (
 	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
@@ -146,16 +146,16 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
-	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
-	maintainedProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("deputize"), baseData.NewListData()))
-	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("authentication"), baseData.NewListData()))
+	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
+	maintainedProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("deputize"), baseData.NewListData()))
+	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
 	immutables := baseQualified.NewImmutables(immutableMetaProperties)
 	mutables := baseQualified.NewMutables(mutableMetaProperties)
-	classificationID := baseIds.NewClassificationID(immutables, mutables)
+	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	identity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 	identity = identity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
-	fromIdentityID := baseIds.NewIdentityID(classificationID, immutables)
-	toIdentityID := baseIds.NewIdentityID(classificationID, immutables)
+	fromIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
+	toIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
 	keepers.DeputizeKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(identity))
 	type fields struct {
 		mapper                helpers.Mapper

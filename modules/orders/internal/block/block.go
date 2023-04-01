@@ -5,6 +5,7 @@ package block
 
 import (
 	"context"
+
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/burn"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"

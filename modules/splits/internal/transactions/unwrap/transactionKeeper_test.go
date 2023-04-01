@@ -37,7 +37,7 @@ import (
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
@@ -203,7 +203,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, Mapper, Parameters, supplyKeeper := createTestInput(t)
-	testOwnableID := baseIds.NewCoinID(baseIds.NewStringID("stake"))
+	testOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("stake"))
 	testRate2 := sdkTypes.NewDec(1)
 	split := baseTypes.NewSplit(fromID, testOwnableID, testRate2)
 	keepers.UnwrapKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
