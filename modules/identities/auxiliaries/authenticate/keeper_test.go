@@ -8,17 +8,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
@@ -62,7 +60,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -72,20 +70,20 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, Parameters)
+	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, parameterManager)
 	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		AuthenticateKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{supplementAuxiliary}).(helpers.AuxiliaryKeeper),
+		AuthenticateKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{supplementAuxiliary}).(helpers.AuxiliaryKeeper),
 	}
 
-	return context, keepers, Mapper, Parameters
+	return context, keepers, Mapper, parameterManager
 }
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
-	context, keepers, Mapper, Parameters := CreateTestInput(t)
+	context, keepers, mapper, parameterManager := CreateTestInput(t)
 	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
 	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData()))
 	immutables := baseQualified.NewImmutables(immutableProperties)
@@ -100,7 +98,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	keepers.AuthenticateKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(testIdentity))
 	type fields struct {
 		mapper              helpers.Mapper
-		parameters          helpers.ParameterManager
+		parameterManager    helpers.ParameterManager
 		supplementAuxiliary helpers.Auxiliary
 	}
 	type args struct {
@@ -113,13 +111,13 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve", fields{Mapper, Parameters, supplementAuxiliary}, args{context, NewAuxiliaryRequest(fromAccAddress, testFromID)}, newAuxiliaryResponse(nil)},
+		{"+ve", fields{mapper, parameterManager, supplementAuxiliary}, args{context, NewAuxiliaryRequest(fromAccAddress, testFromID)}, newAuxiliaryResponse(nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			auxiliaryKeeper := auxiliaryKeeper{
 				mapper:              tt.fields.mapper,
-				parameters:          tt.fields.parameters,
+				parameterManager:    tt.fields.parameterManager,
 				supplementAuxiliary: tt.fields.supplementAuxiliary,
 			}
 			if got := auxiliaryKeeper.Help(sdkTypes.WrapSDKContext(tt.args.context), tt.args.request); !reflect.DeepEqual(got, tt.want) {
@@ -130,16 +128,16 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 }
 
 func Test_auxiliaryKeeper_Initialize(t *testing.T) {
-	_, _, Mapper, Parameters := CreateTestInput(t)
+	_, _, mapper, parameterManager := CreateTestInput(t)
 	type fields struct {
 		mapper              helpers.Mapper
-		parameters          helpers.ParameterManager
+		parameterManager    helpers.ParameterManager
 		supplementAuxiliary helpers.Auxiliary
 	}
 	type args struct {
-		mapper      helpers.Mapper
-		parameters  helpers.ParameterManager
-		auxiliaries []interface{}
+		mapper           helpers.Mapper
+		parameterManager helpers.ParameterManager
+		auxiliaries      []interface{}
 	}
 	tests := []struct {
 		name   string
@@ -147,16 +145,16 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper, Parameters, supplementAuxiliary}, args{Mapper, Parameters, []interface{}{}}, auxiliaryKeeper{Mapper, Parameters, supplementAuxiliary}},
+		{"+ve", fields{mapper, parameterManager, supplementAuxiliary}, args{mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{mapper, parameterManager, supplementAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			auxiliaryKeeper := auxiliaryKeeper{
 				mapper:              tt.fields.mapper,
-				parameters:          tt.fields.parameters,
+				parameterManager:    tt.fields.parameterManager,
 				supplementAuxiliary: tt.fields.supplementAuxiliary,
 			}
-			if got := auxiliaryKeeper.Initialize(tt.args.mapper, tt.args.parameters, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+			if got := auxiliaryKeeper.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})

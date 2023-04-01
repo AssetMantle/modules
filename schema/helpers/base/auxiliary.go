@@ -15,8 +15,8 @@ var _ helpers.Auxiliary = (*auxiliary)(nil)
 
 func (auxiliary auxiliary) GetName() string                    { return auxiliary.name }
 func (auxiliary auxiliary) GetKeeper() helpers.AuxiliaryKeeper { return auxiliary.auxiliaryKeeper }
-func (auxiliary auxiliary) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Auxiliary {
-	auxiliary.auxiliaryKeeper = auxiliary.keeperPrototype().Initialize(mapper, parameters, auxiliaryKeepers).(helpers.AuxiliaryKeeper)
+func (auxiliary auxiliary) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Auxiliary {
+	auxiliary.auxiliaryKeeper = auxiliary.keeperPrototype().Initialize(mapper, parameterManager, auxiliaryKeepers).(helpers.AuxiliaryKeeper)
 	return auxiliary
 }
 func NewAuxiliary(name string, keeperPrototype func() helpers.AuxiliaryKeeper) helpers.Auxiliary {

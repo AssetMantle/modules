@@ -6,13 +6,12 @@ package identities
 import (
 	"testing"
 
-	"github.com/AssetMantle/modules/modules/identities/internal/invariants"
-
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries"
 	"github.com/AssetMantle/modules/modules/identities/internal/block"
 	"github.com/AssetMantle/modules/modules/identities/internal/genesis"
+	"github.com/AssetMantle/modules/modules/identities/internal/invariants"
 	"github.com/AssetMantle/modules/modules/identities/internal/mapper"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters"

@@ -30,7 +30,7 @@ func Prototype() helpers.Block {
 	return block{}
 }
 
-func (block block) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, _ ...interface{}) helpers.Block {
-	block.mapper, block.parameterManager = mapper, parameters
+func (block block) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, _ ...interface{}) helpers.Block {
+	block.mapper, block.parameterManager = mapper, parameterManager
 	return block
 }

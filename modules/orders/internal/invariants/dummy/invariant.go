@@ -1,9 +1,9 @@
 package dummy
 
 import (
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
-var Invariant = func(_ types.Context) (string, bool) {
+var Invariant = func(_ sdkTypes.Context) (string, bool) {
 	return "", false
 }

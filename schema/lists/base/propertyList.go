@@ -3,12 +3,11 @@ package base
 import (
 	"sort"
 
-	"github.com/AssetMantle/modules/schema/traits"
-
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 var _ lists.PropertyList = (*PropertyList)(nil)
@@ -81,7 +80,7 @@ func (propertyList PropertyList) Remove(properties ...properties.Property) lists
 	return &updatedList
 }
 
-//TODO: Check if this is required
+// TODO: Check if this is required
 func (propertyList PropertyList) Mutate(properties ...properties.Property) lists.PropertyList {
 	updatedList := propertyList
 

@@ -8,17 +8,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
@@ -66,7 +64,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -76,19 +74,19 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
-	maintainAuxiliary = maintain.Auxiliary.Initialize(Mapper, Parameters)
-	memberAuxiliary = member.Auxiliary.Initialize(Mapper, Parameters)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
+	maintainAuxiliary = maintain.Auxiliary.Initialize(Mapper, parameterManager)
+	memberAuxiliary = member.Auxiliary.Initialize(Mapper, parameterManager)
 
 	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		MutateKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.TransactionKeeper),
+		MutateKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.TransactionKeeper),
 	}
 
-	return context, keepers, Mapper, Parameters
+	return context, keepers, Mapper, parameterManager
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -108,7 +106,7 @@ func Test_keeperPrototype(t *testing.T) {
 }
 
 func Test_transactionKeeper_Initialize(t *testing.T) {
-	_, _, Mapper, Parameters := CreateTestInput(t)
+	_, _, mapper, parameterManager := CreateTestInput(t)
 	type fields struct {
 		mapper                helpers.Mapper
 		authenticateAuxiliary helpers.Auxiliary
@@ -116,9 +114,9 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		memberAuxiliary       helpers.Auxiliary
 	}
 	type args struct {
-		mapper      helpers.Mapper
-		in1         helpers.ParameterManager
-		auxiliaries []interface{}
+		mapper           helpers.Mapper
+		parameterManager helpers.ParameterManager
+		auxiliaries      []interface{}
 	}
 	tests := []struct {
 		name   string
@@ -127,7 +125,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{Mapper, authenticateAuxiliary, maintainAuxiliary, memberAuxiliary}, args{Mapper, Parameters, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, maintainAuxiliary, memberAuxiliary}},
+		{"+ve", fields{mapper, authenticateAuxiliary, maintainAuxiliary, memberAuxiliary}, args{mapper, parameterManager, []interface{}{}}, transactionKeeper{mapper, authenticateAuxiliary, maintainAuxiliary, memberAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -137,7 +135,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 				maintainAuxiliary:     tt.fields.maintainAuxiliary,
 				memberAuxiliary:       tt.fields.memberAuxiliary,
 			}
-			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.in1, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})

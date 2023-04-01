@@ -2,7 +2,6 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/schema/data"
-
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/traits"

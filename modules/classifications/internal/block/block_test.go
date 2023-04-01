@@ -7,8 +7,6 @@ import (
 	"context"
 	"testing"
 
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -16,6 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/mapper"
@@ -24,7 +23,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func CreateTestInput(t *testing.T) context.Context {
+func createTestInput(t *testing.T) context.Context {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -52,7 +51,7 @@ func CreateTestInput(t *testing.T) context.Context {
 func Test_Block_Methods(t *testing.T) {
 	block := Prototype()
 	block.Initialize(mapper.Prototype(), parameters.Prototype(), []helpers.Auxiliary{})
-	context := CreateTestInput(t)
+	context := createTestInput(t)
 	block.Begin(context, abciTypes.RequestBeginBlock{})
 	block.End(context, abciTypes.RequestEndBlock{})
 }

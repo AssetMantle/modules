@@ -7,8 +7,6 @@ import (
 	"context"
 	"testing"
 
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -16,6 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/mapper"
@@ -52,8 +51,8 @@ func CreateTestInput(t *testing.T) context.Context {
 func Test_block_Begin(t *testing.T) {
 	ctx := CreateTestInput(t)
 	type fields struct {
-		mapper     helpers.Mapper
-		parameters helpers.ParameterManager
+		mapper           helpers.Mapper
+		parameterManager helpers.ParameterManager
 	}
 	type args struct {
 		in0 context.Context
@@ -65,13 +64,13 @@ func Test_block_Begin(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{mapper: mapper.Prototype(), parameters: parameters.Prototype()}, args{in0: ctx, in1: abciTypes.RequestBeginBlock{}}},
+		{"+ve", fields{mapper: mapper.Prototype(), parameterManager: parameters.Prototype()}, args{in0: ctx, in1: abciTypes.RequestBeginBlock{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
 				mapper:           tt.fields.mapper,
-				parameterManager: tt.fields.parameters,
+				parameterManager: tt.fields.parameterManager,
 			}
 			block.Begin(tt.args.in0, tt.args.in1)
 		})
@@ -80,8 +79,8 @@ func Test_block_Begin(t *testing.T) {
 
 func Test_block_End(t *testing.T) {
 	type fields struct {
-		mapper     helpers.Mapper
-		parameters helpers.ParameterManager
+		mapper           helpers.Mapper
+		parameterManager helpers.ParameterManager
 	}
 	type args struct {
 		in0 context.Context
@@ -99,7 +98,7 @@ func Test_block_End(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
 				mapper:           tt.fields.mapper,
-				parameterManager: tt.fields.parameters,
+				parameterManager: tt.fields.parameterManager,
 			}
 			block.End(tt.args.in0, tt.args.in1)
 		})

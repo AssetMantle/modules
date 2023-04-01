@@ -6,23 +6,19 @@ package block
 import (
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
-	"github.com/cosmos/cosmos-sdk/std"
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-
-	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
@@ -60,10 +56,10 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Au
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
-	transferAuxiliary := transfer.Auxiliary.Initialize(Mapper, Parameters)
-	supplementAuxiliary := supplement.Auxiliary.Initialize(Mapper, Parameters)
-	scrubAuxiliary := scrub.Auxiliary.Initialize(Mapper, Parameters)
+	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	transferAuxiliary := transfer.Auxiliary.Initialize(Mapper, parameterManager)
+	supplementAuxiliary := supplement.Auxiliary.Initialize(Mapper, parameterManager)
+	scrubAuxiliary := scrub.Auxiliary.Initialize(Mapper, parameterManager)
 
 	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
@@ -88,7 +84,7 @@ func Test_block_End(t *testing.T) {
 	testContext1 := context.WithBlockHeight(-1)
 	type fields struct {
 		mapper              helpers.Mapper
-		parameters          helpers.ParameterManager
+		parameterManager    helpers.ParameterManager
 		supplementAuxiliary helpers.Auxiliary
 		transferAuxiliary   helpers.Auxiliary
 		scrubAuxiliary      helpers.Auxiliary
@@ -110,7 +106,7 @@ func Test_block_End(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
 				mapper:              tt.fields.mapper,
-				parameterManager:    tt.fields.parameters,
+				parameterManager:    tt.fields.parameterManager,
 				supplementAuxiliary: tt.fields.supplementAuxiliary,
 				transferAuxiliary:   tt.fields.transferAuxiliary,
 				scrubAuxiliary:      tt.fields.scrubAuxiliary,

@@ -11,7 +11,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/viper"
 
@@ -22,7 +22,7 @@ import (
 )
 
 var (
-	testBaseRequest = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
+	testBaseRequest = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 )
 
 func Test_newTransactionRequest(t *testing.T) {
@@ -126,7 +126,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), fromID, fromID, classificationID}))}, newTransactionRequest(testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()}, args{sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), fromID, fromID, classificationID}))}, newTransactionRequest(testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -187,7 +187,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		want    types.Msg
+		want    sdkTypes.Msg
 		wantErr bool
 	}{
 		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()}, newMessage(fromAccAddress, fromID, fromID, classificationID), false},

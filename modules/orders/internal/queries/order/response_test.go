@@ -6,14 +6,13 @@ package order
 import (
 	"testing"
 
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/orders/internal/common"
@@ -22,7 +21,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 )
 
-func CreateTestInput(t *testing.T) sdkTypes.Context {
+func createTestInput(t *testing.T) sdkTypes.Context {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -48,7 +47,7 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 }
 
 func Test_Order_Response(t *testing.T) {
-	context := CreateTestInput(t)
+	context := createTestInput(t)
 	collection := mapper.Prototype().NewCollection(sdkTypes.WrapSDKContext(context))
 
 	testQueryResponse := newQueryResponse(collection, nil)

@@ -92,15 +92,15 @@ func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList h
 	if len(parameterList.Get()) == 0 {
 		genesis.ParameterList = genesis.Default().(*Genesis).ParameterList
 	} else {
-		Parameters := parameterList.Get()
+		parameters := parameterList.Get()
 		for _, defaultParameter := range genesis.Default().(*Genesis).ParameterList.Get() {
-			for i, parameter := range Parameters {
+			for i, parameter := range parameters {
 				if defaultParameter.GetMetaProperty().GetID().Compare(parameter.GetMetaProperty().GetID()) == 0 {
-					Parameters[i] = defaultParameter.Mutate(parameter.GetMetaProperty().GetData())
+					parameters[i] = defaultParameter.Mutate(parameter.GetMetaProperty().GetData())
 				}
 			}
 		}
-		genesis.ParameterList = baseParameters.NewParameterList(Parameters...).(*baseParameters.ParameterList)
+		genesis.ParameterList = baseParameters.NewParameterList(parameters...).(*baseParameters.ParameterList)
 	}
 
 	return genesis

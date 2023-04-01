@@ -9,20 +9,16 @@ import (
 	"testing"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
-
-	"github.com/cosmos/cosmos-sdk/store"
-
-	"github.com/AssetMantle/modules/schema/applications/base"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/distribution"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	"github.com/cosmos/cosmos-sdk/x/params"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
@@ -36,6 +32,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas"
 	"github.com/AssetMantle/modules/modules/orders"
 	"github.com/AssetMantle/modules/modules/splits"
+	"github.com/AssetMantle/modules/schema/applications/base"
 )
 
 // GetProperty flags every time the simulator is run

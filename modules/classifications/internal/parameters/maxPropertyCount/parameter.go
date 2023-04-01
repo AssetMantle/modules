@@ -9,13 +9,13 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 	"github.com/AssetMantle/modules/schema/properties/base"
 	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
 )
 
 var ID = constantProperties.MaxPropertyCountProperty.GetKey()
-var Parameter = baseTypes.NewParameter(base.NewMetaProperty(ID, baseData.NewNumberData(22)))
+var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewNumberData(22)))
 
 func validator(i interface{}) error {
 	var number *baseData.NumberData

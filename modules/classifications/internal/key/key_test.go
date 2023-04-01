@@ -9,8 +9,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	baseHelpers "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
-
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -19,6 +17,7 @@ import (
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	baseHelpers "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func createTestInput() *baseIDs.ClassificationID {

@@ -6,17 +6,14 @@ package simulator
 import (
 	"math/rand"
 
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-
-	"github.com/AssetMantle/modules/modules/classifications/internal/common"
-	"github.com/AssetMantle/modules/schema/data/base"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
+	"github.com/AssetMantle/modules/modules/classifications/internal/common"
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/bondRate"
+	"github.com/AssetMantle/modules/schema/data/base"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {

@@ -107,8 +107,8 @@ func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
 		rest.PostProcessResponse(responseWriter, clientContext, response)
 	}
 }
-func (query query) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Query {
-	query.queryKeeper = query.keeperPrototype().Initialize(mapper, parameters, auxiliaryKeepers).(helpers.QueryKeeper)
+func (query query) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Query {
+	query.queryKeeper = query.keeperPrototype().Initialize(mapper, parameterManager, auxiliaryKeepers).(helpers.QueryKeeper)
 	return query
 }
 

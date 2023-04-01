@@ -275,7 +275,7 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 	return module
 }
 
-func NewModule(name string, consensusVersion uint64, auxiliariesPrototype func() helpers.Auxiliaries, blockPrototype func() helpers.Block, genesisPrototype func() helpers.Genesis, invariantsPrototype func() helpers.Invariants, mapperPrototype func() helpers.Mapper, parametersPrototype func() helpers.ParameterManager, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions) helpers.Module {
+func NewModule(name string, consensusVersion uint64, auxiliariesPrototype func() helpers.Auxiliaries, blockPrototype func() helpers.Block, genesisPrototype func() helpers.Genesis, invariantsPrototype func() helpers.Invariants, mapperPrototype func() helpers.Mapper, parameterManagerPrototype func() helpers.ParameterManager, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions) helpers.Module {
 	return module{
 		name:                      name,
 		consensusVersion:          consensusVersion,
@@ -284,7 +284,7 @@ func NewModule(name string, consensusVersion uint64, auxiliariesPrototype func()
 		genesisPrototype:          genesisPrototype,
 		invariantsPrototype:       invariantsPrototype,
 		mapperPrototype:           mapperPrototype,
-		parameterManagerPrototype: parametersPrototype,
+		parameterManagerPrototype: parameterManagerPrototype,
 		queriesPrototype:          queriesPrototype,
 		simulatorPrototype:        simulatorPrototype,
 		transactionsPrototype:     transactionsPrototype,

@@ -6,13 +6,12 @@ package orders
 import (
 	"testing"
 
-	"github.com/AssetMantle/modules/modules/orders/internal/invariants"
-
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries"
 	"github.com/AssetMantle/modules/modules/orders/internal/block"
 	"github.com/AssetMantle/modules/modules/orders/internal/genesis"
+	"github.com/AssetMantle/modules/modules/orders/internal/invariants"
 	"github.com/AssetMantle/modules/modules/orders/internal/mapper"
 	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/modules/orders/internal/parameters"

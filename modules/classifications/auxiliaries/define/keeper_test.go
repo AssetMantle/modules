@@ -9,22 +9,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
-	"github.com/cosmos/cosmos-sdk/std"
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-
-	"github.com/AssetMantle/modules/schema/properties"
-
-	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
@@ -32,11 +25,13 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
+	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
@@ -45,7 +40,7 @@ type TestKeepers struct {
 	ClassificationsKeeper helpers.AuxiliaryKeeper
 }
 
-func CreateTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
+func createTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -63,7 +58,7 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -78,14 +73,14 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		ClassificationsKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.AuxiliaryKeeper),
+		ClassificationsKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
-	return sdkTypes.WrapSDKContext(context), keepers, Mapper, Parameters
+	return sdkTypes.WrapSDKContext(context), keepers, Mapper, parameterManager
 }
 
 func Test_Auxiliary_Keeper_Help(t *testing.T) {
-	context, keepers, _, _ := CreateTestInput(t)
+	context, keepers, _, _ := createTestInput(t)
 
 	immutableProperties := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutableProperties := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
@@ -160,7 +155,7 @@ func Test_keeperPrototype(t *testing.T) {
 }
 
 func Test_auxiliaryKeeper_Initialize(t *testing.T) {
-	_, _, Mapper, Parameters := CreateTestInput(t)
+	_, _, mapper, parameterManager := createTestInput(t)
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -175,7 +170,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, auxiliaryKeeper{Mapper, Parameters}},
+		{"+ve", fields{mapper}, args{mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{mapper, parameterManager}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

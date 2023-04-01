@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/stretchr/testify/require"
 
@@ -35,7 +35,7 @@ func createTestInput(t *testing.T) (rest.BaseReq, string, *baseIDs.IdentityID, *
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	testToID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
+	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	testToAddress := "cosmos1vx8knpllrj7n963p9ttd80w47kpacrhuts497x"
 	return testBaseReq, testToAddress, testFromID.(*baseIDs.IdentityID), testToID.(*baseIDs.IdentityID), testClassificationID.(*baseIDs.ClassificationID)
 }
@@ -131,7 +131,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
 	testBaseReq, fromAddress, testFromID, testToID, testClassificationID := createTestInput(t)
-	fromAccAddress, err := types.AccAddressFromBech32(fromAddress)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 	type fields struct {
 		BaseReq          rest.BaseReq
@@ -149,7 +149,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), testFromID, testToID, testClassificationID}))}, transactionRequest{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, false},
+		{"+ve", fields{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, args{sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), testFromID, testToID, testClassificationID}))}, transactionRequest{testBaseReq, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -203,7 +203,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	testBaseReq, fromAccAddress, testFromID, testToID, testClassificationID := createTestInput(t)
-	testFromAccAddress, err := types.AccAddressFromBech32(fromAccAddress)
+	testFromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAccAddress)
 	require.Nil(t, err)
 	type fields struct {
 		BaseReq          rest.BaseReq
@@ -214,7 +214,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		want    types.Msg
+		want    sdkTypes.Msg
 		wantErr bool
 	}{
 		// TODO: Type & Data same but Not matching

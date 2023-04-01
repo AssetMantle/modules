@@ -1,8 +1,6 @@
 package docs
 
 import (
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -10,10 +8,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	propertiesUtilities "github.com/AssetMantle/modules/schema/properties/utilities"
 	"github.com/AssetMantle/modules/schema/qualified"

@@ -8,19 +8,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/properties/utilities"
-
-	"github.com/cosmos/cosmos-sdk/simapp"
-
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
@@ -38,6 +34,7 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
@@ -46,7 +43,7 @@ type TestKeepers struct {
 }
 
 var (
-	Parameters                 helpers.ParameterManager
+	parameterManager           helpers.ParameterManager
 	authenticateAuxiliary      helpers.Auxiliary
 	conformAuxiliary           helpers.Auxiliary
 	maintainersVerifyAuxiliary helpers.Auxiliary
@@ -70,7 +67,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters = parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -84,11 +81,11 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
-	conformAuxiliary = conform.Auxiliary.Initialize(Mapper, Parameters)
-	maintainersVerifyAuxiliary = verify.Auxiliary.Initialize(Mapper, Parameters)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
+	conformAuxiliary = conform.Auxiliary.Initialize(Mapper, parameterManager)
+	maintainersVerifyAuxiliary = verify.Auxiliary.Initialize(Mapper, parameterManager)
 	keepers := TestKeepers{
-		IssueKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}).(helpers.TransactionKeeper),
+		IssueKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return context, keepers, Mapper
@@ -130,7 +127,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{Mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}, args{Mapper, Parameters, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}},
+		{"+ve", fields{Mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

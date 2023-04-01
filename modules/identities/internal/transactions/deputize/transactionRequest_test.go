@@ -8,10 +8,9 @@ import (
 	"reflect"
 	"testing"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -22,9 +21,7 @@ import (
 func Test_newTransactionRequest(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type args struct {
 		baseReq              rest.BaseReq
@@ -130,9 +127,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 func Test_transactionRequest_FromJSON(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	jsonMessage, _ := json.Marshal(newTransactionRequest(testBaseReq, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false, false))
 	type fields struct {
@@ -190,9 +185,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
 		BaseReq              rest.BaseReq
@@ -292,9 +285,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
 		BaseReq              rest.BaseReq
@@ -342,9 +333,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 func Test_transactionRequest_Validate(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
 		BaseReq              rest.BaseReq

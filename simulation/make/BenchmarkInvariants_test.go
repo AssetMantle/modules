@@ -8,9 +8,8 @@ import (
 	"os"
 	"testing"
 
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-
 	"github.com/cosmos/cosmos-sdk/simapp"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"

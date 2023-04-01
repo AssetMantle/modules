@@ -8,9 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -110,7 +109,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		paramsTransientStoreKeys,
 	)
 
-	testParameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -137,7 +136,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	}{
 		// TODO: Test dependency on #96  https://github.com/AssetMantle/modules/issues/96
 		{"+ve with nil", fields{}, args{}, auxiliaryKeeper{}},
-		{"+ve", fields{Mapper}, args{Mapper, testParameters, []interface{}{}}, auxiliaryKeeper{Mapper}}, // TODO: type & data same but doesn't match
+		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper}}, // TODO: type & data same but doesn't match
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

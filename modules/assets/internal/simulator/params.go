@@ -8,7 +8,6 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/common"
