@@ -15,7 +15,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
@@ -34,15 +34,15 @@ type TestKeepers struct {
 	QueryKeeper helpers.QueryKeeper
 }
 
-func CreateTestInputForQueries(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
+func CreateTestInputForQueries(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 
-	storeKey := types.NewKVStoreKey("test")
-	paramsStoreKey := types.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := types.NewTransientStoreKey("testParamsTransient")
+	storeKey := sdkTypes.NewKVStoreKey("test")
+	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
+	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
@@ -56,13 +56,13 @@ func CreateTestInputForQueries(t *testing.T) (types.Context, TestKeepers, helper
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, types.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, types.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, types.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := types.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -92,12 +92,12 @@ func Test_keeperPrototype(t *testing.T) {
 func Test_queryKeeper_Enquire(t *testing.T) {
 	context, keepers, Mapper, _ := CreateTestInputForQueries(t)
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutables, mutables)
-	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(testOrder))
+	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(testOrder))
 	type fields struct {
 		mapper helpers.Mapper
 	}
 	type args struct {
-		context      types.Context
+		context      sdkTypes.Context
 		queryRequest helpers.QueryRequest
 	}
 	tests := []struct {
@@ -106,14 +106,14 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 		args   args
 		want   helpers.QueryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, newQueryRequest(testOrderID)}, newQueryResponse(keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Fetch(key.NewKey(testOrderID)), nil)},
+		{"+ve", fields{Mapper}, args{context, newQueryRequest(testOrderID)}, newQueryResponse(keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Fetch(key.NewKey(testOrderID)), nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryKeeper := queryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := queryKeeper.Enquire(types.WrapSDKContext(tt.args.context), tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
+			if got := queryKeeper.Enquire(sdkTypes.WrapSDKContext(tt.args.context), tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Enquire() = %v, want %v", got, tt.want)
 			}
 		})
@@ -123,7 +123,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 func Test_queryKeeper_Initialize(t *testing.T) {
 	context, keepers, mapper, parameterManager := CreateTestInputForQueries(t)
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutables, mutables)
-	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(testOrder))
+	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(testOrder))
 	type fields struct {
 		mapper helpers.Mapper
 	}

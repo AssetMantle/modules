@@ -5,14 +5,14 @@ package define
 
 import (
 	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/qualified"
 )
 
 type auxiliaryRequest struct {
-	types.AccAddress
+	sdkTypes.AccAddress
 	qualified.Immutables `json:"immutables" valid:"required~required field immutableProperties missing"`
 	qualified.Mutables   `json:"mutables" valid:"required~required field mutableProperties missing"`
 }
@@ -33,7 +33,7 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(accAddress types.AccAddress, immutables qualified.Immutables, mutables qualified.Mutables) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(accAddress sdkTypes.AccAddress, immutables qualified.Immutables, mutables qualified.Mutables) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		AccAddress: accAddress,
 		Immutables: immutables,

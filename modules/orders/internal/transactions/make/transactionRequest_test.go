@@ -11,7 +11,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
@@ -27,7 +27,7 @@ import (
 
 var (
 	fromAddress                   = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, _             = types.AccAddressFromBech32(fromAddress)
+	fromAccAddress, _             = sdkTypes.AccAddressFromBech32(fromAddress)
 	immutableMetaPropertiesString = "defaultImmutableMeta1:S|defaultImmutableMeta1"
 	immutablePropertiesString     = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString   = "defaultMutableMeta1:S|defaultMutableMeta1"
@@ -42,10 +42,10 @@ var (
 	testFromID                    = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
 	makerOwnableID                = baseIDs.NewCoinID(baseIDs.NewStringID("makerownableid")).ToAnyOwnableID().(*baseIDs.AnyOwnableID)
 	takerOwnableID                = baseIDs.NewCoinID(baseIDs.NewStringID("takerownableid")).ToAnyOwnableID().(*baseIDs.AnyOwnableID)
-	testBaseRequest               = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
+	testBaseRequest               = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	expiresIn                     = int64(60)
-	makerOwnableSplit             = types.NewDec(60)
-	takerOwnableSplit             = types.NewDec(60)
+	makerOwnableSplit             = sdkTypes.NewDec(60)
+	takerOwnableSplit             = sdkTypes.NewDec(60)
 )
 
 func Test_newTransactionRequest(t *testing.T) {
@@ -293,7 +293,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		want    types.Msg
+		want    sdkTypes.Msg
 		wantErr bool
 	}{
 		{"+ve", fields{testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerOwnableID.AsString(), takerOwnableID.AsString(), expiresIn, makerOwnableSplit.String(), takerOwnableSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, testFromID, testClassificationID, testFromID, makerOwnableID, takerOwnableID, base.NewHeight(60), makerOwnableSplit, takerOwnableSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), false},
