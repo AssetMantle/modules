@@ -52,7 +52,7 @@ func CreateTestInputForQueries(t *testing.T) (types.Context, TestKeepers, helper
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -67,10 +67,10 @@ func CreateTestInputForQueries(t *testing.T) (types.Context, TestKeepers, helper
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		QueryKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.QueryKeeper),
+		QueryKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.QueryKeeper),
 	}
 
-	return context, keepers, Mapper, Parameters
+	return context, keepers, Mapper, parameterManager
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -121,16 +121,16 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 }
 
 func Test_queryKeeper_Initialize(t *testing.T) {
-	context, keepers, Mapper, Parameters := CreateTestInputForQueries(t)
+	context, keepers, mapper, parameterManager := CreateTestInputForQueries(t)
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutables, mutables)
 	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(testOrder))
 	type fields struct {
 		mapper helpers.Mapper
 	}
 	type args struct {
-		mapper helpers.Mapper
-		in1    helpers.ParameterManager
-		in2    []interface{}
+		mapper           helpers.Mapper
+		parameterManager helpers.ParameterManager
+		in2              []interface{}
 	}
 	tests := []struct {
 		name   string
@@ -139,14 +139,14 @@ func Test_queryKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, queryKeeper{}},
-		{"+ve", fields{Mapper}, args{Mapper, Parameters, []interface{}{}}, queryKeeper{Mapper}},
+		{"+ve", fields{mapper}, args{mapper, parameterManager, []interface{}{}}, queryKeeper{mapper}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryKeeper := queryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := queryKeeper.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+			if got := queryKeeper.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})

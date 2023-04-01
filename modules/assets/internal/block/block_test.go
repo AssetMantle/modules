@@ -53,8 +53,8 @@ func CreateAssetsTestInput(t *testing.T) context.Context {
 
 func Test_block_Begin(t *testing.T) {
 	type fields struct {
-		mapper     helpers.Mapper
-		parameters helpers.ParameterManager
+		mapper           helpers.Mapper
+		parameterManager helpers.ParameterManager
 	}
 	type args struct {
 		in0 context.Context
@@ -72,7 +72,7 @@ func Test_block_Begin(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
 				mapper:           tt.fields.mapper,
-				parameterManager: tt.fields.parameters,
+				parameterManager: tt.fields.parameterManager,
 			}
 			block.Begin(tt.args.in0, tt.args.in1)
 		})
@@ -81,8 +81,8 @@ func Test_block_Begin(t *testing.T) {
 
 func Test_block_End(t *testing.T) {
 	type fields struct {
-		mapper     helpers.Mapper
-		parameters helpers.ParameterManager
+		mapper           helpers.Mapper
+		parameterManager helpers.ParameterManager
 	}
 	type args struct {
 		in0 context.Context
@@ -100,7 +100,7 @@ func Test_block_End(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
 				mapper:           tt.fields.mapper,
-				parameterManager: tt.fields.parameters,
+				parameterManager: tt.fields.parameterManager,
 			}
 			block.End(tt.args.in0, tt.args.in1)
 		})
@@ -112,13 +112,13 @@ func Test_block_Initialize(t *testing.T) {
 	testParameter := parameters.Prototype()
 	testBlock := block{testMapper, testParameter}
 	type fields struct {
-		mapper     helpers.Mapper
-		parameters helpers.ParameterManager
+		mapper           helpers.Mapper
+		parameterManager helpers.ParameterManager
 	}
 	type args struct {
-		mapper     helpers.Mapper
-		parameters helpers.ParameterManager
-		in2        []interface{}
+		mapper           helpers.Mapper
+		parameterManager helpers.ParameterManager
+		in2              []interface{}
 	}
 	tests := []struct {
 		name   string
@@ -132,9 +132,9 @@ func Test_block_Initialize(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
 				mapper:           tt.fields.mapper,
-				parameterManager: tt.fields.parameters,
+				parameterManager: tt.fields.parameterManager,
 			}
-			if got := block.Initialize(tt.args.mapper, tt.args.parameters, tt.args.in2...); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+			if got := block.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.in2...); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})

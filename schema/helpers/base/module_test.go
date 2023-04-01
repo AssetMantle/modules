@@ -35,7 +35,7 @@ var genesisPrototype = func() helpers.Genesis {
 var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
 }
-var parametersPrototype = func() helpers.ParameterManager {
+var parameterManagerPrototype = func() helpers.ParameterManager {
 	return NewParameterManager("", NewValidatableParameter(baseTypes.NewParameter(base.NewMetaProperty(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"))), func(interface{}) error { return nil }))
 }
 var queriesPrototype = func() helpers.Queries {
@@ -57,7 +57,7 @@ func TestModule(t *testing.T) {
 	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test") // .WithKeyTable(parameterManagerPrototype().GetKeyTable())
 	// subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), parameterManagerPrototype())
 	Module := NewModule("test", 1, auxiliariesPrototype, blockPrototype, genesisPrototype, nil,
-		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype).Initialize(storeKey, subspace).(module)
+		mapperPrototype, parameterManagerPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype).Initialize(storeKey, subspace).(module)
 
 	// AppModuleBasic
 	require.Equal(t, "test", Module.Name())

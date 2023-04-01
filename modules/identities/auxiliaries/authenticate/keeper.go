@@ -15,7 +15,7 @@ import (
 
 type auxiliaryKeeper struct {
 	mapper              helpers.Mapper
-	parameters          helpers.ParameterManager
+	parameterManager    helpers.ParameterManager
 	supplementAuxiliary helpers.Auxiliary
 }
 
@@ -37,8 +37,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	return newAuxiliaryResponse(), nil
 }
 
-func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
-	auxiliaryKeeper.mapper, auxiliaryKeeper.parameters = mapper, parameters
+func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
+	auxiliaryKeeper.mapper, auxiliaryKeeper.parameterManager = mapper, parameterManager
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {

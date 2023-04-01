@@ -50,7 +50,7 @@ var (
 	defineAuxiliary       helpers.Auxiliary
 	superAuxiliary        helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
-	Parameters            helpers.ParameterManager
+	parameterManager      helpers.ParameterManager
 )
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper) {
@@ -71,7 +71,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters = parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -85,12 +85,12 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
-	defineAuxiliary = define.Auxiliary.Initialize(Mapper, Parameters)
-	superAuxiliary = super.Auxiliary.Initialize(Mapper, Parameters)
-	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, Parameters)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
+	defineAuxiliary = define.Auxiliary.Initialize(Mapper, parameterManager)
+	superAuxiliary = super.Auxiliary.Initialize(Mapper, parameterManager)
+	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, parameterManager)
 	keepers := TestKeepers{
-		DefineKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
+		DefineKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return context, keepers, Mapper
@@ -133,7 +133,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{Mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{Mapper, Parameters, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}},
+		{"+ve", fields{Mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

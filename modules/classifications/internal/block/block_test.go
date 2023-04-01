@@ -24,7 +24,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 )
 
-func CreateTestInput(t *testing.T) context.Context {
+func createTestInput(t *testing.T) context.Context {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -52,7 +52,7 @@ func CreateTestInput(t *testing.T) context.Context {
 func Test_Block_Methods(t *testing.T) {
 	block := Prototype()
 	block.Initialize(mapper.Prototype(), parameters.Prototype(), []helpers.Auxiliary{})
-	context := CreateTestInput(t)
+	context := createTestInput(t)
 	block.Begin(context, abciTypes.RequestBeginBlock{})
 	block.End(context, abciTypes.RequestEndBlock{})
 }

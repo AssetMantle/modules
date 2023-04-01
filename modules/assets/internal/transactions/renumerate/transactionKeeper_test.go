@@ -70,7 +70,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -84,16 +84,16 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	maintainAuxiliary = maintain.Auxiliary.Initialize(Mapper, Parameters)
-	renumerateAuxiliary = renumerate.Auxiliary.Initialize(Mapper, Parameters)
-	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, Parameters)
-	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
+	maintainAuxiliary = maintain.Auxiliary.Initialize(Mapper, parameterManager)
+	renumerateAuxiliary = renumerate.Auxiliary.Initialize(Mapper, parameterManager)
+	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, parameterManager)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
 
 	keepers := TestKeepers{
-		RenumerateKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{}).(helpers.TransactionKeeper),
+		RenumerateKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.TransactionKeeper),
 	}
 
-	return context, keepers, Mapper, Parameters
+	return context, keepers, Mapper, parameterManager
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -113,7 +113,7 @@ func Test_keeperPrototype(t *testing.T) {
 }
 
 func Test_transactionKeeper_Initialize(t *testing.T) {
-	_, _, Mapper, Parameters := createTestInput(t)
+	_, _, mapper, parameterManager := createTestInput(t)
 	type fields struct {
 		mapper                helpers.Mapper
 		maintainAuxiliary     helpers.Auxiliary
@@ -122,9 +122,9 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		authenticateAuxiliary helpers.Auxiliary
 	}
 	type args struct {
-		mapper      helpers.Mapper
-		in1         helpers.ParameterManager
-		auxiliaries []interface{}
+		mapper           helpers.Mapper
+		parameterManager helpers.ParameterManager
+		auxiliaries      []interface{}
 	}
 	tests := []struct {
 		name   string
@@ -132,7 +132,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper, maintainAuxiliary, renumerateAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{Mapper, Parameters, []interface{}{}}, transactionKeeper{Mapper, maintainAuxiliary, renumerateAuxiliary, supplementAuxiliary, authenticateAuxiliary}},
+		{"+ve", fields{mapper, maintainAuxiliary, renumerateAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{mapper, parameterManager, []interface{}{}}, transactionKeeper{mapper, maintainAuxiliary, renumerateAuxiliary, supplementAuxiliary, authenticateAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -143,7 +143,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 				supplementAuxiliary:   tt.fields.supplementAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
-			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.in1, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})

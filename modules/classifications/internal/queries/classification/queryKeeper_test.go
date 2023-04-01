@@ -62,9 +62,9 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
-	testQueryKeeper := keeperPrototype().Initialize(mapper, Parameters, []interface{}{})
+	testQueryKeeper := keeperPrototype().Initialize(mapper, parameterManager, []interface{}{})
 
 	return context, testQueryKeeper
 }

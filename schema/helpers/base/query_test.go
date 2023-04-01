@@ -22,7 +22,7 @@ func TestQuery(t *testing.T) {
 		base.TestQueryResponsePrototype, base.TestQueryKeeperPrototype,
 		nil,
 		nil,
-	).Initialize(Mapper, parametersPrototype()).(query)
+	).Initialize(Mapper, parameterManagerPrototype()).(query)
 
 	require.Equal(t, nil, base.TestQueryKeeperPrototype().(base.TestQueryKeeper).Help(context, nil))
 	require.Equal(t, nil, base.TestQueryRequestPrototype().Validate())

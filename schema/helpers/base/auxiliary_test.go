@@ -109,7 +109,7 @@ func Test_auxiliary_Initialize(t *testing.T) {
 	}
 	type args struct {
 		mapper           helpers.Mapper
-		parameters       helpers.ParameterManager
+		parameterManager helpers.ParameterManager
 		auxiliaryKeepers []interface{}
 	}
 	tests := []struct {
@@ -128,7 +128,7 @@ func Test_auxiliary_Initialize(t *testing.T) {
 				auxiliaryKeeper: tt.fields.auxiliaryKeeper,
 				keeperPrototype: tt.fields.keeperPrototype,
 			}
-			if got := auxiliary.Initialize(tt.args.mapper, tt.args.parameters, tt.args.auxiliaryKeepers...); !reflect.DeepEqual(got, tt.want) {
+			if got := auxiliary.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.auxiliaryKeepers...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})

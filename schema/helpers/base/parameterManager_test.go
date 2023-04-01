@@ -25,28 +25,28 @@ func TestParameters(t *testing.T) {
 	codec := CodecPrototype()
 
 	Parameter := baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"), func(interface{}) error { return nil })
-	ParameterManager := []parametersSchema.Parameter{Parameter}
-	Parameters := NewParameterManager(ParameterManager...).(*parameterManager)
-	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test").WithKeyTable(Parameters.GetKeyTable())
-	subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), Parameters)
-	Parameters = Parameters.Initialize(subspace).(*parameterManager)
+	parameters := []parametersSchema.Parameter{Parameter}
+	ParameterManager := NewParameterManager(parameters...).(*parameterManager)
+	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test").WithKeyTable(ParameterManager.GetKeyTable())
+	subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), ParameterManager)
+	ParameterManager = ParameterManager.Initialize(subspace).(*parameterManager)
 
-	require.NotNil(t, Parameters.ParamSetPairs())
+	require.NotNil(t, ParameterManager.ParamSetPairs())
 
-	require.NotNil(t, Parameters.GetKeyTable())
+	require.NotNil(t, ParameterManager.GetKeyTable())
 
-	require.Equal(t, true, Parameters.Equal(Parameters))
+	require.Equal(t, true, ParameterManager.Equal(ParameterManager))
 
-	require.Equal(t, true, Parameters.GetList()[0].Equal(Parameter))
-	require.Equal(t, `{"id":{"idString":"testParameter"},"data":{"value":"testData"}}`, Parameters.String())
+	require.Equal(t, true, ParameterManager.GetList()[0].Equal(Parameter))
+	require.Equal(t, `{"id":{"idString":"testParameter"},"data":{"value":"testData"}}`, ParameterManager.String())
 
-	err := Parameters.Validate()
+	err := ParameterManager.Validate()
 	require.Nil(t, err)
 
 	require.NotPanics(t, func() {
-		Parameters.Fetch(context, baseIDs.NewStringID("testParameter"))
+		ParameterManager.Fetch(context, baseIDs.NewStringID("testParameter"))
 	})
 
-	require.Equal(t, "testData123", Parameters.Mutate(context,
+	require.Equal(t, "testData123", ParameterManager.Mutate(context,
 		baseTypes.NewParameter(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData123"), func(interface{}) error { return nil })).Get(baseIDs.NewStringID("testParameter")).GetData().AsString())
 }

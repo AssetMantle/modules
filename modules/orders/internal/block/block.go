@@ -189,8 +189,8 @@ func Prototype() helpers.Block {
 	return block{}
 }
 
-func (block block) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Block {
-	block.mapper, block.parameterManager = mapper, parameters
+func (block block) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Block {
+	block.mapper, block.parameterManager = mapper, parameterManager
 
 	for _, auxiliaryKeeper := range auxiliaryKeepers {
 		switch value := auxiliaryKeeper.(type) {

@@ -34,7 +34,7 @@ func TestTransaction(t *testing.T) {
 	legacyAmino.Seal()
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
 	Transaction := NewTransaction("test", "", "", base.TestTransactionRequestPrototype, base.TestMessagePrototype,
-		base.TestTransactionKeeperPrototype, nil, nil).InitializeKeeper(Mapper, parametersPrototype()).(transaction)
+		base.TestTransactionKeeperPrototype, nil, nil).InitializeKeeper(Mapper, parameterManagerPrototype()).(transaction)
 	require.Equal(t, "TestMessage", base.TestMessagePrototype().(*base.TestMessage).Route())
 	require.NotNil(t, base.TestMessagePrototype().(*base.TestMessage).GetSignBytes())
 	_, err := base.TestTransactionKeeperPrototype().Transact(context, nil)

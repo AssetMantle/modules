@@ -22,7 +22,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 )
 
-func CreateTestInput(t *testing.T) sdkTypes.Context {
+func createTestInput(t *testing.T) sdkTypes.Context {
 	var legacyAmino = codec.NewLegacyAmino()
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
@@ -48,7 +48,7 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 }
 
 func Test_Order_Response(t *testing.T) {
-	context := CreateTestInput(t)
+	context := createTestInput(t)
 	collection := mapper.Prototype().NewCollection(sdkTypes.WrapSDKContext(context))
 
 	testQueryResponse := newQueryResponse(collection, nil)

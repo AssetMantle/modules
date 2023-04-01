@@ -56,7 +56,7 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -70,10 +70,10 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrubAuxiliary := scrub.Auxiliary.Initialize(mapper, Parameters)
-	defineAuxiliary := define.Auxiliary.Initialize(mapper, Parameters)
+	scrubAuxiliary := scrub.Auxiliary.Initialize(mapper, parameterManager)
+	defineAuxiliary := define.Auxiliary.Initialize(mapper, parameterManager)
 	keepers := TestKeepers{
-		IdentitiesKeeper: keeperPrototype().Initialize(mapper, Parameters,
+		IdentitiesKeeper: keeperPrototype().Initialize(mapper, parameterManager,
 			[]interface{}{scrubAuxiliary,
 				defineAuxiliary}).(helpers.TransactionKeeper),
 	}
