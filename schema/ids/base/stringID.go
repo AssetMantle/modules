@@ -4,11 +4,11 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/schema/ids/utilities"
 	"strings"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 

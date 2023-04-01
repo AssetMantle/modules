@@ -19,10 +19,10 @@ import (
 )
 
 func ValidatedID[V *base.PropertyID | *base.DataID](value any) V {
-	if value == nil {
-		return nil
-	}
-	return value.(V)
+if value == nil {
+return nil
+}
+return value.(V)
 }
 
 func createTestInputForMesaProperty() (ids.StringID, ids.PropertyID, data.Data, properties.Property) {

@@ -1,0 +1,12 @@
+syntax = "proto3";
+package identities.transactions.mutate;
+
+import "google/api/annotations.proto";
+import "modules/identities/internal/transactions/mutate/message.proto";
+import "modules/identities/internal/transactions/mutate/transactionResponse.proto";
+
+service Service {
+  rpc Handle(Message) returns (TransactionResponse) {
+    option (google.api.http).post = "/mantle/identities/mutate";
+  }
+}

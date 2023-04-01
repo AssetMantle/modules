@@ -1,8 +1,0 @@
-syntax = "proto3";
-package orders.queries.order;
-
-import "schema/ids/base/orderID.v1.proto";
-
-message QueryRequest {
-  ids.OrderID order_i_d = 1;
-}

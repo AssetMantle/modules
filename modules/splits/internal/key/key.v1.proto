@@ -1,8 +1,0 @@
-syntax = "proto3";
-package splits;
-
-import "schema/ids/base/splitID.v1.proto";
-
-message Key {
-  ids.SplitID split_i_d = 1;
-}
