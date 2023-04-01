@@ -56,18 +56,20 @@ func (propertyList *PropertyList) GetPropertyIDList() lists.IDList {
 	}
 	return propertyIDList
 }
-func (propertyList *PropertyList) Add(properties ...properties.Property) lists.PropertyList {
+func (propertyList PropertyList) Add(properties ...properties.Property) lists.PropertyList {
 	updatedList := propertyList
 	for _, listable := range properties {
 		if index, found := updatedList.Search(listable); !found {
 			updatedList.PropertyList = append(updatedList.PropertyList, listable.ToAnyProperty().(*base.AnyProperty))
 			copy(updatedList.PropertyList[index+1:], updatedList.PropertyList[index:])
 			updatedList.PropertyList[index] = listable.ToAnyProperty().(*base.AnyProperty)
+		} else {
+			updatedList.PropertyList[index] = listable.ToAnyProperty().(*base.AnyProperty)
 		}
 	}
-	return updatedList
+	return &updatedList
 }
-func (propertyList *PropertyList) Remove(properties ...properties.Property) lists.PropertyList {
+func (propertyList PropertyList) Remove(properties ...properties.Property) lists.PropertyList {
 	updatedList := propertyList
 
 	for _, listable := range properties {
@@ -76,9 +78,11 @@ func (propertyList *PropertyList) Remove(properties ...properties.Property) list
 		}
 	}
 
-	return updatedList
+	return &updatedList
 }
-func (propertyList *PropertyList) Mutate(properties ...properties.Property) lists.PropertyList {
+
+//TODO: Check if this is required
+func (propertyList PropertyList) Mutate(properties ...properties.Property) lists.PropertyList {
 	updatedList := propertyList
 
 	for _, listable := range properties {
@@ -87,7 +91,7 @@ func (propertyList *PropertyList) Mutate(properties ...properties.Property) list
 		}
 	}
 
-	return updatedList
+	return &updatedList
 }
 func (propertyList *PropertyList) ScrubData() lists.PropertyList {
 	newPropertyList := NewPropertyList()
