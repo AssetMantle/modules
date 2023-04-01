@@ -6,7 +6,7 @@ package revoke
 import (
 	"context"
 
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/revoke"
@@ -15,7 +15,7 @@ import (
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
-	parameters            helpers.ParameterManager
+	parameterManager      helpers.ParameterManager
 	authenticateAuxiliary helpers.Auxiliary
 	revokeAuxiliary       helpers.Auxiliary
 }
@@ -28,7 +28,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 
-	fromAddress, err := types.AccAddressFromBech32(message.From)
+	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
 		panic("Could not get from address from Bech32 string")
 	}
@@ -43,8 +43,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	return newTransactionResponse(), nil
 }
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
-	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
+	transactionKeeper.mapper, transactionKeeper.parameterManager = mapper, parameterManager
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {

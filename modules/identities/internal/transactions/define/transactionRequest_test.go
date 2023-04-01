@@ -8,8 +8,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/lists/utilities"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -23,6 +21,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/modules/schema/lists/utilities"
 	propertiesUtilities "github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
@@ -33,9 +32,7 @@ func Test_newTransactionRequest(t *testing.T) {
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
-
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type args struct {
 		baseReq                 rest.BaseReq
@@ -83,7 +80,6 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
 		BaseReq                 rest.BaseReq
@@ -139,9 +135,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
-
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	jsonMessage, _ := json.Marshal(transactionRequest{testBaseReq, "fromID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString})
 
@@ -197,9 +191,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
-
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
 		BaseReq                 rest.BaseReq
@@ -239,7 +231,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
-
 	immutableMetaProperties, err := propertiesUtilities.ReadMetaProperty(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 	immutableProperties, err := utilities.ReadMetaPropertyList(immutablePropertiesString)
@@ -301,9 +292,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
-
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
 		BaseReq                 rest.BaseReq
@@ -343,9 +332,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
-
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	type fields struct {
 		BaseReq                 rest.BaseReq

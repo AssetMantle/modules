@@ -7,13 +7,11 @@ import (
 	"reflect"
 	"testing"
 
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"

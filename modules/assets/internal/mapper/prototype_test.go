@@ -7,10 +7,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/helpers"
-
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
+	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 )
 

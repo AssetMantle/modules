@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client"
-
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -25,9 +24,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
-
 	"github.com/AssetMantle/modules/schema"
+	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestHandler(t *testing.T) {
@@ -57,7 +55,6 @@ func TestHandler(t *testing.T) {
 	require.Nil(t, err)
 
 	address := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	var sdkAddress sdkTypes.AccAddress
 	sdkAddress, err = sdkTypes.AccAddressFromBech32(address)
 

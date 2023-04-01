@@ -4,15 +4,13 @@
 package mutate
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
@@ -22,11 +20,21 @@ var _ helpers.Message = (*Message)(nil)
 
 func (message *Message) Type() string { return Transaction.GetName() }
 func (message *Message) ValidateBasic() error {
-	var _, err = govalidator.ValidateStruct(message)
-	if err != nil {
-		return errorConstants.IncorrectMessage.Wrapf(err.Error())
+	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
+		return err
 	}
-
+	if err := message.FromID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.AssetID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.MutableMetaProperties.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.MutableProperties.ValidateBasic(); err != nil {
+		return err
+	}
 	return nil
 }
 func (message *Message) GetSigners() []sdkTypes.AccAddress {
@@ -57,8 +65,8 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, assetID ids.AssetID, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return &Message{
 		From:                  from.String(),
-		FromID:                fromID.(*baseIds.IdentityID),
-		AssetID:               assetID.(*baseIds.AssetID),
+		FromID:                fromID.(*baseIDs.IdentityID),
+		AssetID:               assetID.(*baseIDs.AssetID),
 		MutableMetaProperties: mutableMetaProperties.(*baseLists.PropertyList),
 		MutableProperties:     mutableProperties.(*baseLists.PropertyList),
 	}

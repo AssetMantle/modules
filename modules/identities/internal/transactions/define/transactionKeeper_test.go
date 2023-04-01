@@ -8,18 +8,15 @@ import (
 	"reflect"
 	"testing"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/cosmos/cosmos-sdk/simapp"
-
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
@@ -35,7 +32,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
@@ -50,7 +47,7 @@ var (
 	defineAuxiliary       helpers.Auxiliary
 	superAuxiliary        helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
-	Parameters            helpers.ParameterManager
+	parameterManager      helpers.ParameterManager
 )
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper) {
@@ -71,7 +68,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters = parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -85,12 +82,12 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
-	defineAuxiliary = define.Auxiliary.Initialize(Mapper, Parameters)
-	superAuxiliary = super.Auxiliary.Initialize(Mapper, Parameters)
-	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, Parameters)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
+	defineAuxiliary = define.Auxiliary.Initialize(Mapper, parameterManager)
+	superAuxiliary = super.Auxiliary.Initialize(Mapper, parameterManager)
+	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, parameterManager)
 	keepers := TestKeepers{
-		DefineKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
+		DefineKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return context, keepers, Mapper
@@ -133,7 +130,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{Mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{Mapper, Parameters, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}},
+		{"+ve", fields{Mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -159,13 +156,13 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	fromAddress2 := "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
 	fromAccAddress2, err := sdkTypes.AccAddressFromBech32(fromAddress2)
 	require.Nil(t, err)
-	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
-	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID11"), baseData.NewStringData("ImmutableData")))
-	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("authentication"), baseData.NewListData()))
-	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("authentication"), baseData.NewStringData("MutableData")))
+	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID11"), baseData.NewStringData("ImmutableData")))
+	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewStringData("MutableData")))
 	immutables := baseQualified.NewImmutables(immutableMetaProperties)
 	mutables := baseQualified.NewMutables(mutableMetaProperties)
-	classificationID := baseIds.NewClassificationID(immutables, mutables)
+	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	identity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 	identity = identity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
 	keepers.DefineKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(identity))
@@ -186,8 +183,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress, baseIds.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
-		{"-ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress2, baseIds.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(errorConstants.NotAuthorized)},
+		{"+ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
+		{"-ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress2, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(errorConstants.NotAuthorized)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

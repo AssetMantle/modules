@@ -15,6 +15,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 )
@@ -38,6 +39,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
+	var coinID ids.CoinID
+
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err
 	}
@@ -50,17 +53,17 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		if _, found := transactionKeeper.parameterManager.GetParameter(constants.WrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData).Search(base.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom)))); !found {
 			return nil, errorConstants.NotAuthorized.Wrapf("coin %s is not allowed to be wrapped", coin.Denom)
 		}
-
-		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom)), sdkTypes.NewDecFromInt(coin.Amount)); err != nil {
+		coinID = baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom))
+		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, coinID, sdkTypes.NewDecFromInt(coin.Amount)); err != nil {
 			return nil, err
 		}
 	}
 
-	return newTransactionResponse(), nil
+	return newTransactionResponse(coinID.AsString()), nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
-	transactionKeeper.mapper, transactionKeeper.parameterManager = mapper, parameters
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
+	transactionKeeper.mapper, transactionKeeper.parameterManager = mapper, parameterManager
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {

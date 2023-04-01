@@ -9,6 +9,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/burn"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
@@ -31,6 +32,7 @@ import (
 type block struct {
 	mapper              helpers.Mapper
 	parameterManager    helpers.ParameterManager
+	burnAuxiliary       helpers.Auxiliary
 	supplementAuxiliary helpers.Auxiliary
 	transferAuxiliary   helpers.Auxiliary
 	scrubAuxiliary      helpers.Auxiliary
@@ -55,6 +57,9 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 			if order.GetExpiryHeight().Compare(baseTypes.CurrentHeight(context)) <= 0 {
 				// TODO ***** check security of sending and receiving from module and module account security
 				if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); err != nil {
+					panic(err)
+				}
+				if _, err := block.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(order.GetClassificationID())); err != nil {
 					panic(err)
 				}
 				orders.Remove(mappable.NewMappable(order))
@@ -183,8 +188,8 @@ func Prototype() helpers.Block {
 	return block{}
 }
 
-func (block block) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Block {
-	block.mapper, block.parameterManager = mapper, parameters
+func (block block) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Block {
+	block.mapper, block.parameterManager = mapper, parameterManager
 
 	for _, auxiliaryKeeper := range auxiliaryKeepers {
 		switch value := auxiliaryKeeper.(type) {
@@ -196,6 +201,8 @@ func (block block) Initialize(mapper helpers.Mapper, parameters helpers.Paramete
 				block.transferAuxiliary = value
 			case scrub.Auxiliary.GetName():
 				block.scrubAuxiliary = value
+			case burn.Auxiliary.GetName():
+				block.burnAuxiliary = value
 			}
 		}
 	}

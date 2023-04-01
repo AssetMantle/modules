@@ -13,19 +13,19 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 var (
-	immutables          = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables            = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID    = baseIds.NewClassificationID(immutables, mutables)
-	testOwnerIdentityID = baseIds.NewIdentityID(classificationID, immutables)
-	testOwnableID       = baseIds.NewCoinID(baseIds.NewStringID("ownerid"))
-	splitID             = baseIds.NewSplitID(testOwnerIdentityID, testOwnableID).(*baseIds.SplitID)
+	immutables          = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables            = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID    = baseIDs.NewClassificationID(immutables, mutables)
+	testOwnerIdentityID = baseIDs.NewIdentityID(classificationID, immutables)
+	testOwnableID       = baseIDs.NewCoinID(baseIDs.NewStringID("ownerid"))
+	splitID             = baseIDs.NewSplitID(testOwnerIdentityID, testOwnableID).(*baseIDs.SplitID)
 )
 
 func TestNewKey(t *testing.T) {
@@ -38,7 +38,7 @@ func TestNewKey(t *testing.T) {
 		want helpers.Key
 	}{
 		{"+ve", args{splitID}, &Key{splitID}},
-		{"+ve with nil", args{baseIds.PrototypeSplitID()}, &Key{baseIds.PrototypeSplitID().(*baseIds.SplitID)}},
+		{"+ve with nil", args{baseIDs.PrototypeSplitID()}, &Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -76,7 +76,7 @@ func Test_keyFromInterface(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", args{NewKey(splitID)}, &Key{splitID}, false},
-		{"+ve", args{NewKey(baseIds.PrototypeSplitID())}, &Key{baseIds.PrototypeSplitID().(*baseIds.SplitID)}, false},
+		{"+ve", args{NewKey(baseIDs.PrototypeSplitID())}, &Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -106,12 +106,12 @@ func Test_key_Equals(t *testing.T) {
 		want   bool
 	}{
 		{"+ve", fields{splitID}, args{NewKey(splitID)}, true},
-		{"+ve", fields{splitID}, args{NewKey(baseIds.PrototypeSplitID())}, false},
+		{"+ve", fields{splitID}, args{NewKey(baseIDs.PrototypeSplitID())}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			key := &Key{
-				SplitID: tt.fields.SplitID.(*baseIds.SplitID),
+				SplitID: tt.fields.SplitID.(*baseIDs.SplitID),
 			}
 			if got := key.Equals(tt.args.compareKey); got != tt.want {
 				t.Errorf("Equals() = %v, want %v", got, tt.want)
@@ -130,12 +130,12 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		want   []byte
 	}{
 		{"+ve", fields{splitID}, module.StoreKeyPrefix.GenerateStoreKey((&Key{splitID}).GenerateStoreKeyBytes())},
-		{"+ve", fields{baseIds.PrototypeSplitID()}, module.StoreKeyPrefix.GenerateStoreKey((&Key{baseIds.PrototypeSplitID().(*baseIds.SplitID)}).GenerateStoreKeyBytes())},
+		{"+ve", fields{baseIDs.PrototypeSplitID()}, module.StoreKeyPrefix.GenerateStoreKey((&Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}).GenerateStoreKeyBytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			key := &Key{
-				SplitID: tt.fields.SplitID.(*baseIds.SplitID),
+				SplitID: tt.fields.SplitID.(*baseIDs.SplitID),
 			}
 			if got := key.GenerateStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GenerateStoreKeyBytes() = %v, want %v", got, tt.want)
@@ -154,12 +154,12 @@ func Test_key_IsPartial(t *testing.T) {
 		want   bool
 	}{
 		{"+ve", fields{splitID}, false},
-		{"+ve", fields{baseIds.PrototypeSplitID()}, true},
+		{"+ve", fields{baseIDs.PrototypeSplitID()}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			key := &Key{
-				SplitID: tt.fields.SplitID.(*baseIds.SplitID),
+				SplitID: tt.fields.SplitID.(*baseIDs.SplitID),
 			}
 			if got := key.IsPartial(); got != tt.want {
 				t.Errorf("IsPartial() = %v, want %v", got, tt.want)
@@ -185,7 +185,7 @@ func Test_key_RegisterCodec(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ke := &Key{
-				SplitID: tt.fields.SplitID.(*baseIds.SplitID),
+				SplitID: tt.fields.SplitID.(*baseIDs.SplitID),
 			}
 			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})

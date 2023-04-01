@@ -1,8 +1,0 @@
-syntax = "proto3";
-package assets;
-
-import "schema/ids/base/assetID.v1.proto";
-
-message Key {
-  ids.AssetID asset_i_d = 1;
-}

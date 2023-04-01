@@ -1,9 +1,0 @@
-syntax = "proto3";
-package data;
-import "gogoproto/gogo.proto";
-
-message DecData{
-  option (gogoproto.goproto_getters) = false;
-
-  string value = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
-}

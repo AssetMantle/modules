@@ -8,19 +8,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/properties/utilities"
-
-	"github.com/cosmos/cosmos-sdk/simapp"
-
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
@@ -35,9 +31,10 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
@@ -46,7 +43,7 @@ type TestKeepers struct {
 }
 
 var (
-	Parameters                 helpers.ParameterManager
+	parameterManager           helpers.ParameterManager
 	authenticateAuxiliary      helpers.Auxiliary
 	conformAuxiliary           helpers.Auxiliary
 	maintainersVerifyAuxiliary helpers.Auxiliary
@@ -70,7 +67,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters = parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -84,11 +81,11 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, Parameters)
-	conformAuxiliary = conform.Auxiliary.Initialize(Mapper, Parameters)
-	maintainersVerifyAuxiliary = verify.Auxiliary.Initialize(Mapper, Parameters)
+	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
+	conformAuxiliary = conform.Auxiliary.Initialize(Mapper, parameterManager)
+	maintainersVerifyAuxiliary = verify.Auxiliary.Initialize(Mapper, parameterManager)
 	keepers := TestKeepers{
-		IssueKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}).(helpers.TransactionKeeper),
+		IssueKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return context, keepers, Mapper
@@ -130,7 +127,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{Mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}, args{Mapper, Parameters, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}},
+		{"+ve", fields{Mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -155,14 +152,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	toAddress := "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
 	toAccAddress, err := sdkTypes.AccAddressFromBech32(toAddress)
 	require.Nil(t, err)
-	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
-	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID11"), baseData.NewStringData("ImmutableData")))
-	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("authentication"), baseData.NewListData()))
-	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("authentication"), baseData.NewStringData("MutableData")))
+	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID11"), baseData.NewStringData("ImmutableData")))
+	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewStringData("MutableData")))
 	immutables := baseQualified.NewImmutables(immutableMetaProperties)
 	mutables := baseQualified.NewMutables(mutableMetaProperties)
-	classificationID := baseIds.NewClassificationID(immutables, mutables)
-	fromIdentityID := baseIds.NewIdentityID(classificationID, immutables)
+	classificationID := baseIDs.NewClassificationID(immutables, mutables)
+	fromIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
 	identity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 	identity = identity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
 	identity.Mutate(utilities.AnyPropertyListToPropertyList(immutableMetaProperties.GetList()...)...)

@@ -7,13 +7,12 @@ import (
 	"reflect"
 	"testing"
 
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-
 	"github.com/stretchr/testify/assert"
 
 	"github.com/AssetMantle/modules/schema/data"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -26,9 +25,9 @@ func ValidatedData(value data.Data) *baseData.AnyData {
 }
 
 func createTestInput() (ids.StringID, ids.PropertyID, data.Data, properties.MetaProperty) {
-	testKey := base.NewStringID("ID")
+	testKey := baseIDs.NewStringID("ID")
 	testData := baseData.NewStringData("Data")
-	testPropertyID := base.NewPropertyID(testKey, testData.GetTypeID())
+	testPropertyID := baseIDs.NewPropertyID(testKey, testData.GetTypeID())
 	testMetaProperty := NewMetaProperty(testKey, testData)
 	return testKey, testPropertyID, testData, testMetaProperty
 }
@@ -44,7 +43,7 @@ func TestNewEmptyMetaPropertyFromID(t *testing.T) {
 		want    properties.MetaProperty
 		wantErr bool
 	}{
-		{"+ve", args{testPropertyID}, &MetaProperty{ID: testPropertyID.(*base.PropertyID)}, false},
+		{"+ve", args{testPropertyID}, &MetaProperty{ID: testPropertyID.(*baseIDs.PropertyID)}, false},
 		{"panic with nil", args{}, nil, true},
 	}
 	for _, tt := range tests {
@@ -75,7 +74,7 @@ func TestNewMetaProperty(t *testing.T) {
 		want        properties.MetaProperty
 		shouldPanic bool
 	}{
-		{"+ve", args{testKey, testData}, &MetaProperty{testPropertyID.(*base.PropertyID), testData.ToAnyData().(*baseData.AnyData)}, false},
+		{"+ve", args{testKey, testData}, &MetaProperty{testPropertyID.(*baseIDs.PropertyID), testData.ToAnyData().(*baseData.AnyData)}, false},
 		{"+ve", args{nil, nil}, &MetaProperty{nil, nil}, true},
 	}
 	for _, tt := range tests {
@@ -105,12 +104,12 @@ func Test_metaProperty_Compare(t *testing.T) {
 		want   int
 	}{
 		{"+ve", fields{testPropertyID, testData}, args{testMetaProperty}, 0},
-		{"+ve compare with metaProperty with no Data", fields{testPropertyID, testData}, args{&MetaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID)}}, 0},
-		{"+ve", fields{testPropertyID, testData}, args{&MetaProperty{base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID), baseData.NewStringData("Data2").ToAnyData().(*baseData.AnyData)}}, 0}}
+		{"+ve compare with metaProperty with no Data", fields{testPropertyID, testData}, args{&MetaProperty{ID: baseIDs.NewPropertyID(baseIDs.NewStringID("ID"), baseIDs.NewStringID("S")).(*baseIDs.PropertyID)}}, 0},
+		{"+ve", fields{testPropertyID, testData}, args{&MetaProperty{baseIDs.NewPropertyID(baseIDs.NewStringID("ID"), baseIDs.NewStringID("S")).(*baseIDs.PropertyID), baseData.NewStringData("Data2").ToAnyData().(*baseData.AnyData)}}, 0}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				ID:   ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
 				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.Compare(tt.args.listable); got != tt.want {
@@ -137,7 +136,7 @@ func Test_metaProperty_GetData(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				ID:   ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
 				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetData(); !reflect.DeepEqual(got, tt.want) {
@@ -163,7 +162,7 @@ func Test_metaProperty_GetDataID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				ID:   ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
 				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetDataID(); !reflect.DeepEqual(got, tt.want) {
@@ -190,7 +189,7 @@ func Test_metaProperty_GetID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				ID:   ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
 				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetID(); !reflect.DeepEqual(got, tt.want) {
@@ -216,7 +215,7 @@ func Test_metaProperty_GetKey(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				ID:   ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
 				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetKey(); !reflect.DeepEqual(got, tt.want) {
@@ -242,7 +241,7 @@ func Test_metaProperty_GetType(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				ID:   ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
 				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.GetType(); !reflect.DeepEqual(got, tt.want) {
@@ -263,12 +262,12 @@ func Test_metaProperty_RemoveData(t *testing.T) {
 		fields fields
 		want   properties.Property
 	}{
-		{"+ve", fields{testPropertyID, testData}, &MesaProperty{ID: testPropertyID.(*base.PropertyID), DataID: testData.GetID().(*base.DataID)}},
+		{"+ve", fields{testPropertyID, testData}, &MesaProperty{ID: testPropertyID.(*baseIDs.PropertyID), DataID: testData.GetID().(*baseIDs.DataID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			metaProperty := &MetaProperty{
-				ID:   ValidatedID[*base.PropertyID](tt.fields.ID),
+				ID:   ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
 				Data: ValidatedData(tt.fields.Data),
 			}
 			if got := metaProperty.ScrubData(); !reflect.DeepEqual(got, tt.want) {

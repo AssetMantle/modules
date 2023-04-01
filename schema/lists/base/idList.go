@@ -13,6 +13,14 @@ import (
 
 var _ lists.IDList = (*IDList)(nil)
 
+func (idList *IDList) ValidateBasic() error {
+	for _, id := range idList.IDList {
+		if err := id.ValidateBasic(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 func (idList *IDList) GetList() []ids.AnyID {
 	returnIDList := make([]ids.AnyID, len(idList.IDList))
 

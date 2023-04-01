@@ -4,15 +4,13 @@
 package modify
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	typesSchema "github.com/AssetMantle/modules/schema/types"
@@ -24,12 +22,28 @@ var _ helpers.Message = (*Message)(nil)
 
 func (message *Message) Type() string { return Transaction.GetName() }
 func (message *Message) ValidateBasic() error {
-	var _, err = govalidator.ValidateStruct(message)
-	if err != nil {
-		return errorConstants.IncorrectMessage.Wrapf(err.Error())
+	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
+		return err
 	}
-	if !sdkTypes.ValidSortableDec(message.MakerOwnableSplit) || !sdkTypes.ValidSortableDec(message.TakerOwnableSplit) {
-		return errorConstants.InvalidParameter.Wrapf("invalid split")
+	if err := message.FromID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.OrderID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.ExpiresIn.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.MutableMetaProperties.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.MutableProperties.ValidateBasic(); err != nil {
+		return err
+	}
+	if _, err := sdkTypes.NewDecFromStr(message.MakerOwnableSplit); err != nil {
+		return err
+	} else if _, err := sdkTypes.NewDecFromStr(message.TakerOwnableSplit); err != nil {
+		return err
 	}
 	return nil
 }
@@ -61,10 +75,10 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, orderID ids.OrderID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn typesSchema.Height, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return &Message{
 		From:                  from.String(),
-		FromID:                fromID.(*baseIds.IdentityID),
-		OrderID:               orderID.(*baseIds.OrderID),
-		TakerOwnableSplit:     takerOwnableSplit,
-		MakerOwnableSplit:     makerOwnableSplit,
+		FromID:                fromID.(*baseIDs.IdentityID),
+		OrderID:               orderID.(*baseIDs.OrderID),
+		TakerOwnableSplit:     takerOwnableSplit.String(),
+		MakerOwnableSplit:     makerOwnableSplit.String(),
 		ExpiresIn:             expiresIn.(*baseTypes.Height),
 		MutableMetaProperties: mutableMetaProperties.(*baseLists.PropertyList),
 		MutableProperties:     mutableProperties.(*baseLists.PropertyList),

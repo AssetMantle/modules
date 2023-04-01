@@ -6,16 +6,11 @@ package base
 import (
 	"encoding/json"
 	"errors"
-	documentIDGetters "github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
-	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -109,9 +104,12 @@ import (
 
 	"github.com/AssetMantle/modules/modules/assets"
 	"github.com/AssetMantle/modules/modules/classifications"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/burn"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
 	"github.com/AssetMantle/modules/modules/identities"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers"
@@ -128,8 +126,11 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	"github.com/AssetMantle/modules/schema/applications"
+	"github.com/AssetMantle/modules/schema/applications/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/helpers/base"
+	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
+	documentIDGetters "github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
 )
 
 type application struct {
@@ -678,6 +679,9 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		application.keys[orders.Prototype().Name()],
 		ParamsKeeper.Subspace(orders.Prototype().Name()),
 		identitiesModule.GetAuxiliary(authenticate.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(bond.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(burn.Auxiliary.GetName()),
+		classificationsModule.GetAuxiliary(unbond.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(conform.Auxiliary.GetName()),
 		classificationsModule.GetAuxiliary(define.Auxiliary.GetName()),
 		maintainersModule.GetAuxiliary(deputize.Auxiliary.GetName()),
@@ -869,39 +873,39 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 	})
 
 	UpgradeKeeper.SetUpgradeHandler(
-		upgradeName,
+		constants.UpgradeName,
 		func(ctx sdkTypes.Context, _ upgradeTypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 			fromVM[icaTypes.ModuleName] = ica.NewAppModule(nil, &ICAHostKeeper).ConsensusVersion()
 			controllerParams := icaControllerTypes.Params{}
 			hostParams := icaHostTypes.Params{
 				HostEnabled: true,
 				AllowMessages: []string{
-					authzMsgExec,
-					authzMsgGrant,
-					authzMsgRevoke,
-					bankMsgSend,
-					bankMsgMultiSend,
-					distrMsgSetWithdrawAddr,
-					distrMsgWithdrawValidatorCommission,
-					distrMsgFundCommunityPool,
-					distrMsgWithdrawDelegatorReward,
-					feegrantMsgGrantAllowance,
-					feegrantMsgRevokeAllowance,
-					govMsgVoteWeighted,
-					govMsgSubmitProposal,
-					govMsgDeposit,
-					govMsgVote,
-					stakingMsgEditValidator,
-					stakingMsgDelegate,
-					stakingMsgUndelegate,
-					stakingMsgBeginRedelegate,
-					stakingMsgCreateValidator,
-					vestingMsgCreateVestingAccount,
-					transferMsgTransfer,
-					liquidityMsgCreatePool,
-					liquidityMsgSwapWithinBatch,
-					liquidityMsgDepositWithinBatch,
-					liquidityMsgWithdrawWithinBatch,
+					constants.AuthzMsgExec,
+					constants.AuthzMsgGrant,
+					constants.AuthzMsgRevoke,
+					constants.BankMsgSend,
+					constants.BankMsgMultiSend,
+					constants.DistrMsgSetWithdrawAddr,
+					constants.DistrMsgWithdrawValidatorCommission,
+					constants.DistrMsgFundCommunityPool,
+					constants.DistrMsgWithdrawDelegatorReward,
+					constants.FeegrantMsgGrantAllowance,
+					constants.FeegrantMsgRevokeAllowance,
+					constants.GovMsgVoteWeighted,
+					constants.GovMsgSubmitProposal,
+					constants.GovMsgDeposit,
+					constants.GovMsgVote,
+					constants.StakingMsgEditValidator,
+					constants.StakingMsgDelegate,
+					constants.StakingMsgUndelegate,
+					constants.StakingMsgBeginRedelegate,
+					constants.StakingMsgCreateValidator,
+					constants.VestingMsgCreateVestingAccount,
+					constants.TransferMsgTransfer,
+					constants.LiquidityMsgCreatePool,
+					constants.LiquidityMsgSwapWithinBatch,
+					constants.LiquidityMsgDepositWithinBatch,
+					constants.LiquidityMsgWithdrawWithinBatch,
 				},
 			}
 			ica.NewAppModule(nil, &ICAHostKeeper).InitModule(ctx, controllerParams, hostParams)
@@ -915,7 +919,7 @@ func (application application) Initialize(logger tendermintLog.Logger, db tender
 		panic(err)
 	}
 
-	if upgradeInfo.Name == upgradeName && !UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+	if upgradeInfo.Name == constants.UpgradeName && !UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := storeTypes.StoreUpgrades{
 			Added: []string{icaHostTypes.StoreKey},
 		}
@@ -942,35 +946,3 @@ func NewApplication(name string, moduleBasicManager module.BasicManager, moduleA
 		tokenReceiveAllowedModules: tokenReceiveAllowedModules,
 	}
 }
-
-// TODO move upgrade configuration input to method parameter input
-const (
-	upgradeName = "v0.4.0"
-
-	authzMsgExec                        = "/cosmos.authz.v1beta1.MsgExec"
-	authzMsgGrant                       = "/cosmos.authz.v1beta1.MsgGrant"
-	authzMsgRevoke                      = "/cosmos.authz.v1beta1.MsgRevoke"
-	bankMsgSend                         = "/cosmos.bank.v1beta1.MsgSend"
-	bankMsgMultiSend                    = "/cosmos.bank.v1beta1.MsgMultiSend"
-	distrMsgSetWithdrawAddr             = "/cosmos.distribution.v1beta1.MsgSetWithdrawAddress"
-	distrMsgWithdrawValidatorCommission = "/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission"
-	distrMsgFundCommunityPool           = "/cosmos.distribution.v1beta1.MsgFundCommunityPool"
-	distrMsgWithdrawDelegatorReward     = "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"
-	feegrantMsgGrantAllowance           = "/cosmos.feegrant.v1beta1.MsgGrantAllowance"
-	feegrantMsgRevokeAllowance          = "/cosmos.feegrant.v1beta1.MsgRevokeAllowance"
-	govMsgVoteWeighted                  = "/cosmos.gov.v1beta1.MsgVoteWeighted"
-	govMsgSubmitProposal                = "/cosmos.gov.v1beta1.MsgSubmitProposal"
-	govMsgDeposit                       = "/cosmos.gov.v1beta1.MsgDeposit"
-	govMsgVote                          = "/cosmos.gov.v1beta1.MsgVote"
-	stakingMsgEditValidator             = "/cosmos.staking.v1beta1.MsgEditValidator"
-	stakingMsgDelegate                  = "/cosmos.staking.v1beta1.MsgDelegate"
-	stakingMsgUndelegate                = "/cosmos.staking.v1beta1.MsgUndelegate"
-	stakingMsgBeginRedelegate           = "/cosmos.staking.v1beta1.MsgBeginRedelegate"
-	stakingMsgCreateValidator           = "/cosmos.staking.v1beta1.MsgCreateValidator"
-	vestingMsgCreateVestingAccount      = "/cosmos.vesting.v1beta1.MsgCreateVestingAccount"
-	transferMsgTransfer                 = "/ibc.applications.transfer.v1.MsgTransfer"
-	liquidityMsgCreatePool              = "/tendermint.liquidity.v1beta1.MsgCreatePool"
-	liquidityMsgSwapWithinBatch         = "/tendermint.liquidity.v1beta1.MsgSwapWithinBatch"
-	liquidityMsgDepositWithinBatch      = "/tendermint.liquidity.v1beta1.MsgDepositWithinBatch"
-	liquidityMsgWithdrawWithinBatch     = "/tendermint.liquidity.v1beta1.MsgWithdrawWithinBatch"
-)

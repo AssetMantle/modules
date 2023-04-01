@@ -19,8 +19,8 @@ import (
 var _ data.DecData = (*DecData)(nil)
 
 func (decData *DecData) ValidateBasic() error {
-	if !sdkTypes.ValidSortableDec(decData.Value) {
-		return errorConstants.IncorrectFormat
+	if _, err := sdkTypes.NewDecFromStr(decData.Value); err != nil {
+		return err
 	}
 	return nil
 }
@@ -39,7 +39,7 @@ func (decData *DecData) Compare(listable traits.Listable) int {
 	return bytes.Compare(decData.Bytes(), compareDecData.Bytes())
 }
 func (decData *DecData) Bytes() []byte {
-	return sdkTypes.SortableDecBytes(decData.Value)
+	return []byte(decData.Value)
 }
 func (decData *DecData) GetTypeID() ids.StringID {
 	return dataConstants.DecDataTypeID
@@ -55,7 +55,7 @@ func (decData *DecData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(decData.Bytes())
 }
 func (decData *DecData) AsString() string {
-	return joinDataTypeAndValueStrings(decData.GetTypeID().AsString(), decData.Value.String())
+	return joinDataTypeAndValueStrings(decData.GetTypeID().AsString(), decData.Value)
 }
 func (decData *DecData) FromString(dataTypeAndValueString string) (data.Data, error) {
 	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
@@ -76,7 +76,8 @@ func (decData *DecData) FromString(dataTypeAndValueString string) (data.Data, er
 	return NewDecData(dec), nil
 }
 func (decData *DecData) Get() sdkTypes.Dec {
-	return decData.Value
+	value, _ := sdkTypes.NewDecFromStr(decData.Value)
+	return value
 }
 func (decData *DecData) ToAnyData() data.AnyData {
 	return &AnyData{
@@ -91,6 +92,6 @@ func PrototypeDecData() data.DecData {
 
 func NewDecData(value sdkTypes.Dec) data.DecData {
 	return &DecData{
-		Value: value,
+		Value: value.String(),
 	}
 }

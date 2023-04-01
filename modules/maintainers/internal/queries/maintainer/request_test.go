@@ -16,12 +16,12 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 var (
 	testMaintainerID, _ = createTestData()
-	testMaintainerID1   = baseIds.PrototypeMaintainerID().(*baseIds.MaintainerID)
+	testMaintainerID1   = baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -72,7 +72,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 	encodedQuery1, err := (&QueryRequest{testMaintainerID1}).Encode()
 	require.NoError(t, err)
 	type fields struct {
-		MaintainerID *baseIds.MaintainerID
+		MaintainerID *baseIDs.MaintainerID
 	}
 	type args struct {
 		bytes []byte
@@ -110,7 +110,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 	encodedQuery1, err := common.LegacyAmino.MarshalJSON(&QueryRequest{testMaintainerID1})
 	require.NoError(t, err)
 	type fields struct {
-		MaintainerID *baseIds.MaintainerID
+		MaintainerID *baseIDs.MaintainerID
 	}
 	tests := []struct {
 		name    string
@@ -142,7 +142,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.MaintainerID})
 	viper.Set(constants.MaintainerID.GetName(), testMaintainerID.AsString())
 	type fields struct {
-		MaintainerID *baseIds.MaintainerID
+		MaintainerID *baseIDs.MaintainerID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -180,7 +180,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 	vars1 := make(map[string]string)
 	vars1[Query.GetName()] = testMaintainerID.AsString()
 	type fields struct {
-		MaintainerID *baseIds.MaintainerID
+		MaintainerID *baseIDs.MaintainerID
 	}
 	type args struct {
 		vars map[string]string
@@ -213,7 +213,7 @@ func Test_queryRequest_FromMap(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		MaintainerID *baseIds.MaintainerID
+		MaintainerID *baseIDs.MaintainerID
 	}
 	tests := []struct {
 		name    string

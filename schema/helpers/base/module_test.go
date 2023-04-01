@@ -5,7 +5,6 @@ package base
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/schema/properties/base"
 	"math/rand"
 	"testing"
 
@@ -16,13 +15,13 @@ import (
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/AssetMantle/modules/utilities/test"
-	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
+	"github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/utilities/test"
+	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 // TODO: Add grpc gateway handling for tests
@@ -36,8 +35,8 @@ var genesisPrototype = func() helpers.Genesis {
 var mapperPrototype = func() helpers.Mapper {
 	return NewMapper(baseTestUtilities.KeyPrototype, baseTestUtilities.MappablePrototype)
 }
-var parametersPrototype = func() helpers.ParameterManager {
-	return NewParameterManager("", NewValidatableParameter(baseTypes.NewParameter(base.NewMetaProperty(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"))), func(interface{}) error { return nil }))
+var parameterManagerPrototype = func() helpers.ParameterManager {
+	return NewParameterManager("", NewValidatableParameter(baseParameters.NewParameter(base.NewMetaProperty(baseIDs.NewStringID("testParameter"), baseData.NewStringData("testData"))), func(interface{}) error { return nil }))
 }
 var queriesPrototype = func() helpers.Queries {
 	return queries{[]helpers.Query{NewQuery("testQuery", "q", "testQuery", "test", baseTestUtilities.TestQueryRequestPrototype,
@@ -58,7 +57,7 @@ func TestModule(t *testing.T) {
 	subspace := paramsTypes.NewSubspace(codec.GetProtoCodec(), codec.GetLegacyAmino(), storeKey, transientStoreKey, "test") // .WithKeyTable(parameterManagerPrototype().GetKeyTable())
 	// subspace.SetParamSet(sdkTypes.UnwrapSDKContext(context), parameterManagerPrototype())
 	Module := NewModule("test", 1, auxiliariesPrototype, blockPrototype, genesisPrototype, nil,
-		mapperPrototype, parametersPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype).Initialize(storeKey, subspace).(module)
+		mapperPrototype, parameterManagerPrototype, queriesPrototype, simulatorPrototype, transactionsPrototype).Initialize(storeKey, subspace).(module)
 
 	// AppModuleBasic
 	require.Equal(t, "test", Module.Name())

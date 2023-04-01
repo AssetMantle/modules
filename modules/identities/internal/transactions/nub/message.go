@@ -4,15 +4,13 @@
 package nub
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -20,11 +18,12 @@ var _ helpers.Message = (*Message)(nil)
 
 func (message *Message) Type() string { return Transaction.GetName() }
 func (message *Message) ValidateBasic() error {
-	var _, err = govalidator.ValidateStruct(message)
-	if err != nil {
-		return errorConstants.IncorrectMessage.Wrapf(err.Error())
+	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
+		return err
 	}
-
+	if err := message.NubID.ValidateBasic(); err != nil {
+		return err
+	}
 	return nil
 }
 func (message *Message) GetSigners() []sdkTypes.AccAddress {
@@ -55,6 +54,6 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, nubID ids.ID) sdkTypes.Msg {
 	return &Message{
 		From:  from.String(),
-		NubID: nubID.(*baseIds.StringID),
+		NubID: nubID.(*baseIDs.StringID),
 	}
 }

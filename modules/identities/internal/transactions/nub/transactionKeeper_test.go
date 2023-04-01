@@ -8,18 +8,15 @@ import (
 	"reflect"
 	"testing"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/cosmos/cosmos-sdk/simapp"
-
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
@@ -56,7 +53,7 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -70,10 +67,10 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrubAuxiliary := scrub.Auxiliary.Initialize(mapper, Parameters)
-	defineAuxiliary := define.Auxiliary.Initialize(mapper, Parameters)
+	scrubAuxiliary := scrub.Auxiliary.Initialize(mapper, parameterManager)
+	defineAuxiliary := define.Auxiliary.Initialize(mapper, parameterManager)
 	keepers := TestKeepers{
-		IdentitiesKeeper: keeperPrototype().Initialize(mapper, Parameters,
+		IdentitiesKeeper: keeperPrototype().Initialize(mapper, parameterManager,
 			[]interface{}{scrubAuxiliary,
 				defineAuxiliary}).(helpers.TransactionKeeper),
 	}

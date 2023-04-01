@@ -1,0 +1,12 @@
+syntax = "proto3";
+package identities.transactions.provision;
+
+import "google/api/annotations.proto";
+import "modules/identities/internal/transactions/provision/message.proto";
+import "modules/identities/internal/transactions/provision/transactionResponse.proto";
+
+service Service {
+  rpc Handle(Message) returns (TransactionResponse) {
+    option (google.api.http).post = "/mantle/identities/provision";
+  }
+}

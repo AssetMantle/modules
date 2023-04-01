@@ -20,6 +20,9 @@ var _ data.ListData = (*ListData)(nil)
 
 func (listData *ListData) ValidateBasic() error {
 	for _, data := range listData.DataList {
+		if data.GetType().Compare(listData.GetType()) == 0 {
+			return errorConstants.IncorrectFormat.Wrapf("ListData cannot contain ListData")
+		}
 		if err := data.ValidateBasic(); err != nil {
 			return err
 		}

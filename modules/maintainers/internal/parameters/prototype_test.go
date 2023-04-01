@@ -4,10 +4,10 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters/deputizeAllowed"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"

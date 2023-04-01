@@ -6,8 +6,6 @@ package modify
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/schema/properties/utilities"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
@@ -23,12 +21,13 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
-	parameters            helpers.ParameterManager
+	parameterManager      helpers.ParameterManager
 	conformAuxiliary      helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	transferAuxiliary     helpers.Auxiliary
@@ -59,8 +58,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityNotFound.Wrapf("order with ID %s not found", message.OrderID.AsString())
 	}
 	order := mappable.GetOrder(Mappable)
-
-	transferMakerOwnableSplit := message.MakerOwnableSplit.Sub(order.GetMakerOwnableSplit())
+	makerOwnableSplit, _ := sdkTypes.NewDecFromStr(message.MakerOwnableSplit)
+	transferMakerOwnableSplit := makerOwnableSplit.Sub(order.GetMakerOwnableSplit())
 
 	if transferMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
 		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), transferMakerOwnableSplit.Abs())); err != nil {
@@ -73,7 +72,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	mutableMetaProperties := message.MutableMetaProperties.
-		Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(message.MakerOwnableSplit))).
+		Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(makerOwnableSplit))).
 		Add(baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+sdkTypes.UnwrapSDKContext(context).BlockHeight()))))
 
 	updatedMutables := order.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...)
@@ -88,8 +87,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	return newTransactionResponse(), nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
-	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
+	transactionKeeper.mapper, transactionKeeper.parameterManager = mapper, parameterManager
 
 	for _, externalKeeper := range auxiliaries {
 		switch value := externalKeeper.(type) {

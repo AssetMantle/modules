@@ -14,7 +14,6 @@ import (
 
 func Test_SignTx_Request(t *testing.T) {
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 
 	testFee := authTypes.NewStdFee(12, sdkTypes.NewCoins())

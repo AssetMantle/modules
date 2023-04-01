@@ -11,4 +11,5 @@ type Mappable interface {
 	codec.ProtoMarshaler
 	GetKey() Key
 	RegisterLegacyAminoCodec(*codec.LegacyAmino)
+	ValidateBasic() error
 }

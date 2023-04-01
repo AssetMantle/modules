@@ -7,9 +7,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -17,7 +16,7 @@ import (
 	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/qualified"
@@ -25,9 +24,9 @@ import (
 )
 
 func createTestInput() (documents.Identity, ids.ClassificationID, qualified.Immutables, qualified.Mutables) {
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := baseIds.NewClassificationID(immutables, mutables)
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testIdentity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 
 	return testIdentity, classificationID, immutables, mutables
@@ -84,7 +83,7 @@ func Test_identity_GetKey(t *testing.T) {
 		want      helpers.Key
 		wantPanic bool
 	}{
-		{"+ve", fields{testIdentity}, key.NewKey(baseIds.NewIdentityID(testIdentity.GetClassificationID(), testIdentity.GetImmutables())), false},
+		{"+ve", fields{testIdentity}, key.NewKey(baseIDs.NewIdentityID(testIdentity.GetClassificationID(), testIdentity.GetImmutables())), false},
 		{"panic case nil", fields{nil}, nil, true},
 	}
 	for _, tt := range tests {

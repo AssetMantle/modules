@@ -15,7 +15,7 @@ import (
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
-	parameters            helpers.ParameterManager
+	parameterManager      helpers.ParameterManager
 	authenticateAuxiliary helpers.Auxiliary
 }
 
@@ -37,20 +37,20 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	splits := transactionKeeper.mapper.NewCollection(context)
-
-	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, message.Value); err != nil {
+	value, err := sdkTypes.NewDecFromStr(message.Value)
+	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, value); err != nil {
 		return nil, err
 	}
 
-	if _, err := utilities.AddSplits(splits, message.ToID, message.OwnableID, message.Value); err != nil {
+	if _, err := utilities.AddSplits(splits, message.ToID, message.OwnableID, value); err != nil {
 		return nil, err
 	}
 
 	return newTransactionResponse(), nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
-	transactionKeeper.mapper, transactionKeeper.parameters = mapper, parameters
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
+	transactionKeeper.mapper, transactionKeeper.parameterManager = mapper, parameterManager
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {

@@ -15,6 +15,18 @@ import (
 
 var _ properties.MesaProperty = (*MesaProperty)(nil)
 
+func (mesaProperty *MesaProperty) ValidateBasic() error {
+	if err := mesaProperty.ID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := mesaProperty.DataID.ValidateBasic(); err != nil {
+		return err
+	}
+	if mesaProperty.DataID.TypeID.Compare(mesaProperty.ID.TypeID) != 0 {
+		return errorConstants.IncorrectFormat
+	}
+	return nil
+}
 func (mesaProperty *MesaProperty) GetID() ids.PropertyID {
 	return mesaProperty.ID
 }
@@ -57,10 +69,6 @@ func (mesaProperty *MesaProperty) ToAnyProperty() properties.AnyProperty {
 			MesaProperty: mesaProperty,
 		},
 	}
-}
-func (mesaProperty *MesaProperty) ValidateBasic() error {
-	// TODO implement
-	return nil
 }
 
 func (mesaProperty *MesaProperty) Mutate(data data.Data) properties.Property {

@@ -45,8 +45,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	return newTransactionResponse(), nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameters helpers.ParameterManager, _ []interface{}) helpers.Keeper {
-	transactionKeeper.mapper, transactionKeeper.parameterManager = mapper, parameters
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, _ []interface{}) helpers.Keeper {
+	transactionKeeper.mapper, transactionKeeper.parameterManager = mapper, parameterManager
 	return transactionKeeper
 }
 func keeperPrototype() helpers.TransactionKeeper {

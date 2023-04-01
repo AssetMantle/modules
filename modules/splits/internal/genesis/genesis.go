@@ -3,7 +3,6 @@ package genesis
 import (
 	"context"
 
-	"github.com/asaskevich/govalidator"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
@@ -42,10 +41,13 @@ func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager)
 		}
 	}
 
-	// TODO ***** define validation for mappable list
-	_, err := govalidator.ValidateStruct(genesis)
+	for _, mappable := range genesis.Mappables {
+		if err := mappable.ValidateBasic(); err != nil {
+			return err
+		}
+	}
 
-	return err
+	return nil
 }
 func (genesis *Genesis) Import(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) {
 	for _, Mappable := range genesis.Mappables {
@@ -90,15 +92,15 @@ func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList h
 	if len(parameterList.Get()) == 0 {
 		genesis.ParameterList = genesis.Default().(*Genesis).ParameterList
 	} else {
-		Parameters := parameterList.Get()
+		parameters := parameterList.Get()
 		for _, defaultParameter := range genesis.Default().(*Genesis).ParameterList.Get() {
-			for i, parameter := range Parameters {
+			for i, parameter := range parameters {
 				if defaultParameter.GetMetaProperty().GetID().Compare(parameter.GetMetaProperty().GetID()) == 0 {
-					Parameters[i] = defaultParameter.Mutate(parameter.GetMetaProperty().GetData())
+					parameters[i] = defaultParameter.Mutate(parameter.GetMetaProperty().GetData())
 				}
 			}
 		}
-		genesis.ParameterList = baseParameters.NewParameterList(Parameters...).(*baseParameters.ParameterList)
+		genesis.ParameterList = baseParameters.NewParameterList(parameters...).(*baseParameters.ParameterList)
 	}
 
 	return genesis

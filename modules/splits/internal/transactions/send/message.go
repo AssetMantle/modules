@@ -4,15 +4,13 @@
 package send
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -20,12 +18,20 @@ var _ helpers.Message = (*Message)(nil)
 
 func (message *Message) Type() string { return Transaction.GetName() }
 func (message *Message) ValidateBasic() error {
-	var _, err = govalidator.ValidateStruct(message)
-	if err != nil {
-		return errorConstants.IncorrectMessage.Wrapf(err.Error())
+	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
+		return err
 	}
-	if !sdkTypes.ValidSortableDec(message.Value) {
-		return errorConstants.InvalidParameter.Wrapf("invalid value")
+	if err := message.FromID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.ToID.ValidateBasic(); err != nil {
+		return err
+	}
+	if err := message.OwnableID.ValidateBasic(); err != nil {
+		return err
+	}
+	if _, err := sdkTypes.NewDecFromStr(message.Value); err != nil {
+		return err
 	}
 	return nil
 }
@@ -57,9 +63,9 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) sdkTypes.Msg {
 	return &Message{
 		From:      from.String(),
-		FromID:    fromID.(*baseIds.IdentityID),
-		ToID:      toID.(*baseIds.IdentityID),
-		OwnableID: ownableID.ToAnyOwnableID().(*baseIds.AnyOwnableID),
-		Value:     value,
+		FromID:    fromID.(*baseIDs.IdentityID),
+		ToID:      toID.(*baseIDs.IdentityID),
+		OwnableID: ownableID.ToAnyOwnableID().(*baseIDs.AnyOwnableID),
+		Value:     value.String(),
 	}
 }

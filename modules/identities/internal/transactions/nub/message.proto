@@ -1,0 +1,10 @@
+syntax = "proto3";
+package identities.transactions.nub;
+
+import "schema/ids/base/identityID.proto";
+import "schema/ids/base/stringID.proto";
+
+message Message {
+  string from = 1;
+  ids.StringID nub_i_d = 2;
+}

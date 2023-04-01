@@ -9,17 +9,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
+	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
@@ -65,7 +63,7 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	Parameters := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -79,12 +77,12 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	authenticateAuxiliary := authenticate.Auxiliary.Initialize(Mapper, Parameters)
+	authenticateAuxiliary := authenticate.Auxiliary.Initialize(Mapper, parameterManager)
 	keepers := TestKeepers{
-		UnProvisionKeeper: keeperPrototype().Initialize(Mapper, Parameters, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
+		UnProvisionKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
 	}
 
-	return sdkTypes.WrapSDKContext(context), keepers, Mapper, Parameters
+	return sdkTypes.WrapSDKContext(context), keepers, Mapper, parameterManager
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -104,8 +102,8 @@ func Test_keeperPrototype(t *testing.T) {
 }
 
 func Test_transactionKeeper_Initialize(t *testing.T) {
-	_, _, mapper, _parameters := CreateTestInput(t)
-	supplementAuxiliary = supplement.Auxiliary.Initialize(mapper, _parameters)
+	_, _, mapper, parameterManager := CreateTestInput(t)
+	supplementAuxiliary = supplement.Auxiliary.Initialize(mapper, parameterManager)
 	type fields struct {
 		mapper              helpers.Mapper
 		supplementAuxiliary helpers.Auxiliary
@@ -122,7 +120,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{mapper, supplementAuxiliary}, args{mapper, _parameters, []interface{}{supplementAuxiliary}}, transactionKeeper{mapper, supplementAuxiliary}},
+		{"+ve", fields{mapper, supplementAuxiliary}, args{mapper, parameterManager, []interface{}{supplementAuxiliary}}, transactionKeeper{mapper, supplementAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

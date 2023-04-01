@@ -11,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
-	"github.com/cosmos/cosmos-sdk/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/stretchr/testify/require"
 
@@ -33,7 +33,7 @@ func createTestInput(t *testing.T) (rest.BaseReq, string, *baseIDs.IdentityID) {
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
+	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	testToAddress := "cosmos1vx8knpllrj7n963p9ttd80w47kpacrhuts497x"
 	return testBaseReq, testToAddress, testFromID.(*baseIDs.IdentityID)
 }
@@ -141,7 +141,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testToAddress, testFromID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c").String(), types.AccAddress(testToAddress).String(), testFromID}))}, transactionRequest{testBaseReq, testToAddress, testFromID.AsString()}, false},
+		{"+ve", fields{testBaseReq, testToAddress, testFromID.AsString()}, args{sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{sdkTypes.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c").String(), sdkTypes.AccAddress(testToAddress).String(), testFromID}))}, transactionRequest{testBaseReq, testToAddress, testFromID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -193,9 +193,9 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	testBaseReq, testToAddress, testFromID := createTestInput(t)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := types.AccAddressFromBech32(fromAddress)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
-	toAccAddress, err := types.AccAddressFromBech32(testToAddress)
+	toAccAddress, err := sdkTypes.AccAddressFromBech32(testToAddress)
 	require.Nil(t, err)
 	type fields struct {
 		BaseReq    rest.BaseReq
@@ -205,7 +205,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		want    types.Msg
+		want    sdkTypes.Msg
 		wantErr bool
 	}{
 		{"+ve", fields{testBaseReq, testToAddress, testFromID.AsString()}, &Message{fromAccAddress.String(), toAccAddress.String(), testFromID}, false},

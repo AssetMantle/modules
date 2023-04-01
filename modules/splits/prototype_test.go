@@ -6,13 +6,12 @@ package splits
 import (
 	"testing"
 
-	"github.com/AssetMantle/modules/modules/splits/internal/invariants"
-
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries"
 	"github.com/AssetMantle/modules/modules/splits/internal/block"
 	"github.com/AssetMantle/modules/modules/splits/internal/genesis"
+	"github.com/AssetMantle/modules/modules/splits/internal/invariants"
 	"github.com/AssetMantle/modules/modules/splits/internal/mapper"
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/internal/parameters"

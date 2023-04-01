@@ -6,14 +6,13 @@ package member
 import (
 	"testing"
 
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 func Test_Conform_Request(t *testing.T) {

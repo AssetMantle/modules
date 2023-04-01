@@ -1,7 +1,6 @@
 package base
 
 import (
-	documentIDGetters "github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
 	sdkClient "github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkCodecTypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -11,6 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/schema/helpers"
+	documentIDGetters "github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
 )
 
 type codec struct {

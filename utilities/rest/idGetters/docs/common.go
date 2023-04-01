@@ -12,7 +12,6 @@ import (
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/lists/utilities"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -34,9 +33,9 @@ func GetTotalWeight(immutables qualified.Immutables, mutables qualified.Mutables
 	return totalWeight
 }
 
-func ReadAndProcess(context client.Context, addAuth bool, responseWriter http.ResponseWriter, httpRequest *http.Request) (ids.ClassificationID, qualified.Immutables, qualified.Mutables) {
+func ReadAndProcess(context client.Context, addAuth bool, addBond bool, responseWriter http.ResponseWriter, httpRequest *http.Request) (ids.ClassificationID, qualified.Immutables, qualified.Mutables) {
 	_, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties := Read(context, responseWriter, httpRequest)
-	Immutables, Mutables := Process(immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, addAuth)
+	Immutables, Mutables := Process(immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, addAuth, addBond)
 	if len(classificationID.Bytes()) != 0 {
 		return classificationID, Immutables, Mutables
 	}
@@ -71,17 +70,20 @@ func Read(context client.Context, responseWriter http.ResponseWriter, httpReques
 	return req, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties
 }
 
-func Process(immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties lists.PropertyList, addAuth bool) (qualified.Immutables, qualified.Mutables) {
-	immutables := base.NewImmutables(baseLists.NewPropertyList(propertiesUtilities.AnyPropertyListToPropertyList(append(immutableMetaProperties.GetList(), immutableProperties.GetList()...)...)...))
+func Process(immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties lists.PropertyList, addAuth bool, addBond bool) (qualified.Immutables, qualified.Mutables) {
+	immutables := base.NewImmutables(immutableMetaProperties.Add(propertiesUtilities.AnyPropertyListToPropertyList(immutableProperties.GetList()...)...))
 	var Mutables qualified.Mutables
 	if addAuth {
-		Mutables = base.NewMutables(baseLists.NewPropertyList(propertiesUtilities.AnyPropertyListToPropertyList(append(append(mutableMetaProperties.GetList(), mutableProperties.GetList()...), constants.AuthenticationProperty.ToAnyProperty())...)...))
+		Mutables = base.NewMutables(mutableMetaProperties.Add(propertiesUtilities.AnyPropertyListToPropertyList(mutableProperties.Add(constants.AuthenticationProperty.ToAnyProperty()).GetList()...)...))
 	} else {
-		Mutables = base.NewMutables(baseLists.NewPropertyList(propertiesUtilities.AnyPropertyListToPropertyList(append(mutableMetaProperties.GetList(), mutableProperties.GetList()...)...)...))
+		Mutables = base.NewMutables(mutableMetaProperties.Add(propertiesUtilities.AnyPropertyListToPropertyList(mutableProperties.GetList()...)...))
 	}
-
-	Immutables := base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewNumberData(GetTotalWeight(immutables, Mutables)*baseData.NewNumberData(1).Get()))))
-
+	var Immutables qualified.Immutables
+	if addBond {
+		Immutables = base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewNumberData(GetTotalWeight(immutables, Mutables)*baseData.NewNumberData(1).Get()))))
+	} else {
+		Immutables = immutables
+	}
 	return Immutables, Mutables
 }
 

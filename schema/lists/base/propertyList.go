@@ -3,16 +3,23 @@ package base
 import (
 	"sort"
 
-	"github.com/AssetMantle/modules/schema/traits"
-
 	"github.com/AssetMantle/modules/schema/ids"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/traits"
 )
 
 var _ lists.PropertyList = (*PropertyList)(nil)
 
+func (propertyList *PropertyList) ValidateBasic() error {
+	for _, property := range propertyList.PropertyList {
+		if err := property.ValidateBasic(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 func (propertyList *PropertyList) GetProperty(propertyID ids.PropertyID) properties.AnyProperty {
 	if i, found := propertyList.Search(base.NewEmptyMesaPropertyFromID(propertyID)); found {
 		return propertyList.GetList()[i]
@@ -48,18 +55,20 @@ func (propertyList *PropertyList) GetPropertyIDList() lists.IDList {
 	}
 	return propertyIDList
 }
-func (propertyList *PropertyList) Add(properties ...properties.Property) lists.PropertyList {
+func (propertyList PropertyList) Add(properties ...properties.Property) lists.PropertyList {
 	updatedList := propertyList
 	for _, listable := range properties {
 		if index, found := updatedList.Search(listable); !found {
 			updatedList.PropertyList = append(updatedList.PropertyList, listable.ToAnyProperty().(*base.AnyProperty))
 			copy(updatedList.PropertyList[index+1:], updatedList.PropertyList[index:])
 			updatedList.PropertyList[index] = listable.ToAnyProperty().(*base.AnyProperty)
+		} else {
+			updatedList.PropertyList[index] = listable.ToAnyProperty().(*base.AnyProperty)
 		}
 	}
-	return updatedList
+	return &updatedList
 }
-func (propertyList *PropertyList) Remove(properties ...properties.Property) lists.PropertyList {
+func (propertyList PropertyList) Remove(properties ...properties.Property) lists.PropertyList {
 	updatedList := propertyList
 
 	for _, listable := range properties {
@@ -68,9 +77,11 @@ func (propertyList *PropertyList) Remove(properties ...properties.Property) list
 		}
 	}
 
-	return updatedList
+	return &updatedList
 }
-func (propertyList *PropertyList) Mutate(properties ...properties.Property) lists.PropertyList {
+
+// TODO: Check if this is required
+func (propertyList PropertyList) Mutate(properties ...properties.Property) lists.PropertyList {
 	updatedList := propertyList
 
 	for _, listable := range properties {
@@ -79,7 +90,7 @@ func (propertyList *PropertyList) Mutate(properties ...properties.Property) list
 		}
 	}
 
-	return updatedList
+	return &updatedList
 }
 func (propertyList *PropertyList) ScrubData() lists.PropertyList {
 	newPropertyList := NewPropertyList()

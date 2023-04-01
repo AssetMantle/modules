@@ -4,12 +4,12 @@
 package revealEnabled
 
 import (
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"testing"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 )
 
 func Test_validator(t *testing.T) {
@@ -23,12 +23,12 @@ func Test_validator(t *testing.T) {
 	}{
 		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, true},
 		{"+ve", args{Parameter}, false},
-		{"-ve InvalidParameter", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
+		{"-ve InvalidParameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
 		{"+ve with booleanData", args{baseData.NewBooleanData(false)}, false},
 		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
-		{"+ve with true booleanData", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("revealEnabled"), baseData.NewBooleanData(true)))}, false},
-		{"+ve with false booleanData", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("revealEnabled"), baseData.NewBooleanData(false)))}, false},
-		{"+ve with incorrect ID", args{baseTypes.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewBooleanData(false)))}, true},
+		{"+ve with true booleanData", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("revealEnabled"), baseData.NewBooleanData(true)))}, false},
+		{"+ve with false booleanData", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("revealEnabled"), baseData.NewBooleanData(false)))}, false},
+		{"+ve with incorrect ID", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewBooleanData(false)))}, true},
 		{"-ve nil", args{}, true},
 	}
 	for _, tt := range tests {

@@ -11,7 +11,6 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -41,9 +40,9 @@ func orderIDHandler(context client.Context) http.HandlerFunc {
 			Add(baseProperties.NewMetaProperty(constants.MakerOwnableIDProperty.GetKey(), baseData.NewIDData(makerOwnableID))).
 			Add(baseProperties.NewMetaProperty(constants.TakerOwnableIDProperty.GetKey(), baseData.NewIDData(takerOwnableID))).
 			Add(baseProperties.NewMetaProperty(constants.MakerIDProperty.GetKey(), baseData.NewIDData(fromID))).
-			Add(baseProperties.NewMetaProperty(constants.TakerIDProperty.GetKey(), baseData.NewIDData(takerID))).
-			Add(constants.BondAmountProperty)
-		Immutables := base.NewImmutables(baseLists.NewPropertyList(propertiesUtilities.AnyPropertyListToPropertyList(append(immutableMetaProperties.GetList(), ImmutableProperties.GetList()...)...)...))
+			Add(baseProperties.NewMetaProperty(constants.TakerIDProperty.GetKey(), baseData.NewIDData(takerID)))
+
+		Immutables := base.NewImmutables(immutableMetaProperties.Add(propertiesUtilities.AnyPropertyListToPropertyList(ImmutableProperties.GetList()...)...))
 
 		// Mutables := base.NewMutables(baseLists.NewPropertyList(propertiesUtilities.AnyPropertyListToPropertyList(append(mutableMetaProperties.GetList(), mutableProperties.GetList()...)...)...))
 
@@ -54,8 +53,30 @@ func orderIDHandler(context client.Context) http.HandlerFunc {
 func orderClassificationHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		_, _, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties := Read(context, responseWriter, httpRequest)
-		immutables := base.NewImmutables(baseLists.NewPropertyList(propertiesUtilities.AnyPropertyListToPropertyList(append(append(immutableMetaProperties.GetList(), immutableProperties.GetList()...), constants.ExchangeRateProperty.ToAnyProperty(), constants.CreationHeightProperty.ToAnyProperty(), constants.MakerOwnableIDProperty.ToAnyProperty(), constants.TakerOwnableIDProperty.ToAnyProperty(), constants.MakerIDProperty.ToAnyProperty(), constants.TakerIDProperty.ToAnyProperty())...)...))
-		mutables := base.NewMutables(baseLists.NewPropertyList(propertiesUtilities.AnyPropertyListToPropertyList(append(append(mutableMetaProperties.GetList(), mutableProperties.GetList()...), constants.ExpiryHeightProperty.ToAnyProperty(), constants.MakerOwnableSplitProperty.ToAnyProperty())...)...))
+		immutables := base.NewImmutables(
+			immutableMetaProperties.Add(
+				propertiesUtilities.AnyPropertyListToPropertyList(
+					immutableProperties.Add(
+						constants.ExchangeRateProperty.ToAnyProperty(),
+						constants.CreationHeightProperty.ToAnyProperty(),
+						constants.MakerOwnableIDProperty.ToAnyProperty(),
+						constants.TakerOwnableIDProperty.ToAnyProperty(),
+						constants.MakerIDProperty.ToAnyProperty(),
+						constants.TakerIDProperty.ToAnyProperty(),
+					).GetList()...,
+				)...,
+			),
+		)
+		mutables := base.NewMutables(
+			mutableMetaProperties.Add(
+				propertiesUtilities.AnyPropertyListToPropertyList(
+					mutableProperties.Add(
+						constants.ExpiryHeightProperty.ToAnyProperty(),
+						constants.MakerOwnableSplitProperty.ToAnyProperty(),
+					).GetList()...,
+				)...,
+			),
+		)
 		Immutables := base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewNumberData(GetTotalWeight(immutables, mutables)*baseData.NewNumberData(1).Get()))))
 		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewClassificationID(Immutables, mutables).AsString(), Immutables.GetProperty(constants.BondAmountProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.NumberData).AsString(), nil))
 	}
