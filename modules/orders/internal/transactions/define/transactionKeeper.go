@@ -68,7 +68,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		),
 	)
 
-	auxiliaryResponse, err := transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(immutables, mutables))
+	auxiliaryResponse, err := transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(fromAddress, immutables, mutables))
 	if err != nil {
 		return nil, err
 	}

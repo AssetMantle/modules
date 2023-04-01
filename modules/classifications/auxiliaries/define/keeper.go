@@ -8,6 +8,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
+	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents/base"
@@ -18,11 +19,16 @@ import (
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 )
 
 type auxiliaryKeeper struct {
 	mapper           helpers.Mapper
 	parameterManager helpers.ParameterManager
+	bankKeeper       bankKeeper.Keeper
+	stakingKeeper    stakingKeeper.Keeper
 }
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
@@ -34,7 +40,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	for _, property := range append(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...) {
 		totalWeight += property.Get().GetBondWeight()
 	}
-	immutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewNumberData(auxiliaryKeeper.parameterManager.GetParameter(constants.BondRateProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()*totalWeight))))
+	bondAmount := baseData.NewNumberData(auxiliaryKeeper.parameterManager.GetParameter(constants.BondRateProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get() * totalWeight)
+	immutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), bondAmount)))
 
 	if int64(len(immutables.GetImmutablePropertyList().GetList())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList())) > auxiliaryKeeper.parameterManager.GetParameter(constants.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get() {
 		return nil, errorConstants.InvalidRequest.Wrapf("total property count %d exceeds maximum %d", len(immutables.GetImmutablePropertyList().GetList())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()), auxiliaryKeeper.parameterManager.GetParameter(constants.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get())
@@ -50,13 +57,27 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		return newAuxiliaryResponse(classificationID), errorConstants.EntityAlreadyExists.Wrapf("classification with ID %s already exists", classificationID.AsString())
 	}
 
+	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.AccAddress, module.Name, sdkTypes.NewCoins(sdkTypes.NewCoin(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), sdkTypes.NewInt(bondAmount.Get())))); err != nil {
+		return nil, err
+	}
+
 	classifications.Add(mappable.NewMappable(base.NewClassification(immutables, auxiliaryRequest.Mutables)))
 
 	return newAuxiliaryResponse(classificationID), nil
 }
 
-func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, _ []interface{}) helpers.Keeper {
-	return auxiliaryKeeper{mapper: mapper, parameterManager: parameterManager}
+func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
+	auxiliaryKeeper.mapper = mapper
+	auxiliaryKeeper.parameterManager = parameterManager
+	for _, auxiliary := range auxiliaries {
+		switch value := auxiliary.(type) {
+		case bankKeeper.Keeper:
+			auxiliaryKeeper.bankKeeper = value
+		case stakingKeeper.Keeper:
+			auxiliaryKeeper.stakingKeeper = value
+		}
+	}
+	return auxiliaryKeeper
 }
 
 func keeperPrototype() helpers.AuxiliaryKeeper {
