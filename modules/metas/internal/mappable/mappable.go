@@ -10,7 +10,7 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -20,7 +20,7 @@ func (mappable *Mappable) ValidateBasic() error {
 	return mappable.Data.ValidateBasic()
 }
 func (mappable *Mappable) GetKey() helpers.Key {
-	return key.NewKey(base.GenerateDataID(mappable.Data))
+	return key.NewKey(baseIDs.GenerateDataID(mappable.Data))
 }
 func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, Mappable{})

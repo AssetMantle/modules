@@ -5,6 +5,7 @@ package define
 
 import (
 	"context"
+
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"

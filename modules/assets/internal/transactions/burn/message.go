@@ -4,13 +4,14 @@
 package burn
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/base"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 var _ helpers.Message = (*Message)(nil)
@@ -56,7 +57,7 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, assetID ids.AssetID) sdkTypes.Msg {
 	return &Message{
 		From:    from.String(),
-		FromID:  fromID.(*base.IdentityID),
-		AssetID: assetID.(*base.AssetID),
+		FromID:  fromID.(*baseIDs.IdentityID),
+		AssetID: assetID.(*baseIDs.AssetID),
 	}
 }

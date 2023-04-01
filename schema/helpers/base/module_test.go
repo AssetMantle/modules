@@ -5,7 +5,6 @@ package base
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/schema/properties/base"
 	"math/rand"
 	"testing"
 
@@ -16,13 +15,13 @@ import (
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/AssetMantle/modules/utilities/test"
-	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
-
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseTypes "github.com/AssetMantle/modules/schema/parameters/base"
+	"github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/utilities/test"
+	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 // TODO: Add grpc gateway handling for tests

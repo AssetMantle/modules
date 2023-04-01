@@ -13,17 +13,17 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 var (
-	immutables       = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables         = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID = baseIds.NewClassificationID(immutables, mutables)
-	testOrderID      = baseIds.NewOrderID(classificationID, immutables).(*baseIds.OrderID)
+	immutables       = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables         = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID = baseIDs.NewClassificationID(immutables, mutables)
+	testOrderID      = baseIDs.NewOrderID(classificationID, immutables).(*baseIDs.OrderID)
 )
 
 func TestNewKey(t *testing.T) {
@@ -74,7 +74,7 @@ func Test_keyFromInterface(t *testing.T) {
 	}{
 		{"+ve", args{}, &Key{}, true},
 		{"+ve", args{NewKey(testOrderID)}, &Key{testOrderID}, false},
-		{"-ve", args{baseIds.NewStringID("StringID")}, &Key{}, true},
+		{"-ve", args{baseIDs.NewStringID("StringID")}, &Key{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -92,7 +92,7 @@ func Test_keyFromInterface(t *testing.T) {
 
 func Test_key_Equals(t *testing.T) {
 	type fields struct {
-		OrderID *baseIds.OrderID
+		OrderID *baseIDs.OrderID
 	}
 	type args struct {
 		compareKey helpers.Key
@@ -119,7 +119,7 @@ func Test_key_Equals(t *testing.T) {
 
 func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 	type fields struct {
-		OrderID *baseIds.OrderID
+		OrderID *baseIDs.OrderID
 	}
 	tests := []struct {
 		name   string
@@ -142,7 +142,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 
 func Test_key_IsPartial(t *testing.T) {
 	type fields struct {
-		OrderID *baseIds.OrderID
+		OrderID *baseIDs.OrderID
 	}
 	tests := []struct {
 		name   string
@@ -165,7 +165,7 @@ func Test_key_IsPartial(t *testing.T) {
 
 func Test_key_RegisterCodec(t *testing.T) {
 	type fields struct {
-		OrderID *baseIds.OrderID
+		OrderID *baseIDs.OrderID
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino

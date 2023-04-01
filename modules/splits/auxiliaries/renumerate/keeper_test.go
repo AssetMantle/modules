@@ -28,7 +28,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
@@ -80,11 +80,11 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
 	context, keepers, Mapper, _ := createTestInput(t)
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := baseIds.NewClassificationID(immutables, mutables)
-	testOwnerIdentityID := baseIds.NewIdentityID(classificationID, immutables)
-	testOwnableID := baseIds.NewCoinID(baseIds.NewStringID("OwnerID"))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
+	testOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
 	testRate := sdkTypes.NewDec(1)
 	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
 	keepers.RenumerateKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))

@@ -5,10 +5,10 @@ package base
 
 import (
 	"bytes"
-	"github.com/AssetMantle/modules/schema/data/utilities"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"

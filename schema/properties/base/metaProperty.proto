@@ -1,0 +1,13 @@
+syntax = "proto3";
+package properties;
+
+import "gogoproto/gogo.proto";
+import "schema/data/base/anyData.proto";
+import "schema/ids/base/propertyID.proto";
+
+message MetaProperty {
+  option (gogoproto.goproto_getters) = false;
+
+  ids.PropertyID i_d = 1;
+  data.AnyData data = 2;
+}

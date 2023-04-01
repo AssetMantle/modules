@@ -4,10 +4,10 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/modules/metas/internal/module"
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/modules/metas/internal/module"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters/revealEnabled"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
