@@ -6,12 +6,11 @@ package burn
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"

@@ -8,11 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/properties/utilities"
-
-	"github.com/cosmos/cosmos-sdk/simapp"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -32,6 +29,7 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 )
 
 var (

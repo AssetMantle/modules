@@ -6,11 +6,10 @@ package block
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/burn"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/burn"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/orders/internal/key"

@@ -6,9 +6,9 @@ package member
 import (
 	"testing"
 
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-
 	"github.com/stretchr/testify/require"
+
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 )
 
 func Test_Conform_Response(t *testing.T) {

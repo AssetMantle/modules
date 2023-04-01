@@ -7,16 +7,14 @@ import (
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/utilities/test"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
 	parametersSchema "github.com/AssetMantle/modules/schema/parameters/base"
+	"github.com/AssetMantle/modules/utilities/test"
 )
 
 func TestParameters(t *testing.T) {

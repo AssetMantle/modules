@@ -80,12 +80,11 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmLog "github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
+	tmProto "github.com/tendermint/tendermint/proto/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/schema/applications"
 	simulationMake "github.com/AssetMantle/modules/simulation/make"
-
-	tmProto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 type GenesisState map[string]json.RawMessage

@@ -6,8 +6,6 @@ package scrub
 import (
 	"testing"
 
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/modules/schema/data/base"
@@ -15,6 +13,7 @@ import (
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
+	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 )
 
 func Test_Super_Response(t *testing.T) {

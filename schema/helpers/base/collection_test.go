@@ -9,10 +9,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/utilities/test"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
-
-	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func TestCollection(t *testing.T) {

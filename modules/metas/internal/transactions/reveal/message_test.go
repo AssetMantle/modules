@@ -6,14 +6,12 @@ package reveal
 import (
 	"testing"
 
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-
-	"github.com/AssetMantle/modules/schema/data/utilities"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/module"
+	baseData "github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	"github.com/AssetMantle/modules/utilities/transaction"
 )
 

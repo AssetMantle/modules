@@ -8,9 +8,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/data/utilities"
-
 	"github.com/AssetMantle/modules/schema/data"
+	"github.com/AssetMantle/modules/schema/data/utilities"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"

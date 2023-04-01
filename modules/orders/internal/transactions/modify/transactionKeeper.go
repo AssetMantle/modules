@@ -6,8 +6,6 @@ package modify
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/schema/properties/utilities"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
@@ -23,6 +21,7 @@ import (
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/modules/schema/properties/utilities"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 

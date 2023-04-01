@@ -12,14 +12,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/burn"
-	"github.com/AssetMantle/modules/schema/applications/constants"
-	documentIDGetters "github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
-
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
-	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -112,9 +104,12 @@ import (
 
 	"github.com/AssetMantle/modules/modules/assets"
 	"github.com/AssetMantle/modules/modules/classifications"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/bond"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/burn"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
 	"github.com/AssetMantle/modules/modules/identities"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers"
@@ -131,8 +126,11 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	"github.com/AssetMantle/modules/schema/applications"
+	"github.com/AssetMantle/modules/schema/applications/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/helpers/base"
+	utilitiesRest "github.com/AssetMantle/modules/utilities/rest"
+	documentIDGetters "github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
 )
 
 type application struct {

@@ -4,15 +4,15 @@
 package base
 
 import (
+	"math"
+	"math/rand"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
-
-	"math"
-	"math/rand"
 )
 
 func GenerateRandomData(r *rand.Rand) data.Data {
