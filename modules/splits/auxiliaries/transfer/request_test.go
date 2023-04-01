@@ -12,18 +12,18 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 func createTestInput1() (ids.IdentityID, ids.OwnableID, types.Dec) {
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIds.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := baseIds.NewClassificationID(immutables, mutables)
-	testOwnerID := baseIds.NewIdentityID(classificationID, immutables)
-	testOwnableID := baseIds.NewCoinID(baseIds.NewStringID("OwnerID"))
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testOwnerID := baseIDs.NewIdentityID(classificationID, immutables)
+	testOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
 	testValue := types.NewDec(1)
 	return testOwnerID, testOwnableID, testValue
 }
@@ -42,7 +42,7 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 		want helpers.AuxiliaryRequest
 	}{
 		{"+ve", args{testOwnerID, testOwnerID, testOwnableID, testValue}, NewAuxiliaryRequest(testOwnerID, testOwnerID, testOwnableID, testValue)},
-		{"+ve with nil", args{testOwnerID, baseIds.PrototypeIdentityID(), baseIds.PrototypeOwnableID(), testValue}, NewAuxiliaryRequest(testOwnerID, baseIds.PrototypeIdentityID(), baseIds.PrototypeOwnableID(), testValue)},
+		{"+ve with nil", args{testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeOwnableID(), testValue}, NewAuxiliaryRequest(testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeOwnableID(), testValue)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -10,7 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	baseIds "github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	typesSchema "github.com/AssetMantle/modules/schema/types"
@@ -75,8 +75,8 @@ func messagePrototype() helpers.Message {
 func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, orderID ids.OrderID, takerOwnableSplit sdkTypes.Dec, makerOwnableSplit sdkTypes.Dec, expiresIn typesSchema.Height, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return &Message{
 		From:                  from.String(),
-		FromID:                fromID.(*baseIds.IdentityID),
-		OrderID:               orderID.(*baseIds.OrderID),
+		FromID:                fromID.(*baseIDs.IdentityID),
+		OrderID:               orderID.(*baseIDs.OrderID),
 		TakerOwnableSplit:     takerOwnableSplit.String(),
 		MakerOwnableSplit:     makerOwnableSplit.String(),
 		ExpiresIn:             expiresIn.(*baseTypes.Height),

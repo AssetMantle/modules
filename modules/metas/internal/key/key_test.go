@@ -13,12 +13,12 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 var (
-	testDataID  = base.GenerateDataID(baseData.NewStringData("Data")).(*base.DataID)
-	testDataID1 = base.PrototypeDataID().(*base.DataID)
+	testDataID  = baseIDs.GenerateDataID(baseData.NewStringData("Data")).(*baseIDs.DataID)
+	testDataID1 = baseIDs.PrototypeDataID().(*baseIDs.DataID)
 )
 
 func TestNewKey(t *testing.T) {
@@ -87,7 +87,7 @@ func Test_keyFromInterface(t *testing.T) {
 
 func Test_key_Equals(t *testing.T) {
 	type fields struct {
-		DataID *base.DataID
+		DataID *baseIDs.DataID
 	}
 	type args struct {
 		compareKey helpers.Key
@@ -115,7 +115,7 @@ func Test_key_Equals(t *testing.T) {
 
 func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 	type fields struct {
-		DataID *base.DataID
+		DataID *baseIDs.DataID
 	}
 	tests := []struct {
 		name   string
@@ -139,7 +139,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 
 func Test_key_IsPartial(t *testing.T) {
 	type fields struct {
-		DataID *base.DataID
+		DataID *baseIDs.DataID
 	}
 	tests := []struct {
 		name   string
@@ -163,7 +163,7 @@ func Test_key_IsPartial(t *testing.T) {
 
 func Test_key_RegisterCodec(t *testing.T) {
 	type fields struct {
-		DataID *base.DataID
+		DataID *baseIDs.DataID
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino

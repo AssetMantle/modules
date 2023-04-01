@@ -6,12 +6,11 @@ package key
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/AssetMantle/modules/schema/ids/base"
-
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/AssetMantle/modules/schema/ids"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
@@ -44,10 +43,10 @@ func keyFromInterface(i interface{}) (*Key, error) {
 
 func NewKey(classificationID ids.ClassificationID) helpers.Key {
 	return &Key{
-		ClassificationID: classificationID.(*base.ClassificationID),
+		ClassificationID: classificationID.(*baseIDs.ClassificationID),
 	}
 }
 
 func Prototype() helpers.Key {
-	return &Key{base.PrototypeClassificationID().(*base.ClassificationID)}
+	return &Key{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}
 }

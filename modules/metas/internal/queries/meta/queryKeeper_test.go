@@ -28,7 +28,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 )
 
 type TestKeepers struct {
@@ -92,7 +92,7 @@ func Test_keeperPrototype(t *testing.T) {
 
 func Test_queryKeeper_Enquire(t *testing.T) {
 	context, keepers, Mapper, _ := createTestInput(t)
-	testDataID := base.GenerateDataID(baseData.NewStringData("Data"))
+	testDataID := baseIDs.GenerateDataID(baseData.NewStringData("Data"))
 	keepers.MetaKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(baseData.NewStringData("Data")))
 	type fields struct {
 		mapper helpers.Mapper

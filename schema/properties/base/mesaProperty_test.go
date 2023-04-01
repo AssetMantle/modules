@@ -13,7 +13,7 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/base"
+	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/traits"
 )
@@ -26,9 +26,9 @@ func ValidatedID[V *base.PropertyID | *base.DataID](value any) V {
 }
 
 func createTestInputForMesaProperty() (ids.StringID, ids.PropertyID, data.Data, properties.Property) {
-	testKey := base.NewStringID("ID")
+	testKey := baseIDs.NewStringID("ID")
 	testData := baseData.NewStringData("Data")
-	testPropertyID := base.NewPropertyID(testKey, testData.GetType())
+	testPropertyID := baseIDs.NewPropertyID(testKey, testData.GetType())
 	testProperty := NewMesaProperty(testKey, testData)
 	return testKey, testPropertyID, testData, testProperty
 }
@@ -45,7 +45,7 @@ func TestNewEmptyMesaPropertyFromID(t *testing.T) {
 		want    properties.Property
 		wantErr bool
 	}{
-		{"+ve", args{testPropertyID}, &MesaProperty{ID: testPropertyID.(*base.PropertyID)}, false},
+		{"+ve", args{testPropertyID}, &MesaProperty{ID: testPropertyID.(*baseIDs.PropertyID)}, false},
 		{"panic with nil", args{}, &MesaProperty{}, true},
 	}
 	for _, tt := range tests {
@@ -77,7 +77,7 @@ func TestNewMesaProperty(t *testing.T) {
 		wantPanic bool
 	}{
 		{"nil", args{}, &MesaProperty{}, true},
-		{"+ve", args{testKey, testData}, &MesaProperty{testPropertyID.(*base.PropertyID), testData.GetID().(*base.DataID)}, false},
+		{"+ve", args{testKey, testData}, &MesaProperty{testPropertyID.(*baseIDs.PropertyID), testData.GetID().(*baseIDs.DataID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -106,7 +106,7 @@ func Test_mesaPropertyFromInterface(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve with nil", args{}, &MesaProperty{}, true},
-		{"+ve", args{testMesaProperty}, &MesaProperty{testMesaPropertyID.(*base.PropertyID), testData.GetID().(*base.DataID)}, false},
+		{"+ve", args{testMesaProperty}, &MesaProperty{testMesaPropertyID.(*baseIDs.PropertyID), testData.GetID().(*baseIDs.DataID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -138,8 +138,8 @@ func Test_mesaProperty_Compare(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-		{"+ve compare with property with no Data", fields{testMesaPropertyID, testData.GetID()}, args{&MesaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID)}}, 0, false},
-		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{&MesaProperty{ID: base.NewPropertyID(base.NewStringID("ID"), base.NewStringID("S")).(*base.PropertyID), DataID: baseData.NewStringData("Data2").GetID().(*base.DataID)}}, 0, false},
+		{"+ve compare with property with no Data", fields{testMesaPropertyID, testData.GetID()}, args{&MesaProperty{ID: baseIDs.NewPropertyID(baseIDs.NewStringID("ID"), baseIDs.NewStringID("S")).(*baseIDs.PropertyID)}}, 0, false},
+		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{&MesaProperty{ID: baseIDs.NewPropertyID(baseIDs.NewStringID("ID"), baseIDs.NewStringID("S")).(*baseIDs.PropertyID), DataID: baseData.NewStringData("Data2").GetID().(*baseIDs.DataID)}}, 0, false},
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, args{testMesaProperty}, 0, false},
 		{"+ve nil dataID", fields{testMesaPropertyID, nil}, args{testMesaProperty}, 0, false},
 		{"panic nil propertyID", fields{nil, testData.GetID()}, args{testMesaProperty}, 0, true},
@@ -148,8 +148,8 @@ func Test_mesaProperty_Compare(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mesaProperty := &MesaProperty{
-				ID:     ValidatedID[*base.PropertyID](tt.fields.ID),
-				DataID: ValidatedID[*base.DataID](tt.fields.DataID),
+				ID:     ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
+				DataID: ValidatedID[*baseIDs.DataID](tt.fields.DataID),
 			}
 			defer func() {
 				r := recover()
@@ -176,14 +176,14 @@ func Test_mesaProperty_GetDataID(t *testing.T) {
 		fields fields
 		want   ids.DataID
 	}{
-		{"+ve with nil", fields{}, (*base.DataID)(nil)},
+		{"+ve with nil", fields{}, (*baseIDs.DataID)(nil)},
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, testData.GetID()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mesaProperty := &MesaProperty{
-				ID:     ValidatedID[*base.PropertyID](tt.fields.ID),
-				DataID: ValidatedID[*base.DataID](tt.fields.DataID),
+				ID:     ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
+				DataID: ValidatedID[*baseIDs.DataID](tt.fields.DataID),
 			}
 			if got := mesaProperty.GetDataID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetDataID() = %v, want %v", got, tt.want)
@@ -213,8 +213,8 @@ func Test_mesaProperty_GetHash(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mesaProperty := &MesaProperty{
-				ID:     ValidatedID[*base.PropertyID](tt.fields.ID),
-				DataID: ValidatedID[*base.DataID](tt.fields.DataID),
+				ID:     ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
+				DataID: ValidatedID[*baseIDs.DataID](tt.fields.DataID),
 			}
 			defer func() {
 				r := recover()
@@ -241,14 +241,14 @@ func Test_mesaProperty_GetID(t *testing.T) {
 		fields fields
 		want   ids.PropertyID
 	}{
-		{"+ve with nil", fields{}, (*base.PropertyID)(nil)},
+		{"+ve with nil", fields{}, (*baseIDs.PropertyID)(nil)},
 		{"+ve", fields{testMesaPropertyID, testData.GetID()}, testMesaPropertyID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mesaProperty := &MesaProperty{
-				ID:     ValidatedID[*base.PropertyID](tt.fields.ID),
-				DataID: ValidatedID[*base.DataID](tt.fields.DataID),
+				ID:     ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
+				DataID: ValidatedID[*baseIDs.DataID](tt.fields.DataID),
 			}
 			if got := mesaProperty.GetID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetID() = %v, want %v", got, tt.want)
@@ -277,8 +277,8 @@ func Test_mesaProperty_GetKey(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mesaProperty := &MesaProperty{
-				ID:     ValidatedID[*base.PropertyID](tt.fields.ID),
-				DataID: ValidatedID[*base.DataID](tt.fields.DataID),
+				ID:     ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
+				DataID: ValidatedID[*baseIDs.DataID](tt.fields.DataID),
 			}
 			defer func() {
 				r := recover()
@@ -306,15 +306,15 @@ func Test_mesaProperty_GetType(t *testing.T) {
 		want    ids.StringID
 		wantErr bool
 	}{
-		{"+ve", fields{testMesaPropertyID, testData.GetID()}, base.NewStringID("S"), false},
-		{"+ve nil dataID", fields{testMesaPropertyID, nil}, base.NewStringID("S"), false},
-		{"panic nil PropertyID", fields{nil, testData.GetID()}, base.NewStringID("S"), true},
+		{"+ve", fields{testMesaPropertyID, testData.GetID()}, baseIDs.NewStringID("S"), false},
+		{"+ve nil dataID", fields{testMesaPropertyID, nil}, baseIDs.NewStringID("S"), false},
+		{"panic nil PropertyID", fields{nil, testData.GetID()}, baseIDs.NewStringID("S"), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mesaProperty := &MesaProperty{
-				ID:     ValidatedID[*base.PropertyID](tt.fields.ID),
-				DataID: ValidatedID[*base.DataID](tt.fields.DataID),
+				ID:     ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
+				DataID: ValidatedID[*baseIDs.DataID](tt.fields.DataID),
 			}
 			defer func() {
 				r := recover()
@@ -346,8 +346,8 @@ func Test_mesaProperty_IsMesa(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mesaProperty := &MesaProperty{
-				ID:     ValidatedID[*base.PropertyID](tt.fields.ID),
-				DataID: ValidatedID[*base.DataID](tt.fields.DataID),
+				ID:     ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
+				DataID: ValidatedID[*baseIDs.DataID](tt.fields.DataID),
 			}
 			if got := mesaProperty.IsMesa(); got != tt.want {
 				t.Errorf("IsMesa() = %v, want %v", got, tt.want)
@@ -372,8 +372,8 @@ func Test_mesaProperty_IsMeta(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mesaProperty := &MesaProperty{
-				ID:     ValidatedID[*base.PropertyID](tt.fields.ID),
-				DataID: ValidatedID[*base.DataID](tt.fields.DataID),
+				ID:     ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
+				DataID: ValidatedID[*baseIDs.DataID](tt.fields.DataID),
 			}
 			if got := mesaProperty.IsMeta(); got != tt.want {
 				t.Errorf("IsMeta() = %v, want %v", got, tt.want)
