@@ -7,5 +7,5 @@ import "gogoproto/gogo.proto";
 message PropertyList {
   option (gogoproto.goproto_getters) = false;
 
-  repeated properties.AnyProperty property_list = 1;
+  repeated properties.AnyProperty properties = 1;
 }

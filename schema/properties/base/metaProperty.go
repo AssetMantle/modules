@@ -24,7 +24,7 @@ func (metaProperty *MetaProperty) ValidateBasic() error {
 	if err := metaProperty.Data.ValidateBasic(); err != nil {
 		return err
 	}
-	if metaProperty.Data.GetType().Compare(metaProperty.ID.TypeID) != 0 {
+	if metaProperty.Data.GetTypeID().Compare(metaProperty.ID.TypeID) != 0 {
 		return errorConstants.IncorrectFormat
 	}
 	return nil

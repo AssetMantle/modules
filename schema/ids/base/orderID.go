@@ -3,8 +3,10 @@ package base
 import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
+	"strings"
 )
 
 var _ ids.OrderID = (*OrderID)(nil)
@@ -13,11 +15,24 @@ func (orderID *OrderID) ValidateBasic() error {
 	return orderID.HashID.ValidateBasic()
 }
 func (orderID *OrderID) GetTypeID() ids.StringID {
+	return NewStringID(constants.OrderIDType)
 }
-func (orderID *OrderID) FromString(idTypeAndValueString string) (ids.ID, error) {
+func (orderID *OrderID) FromString(idString string) (ids.ID, error) {
+	idString = strings.TrimSpace(idString)
+	if idString == "" {
+		return PrototypeOrderID(), nil
+	}
+
+	if hashID, err := PrototypeHashID().FromString(idString); err != nil {
+		return PrototypeOrderID(), err
+	} else {
+		return &OrderID{
+			HashID: hashID.(*HashID),
+		}, nil
+	}
 }
 func (orderID *OrderID) AsString() string {
-	return joinIDTypeAndValueStrings(orderID.GetTypeID().AsString(), orderID.HashID.AsString())
+	return orderID.HashID.AsString()
 }
 func (orderID *OrderID) Bytes() []byte {
 	return orderID.HashID.IDBytes

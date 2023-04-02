@@ -14,12 +14,7 @@ type Maintainer interface {
 	GetMaintainedProperties() data.ListData
 	GetPermissions() data.ListData
 
-	CanMintAsset() bool
-	CanBurnAsset() bool
-	CanRenumerateAsset() bool
-	CanAddMaintainer() bool
-	CanRemoveMaintainer() bool
-	CanMutateMaintainer() bool
+	IsPermitted(permissionID ids.StringID) bool
 	MaintainsProperty(ids.PropertyID) bool
 
 	Document

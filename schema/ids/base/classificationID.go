@@ -3,8 +3,10 @@ package base
 import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
+	"strings"
 )
 
 var _ ids.ClassificationID = (*ClassificationID)(nil)
@@ -13,14 +15,10 @@ func (classificationID *ClassificationID) ValidateBasic() error {
 	return classificationID.HashID.ValidateBasic()
 }
 func (classificationID *ClassificationID) GetTypeID() ids.StringID {
+	return NewStringID(constants.ClassificationIDType)
 }
-func (classificationID *ClassificationID) FromString(idTypeAndValueString string) (ids.ID, error) {
-	idTypeString, idString := splitIDTypeAndValueStrings(idTypeAndValueString)
-
-	if idTypeString != classificationID.GetTypeID().AsString() {
-		return PrototypeClassificationID(), errorConstants.IncorrectFormat.Wrapf("expected id type %s, got %s", classificationID.GetTypeID().AsString(), idTypeString)
-	}
-
+func (classificationID *ClassificationID) FromString(idString string) (ids.ID, error) {
+	idString = strings.TrimSpace(idString)
 	if idString == "" {
 		return PrototypeClassificationID(), nil
 	}
@@ -34,7 +32,7 @@ func (classificationID *ClassificationID) FromString(idTypeAndValueString string
 	}
 }
 func (classificationID *ClassificationID) AsString() string {
-	return joinIDTypeAndValueStrings(classificationID.GetTypeID().AsString(), classificationID.HashID.AsString())
+	return classificationID.HashID.AsString()
 }
 func (classificationID *ClassificationID) Bytes() []byte {
 	return classificationID.HashID.IDBytes

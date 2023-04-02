@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/base64"
+	"github.com/AssetMantle/modules/schema/ids/constants"
 	"sort"
+	"strings"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -25,14 +27,10 @@ func (hashID *HashID) ValidateBasic() error {
 	return nil
 }
 func (hashID *HashID) GetTypeID() ids.StringID {
+	return NewStringID(constants.HashIDType)
 }
-func (hashID *HashID) FromString(idTypeAndValueString string) (ids.ID, error) {
-	idTypeString, idString := splitIDTypeAndValueStrings(idTypeAndValueString)
-
-	if idTypeString != hashID.GetTypeID().AsString() {
-		return PrototypeHashID(), errorConstants.IncorrectFormat.Wrapf("expected id type %s, got %s", hashID.GetTypeID().AsString(), idTypeString)
-	}
-
+func (hashID *HashID) FromString(idString string) (ids.ID, error) {
+	idString = strings.TrimSpace(idString)
 	if idString == "" {
 		return PrototypeHashID(), nil
 	}
@@ -48,7 +46,7 @@ func (hashID *HashID) FromString(idTypeAndValueString string) (ids.ID, error) {
 
 // TODO test if nil and empty result in ""
 func (hashID *HashID) AsString() string {
-	return joinIDTypeAndValueStrings(hashID.GetTypeID().AsString(), base64.URLEncoding.EncodeToString(hashID.IDBytes))
+	return base64.URLEncoding.EncodeToString(hashID.IDBytes)
 }
 func (hashID *HashID) Bytes() []byte {
 	return hashID.IDBytes

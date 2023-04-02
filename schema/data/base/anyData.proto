@@ -19,9 +19,9 @@ message AnyData {
     DecData dec_data = 3;
     HeightData height_data = 4;
     IDData i_d_data = 5;
-    StringData string_data = 6;
+    ListData list_data = 6;
     NumberData number_data = 7;
-    ListData list_data = 8;
+    StringData string_data = 8;
   }
 }
 

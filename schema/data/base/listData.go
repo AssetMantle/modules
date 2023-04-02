@@ -6,8 +6,9 @@ package base
 import (
 	"bytes"
 	"sort"
+	"strings"
 
-	"github.com/AssetMantle/modules/schema/data"
+	Data "github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -16,24 +17,27 @@ import (
 	stringUtilities "github.com/AssetMantle/modules/utilities/string"
 )
 
-var _ data.ListData = (*ListData)(nil)
+var _ Data.ListData = (*ListData)(nil)
 
 func (listData *ListData) ValidateBasic() error {
 	for _, data := range listData.DataList {
-		if data.GetType().Compare(listData.GetType()) == 0 {
+		if data.GetTypeID().Compare(listData.GetTypeID()) == 0 {
 			return errorConstants.IncorrectFormat.Wrapf("ListData cannot contain ListData")
 		}
+
 		if err := data.ValidateBasic(); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
-func (listData *ListData) Get() []data.AnyData {
-	anyDataList := make([]data.AnyData, len(listData.DataList))
+func (listData *ListData) Get() []Data.AnyData {
+	anyDataList := make([]Data.AnyData, len(listData.DataList))
 	for i, anyData := range listData.DataList {
 		anyDataList[i] = anyData
 	}
+
 	return anyDataList
 }
 func (listData *ListData) GetBondWeight() int64 {
@@ -46,35 +50,30 @@ func (listData *ListData) AsString() string {
 		dataStrings[i] = datum.AsString()
 	}
 
-	return joinDataTypeAndValueStrings(listData.GetTypeID().AsString(), stringUtilities.JoinListStrings(dataStrings...))
+	return stringUtilities.JoinListStrings(dataStrings...)
 }
-func (listData *ListData) FromString(dataTypeAndValueString string) (data.Data, error) {
-	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
-
-	if dataTypeString != listData.GetTypeID().AsString() {
-		return PrototypeListData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for ListData, expected type identifier %s, got %s", listData.GetTypeID().AsString(), dataTypeString)
-	}
-
+func (listData *ListData) FromString(dataString string) (Data.Data, error) {
+	dataString = strings.TrimSpace(dataString)
 	if dataString == "" {
 		return PrototypeListData(), nil
 	}
 
 	dataStringList := stringUtilities.SplitListString(dataString)
-	dataList := make([]data.Data, len(dataStringList))
+	dataList := make([]Data.Data, len(dataStringList))
 
 	for i, datumString := range dataStringList {
 		// TODO: check if all data are same type,[T]
-		Data, err := PrototypeAnyData().FromString(datumString)
+		data, err := PrototypeAnyData().FromString(datumString)
 		if err != nil {
 			return PrototypeListData(), err
 		}
 
-		dataList[i] = Data
+		dataList[i] = data
 	}
 
 	return NewListData(dataList...), nil
 }
-func (listData *ListData) Search(data data.Data) (int, bool) {
+func (listData *ListData) Search(data Data.Data) (int, bool) {
 	index := sort.Search(
 		len(listData.DataList),
 		func(i int) bool {
@@ -88,7 +87,7 @@ func (listData *ListData) Search(data data.Data) (int, bool) {
 
 	return index, false
 }
-func (listData *ListData) Add(data ...data.Data) data.ListData {
+func (listData *ListData) Add(data ...Data.Data) Data.ListData {
 	updatedList := listData
 	for _, listable := range data {
 		if index, found := updatedList.Search(listable); !found {
@@ -97,9 +96,10 @@ func (listData *ListData) Add(data ...data.Data) data.ListData {
 			updatedList.DataList[index] = listable.ToAnyData().(*AnyData)
 		}
 	}
+
 	return updatedList
 }
-func (listData *ListData) Remove(data ...data.Data) data.ListData {
+func (listData *ListData) Remove(data ...Data.Data) Data.ListData {
 	updatedList := listData
 
 	for _, listable := range data {
@@ -136,8 +136,8 @@ func (listData *ListData) Bytes() []byte {
 func (listData *ListData) GetTypeID() ids.StringID {
 	return dataConstants.ListDataTypeID
 }
-func (listData *ListData) ZeroValue() data.Data {
-	return NewListData([]data.Data{}...)
+func (listData *ListData) ZeroValue() Data.Data {
+	return NewListData([]Data.Data{}...)
 }
 func (listData *ListData) GenerateHashID() ids.HashID {
 	if listData.Compare(listData.ZeroValue()) == 0 {
@@ -146,7 +146,7 @@ func (listData *ListData) GenerateHashID() ids.HashID {
 
 	return baseIDs.GenerateHashID(listData.Bytes())
 }
-func (listData *ListData) ToAnyData() data.AnyData {
+func (listData *ListData) ToAnyData() Data.AnyData {
 	return &AnyData{
 		Impl: &AnyData_ListData{
 			ListData: listData,
@@ -162,12 +162,12 @@ func listDataFromInterface(listable traits.Listable) (*ListData, error) {
 	}
 }
 
-func PrototypeListData() data.ListData {
-	return (&ListData{}).ZeroValue().(data.ListData)
+func PrototypeListData() Data.ListData {
+	return (&ListData{}).ZeroValue().(Data.ListData)
 }
 
 // NewListData
 // * onus of ensuring all Data are of the same type is on DataList
-func NewListData(data ...data.Data) data.ListData {
+func NewListData(data ...Data.Data) Data.ListData {
 	return (&ListData{}).Add(data...)
 }

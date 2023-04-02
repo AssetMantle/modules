@@ -5,12 +5,13 @@ package base
 
 import (
 	"bytes"
-
 	"github.com/AssetMantle/modules/schema/data"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/constants"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
+	"strings"
 )
 
 var _ ids.DataID = (*DataID)(nil)
@@ -25,14 +26,10 @@ func (dataID *DataID) ValidateBasic() error {
 	return nil
 }
 func (dataID *DataID) GetTypeID() ids.StringID {
+	return NewStringID(constants.DataIDType)
 }
-func (dataID *DataID) FromString(idTypeAndValueString string) (ids.ID, error) {
-	idTypeString, idString := splitIDTypeAndValueStrings(idTypeAndValueString)
-
-	if idTypeString != dataID.GetTypeID().AsString() {
-		return PrototypeDataID(), errorConstants.IncorrectFormat.Wrapf("expected id type %s, got %s", dataID.GetTypeID().AsString(), idTypeString)
-	}
-
+func (dataID *DataID) FromString(idString string) (ids.ID, error) {
+	idString = strings.TrimSpace(idString)
 	if idString == "" {
 		return PrototypeDataID(), nil
 	}
@@ -53,7 +50,7 @@ func (dataID *DataID) FromString(idTypeAndValueString string) (ids.ID, error) {
 	}
 }
 func (dataID *DataID) AsString() string {
-	return joinIDTypeAndValueStrings(dataID.GetTypeID().AsString(), stringUtilities.JoinIDStrings(dataID.TypeID.AsString(), dataID.HashID.AsString()))
+	return stringUtilities.JoinIDStrings(dataID.TypeID.AsString(), dataID.HashID.AsString())
 }
 func (dataID *DataID) GetHashID() ids.HashID {
 	return dataID.HashID

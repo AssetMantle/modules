@@ -5,6 +5,7 @@ package base
 
 import (
 	"bytes"
+	"strings"
 
 	"github.com/AssetMantle/modules/schema/data/utilities"
 
@@ -22,6 +23,7 @@ func (stringData *StringData) ValidateBasic() error {
 	if !utilities.IsValidStringData(stringData.Value) {
 		return errorConstants.IncorrectFormat
 	}
+
 	return nil
 }
 
@@ -52,15 +54,10 @@ func (stringData *StringData) GenerateHashID() ids.HashID {
 	return baseIDs.GenerateHashID(stringData.Bytes())
 }
 func (stringData *StringData) AsString() string {
-	return joinDataTypeAndValueStrings(stringData.GetTypeID().AsString(), stringData.Value)
+	return stringData.Value
 }
-func (stringData *StringData) FromString(dataTypeAndValueString string) (data.Data, error) {
-	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
-
-	if dataTypeString != stringData.GetTypeID().AsString() {
-		return PrototypeStringData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for StringData, expected type identifier %s, got %s", stringData.GetTypeID().AsString(), dataTypeString)
-	}
-
+func (stringData *StringData) FromString(dataString string) (data.Data, error) {
+	dataString = strings.TrimSpace(dataString)
 	if dataString == "" {
 		return PrototypeStringData(), nil
 	}

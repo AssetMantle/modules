@@ -5,7 +5,6 @@ import (
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	idsConstants "github.com/AssetMantle/modules/schema/ids/constansts"
 	"github.com/AssetMantle/modules/schema/traits"
 )
 
@@ -13,30 +12,27 @@ type idGetter interface {
 	get() ids.ID
 }
 
-var _ idGetter = (*AnyID_AnyOwnableID)(nil)
 var _ idGetter = (*AnyID_AssetID)(nil)
-var _ idGetter = (*AnyID_CoinID)(nil)
 var _ idGetter = (*AnyID_ClassificationID)(nil)
+var _ idGetter = (*AnyID_CoinID)(nil)
 var _ idGetter = (*AnyID_DataID)(nil)
 var _ idGetter = (*AnyID_HashID)(nil)
 var _ idGetter = (*AnyID_IdentityID)(nil)
 var _ idGetter = (*AnyID_MaintainerID)(nil)
 var _ idGetter = (*AnyID_OrderID)(nil)
+var _ idGetter = (*AnyID_OwnableID)(nil)
 var _ idGetter = (*AnyID_PropertyID)(nil)
 var _ idGetter = (*AnyID_SplitID)(nil)
 var _ idGetter = (*AnyID_StringID)(nil)
 
-func (m *AnyID_AnyOwnableID) get() ids.ID {
-	return m.AnyOwnableID
-}
 func (m *AnyID_AssetID) get() ids.ID {
 	return m.AssetID
 }
-func (m *AnyID_CoinID) get() ids.ID {
-	return m.CoinID
-}
 func (m *AnyID_ClassificationID) get() ids.ID {
 	return m.ClassificationID
+}
+func (m *AnyID_CoinID) get() ids.ID {
+	return m.CoinID
 }
 func (m *AnyID_DataID) get() ids.ID {
 	return m.DataID
@@ -52,6 +48,9 @@ func (m *AnyID_MaintainerID) get() ids.ID {
 }
 func (m *AnyID_OrderID) get() ids.ID {
 	return m.OrderID
+}
+func (m *AnyID_OwnableID) get() ids.ID {
+	return m.OwnableID
 }
 func (m *AnyID_PropertyID) get() ids.ID {
 	return m.PropertyID
@@ -77,10 +76,10 @@ func (m *AnyID) FromString(idString string) (ids.ID, error) {
 		switch NewStringID(idTypeString).AsString() {
 		case PrototypeAssetID().GetTypeID().AsString():
 			id, err = PrototypeAssetID().FromString(idString)
-		case PrototypeCoinID().GetTypeID().AsString():
-			id, err = PrototypeCoinID().FromString(idString)
 		case PrototypeClassificationID().GetTypeID().AsString():
 			id, err = PrototypeClassificationID().FromString(idString)
+		case PrototypeCoinID().GetTypeID().AsString():
+			id, err = PrototypeCoinID().FromString(idString)
 		case PrototypeDataID().GetTypeID().AsString():
 			id, err = PrototypeDataID().FromString(idString)
 		case PrototypeHashID().GetTypeID().AsString():
@@ -111,7 +110,7 @@ func (m *AnyID) FromString(idString string) (ids.ID, error) {
 	return nil, errorConstants.IncorrectFormat.Wrapf("type identifier is missing")
 }
 func (m *AnyID) AsString() string {
-	return m.Impl.(idGetter).get().AsString()
+	return joinIDTypeAndValueStrings(m.Impl.(idGetter).get().GetTypeID().AsString(), m.Impl.(idGetter).get().AsString())
 }
 func (m *AnyID) Get() ids.ID {
 	return m.Impl.(idGetter).get()
@@ -129,6 +128,14 @@ func (m *AnyID) ValidateBasic() error {
 	return m.Impl.(idGetter).get().ValidateBasic()
 }
 
+func PrototypeAnyID() ids.AnyID {
+	return &AnyID{
+		Impl: &AnyID_StringID{
+			StringID: PrototypeStringID().(*StringID),
+		},
+	}
+}
+
 func idFromListable(listable traits.Listable) (ids.ID, error) {
 	switch listable.(type) {
 	case ids.ID:
@@ -139,10 +146,10 @@ func idFromListable(listable traits.Listable) (ids.ID, error) {
 	}
 }
 func joinIDTypeAndValueStrings(idTypes, idValue string) string {
-	return strings.Join([]string{idTypes, idValue}, idsConstants.IDTypeAndValueSeparator)
+	return strings.TrimSpace(idTypes) + idTypeAndValueSeparator + strings.TrimSpace(idValue)
 }
 func splitIDTypeAndValueStrings(idTypeAndValueString string) (idType, idValue string) {
-	if idTypeAndValue := strings.SplitN(idTypeAndValueString, idsConstants.IDTypeAndValueSeparator, 2); len(idTypeAndValue) == 1 {
+	if idTypeAndValue := strings.SplitN(idTypeAndValueString, idTypeAndValueSeparator, 2); len(idTypeAndValue) == 1 {
 		return strings.TrimSpace(idTypeAndValue[0]), ""
 	} else if len(idTypeAndValue) == 2 {
 		return strings.TrimSpace(idTypeAndValue[0]), strings.TrimSpace(idTypeAndValue[1])
@@ -150,3 +157,5 @@ func splitIDTypeAndValueStrings(idTypeAndValueString string) (idType, idValue st
 		return "", ""
 	}
 }
+
+const idTypeAndValueSeparator = "|"

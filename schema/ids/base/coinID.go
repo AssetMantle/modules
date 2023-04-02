@@ -2,10 +2,10 @@ package base
 
 import (
 	"bytes"
-
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/constants"
 	"github.com/AssetMantle/modules/schema/traits"
+	"strings"
 )
 
 var _ ids.CoinID = (*CoinID)(nil)
@@ -16,14 +16,10 @@ func (coinID *CoinID) ValidateBasic() error {
 func (coinID *CoinID) IsCoinID() {
 }
 func (coinID *CoinID) GetTypeID() ids.StringID {
+	return NewStringID(constants.CoinIDType)
 }
-func (coinID *CoinID) FromString(idTypeAndValueString string) (ids.ID, error) {
-	idTypeString, idString := splitIDTypeAndValueStrings(idTypeAndValueString)
-
-	if idTypeString != coinID.GetTypeID().AsString() {
-		return PrototypeCoinID(), errorConstants.IncorrectFormat.Wrapf("expected id type %s, got %s", coinID.GetTypeID().AsString(), idTypeString)
-	}
-
+func (coinID *CoinID) FromString(idString string) (ids.ID, error) {
+	idString = strings.TrimSpace(idString)
 	if idString == "" {
 		return PrototypeCoinID(), nil
 	}
@@ -37,7 +33,7 @@ func (coinID *CoinID) FromString(idTypeAndValueString string) (ids.ID, error) {
 	}
 }
 func (coinID *CoinID) AsString() string {
-	return joinIDTypeAndValueStrings(coinID.GetTypeID().AsString(), coinID.StringID.AsString())
+	return coinID.StringID.AsString()
 }
 
 // TODO: Verify
@@ -55,8 +51,8 @@ func (coinID *CoinID) Compare(listable traits.Listable) int {
 }
 func (coinID *CoinID) ToAnyID() ids.AnyID {
 	return &AnyID{
-		Impl: &AnyID_AnyOwnableID{
-			AnyOwnableID: coinID.ToAnyOwnableID().(*AnyOwnableID),
+		Impl: &AnyID_OwnableID{
+			OwnableID: coinID.ToAnyOwnableID().(*AnyOwnableID),
 		},
 	}
 }

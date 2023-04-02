@@ -7,10 +7,10 @@ import (
 	"bytes"
 	"encoding/binary"
 	"strconv"
+	"strings"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -30,15 +30,10 @@ func (heightData *HeightData) GetBondWeight() int64 {
 	return dataConstants.HeightDataWeight
 }
 func (heightData *HeightData) AsString() string {
-	return joinDataTypeAndValueStrings(heightData.GetTypeID().AsString(), strconv.FormatInt(heightData.Value.Get(), 10))
+	return strconv.FormatInt(heightData.Value.Get(), 10)
 }
-func (heightData *HeightData) FromString(dataTypeAndValueString string) (data.Data, error) {
-	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
-
-	if dataTypeString != heightData.GetTypeID().AsString() {
-		return PrototypeHeightData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for HeightData, expected type identifier %s, got %s", heightData.GetTypeID().AsString(), dataTypeString)
-	}
-
+func (heightData *HeightData) FromString(dataString string) (data.Data, error) {
+	dataString = strings.TrimSpace(dataString)
 	if dataString == "" {
 		return PrototypeHeightData(), nil
 	}
@@ -61,6 +56,7 @@ func (heightData *HeightData) Compare(listable traits.Listable) int {
 func (heightData *HeightData) Bytes() []byte {
 	Bytes := make([]byte, 8)
 	binary.LittleEndian.PutUint64(Bytes, uint64(heightData.Get().Get()))
+
 	return Bytes
 }
 func (heightData *HeightData) GetTypeID() ids.StringID {

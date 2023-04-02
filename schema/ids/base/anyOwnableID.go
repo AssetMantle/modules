@@ -34,16 +34,16 @@ func (m *AnyOwnableID) GetTypeID() ids.StringID {
 	return m.Impl.(ownableIDGetter).get().GetTypeID()
 }
 func (m *AnyOwnableID) FromString(idString string) (ids.ID, error) {
-	idTypeString, _ := splitIDTypeAndValueStrings(idString)
+	idTypeString, valueString := splitIDTypeAndValueStrings(idString)
 	if idTypeString != "" {
 		var id ids.ID
 		var err error
 
 		switch NewStringID(idTypeString).AsString() {
 		case PrototypeAssetID().GetTypeID().AsString():
-			id, err = PrototypeAssetID().FromString(idString)
+			id, err = PrototypeAssetID().FromString(valueString)
 		case PrototypeCoinID().GetTypeID().AsString():
-			id, err = PrototypeCoinID().FromString(idString)
+			id, err = PrototypeCoinID().FromString(valueString)
 		default:
 			id, err = nil, errorConstants.IncorrectFormat.Wrapf("type identifier is not recognised")
 		}
@@ -58,7 +58,7 @@ func (m *AnyOwnableID) FromString(idString string) (ids.ID, error) {
 	return nil, errorConstants.IncorrectFormat.Wrapf("type identifier is missing")
 }
 func (m *AnyOwnableID) AsString() string {
-	return m.Impl.(ownableIDGetter).get().AsString()
+	return joinIDTypeAndValueStrings(m.Impl.(ownableIDGetter).get().GetTypeID().AsString(), m.Impl.(ownableIDGetter).get().AsString())
 }
 func (m *AnyOwnableID) Bytes() []byte {
 	return m.Impl.(ownableIDGetter).get().Bytes()
