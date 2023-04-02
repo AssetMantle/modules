@@ -68,34 +68,34 @@ func (m *AnyID) GetTypeID() ids.StringID {
 	return m.Impl.(idGetter).get().GetTypeID()
 }
 func (m *AnyID) FromString(idString string) (ids.ID, error) {
-	idTypeString, _ := splitIDTypeAndValueStrings(idString)
+	idTypeString, idValueString := splitIDTypeAndValueStrings(idString)
 	if idTypeString != "" {
 		var id ids.ID
 		var err error
 
 		switch NewStringID(idTypeString).AsString() {
 		case PrototypeAssetID().GetTypeID().AsString():
-			id, err = PrototypeAssetID().FromString(idString)
+			id, err = PrototypeAssetID().FromString(idValueString)
 		case PrototypeClassificationID().GetTypeID().AsString():
-			id, err = PrototypeClassificationID().FromString(idString)
+			id, err = PrototypeClassificationID().FromString(idValueString)
 		case PrototypeCoinID().GetTypeID().AsString():
-			id, err = PrototypeCoinID().FromString(idString)
+			id, err = PrototypeCoinID().FromString(idValueString)
 		case PrototypeDataID().GetTypeID().AsString():
-			id, err = PrototypeDataID().FromString(idString)
+			id, err = PrototypeDataID().FromString(idValueString)
 		case PrototypeHashID().GetTypeID().AsString():
-			id, err = PrototypeHashID().FromString(idString)
+			id, err = PrototypeHashID().FromString(idValueString)
 		case PrototypeIdentityID().GetTypeID().AsString():
-			id, err = PrototypeIdentityID().FromString(idString)
+			id, err = PrototypeIdentityID().FromString(idValueString)
 		case PrototypeMaintainerID().GetTypeID().AsString():
-			id, err = PrototypeMaintainerID().FromString(idString)
+			id, err = PrototypeMaintainerID().FromString(idValueString)
 		case PrototypeOrderID().GetTypeID().AsString():
-			id, err = PrototypeOrderID().FromString(idString)
+			id, err = PrototypeOrderID().FromString(idValueString)
 		case PrototypePropertyID().GetTypeID().AsString():
-			id, err = PrototypePropertyID().FromString(idString)
+			id, err = PrototypePropertyID().FromString(idValueString)
 		case PrototypeSplitID().GetTypeID().AsString():
-			id, err = PrototypeSplitID().FromString(idString)
+			id, err = PrototypeSplitID().FromString(idValueString)
 		case PrototypeStringID().GetTypeID().AsString():
-			id, err = PrototypeStringID().FromString(idString)
+			id, err = PrototypeStringID().FromString(idValueString)
 		default:
 			id, err = nil, errorConstants.IncorrectFormat.Wrapf("type identifier is not recognised")
 		}
