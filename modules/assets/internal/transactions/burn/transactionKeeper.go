@@ -5,9 +5,6 @@ package burn
 
 import (
 	"context"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
@@ -21,6 +18,7 @@ import (
 	"github.com/AssetMantle/modules/schema/properties"
 	"github.com/AssetMantle/modules/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -50,7 +48,6 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err
 	}
-
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
 
 	Mappable := assets.Get(key.NewKey(message.AssetID))
