@@ -37,7 +37,7 @@ func (mesaProperty *MesaProperty) GetKey() ids.StringID {
 	return mesaProperty.ID.GetKey()
 }
 func (mesaProperty *MesaProperty) GetType() ids.StringID {
-	return mesaProperty.ID.GetType()
+	return mesaProperty.ID.GetTypeID()
 }
 func (mesaProperty *MesaProperty) GetBondWeight() int64 {
 	if zeroData, err := base.PrototypeAnyData().FromString(mesaProperty.GetType().AsString()); err != nil {
@@ -90,7 +90,7 @@ func NewEmptyMesaPropertyFromID(propertyID ids.PropertyID) properties.MesaProper
 }
 func NewMesaProperty(key ids.StringID, data data.Data) properties.MesaProperty {
 	return &MesaProperty{
-		ID:     baseIDs.NewPropertyID(key, data.GetType()).(*baseIDs.PropertyID),
+		ID:     baseIDs.NewPropertyID(key, data.GetTypeID()).(*baseIDs.PropertyID),
 		DataID: data.GetID().(*baseIDs.DataID),
 	}
 }

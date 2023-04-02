@@ -4,9 +4,7 @@
 package ids
 
 type PropertyID interface {
-	GetKey() StringID
-	GetType() StringID
 	ID
+	GetKey() StringID
 	IsPropertyID()
-	AsString() string
 }

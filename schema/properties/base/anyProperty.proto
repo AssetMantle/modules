@@ -8,7 +8,7 @@ import "gogoproto/gogo.proto";
 message AnyProperty {
   option (gogoproto.goproto_getters) = false;
 
-  oneof Impl {
+  oneof impl {
     properties.MesaProperty mesa_property = 1;
     properties.MetaProperty meta_property = 2;
   }

@@ -5,11 +5,12 @@ package base
 
 import (
 	"bytes"
-
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/constants"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
+	"strings"
 )
 
 var _ ids.PropertyID = (*PropertyID)(nil)
@@ -23,16 +24,35 @@ func (propertyID *PropertyID) ValidateBasic() error {
 	}
 	return nil
 }
+func (propertyID *PropertyID) GetTypeID() ids.StringID {
+	return NewStringID(constants.PropertyIDType)
+}
+func (propertyID *PropertyID) FromString(idString string) (ids.ID, error) {
+	idString = strings.TrimSpace(idString)
+	if idString == "" {
+		return PrototypePropertyID(), nil
+	}
 
+	keyIDAndTypeID := stringUtilities.SplitCompositeIDString(idString)
+	if len(keyIDAndTypeID) != 2 {
+		return PrototypePropertyID(), errorConstants.IncorrectFormat.Wrapf("expected composite id")
+	} else if keyID, err := PrototypeStringID().FromString(keyIDAndTypeID[0]); err != nil {
+		return PrototypePropertyID(), err
+	} else if typeID, err := PrototypeStringID().FromString(keyIDAndTypeID[1]); err != nil {
+		return PrototypePropertyID(), err
+	} else {
+		return &PropertyID{
+			KeyID:  keyID.(*StringID),
+			TypeID: typeID.(*StringID),
+		}, nil
+	}
+}
 func (propertyID *PropertyID) AsString() string {
 	return stringUtilities.JoinIDStrings(propertyID.KeyID.AsString(), propertyID.TypeID.AsString())
 }
 func (propertyID *PropertyID) IsPropertyID() {}
 func (propertyID *PropertyID) GetKey() ids.StringID {
 	return propertyID.KeyID
-}
-func (propertyID *PropertyID) GetType() ids.StringID {
-	return propertyID.TypeID
 }
 func (propertyID *PropertyID) Bytes() []byte {
 	var Bytes []byte
@@ -58,6 +78,12 @@ func propertyIDFromInterface(listable traits.Listable) *PropertyID {
 		return value
 	default:
 		panic(errorConstants.IncorrectFormat.Wrapf("expected *PropertyID, got %T", listable))
+	}
+}
+func PrototypePropertyID() *PropertyID {
+	return &PropertyID{
+		KeyID:  PrototypeStringID().(*StringID),
+		TypeID: PrototypeStringID().(*StringID),
 	}
 }
 

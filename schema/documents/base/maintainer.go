@@ -4,8 +4,8 @@ import (
 	"github.com/AssetMantle/modules/schema/data"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
+	"github.com/AssetMantle/modules/schema/documents/constants"
 	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/constansts"
 	"github.com/AssetMantle/modules/schema/lists"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
@@ -46,29 +46,9 @@ func (maintainer maintainer) GetPermissions() data.ListData {
 
 	return constantProperties.PermissionsProperty.GetData().Get().(data.ListData)
 }
-func (maintainer maintainer) CanMintAsset() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Mint))
-	return can
-}
-func (maintainer maintainer) CanBurnAsset() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Burn))
-	return can
-}
-func (maintainer maintainer) CanRenumerateAsset() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Renumerate))
-	return can
-}
-func (maintainer maintainer) CanAddMaintainer() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Add))
-	return can
-}
-func (maintainer maintainer) CanRemoveMaintainer() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Remove))
-	return can
-}
-func (maintainer maintainer) CanMutateMaintainer() bool {
-	_, can := maintainer.GetPermissions().Search(baseData.NewIDData(constansts.Mutate))
-	return can
+func (maintainer maintainer) IsPermitted(permissionID ids.StringID) bool {
+	_, found := maintainer.GetPermissions().Search(baseData.NewIDData(permissionID))
+	return found
 }
 func (maintainer maintainer) MaintainsProperty(propertyID ids.PropertyID) bool {
 	_, found := maintainer.GetMaintainedProperties().Search(baseData.NewIDData(propertyID))
@@ -86,7 +66,7 @@ func idListToListData(idList lists.IDList) data.ListData {
 
 func NewMaintainer(identityID ids.IdentityID, maintainedClassificationID ids.ClassificationID, maintainedPropertyIDList lists.IDList, permissions lists.IDList) documents.Maintainer {
 	return maintainer{
-		Document: NewDocument(constansts.MaintainerClassificationID,
+		Document: NewDocument(constants.MaintainerClassificationID,
 			baseQualified.NewImmutables(baseLists.NewPropertyList(
 				baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(identityID)),
 				baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(maintainedClassificationID)),

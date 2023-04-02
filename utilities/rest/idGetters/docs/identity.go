@@ -10,7 +10,6 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/ids/constansts"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	"github.com/AssetMantle/modules/schema/properties"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
@@ -34,8 +33,10 @@ func nubIDHandler(context client.Context) http.HandlerFunc {
 		nubID := baseIDs.NewStringID(req.NubID)
 		immutables := base.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.NubIDProperty.GetKey(), baseData.NewIDData(nubID))))
 
-		// TODO ***** add nub classificationID to genesis
-		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewIdentityID(constansts.NubClassificationID, immutables).AsString(), "", nil))
+		// TODO move to proper package
+		var NubClassificationID = baseIDs.NewClassificationID(base.NewImmutables(baseLists.NewPropertyList(constants.NubIDProperty)), base.NewMutables(baseLists.NewPropertyList(constants.AuthenticationProperty)))
+
+		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewIdentityID(NubClassificationID, immutables).AsString(), "", nil))
 	}
 }
 

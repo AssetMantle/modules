@@ -241,17 +241,17 @@ func Test_decData_GetType(t *testing.T) {
 		fields fields
 		want   ids.StringID
 	}{
-		{"+ve with nil", fields{}, dataConstants.DecDataID},
-		{"+ve with zero dec", fields{sdkTypes.ZeroDec()}, dataConstants.DecDataID},
-		{"+ve", fields{sdkTypes.NewDec(100)}, dataConstants.DecDataID},
-		{"+ve with -ve Dec", fields{sdkTypes.NewDec(-100)}, dataConstants.DecDataID},
+		{"+ve with nil", fields{}, dataConstants.DecDataTypeID},
+		{"+ve with zero dec", fields{sdkTypes.ZeroDec()}, dataConstants.DecDataTypeID},
+		{"+ve", fields{sdkTypes.NewDec(100)}, dataConstants.DecDataTypeID},
+		{"+ve with -ve Dec", fields{sdkTypes.NewDec(-100)}, dataConstants.DecDataTypeID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			decData := &DecData{
 				Value: tt.fields.Value.String(),
 			}
-			assert.Equalf(t, tt.want, decData.GetType(), "GetType()")
+			assert.Equalf(t, tt.want, decData.GetTypeID(), "GetTypeID()")
 		})
 	}
 }

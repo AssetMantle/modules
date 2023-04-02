@@ -160,16 +160,16 @@ func Test_stringData_GetType(t *testing.T) {
 		fields fields
 		want   ids.StringID
 	}{
-		{"+ve data", fields{"data"}, idsConstants.StringDataID},
-		{"data with special char", fields{"data_!@#$%^&*("}, idsConstants.StringDataID},
-		{"empty string", fields{""}, idsConstants.StringDataID},
+		{"+ve data", fields{"data"}, idsConstants.StringDataTypeID},
+		{"data with special char", fields{"data_!@#$%^&*("}, idsConstants.StringDataTypeID},
+		{"empty string", fields{""}, idsConstants.StringDataTypeID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			stringData := &StringData{
 				Value: tt.fields.Value,
 			}
-			assert.Equalf(t, tt.want, stringData.GetType(), "GetType()")
+			assert.Equalf(t, tt.want, stringData.GetTypeID(), "GetTypeID()")
 		})
 	}
 }

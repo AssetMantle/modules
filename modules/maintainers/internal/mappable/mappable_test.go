@@ -13,9 +13,9 @@ import (
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents"
 	"github.com/AssetMantle/modules/schema/documents/base"
+	"github.com/AssetMantle/modules/schema/documents/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/ids/constansts"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
@@ -78,7 +78,7 @@ func Test_mappable_GetKey(t *testing.T) {
 		fields fields
 		want   helpers.Key
 	}{
-		{"+ve", fields{testMaintainer}, key.NewKey(baseIDs.NewMaintainerID(constansts.MaintainerClassificationID,
+		{"+ve", fields{testMaintainer}, key.NewKey(baseIDs.NewMaintainerID(constants.MaintainerClassificationID,
 			baseQualified.NewImmutables(baseLists.NewPropertyList(
 				baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(testMaintainer.GetMaintainedClassificationID())),
 				baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(testMaintainer.GetIdentityID())),

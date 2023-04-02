@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"strconv"
+	"strings"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
@@ -25,15 +26,10 @@ func (numberData *NumberData) GetBondWeight() int64 {
 	return dataConstants.NumberDataWeight
 }
 func (numberData *NumberData) AsString() string {
-	return joinDataTypeAndValueStrings(numberData.GetType().AsString(), strconv.FormatInt(numberData.Value, 10))
+	return strconv.FormatInt(numberData.Value, 10)
 }
-func (numberData *NumberData) FromString(dataTypeAndValueString string) (data.Data, error) {
-	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
-
-	if dataTypeString != numberData.GetType().AsString() {
-		return PrototypeStringData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for NumberData, expected type identifier %s, got %s", numberData.GetType().AsString(), dataTypeString)
-	}
-
+func (numberData *NumberData) FromString(dataString string) (data.Data, error) {
+	dataString = strings.TrimSpace(dataString)
 	if dataString == "" {
 		return PrototypeNumberData(), nil
 	}
@@ -48,10 +44,11 @@ func (numberData *NumberData) FromString(dataTypeAndValueString string) (data.Da
 func (numberData *NumberData) Bytes() []byte {
 	Bytes := make([]byte, 8)
 	binary.LittleEndian.PutUint64(Bytes, uint64(numberData.Get()))
+
 	return Bytes
 }
-func (numberData *NumberData) GetType() ids.StringID {
-	return dataConstants.NumberDataID
+func (numberData *NumberData) GetTypeID() ids.StringID {
+	return dataConstants.NumberDataTypeID
 }
 func (numberData *NumberData) ZeroValue() data.Data {
 	return NewNumberData(0)
@@ -60,6 +57,7 @@ func (numberData *NumberData) GenerateHashID() ids.HashID {
 	if numberData.Compare(numberData.ZeroValue()) == 0 {
 		return baseIDs.GenerateHashID()
 	}
+
 	return baseIDs.GenerateHashID(numberData.Bytes())
 }
 func (numberData *NumberData) ToAnyData() data.AnyData {

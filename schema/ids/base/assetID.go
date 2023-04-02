@@ -5,17 +5,35 @@ package base
 
 import (
 	"bytes"
-
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
+	"strings"
 )
 
 var _ ids.AssetID = (*AssetID)(nil)
 
 func (assetID *AssetID) ValidateBasic() error {
 	return assetID.HashID.ValidateBasic()
+}
+func (assetID *AssetID) GetTypeID() ids.StringID {
+	return NewStringID(constants.AssetIDType)
+}
+func (assetID *AssetID) FromString(idString string) (ids.ID, error) {
+	idString = strings.TrimSpace(idString)
+	if idString == "" {
+		return PrototypeAssetID(), nil
+	}
+
+	if hashID, err := PrototypeHashID().FromString(idString); err != nil {
+		return PrototypeAssetID(), err
+	} else {
+		return &AssetID{
+			HashID: hashID.(*HashID),
+		}, nil
+	}
 }
 func (assetID *AssetID) AsString() string {
 	return assetID.HashID.AsString()

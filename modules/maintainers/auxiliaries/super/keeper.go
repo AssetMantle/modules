@@ -11,10 +11,10 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/utilities"
 	baseData "github.com/AssetMantle/modules/schema/data/base"
 	"github.com/AssetMantle/modules/schema/documents/base"
+	"github.com/AssetMantle/modules/schema/documents/constants"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/ids/constansts"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
@@ -29,7 +29,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	maintainerID := baseIDs.NewMaintainerID(constansts.MaintainerClassificationID,
+	maintainerID := baseIDs.NewMaintainerID(constants.MaintainerClassificationID,
 		baseQualified.NewImmutables(baseLists.NewPropertyList(
 			baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.MaintainedClassificationID)),
 			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.ToIdentityID)),

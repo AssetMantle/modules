@@ -13,7 +13,7 @@ import (
 var _ lists.PropertyList = (*PropertyList)(nil)
 
 func (propertyList *PropertyList) ValidateBasic() error {
-	for _, property := range propertyList.PropertyList {
+	for _, property := range propertyList.Properties {
 		if err := property.ValidateBasic(); err != nil {
 			return err
 		}
@@ -28,21 +28,21 @@ func (propertyList *PropertyList) GetProperty(propertyID ids.PropertyID) propert
 	return nil
 }
 func (propertyList *PropertyList) GetList() []properties.AnyProperty {
-	Properties := make([]properties.AnyProperty, len(propertyList.PropertyList))
-	for i, listable := range propertyList.PropertyList {
+	Properties := make([]properties.AnyProperty, len(propertyList.Properties))
+	for i, listable := range propertyList.Properties {
 		Properties[i] = listable
 	}
 	return Properties
 }
 func (propertyList *PropertyList) Search(property properties.Property) (index int, found bool) {
 	index = sort.Search(
-		len(propertyList.PropertyList),
+		len(propertyList.Properties),
 		func(i int) bool {
-			return propertyList.PropertyList[i].Compare(property) >= 0
+			return propertyList.Properties[i].Compare(property) >= 0
 		},
 	)
 
-	if index < len(propertyList.PropertyList) && propertyList.PropertyList[index].Compare(property) == 0 {
+	if index < len(propertyList.Properties) && propertyList.Properties[index].Compare(property) == 0 {
 		return index, true
 	}
 
@@ -59,11 +59,11 @@ func (propertyList PropertyList) Add(properties ...properties.Property) lists.Pr
 	updatedList := propertyList
 	for _, listable := range properties {
 		if index, found := updatedList.Search(listable); !found {
-			updatedList.PropertyList = append(updatedList.PropertyList, listable.ToAnyProperty().(*base.AnyProperty))
-			copy(updatedList.PropertyList[index+1:], updatedList.PropertyList[index:])
-			updatedList.PropertyList[index] = listable.ToAnyProperty().(*base.AnyProperty)
+			updatedList.Properties = append(updatedList.Properties, listable.ToAnyProperty().(*base.AnyProperty))
+			copy(updatedList.Properties[index+1:], updatedList.Properties[index:])
+			updatedList.Properties[index] = listable.ToAnyProperty().(*base.AnyProperty)
 		} else {
-			updatedList.PropertyList[index] = listable.ToAnyProperty().(*base.AnyProperty)
+			updatedList.Properties[index] = listable.ToAnyProperty().(*base.AnyProperty)
 		}
 	}
 	return &updatedList
@@ -73,7 +73,7 @@ func (propertyList PropertyList) Remove(properties ...properties.Property) lists
 
 	for _, listable := range properties {
 		if index, found := updatedList.Search(listable); found {
-			updatedList.PropertyList = append(updatedList.PropertyList[:index], updatedList.PropertyList[index+1:]...)
+			updatedList.Properties = append(updatedList.Properties[:index], updatedList.Properties[index+1:]...)
 		}
 	}
 
@@ -86,7 +86,7 @@ func (propertyList PropertyList) Mutate(properties ...properties.Property) lists
 
 	for _, listable := range properties {
 		if index, found := updatedList.Search(listable); found {
-			updatedList.PropertyList[index] = listable.ToAnyProperty().(*base.AnyProperty)
+			updatedList.Properties[index] = listable.ToAnyProperty().(*base.AnyProperty)
 		}
 	}
 
@@ -94,7 +94,7 @@ func (propertyList PropertyList) Mutate(properties ...properties.Property) lists
 }
 func (propertyList *PropertyList) ScrubData() lists.PropertyList {
 	newPropertyList := NewPropertyList()
-	for _, listable := range propertyList.PropertyList {
+	for _, listable := range propertyList.Properties {
 		if property := listable; property.IsMeta() {
 			newPropertyList = newPropertyList.Add(property.Get().(properties.MetaProperty).ScrubData())
 		} else {
@@ -104,8 +104,8 @@ func (propertyList *PropertyList) ScrubData() lists.PropertyList {
 	return newPropertyList
 }
 func (propertyList *PropertyList) sort() lists.PropertyList {
-	sort.Slice(propertyList.PropertyList, func(i, j int) bool {
-		return propertyList.PropertyList[i].Compare(propertyList.PropertyList[j]) <= 0
+	sort.Slice(propertyList.Properties, func(i, j int) bool {
+		return propertyList.Properties[i].Compare(propertyList.Properties[j]) <= 0
 	})
 
 	return propertyList

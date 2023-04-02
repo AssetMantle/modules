@@ -1,7 +1,7 @@
 package utilities
 
 import (
-	"github.com/AssetMantle/modules/schema/ids/constansts"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/schema/lists"
 	"github.com/AssetMantle/modules/schema/lists/base"
 )
@@ -10,22 +10,22 @@ func SetPermissions(mint bool, burn bool, renumerate bool, add bool, remove bool
 	permissions := base.NewIDList()
 
 	if mint {
-		permissions = permissions.Add(constansts.Mint)
+		permissions = permissions.Add(module.Mint)
 	}
 	if burn {
-		permissions = permissions.Add(constansts.Burn)
+		permissions = permissions.Add(module.Burn)
 	}
 	if renumerate {
-		permissions = permissions.Add(constansts.Renumerate)
+		permissions = permissions.Add(module.Renumerate)
 	}
 	if add {
-		permissions = permissions.Add(constansts.Add)
+		permissions = permissions.Add(module.Add)
 	}
 	if remove {
-		permissions = permissions.Add(constansts.Remove)
+		permissions = permissions.Add(module.Remove)
 	}
 	if mutate {
-		permissions = permissions.Add(constansts.Mutate)
+		permissions = permissions.Add(module.Mutate)
 	}
 
 	return permissions

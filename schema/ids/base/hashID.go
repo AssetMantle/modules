@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/base64"
+	"github.com/AssetMantle/modules/schema/ids/constants"
 	"sort"
+	"strings"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
@@ -23,6 +25,23 @@ func (hashID *HashID) ValidateBasic() error {
 		return errorConstants.IncorrectFormat
 	}
 	return nil
+}
+func (hashID *HashID) GetTypeID() ids.StringID {
+	return NewStringID(constants.HashIDType)
+}
+func (hashID *HashID) FromString(idString string) (ids.ID, error) {
+	idString = strings.TrimSpace(idString)
+	if idString == "" {
+		return PrototypeHashID(), nil
+	}
+
+	if hashBytes, err := base64.URLEncoding.DecodeString(idString); err != nil {
+		return PrototypeHashID(), err
+	} else {
+		return &HashID{
+			IDBytes: hashBytes,
+		}, nil
+	}
 }
 
 // TODO test if nil and empty result in ""

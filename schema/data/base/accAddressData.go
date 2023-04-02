@@ -5,12 +5,12 @@ package base
 
 import (
 	"bytes"
+	"strings"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -32,18 +32,14 @@ func (accAddressData *AccAddressData) Compare(listable traits.Listable) int {
 	if err != nil {
 		panic(err)
 	}
+
 	return bytes.Compare(accAddressData.Bytes(), compareAccAddressData.Bytes())
 }
 func (accAddressData *AccAddressData) AsString() string {
-	return joinDataTypeAndValueStrings(accAddressData.GetType().AsString(), sdkTypes.AccAddress(accAddressData.Value).String())
+	return sdkTypes.AccAddress(accAddressData.Value).String()
 }
-func (accAddressData *AccAddressData) FromString(dataTypeAndValueString string) (data.Data, error) {
-	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
-
-	if dataTypeString != accAddressData.GetType().AsString() {
-		return PrototypeAccAddressData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for AccAddressData, expected type identifier %s, got %s", accAddressData.GetType().AsString(), dataTypeString)
-	}
-
+func (accAddressData *AccAddressData) FromString(dataString string) (data.Data, error) {
+	dataString = strings.TrimSpace(dataString)
 	if dataString == "" {
 		return PrototypeAccAddressData(), nil
 	}
@@ -58,8 +54,8 @@ func (accAddressData *AccAddressData) FromString(dataTypeAndValueString string) 
 func (accAddressData *AccAddressData) Bytes() []byte {
 	return sdkTypes.AccAddress(accAddressData.Value).Bytes()
 }
-func (accAddressData *AccAddressData) GetType() ids.StringID {
-	return dataConstants.AccAddressDataID
+func (accAddressData *AccAddressData) GetTypeID() ids.StringID {
+	return dataConstants.AccAddressDataTypeID
 }
 func (accAddressData *AccAddressData) ZeroValue() data.Data {
 	return PrototypeAccAddressData()
@@ -84,10 +80,6 @@ func (accAddressData *AccAddressData) ToAnyData() data.AnyData {
 
 func PrototypeAccAddressData() data.Data {
 	return NewAccAddressData(sdkTypes.AccAddress{})
-}
-
-func GenerateAccAddressData(value sdkTypes.AccAddress) data.Data {
-	return NewAccAddressData(value)
 }
 
 func NewAccAddressData(value sdkTypes.AccAddress) data.AccAddressData {

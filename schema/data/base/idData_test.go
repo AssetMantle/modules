@@ -156,14 +156,14 @@ func Test_idData_GetType(t *testing.T) {
 		fields fields
 		want   ids.StringID
 	}{
-		{"+ve", fields{baseIDs.NewStringID("Data")}, dataConstants.IDDataID},
+		{"+ve", fields{baseIDs.NewStringID("Data")}, dataConstants.IDDataTypeID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			idData := IDData{
 				Value: tt.fields.Value.ToAnyID().(*baseIDs.AnyID),
 			}
-			assert.Equalf(t, tt.want, idData.GetType(), "GetType()")
+			assert.Equalf(t, tt.want, idData.GetTypeID(), "GetTypeID()")
 		})
 	}
 }

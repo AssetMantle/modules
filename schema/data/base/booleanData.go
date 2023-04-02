@@ -6,10 +6,10 @@ package base
 import (
 	"bytes"
 	"strconv"
+	"strings"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -41,15 +41,10 @@ func (booleanData *BooleanData) Compare(listable traits.Listable) int {
 	}
 }
 func (booleanData *BooleanData) AsString() string {
-	return joinDataTypeAndValueStrings(booleanData.GetType().AsString(), strconv.FormatBool(booleanData.Value))
+	return strconv.FormatBool(booleanData.Value)
 }
-func (booleanData *BooleanData) FromString(dataTypeAndValueString string) (data.Data, error) {
-	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
-
-	if dataTypeString != booleanData.GetType().AsString() {
-		return PrototypeBooleanData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for BooleanData, expected type identifier %s, got %s", booleanData.GetType().AsString(), dataTypeString)
-	}
-
+func (booleanData *BooleanData) FromString(dataString string) (data.Data, error) {
+	dataString = strings.TrimSpace(dataString)
 	if dataString == "" {
 		return PrototypeBooleanData(), nil
 	}
@@ -67,8 +62,8 @@ func (booleanData *BooleanData) Bytes() []byte {
 	}
 	return []byte{0x0}
 }
-func (booleanData *BooleanData) GetType() ids.StringID {
-	return dataConstants.BooleanDataID
+func (booleanData *BooleanData) GetTypeID() ids.StringID {
+	return dataConstants.BooleanDataTypeID
 }
 func (booleanData *BooleanData) ZeroValue() data.Data {
 	return NewBooleanData(false)

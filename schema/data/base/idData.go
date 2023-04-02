@@ -5,10 +5,10 @@ package base
 
 import (
 	"bytes"
+	"strings"
 
 	"github.com/AssetMantle/modules/schema/data"
 	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/schema/traits"
@@ -26,20 +26,20 @@ func (idData *IDData) GetBondWeight() int64 {
 	return dataConstants.IDDataWeight
 }
 func (idData *IDData) AsString() string {
-	return joinDataTypeAndValueStrings(idData.GetType().AsString(), idData.Value.AsString())
+	return idData.Value.AsString()
 }
-func (idData *IDData) FromString(dataTypeAndValueString string) (data.Data, error) {
-	dataTypeString, dataString := splitDataTypeAndValueStrings(dataTypeAndValueString)
-
-	if dataTypeString != idData.GetType().AsString() {
-		return PrototypeIDData(), errorConstants.IncorrectFormat.Wrapf("incorrect format for IDData, expected type identifier %s, got %s", idData.GetType().AsString(), dataTypeString)
-	}
-
+func (idData *IDData) FromString(dataString string) (data.Data, error) {
+	dataString = strings.TrimSpace(dataString)
 	if dataString == "" {
 		return PrototypeIDData(), nil
 	}
 
-	return NewIDData(baseIDs.NewStringID(dataString)), nil
+	id, err := baseIDs.PrototypeAnyID().FromString(dataString)
+	if err != nil {
+		return PrototypeIDData(), err
+	}
+
+	return NewIDData(id), nil
 }
 func (idData *IDData) Compare(listable traits.Listable) int {
 	compareIDData, err := dataFromListable(listable)
@@ -52,8 +52,8 @@ func (idData *IDData) Compare(listable traits.Listable) int {
 func (idData *IDData) Bytes() []byte {
 	return idData.Value.Bytes()
 }
-func (idData *IDData) GetType() ids.StringID {
-	return dataConstants.IDDataID
+func (idData *IDData) GetTypeID() ids.StringID {
+	return dataConstants.IDDataTypeID
 }
 func (idData *IDData) ZeroValue() data.Data {
 	return PrototypeIDData()

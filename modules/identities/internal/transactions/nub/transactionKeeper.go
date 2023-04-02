@@ -16,7 +16,6 @@ import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/ids/constansts"
 	baseLists "github.com/AssetMantle/modules/schema/lists/base"
 	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
 	"github.com/AssetMantle/modules/schema/properties/constants"
@@ -27,6 +26,9 @@ type transactionKeeper struct {
 	mapper          helpers.Mapper
 	defineAuxiliary helpers.Auxiliary
 }
+
+// TODO move to proper package
+var NubClassificationID = baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList(constants.NubIDProperty)), baseQualified.NewMutables(baseLists.NewPropertyList(constants.AuthenticationProperty)))
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
@@ -44,14 +46,14 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	// TODO ***** add nub classificationID to genesis
 
-	identityID := baseIDs.NewIdentityID(constansts.NubClassificationID, immutables)
+	identityID := baseIDs.NewIdentityID(NubClassificationID, immutables)
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 	if identities.Get(key.NewKey(identityID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("identity with ID %s already exists", identityID.AsString())
 	}
 
-	identities.Add(mappable.NewMappable(base.NewIdentity(constansts.NubClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(address))))))))
+	identities.Add(mappable.NewMappable(base.NewIdentity(NubClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(address))))))))
 
 	return newTransactionResponse(identityID.AsString()), nil
 }

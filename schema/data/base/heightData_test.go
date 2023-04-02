@@ -160,15 +160,15 @@ func Test_heightData_GetType(t *testing.T) {
 		want   ids.ID
 	}{
 
-		{"Test for an integer value", fields{baseTypes.NewHeight(100).(*baseTypes.Height)}, idsConstants.HeightDataID},
+		{"Test for an integer value", fields{baseTypes.NewHeight(100).(*baseTypes.Height)}, idsConstants.HeightDataTypeID},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			heightData := &HeightData{
 				Value: tt.fields.Value,
 			}
-			if got := heightData.GetType(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetType() = %v, want %v", got, tt.want)
+			if got := heightData.GetTypeID(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetTypeID() = %v, want %v", got, tt.want)
 			}
 		})
 	}

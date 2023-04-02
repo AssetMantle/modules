@@ -2,17 +2,13 @@ package base
 
 import (
 	"bytes"
-
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/constants"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
+	"strings"
 )
-
-// type splitID struct {
-//	OwnerID   ids.IdentityID
-//	OwnableID ids.OwnableID
-// }
 
 var _ ids.SplitID = (*SplitID)(nil)
 
@@ -24,6 +20,30 @@ func (splitID *SplitID) ValidateBasic() error {
 		return err
 	}
 	return nil
+}
+func (splitID *SplitID) GetTypeID() ids.StringID {
+	return NewStringID(constants.SplitIDType)
+}
+func (splitID *SplitID) FromString(idString string) (ids.ID, error) {
+	idString = strings.TrimSpace(idString)
+	if idString == "" {
+		return PrototypeSplitID(), nil
+	}
+
+	ownerIDAndOwnableID := stringUtilities.SplitCompositeIDString(idString)
+	if len(ownerIDAndOwnableID) != 2 {
+		return PrototypeSplitID(), errorConstants.IncorrectFormat.Wrapf("expected composite id")
+	} else if ownerID, err := PrototypeIdentityID().FromString(ownerIDAndOwnableID[0]); err != nil {
+		return PrototypeSplitID(), err
+
+	} else if ownableID, err := PrototypeOwnableID().FromString(ownerIDAndOwnableID[1]); err != nil {
+		return PrototypeSplitID(), err
+	} else {
+		return &SplitID{
+			OwnerID:   ownerID.(*IdentityID),
+			OwnableID: ownableID.(*AnyOwnableID),
+		}, nil
+	}
 }
 func (splitID *SplitID) AsString() string {
 	return stringUtilities.JoinIDStrings(splitID.OwnerID.AsString(), splitID.OwnableID.AsString())

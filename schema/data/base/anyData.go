@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/AssetMantle/modules/schema/data"
-	dataConstants "github.com/AssetMantle/modules/schema/data/constants"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
 	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
@@ -47,34 +46,34 @@ func (x *AnyData) ValidateBasic() error {
 }
 func (x *AnyData) IsAnyData() {}
 func (x *AnyData) AsString() string {
-	return x.Impl.(getter).get().AsString()
+	return joinDataTypeAndValueStrings(x.Impl.(getter).get().GetTypeID().AsString(), x.Impl.(getter).get().AsString())
 }
 func (x *AnyData) FromString(dataString string) (data.Data, error) {
-	dataTypeString, _ := splitDataTypeAndValueStrings(dataString)
+	dataTypeString, dataValueString := splitDataTypeAndValueStrings(dataString)
 	if dataTypeString != "" {
 		var Data data.Data
 
 		var err error
 
 		switch baseIDs.NewStringID(dataTypeString).AsString() {
-		case dataConstants.AccAddressDataID.AsString():
-			Data, err = PrototypeAccAddressData().FromString(dataString)
-		case dataConstants.BooleanDataID.AsString():
-			Data, err = PrototypeBooleanData().FromString(dataString)
-		case dataConstants.DecDataID.AsString():
-			Data, err = PrototypeDecData().FromString(dataString)
-		case dataConstants.HeightDataID.AsString():
-			Data, err = PrototypeHeightData().FromString(dataString)
-		case dataConstants.IDDataID.AsString():
-			Data, err = PrototypeIDData().FromString(dataString)
-		case dataConstants.ListDataID.AsString():
-			Data, err = PrototypeListData().FromString(dataString)
-		case dataConstants.NumberDataID.AsString():
-			Data, err = PrototypeNumberData().FromString(dataString)
-		case dataConstants.StringDataID.AsString():
-			Data, err = PrototypeStringData().FromString(dataString)
+		case PrototypeAccAddressData().GetTypeID().AsString():
+			Data, err = PrototypeAccAddressData().FromString(dataValueString)
+		case PrototypeBooleanData().GetTypeID().AsString():
+			Data, err = PrototypeBooleanData().FromString(dataValueString)
+		case PrototypeDecData().GetTypeID().AsString():
+			Data, err = PrototypeDecData().FromString(dataValueString)
+		case PrototypeHeightData().GetTypeID().AsString():
+			Data, err = PrototypeHeightData().FromString(dataValueString)
+		case PrototypeIDData().GetTypeID().AsString():
+			Data, err = PrototypeIDData().FromString(dataValueString)
+		case PrototypeListData().GetTypeID().AsString():
+			Data, err = PrototypeListData().FromString(dataValueString)
+		case PrototypeNumberData().GetTypeID().AsString():
+			Data, err = PrototypeNumberData().FromString(dataValueString)
+		case PrototypeStringData().GetTypeID().AsString():
+			Data, err = PrototypeStringData().FromString(dataValueString)
 		default:
-			Data, err = nil, errorConstants.IncorrectFormat.Wrapf("type identifier is not recognised")
+			Data, err = nil, errorConstants.IncorrectFormat.Wrapf("type identifier is not recognized")
 		}
 
 		if err != nil {
@@ -95,8 +94,8 @@ func (x *AnyData) GetID() ids.DataID {
 func (x *AnyData) Bytes() []byte {
 	return x.Impl.(getter).get().Bytes()
 }
-func (x *AnyData) GetType() ids.StringID {
-	return x.Impl.(getter).get().GetType()
+func (x *AnyData) GetTypeID() ids.StringID {
+	return x.Impl.(getter).get().GetTypeID()
 }
 func (x *AnyData) ZeroValue() data.Data {
 	return x.Impl.(getter).get().ZeroValue()
@@ -127,10 +126,10 @@ func PrototypeAnyData() data.AnyData {
 	return &AnyData{}
 }
 func joinDataTypeAndValueStrings(dataType, dataValue string) string {
-	return strings.Join([]string{dataType, dataValue}, dataConstants.DataTypeAndValueSeparator)
+	return strings.TrimSpace(dataType) + dataTypeAndValueSeparator + strings.TrimSpace(dataValue)
 }
 func splitDataTypeAndValueStrings(dataTypeAndValueString string) (dataType, dataValue string) {
-	if dataTypeAndValue := strings.SplitN(dataTypeAndValueString, dataConstants.DataTypeAndValueSeparator, 2); len(dataTypeAndValue) == 1 {
+	if dataTypeAndValue := strings.SplitN(dataTypeAndValueString, dataTypeAndValueSeparator, 2); len(dataTypeAndValue) == 1 {
 		return strings.TrimSpace(dataTypeAndValue[0]), ""
 	} else if len(dataTypeAndValue) == 2 {
 		return strings.TrimSpace(dataTypeAndValue[0]), strings.TrimSpace(dataTypeAndValue[1])
@@ -138,3 +137,5 @@ func splitDataTypeAndValueStrings(dataTypeAndValueString string) (dataType, data
 		return "", ""
 	}
 }
+
+const dataTypeAndValueSeparator = "|"

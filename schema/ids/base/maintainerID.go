@@ -3,20 +3,34 @@ package base
 import (
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/constants"
 	"github.com/AssetMantle/modules/schema/qualified"
 	"github.com/AssetMantle/modules/schema/traits"
+	"strings"
 )
-
-// type maintainerID struct {
-//	ids.HashID
-// }
 
 var _ ids.MaintainerID = (*MaintainerID)(nil)
 
 func (maintainerID *MaintainerID) ValidateBasic() error {
 	return maintainerID.HashID.ValidateBasic()
 }
+func (maintainerID *MaintainerID) GetTypeID() ids.StringID {
+	return NewStringID(constants.MaintainerIDType)
+}
+func (maintainerID *MaintainerID) FromString(idString string) (ids.ID, error) {
+	idString = strings.TrimSpace(idString)
+	if idString == "" {
+		return PrototypeMaintainerID(), nil
+	}
 
+	if hashID, err := PrototypeHashID().FromString(idString); err != nil {
+		return PrototypeMaintainerID(), err
+	} else {
+		return &MaintainerID{
+			HashID: hashID.(*HashID),
+		}, nil
+	}
+}
 func (maintainerID *MaintainerID) AsString() string {
 	return maintainerID.HashID.AsString()
 }

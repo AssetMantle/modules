@@ -5,12 +5,13 @@ package base
 
 import (
 	"bytes"
-
 	"github.com/AssetMantle/modules/schema/data"
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/ids"
+	"github.com/AssetMantle/modules/schema/ids/constants"
 	stringUtilities "github.com/AssetMantle/modules/schema/ids/utilities"
 	"github.com/AssetMantle/modules/schema/traits"
+	"strings"
 )
 
 var _ ids.DataID = (*DataID)(nil)
@@ -23,6 +24,30 @@ func (dataID *DataID) ValidateBasic() error {
 		return err
 	}
 	return nil
+}
+func (dataID *DataID) GetTypeID() ids.StringID {
+	return NewStringID(constants.DataIDType)
+}
+func (dataID *DataID) FromString(idString string) (ids.ID, error) {
+	idString = strings.TrimSpace(idString)
+	if idString == "" {
+		return PrototypeDataID(), nil
+	}
+
+	typeIDAndHashID := stringUtilities.SplitCompositeIDString(idString)
+	if len(typeIDAndHashID) != 2 {
+		return PrototypeDataID(), errorConstants.IncorrectFormat.Wrapf("expected composite id")
+	} else if typeID, err := PrototypeStringID().FromString(typeIDAndHashID[0]); err != nil {
+		return PrototypeDataID(), err
+
+	} else if hashID, err := PrototypeHashID().FromString(typeIDAndHashID[1]); err != nil {
+		return PrototypeDataID(), err
+	} else {
+		return &DataID{
+			TypeID: typeID.(*StringID),
+			HashID: hashID.(*HashID),
+		}, nil
+	}
 }
 func (dataID *DataID) AsString() string {
 	return stringUtilities.JoinIDStrings(dataID.TypeID.AsString(), dataID.HashID.AsString())
@@ -68,7 +93,7 @@ func GenerateDataID(data data.Data) ids.DataID {
 	}
 
 	return &DataID{
-		TypeID: data.GetType().(*StringID),
+		TypeID: data.GetTypeID().(*StringID),
 		HashID: data.GenerateHashID().(*HashID),
 	}
 }
