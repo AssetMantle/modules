@@ -33,6 +33,7 @@ func (listData *ListData) ValidateBasic() error {
 	return nil
 }
 func (listData *ListData) Get() []Data.AnyData {
+	listData = listData.Sort()
 	anyDataList := make([]Data.AnyData, len(listData.DataList))
 	for i, anyData := range listData.DataList {
 		anyDataList[i] = anyData
@@ -44,6 +45,7 @@ func (listData *ListData) GetBondWeight() int64 {
 	return dataConstants.ListDataWeight
 }
 func (listData *ListData) AsString() string {
+	listData = listData.Sort()
 	dataStrings := make([]string, len(listData.DataList))
 
 	for i, datum := range listData.DataList {
@@ -74,6 +76,7 @@ func (listData *ListData) FromString(dataString string) (Data.Data, error) {
 	return NewListData(dataList...), nil
 }
 func (listData *ListData) Search(data Data.Data) (int, bool) {
+	listData = listData.Sort()
 	index := sort.Search(
 		len(listData.DataList),
 		func(i int) bool {
@@ -88,30 +91,30 @@ func (listData *ListData) Search(data Data.Data) (int, bool) {
 	return index, false
 }
 func (listData *ListData) Add(data ...Data.Data) Data.ListData {
-	updatedList := listData
+	updatedListData := listData.Sort()
 	for _, listable := range data {
-		if index, found := updatedList.Search(listable); !found {
-			updatedList.DataList = append(updatedList.DataList, listable.ToAnyData().(*AnyData))
-			copy(updatedList.DataList[index+1:], updatedList.DataList[index:])
-			updatedList.DataList[index] = listable.ToAnyData().(*AnyData)
+		if index, found := updatedListData.Search(listable); !found {
+			updatedListData.DataList = append(updatedListData.DataList, listable.ToAnyData().(*AnyData))
+			copy(updatedListData.DataList[index+1:], updatedListData.DataList[index:])
+			updatedListData.DataList[index] = listable.ToAnyData().(*AnyData)
 		}
 	}
 
-	return updatedList
+	return updatedListData
 }
 func (listData *ListData) Remove(data ...Data.Data) Data.ListData {
-	updatedList := listData
+	updatedListData := listData.Sort()
 
 	for _, listable := range data {
-		if index, found := updatedList.Search(listable); found {
-			updatedList.DataList = append(updatedList.DataList[:index], updatedList.DataList[index+1:]...)
+		if index, found := updatedListData.Search(listable); found {
+			updatedListData.DataList = append(updatedListData.DataList[:index], updatedListData.DataList[index+1:]...)
 		}
 	}
 
-	return updatedList
+	return updatedListData
 }
 func (listData *ListData) GetID() ids.DataID {
-	return baseIDs.GenerateDataID(listData)
+	return baseIDs.GenerateDataID(listData.Sort())
 }
 func (listData *ListData) Compare(listable traits.Listable) int {
 	compareListData, err := listDataFromInterface(listable)
@@ -123,7 +126,7 @@ func (listData *ListData) Compare(listable traits.Listable) int {
 	return bytes.Compare(listData.Bytes(), compareListData.Bytes())
 }
 func (listData *ListData) Bytes() []byte {
-	bytesList := make([][]byte, len(listData.DataList))
+	bytesList := make([][]byte, len(listData.Sort().DataList))
 
 	for i, datum := range listData.DataList {
 		if datum != nil {
@@ -144,7 +147,14 @@ func (listData *ListData) GenerateHashID() ids.HashID {
 		return baseIDs.GenerateHashID()
 	}
 
-	return baseIDs.GenerateHashID(listData.Bytes())
+	return baseIDs.GenerateHashID(listData.Sort().Bytes())
+}
+func (listData *ListData) Sort() *ListData {
+	sort.Slice(listData.DataList, func(i, j int) bool {
+		return listData.DataList[i].Compare(listData.DataList[j]) < 0
+	})
+
+	return listData
 }
 func (listData *ListData) ToAnyData() Data.AnyData {
 	return &AnyData{
@@ -156,7 +166,7 @@ func (listData *ListData) ToAnyData() Data.AnyData {
 func listDataFromInterface(listable traits.Listable) (*ListData, error) {
 	switch value := listable.(type) {
 	case *ListData:
-		return value, nil
+		return value.Sort(), nil
 	default:
 		return &ListData{}, errorConstants.IncorrectFormat.Wrapf("unsupported type")
 	}

@@ -54,6 +54,9 @@ func (propertyID *PropertyID) IsPropertyID() {}
 func (propertyID *PropertyID) GetKey() ids.StringID {
 	return propertyID.KeyID
 }
+func (propertyID *PropertyID) GetDataTypeID() ids.StringID {
+	return propertyID.TypeID
+}
 func (propertyID *PropertyID) Bytes() []byte {
 	var Bytes []byte
 	Bytes = append(Bytes, propertyID.KeyID.Bytes()...)
@@ -80,7 +83,7 @@ func propertyIDFromInterface(listable traits.Listable) *PropertyID {
 		panic(errorConstants.IncorrectFormat.Wrapf("expected *PropertyID, got %T", listable))
 	}
 }
-func PrototypePropertyID() *PropertyID {
+func PrototypePropertyID() ids.PropertyID {
 	return &PropertyID{
 		KeyID:  PrototypeStringID().(*StringID),
 		TypeID: PrototypeStringID().(*StringID),

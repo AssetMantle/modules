@@ -373,3 +373,28 @@ func Test_listData_ZeroValue(t *testing.T) {
 		})
 	}
 }
+
+func TestListData_Sort(t *testing.T) {
+	type fields struct {
+		DataList []*AnyData
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   data.ListData
+	}{
+		{"sort already sorted numeric list data", fields{[]*AnyData{NewStringData("1").ToAnyData().(*AnyData), NewStringData("2").ToAnyData().(*AnyData), NewStringData("3").ToAnyData().(*AnyData)}}, NewListData([]data.Data{NewStringData("1").ToAnyData().(*AnyData), NewStringData("2").ToAnyData().(*AnyData), NewStringData("3").ToAnyData().(*AnyData)}...)},
+		{"sort unsorted numeric list data", fields{[]*AnyData{NewStringData("2").ToAnyData().(*AnyData), NewStringData("3").ToAnyData().(*AnyData), NewStringData("1").ToAnyData().(*AnyData)}}, NewListData([]data.Data{NewStringData("1").ToAnyData().(*AnyData), NewStringData("2").ToAnyData().(*AnyData), NewStringData("3").ToAnyData().(*AnyData)}...)},
+		{"sort unsorted single alpha data", fields{[]*AnyData{NewStringData("b").ToAnyData().(*AnyData), NewStringData("a").ToAnyData().(*AnyData), NewStringData("c").ToAnyData().(*AnyData)}}, NewListData([]data.Data{NewStringData("a").ToAnyData().(*AnyData), NewStringData("b").ToAnyData().(*AnyData), NewStringData("c").ToAnyData().(*AnyData)}...)},
+		{"sort unsorted multi alpha data", fields{[]*AnyData{NewStringData("ab").ToAnyData().(*AnyData), NewStringData("aa").ToAnyData().(*AnyData), NewStringData("ac").ToAnyData().(*AnyData)}}, NewListData([]data.Data{NewStringData("aa").ToAnyData().(*AnyData), NewStringData("ab").ToAnyData().(*AnyData), NewStringData("ac").ToAnyData().(*AnyData)}...)},
+		{"sort unsorted small large mix case alpha data", fields{[]*AnyData{NewStringData("A").ToAnyData().(*AnyData), NewStringData("B").ToAnyData().(*AnyData), NewStringData("a").ToAnyData().(*AnyData)}}, NewListData([]data.Data{NewStringData("a").ToAnyData().(*AnyData), NewStringData("A").ToAnyData().(*AnyData), NewStringData("B").ToAnyData().(*AnyData)}...)},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			listData := &ListData{
+				DataList: tt.fields.DataList,
+			}
+			assert.Equalf(t, tt.want, listData.Sort(), "Sort()")
+		})
+	}
+}

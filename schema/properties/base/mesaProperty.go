@@ -36,11 +36,11 @@ func (mesaProperty *MesaProperty) GetDataID() ids.DataID {
 func (mesaProperty *MesaProperty) GetKey() ids.StringID {
 	return mesaProperty.ID.GetKey()
 }
-func (mesaProperty *MesaProperty) GetType() ids.StringID {
-	return mesaProperty.ID.GetTypeID()
+func (mesaProperty *MesaProperty) GetDataTypeID() ids.StringID {
+	return mesaProperty.ID.GetDataTypeID()
 }
 func (mesaProperty *MesaProperty) GetBondWeight() int64 {
-	if zeroData, err := base.PrototypeAnyData().FromString(mesaProperty.GetType().AsString()); err != nil {
+	if zeroData, err := base.PrototypeAnyData().FromString(mesaProperty.GetDataTypeID().AsString()); err != nil {
 		panic(err)
 	} else {
 		return zeroData.GetBondWeight()
