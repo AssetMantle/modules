@@ -25,7 +25,7 @@ func (metaProperty *MetaProperty) ValidateBasic() error {
 		return err
 	}
 	if metaProperty.Data.GetTypeID().Compare(metaProperty.ID.TypeID) != 0 {
-		return errorConstants.IncorrectFormat
+		return errorConstants.IncorrectFormat.Wrapf("data type id does not match property type id")
 	}
 	return nil
 }
@@ -44,8 +44,8 @@ func (metaProperty *MetaProperty) GetDataID() ids.DataID {
 func (metaProperty *MetaProperty) GetKey() ids.StringID {
 	return metaProperty.ID.GetKey()
 }
-func (metaProperty *MetaProperty) GetType() ids.StringID {
-	return metaProperty.Data.GetTypeID()
+func (metaProperty *MetaProperty) GetDataTypeID() ids.StringID {
+	return metaProperty.ID.GetDataTypeID()
 }
 func (metaProperty *MetaProperty) GetBondWeight() int64 {
 	return metaProperty.Data.GetBondWeight()

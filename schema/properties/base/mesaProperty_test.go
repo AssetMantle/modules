@@ -323,7 +323,7 @@ func Test_mesaProperty_GetType(t *testing.T) {
 					t.Errorf("error = %v, wantErr %v", r, tt.wantErr)
 				}
 			}()
-			if got := mesaProperty.GetType(); !reflect.DeepEqual(got, tt.want) {
+			if got := mesaProperty.GetDataTypeID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetTypeID() = %v, want %v", got, tt.want)
 			}
 		})

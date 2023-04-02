@@ -244,7 +244,7 @@ func Test_metaProperty_GetType(t *testing.T) {
 				ID:   ValidatedID[*baseIDs.PropertyID](tt.fields.ID),
 				Data: ValidatedData(tt.fields.Data),
 			}
-			if got := metaProperty.GetType(); !reflect.DeepEqual(got, tt.want) {
+			if got := metaProperty.GetDataTypeID(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetTypeID() = %v, want %v", got, tt.want)
 			}
 		})

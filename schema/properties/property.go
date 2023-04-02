@@ -13,7 +13,7 @@ type Property interface {
 	GetID() ids.PropertyID
 	GetDataID() ids.DataID
 	GetKey() ids.StringID
-	GetType() ids.StringID
+	GetDataTypeID() ids.StringID
 	GetBondWeight() int64
 
 	IsMeta() bool
