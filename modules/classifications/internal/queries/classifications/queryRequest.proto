@@ -1,0 +1,9 @@
+syntax = "proto3";
+package classifications.queries.classifications;
+
+import "schema/ids/base/classificationID.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+message QueryRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}

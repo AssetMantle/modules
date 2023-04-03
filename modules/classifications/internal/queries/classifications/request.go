@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package identities
+package classifications
 
 import (
 	"github.com/asaskevich/govalidator"
@@ -15,7 +15,7 @@ import (
 )
 
 // type queryRequest struct {
-//	ids.IdentityID `json:"identityID" valid:"required~required field identityID missing"`
+//	ids.ClassificationID `json:"classificationID" valid:"required~required field classificationID missing"`
 // }
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
@@ -25,11 +25,11 @@ var _ helpers.QueryRequest = (*QueryRequest)(nil)
 // @Description Able to query the asset
 // @Accept json
 // @Produce json
-// @Tags Identities
-// @Param identityID path string true "Query identity using identityID"
-// @Success 200 {object} queryResponse "Message for a successful response."
+// @Tags Classifications
+// @Param classificationID path string true "Unique identifier of an asset classification."
+// @Success 200 {object} queryResponse "Message for a successful search response."
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
-// @Router /identities/identities/{identityID} [get]
+// @Router /classifications/classifications/{classificationID} [get]
 func (queryRequest *QueryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
@@ -70,5 +70,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(pagination *query.PageRequest) helpers.QueryRequest {
-	return &QueryRequest{Pagination: pagination}
+	return &QueryRequest{pagination}
 }

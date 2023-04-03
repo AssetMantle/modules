@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package classification
+package classifications
 
 import (
 	"context"
@@ -17,7 +17,7 @@ import (
 )
 
 var Query = baseHelpers.NewQuery(
-	"classification",
+	"classifications",
 	"",
 	"",
 
