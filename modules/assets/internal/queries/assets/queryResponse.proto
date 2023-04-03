@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assets.queries.asset;
+package assets.queries.assets;
 
 import "gogoproto/gogo.proto";
 import "modules/assets/internal/mappable/mappable.proto";

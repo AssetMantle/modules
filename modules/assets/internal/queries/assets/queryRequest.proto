@@ -1,0 +1,9 @@
+syntax = "proto3";
+package assets.queries.assets;
+
+import "schema/ids/base/assetID.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+message QueryRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
