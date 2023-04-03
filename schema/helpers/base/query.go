@@ -4,8 +4,6 @@
 package base
 
 import (
-	"net/http"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -15,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"golang.org/x/net/context"
+	"net/http"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"

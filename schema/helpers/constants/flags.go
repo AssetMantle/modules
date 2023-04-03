@@ -44,4 +44,5 @@ var (
 	TakerOwnableID          = baseHelpers.NewCLIFlag("takerOwnableID", "", "TakerOwnableID")
 	TakerOwnableSplit       = baseHelpers.NewCLIFlag("takerOwnableSplit", "0", "TakerOwnableSplit")
 	Value                   = baseHelpers.NewCLIFlag("value", "0", "Value")
+	Offset                  = baseHelpers.NewCLIFlag("offset", "0", "offset")
 )

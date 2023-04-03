@@ -1,22 +1,18 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
-// SPDX-License-Identifier: Apache-2.0
-
-package identity
+package identities
 
 import (
 	"context"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/gogo/protobuf/grpc"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/gogo/protobuf/grpc"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
 
 var Query = baseHelpers.NewQuery(
-	"identity",
+	"identities",
 	"",
 	"",
 

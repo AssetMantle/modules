@@ -5,8 +5,8 @@ package base
 
 import (
 	"context"
-
 	"github.com/AssetMantle/modules/schema/helpers"
+	sdkTypesQuery "github.com/cosmos/cosmos-sdk/types/query"
 )
 
 type collection struct {
@@ -50,6 +50,20 @@ func (collection collection) Fetch(key helpers.Key) helpers.Collection {
 			mappableList = append(mappableList, mappable)
 		}
 	}
+
+	collection.Key, collection.List = key, mappableList
+
+	return collection
+}
+
+func (collection collection) FetchPaginated(key helpers.Key, request *sdkTypesQuery.PageRequest) helpers.Collection {
+	var mappableList []helpers.Mappable
+
+	accumulator := func(mappable helpers.Mappable) bool {
+		mappableList = append(mappableList, mappable)
+		return false
+	}
+	collection.mapper.IteratePaginated(collection.context, request, accumulator)
 
 	collection.Key, collection.List = key, mappableList
 

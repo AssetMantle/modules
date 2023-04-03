@@ -4,6 +4,7 @@
 package queries
 
 import (
+	"github.com/AssetMantle/modules/modules/identities/internal/queries/identities"
 	"github.com/AssetMantle/modules/modules/identities/internal/queries/identity"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
@@ -12,5 +13,6 @@ import (
 func Prototype() helpers.Queries {
 	return baseHelpers.NewQueries(
 		identity.Query,
+		identities.Query,
 	)
 }

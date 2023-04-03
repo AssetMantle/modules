@@ -7,9 +7,9 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
+	sdkTypesQuery "github.com/cosmos/cosmos-sdk/types/query"
 
 	"github.com/AssetMantle/modules/schema/helpers"
 )
@@ -73,6 +73,21 @@ func (mapper mapper) Iterate(context context.Context, partialKey helpers.Key, ac
 		if accumulator(mappable) {
 			break
 		}
+	}
+}
+func (mapper mapper) IteratePaginated(context context.Context, pageRequest *sdkTypesQuery.PageRequest, accumulator func(helpers.Mappable) bool) {
+	store := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
+
+	_, err := sdkTypesQuery.Paginate(store, pageRequest, func(_, value []byte) error {
+		mappable := mapper.mappablePrototype()
+		CodecPrototype().MustUnmarshal(value, mappable)
+		if accumulator(mappable) {
+			return nil
+		}
+		return nil
+	})
+	if err != nil {
+		panic("lol")
 	}
 }
 func (mapper mapper) IterateAll(context context.Context, accumulator func(helpers.Mappable) bool) {

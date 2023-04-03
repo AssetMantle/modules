@@ -6,8 +6,6 @@ package base
 import (
 	"encoding/json"
 	"fmt"
-	"math/rand"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -19,6 +17,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"math/rand"
 
 	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -74,7 +73,6 @@ func (module module) RegisterRESTRoutes(context client.Context, router *mux.Rout
 
 	for _, query := range module.queriesPrototype().GetList() {
 		router.HandleFunc("/"+module.Name()+"/"+query.GetName()+fmt.Sprintf("/{%s}", query.GetName()), query.RESTQueryHandler(context)).Methods("GET")
-		router.HandleFunc("/"+module.Name()+"/"+query.GetName(), query.RESTQueryHandler(context)).Methods("GET")
 	}
 
 	for _, transaction := range module.transactionsPrototype().GetList() {
