@@ -3,7 +3,7 @@ module github.com/AssetMantle/modules
 go 1.18
 
 require (
-	github.com/AssetMantle/schema v0.0.0-20230403143306-044fdec2bd4e
+	github.com/AssetMantle/schema v0.0.0-20230404101639-e8b0915766e3
 	github.com/CosmWasm/wasmd v0.29.2
 	github.com/Shopify/sarama v1.19.0
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
@@ -132,8 +132,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	nhooyr.io/websocket v1.8.6 // indirect
 )
-
-replace github.com/AssetMantle/schema => ../schema
 
 replace (
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
