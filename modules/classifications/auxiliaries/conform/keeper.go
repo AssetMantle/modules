@@ -6,11 +6,12 @@ package conform
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/modules/classifications/internal/key"
-	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+
+	"github.com/AssetMantle/modules/modules/classifications/internal/key"
+	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 )
 
 type auxiliaryKeeper struct {

@@ -7,10 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents"
 	baseDocuments "github.com/AssetMantle/schema/x/documents/base"
@@ -19,6 +15,10 @@ import (
 	baseLists "github.com/AssetMantle/schema/x/lists/base"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/modules/orders/internal/key"
 )
 
 var (

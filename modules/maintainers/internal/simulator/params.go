@@ -6,6 +6,7 @@ package simulator
 import (
 	"math/rand"
 
+	"github.com/AssetMantle/schema/x/data/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
@@ -13,7 +14,6 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/common"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters/deputizeAllowed"
-	"github.com/AssetMantle/schema/x/data/base"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {

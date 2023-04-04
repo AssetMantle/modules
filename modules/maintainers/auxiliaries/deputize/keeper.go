@@ -5,12 +5,7 @@ package deputize
 
 import (
 	"context"
-	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
-	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
-	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
-	internalUtilities "github.com/AssetMantle/modules/modules/maintainers/internal/utilities"
 	"github.com/AssetMantle/schema/x/data"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents/base"
@@ -23,6 +18,12 @@ import (
 	constantProperties "github.com/AssetMantle/schema/x/properties/constants"
 	propertiesUtilities "github.com/AssetMantle/schema/x/properties/utilities"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
+	internalUtilities "github.com/AssetMantle/modules/modules/maintainers/internal/utilities"
 )
 
 type auxiliaryKeeper struct {

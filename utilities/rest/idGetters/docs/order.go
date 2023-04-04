@@ -4,10 +4,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
-
 	"github.com/AssetMantle/schema/x/data"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
@@ -17,6 +13,9 @@ import (
 	propertiesUtilities "github.com/AssetMantle/schema/x/properties/utilities"
 	"github.com/AssetMantle/schema/x/qualified/base"
 	baseTypes "github.com/AssetMantle/schema/x/types/base"
+	"github.com/cosmos/cosmos-sdk/client"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
 func orderIDHandler(context client.Context) http.HandlerFunc {

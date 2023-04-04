@@ -4,6 +4,9 @@
 package orders
 
 import (
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
 	"github.com/AssetMantle/modules/modules/orders/auxiliaries"
 	"github.com/AssetMantle/modules/modules/orders/internal/block"
 	"github.com/AssetMantle/modules/modules/orders/internal/genesis"
@@ -14,8 +17,6 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/queries"
 	"github.com/AssetMantle/modules/modules/orders/internal/simulator"
 	"github.com/AssetMantle/modules/modules/orders/internal/transactions"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.Module {

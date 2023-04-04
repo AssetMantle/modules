@@ -24,6 +24,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
+	"github.com/AssetMantle/schema/schema"
+
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 

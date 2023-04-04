@@ -4,9 +4,10 @@
 package transactions
 
 import (
-	"github.com/AssetMantle/modules/modules/metas/internal/transactions/reveal"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/metas/internal/transactions/reveal"
 )
 
 func Prototype() helpers.Transactions {

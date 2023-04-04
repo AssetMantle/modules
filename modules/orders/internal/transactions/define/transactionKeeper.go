@@ -6,15 +6,15 @@ package define
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/properties/constants"
+	"github.com/AssetMantle/schema/x/properties/utilities"
+	"github.com/AssetMantle/schema/x/qualified/base"
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
-	"github.com/AssetMantle/schema/x/helpers"
-	"github.com/AssetMantle/schema/x/properties/constants"
-	"github.com/AssetMantle/schema/x/properties/utilities"
-	"github.com/AssetMantle/schema/x/qualified/base"
 )
 
 type transactionKeeper struct {

@@ -6,6 +6,11 @@ package mutate
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/x/documents/base"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/properties/utilities"
+	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/member"
@@ -13,11 +18,6 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
-	"github.com/AssetMantle/schema/x/documents/base"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
-	"github.com/AssetMantle/schema/x/properties/utilities"
-	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 )
 
 type transactionKeeper struct {

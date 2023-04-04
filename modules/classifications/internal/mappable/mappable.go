@@ -4,13 +4,13 @@
 package mappable
 
 import (
+	"github.com/AssetMantle/schema/x/documents"
+	"github.com/AssetMantle/schema/x/documents/base"
+	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
-	"github.com/AssetMantle/schema/x/documents"
-	"github.com/AssetMantle/schema/x/documents/base"
-	"github.com/AssetMantle/schema/x/helpers"
 )
 
 var _ helpers.Mappable = (*Mappable)(nil)

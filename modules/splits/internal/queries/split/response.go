@@ -6,9 +6,10 @@ package split
 import (
 	"errors"
 
-	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 )
 
 // type queryResponse struct {

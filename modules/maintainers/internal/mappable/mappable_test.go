@@ -7,9 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents"
 	"github.com/AssetMantle/schema/x/documents/base"
@@ -20,6 +17,9 @@ import (
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 	constantProperties "github.com/AssetMantle/schema/x/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/AssetMantle/modules/modules/maintainers/internal/key"
 )
 
 func createTestData(t *testing.T) documents.Maintainer {

@@ -4,6 +4,9 @@
 package maintainers
 
 import (
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/block"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/genesis"
@@ -14,8 +17,6 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/queries"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/simulator"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/transactions"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.Module {

@@ -6,13 +6,12 @@ package docs
 import (
 	"encoding/json"
 
+	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-
-	"github.com/AssetMantle/schema/x/helpers"
 )
 
 type request struct {

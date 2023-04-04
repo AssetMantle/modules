@@ -4,9 +4,10 @@
 package queries
 
 import (
-	"github.com/AssetMantle/modules/modules/classifications/internal/queries/classification"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/classifications/internal/queries/classification"
 )
 
 func Prototype() helpers.Queries {

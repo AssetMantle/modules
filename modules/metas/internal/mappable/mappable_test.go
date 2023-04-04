@@ -7,13 +7,13 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/schema/x/data"
 	"github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/AssetMantle/modules/modules/metas/internal/key"
 )
 
 func TestNewMappable(t *testing.T) {

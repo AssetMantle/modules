@@ -4,10 +4,11 @@
 package auxiliaries
 
 import (
-	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
-	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/scrub"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 )
 
 func Prototype() helpers.Auxiliaries {

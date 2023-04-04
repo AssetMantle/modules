@@ -4,9 +4,10 @@
 package auxiliaries
 
 import (
-	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 )
 
 func Prototype() helpers.Auxiliaries {

@@ -6,11 +6,12 @@ package mint
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/modules/splits/internal/key"
-	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/AssetMantle/schema/x/types/base"
+
+	"github.com/AssetMantle/modules/modules/splits/internal/key"
+	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 )
 
 type auxiliaryKeeper struct {

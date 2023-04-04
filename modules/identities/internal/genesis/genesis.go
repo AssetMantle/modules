@@ -3,13 +3,13 @@ package genesis
 import (
 	"context"
 
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 )
 
 var _ helpers.Genesis = (*Genesis)(nil)

@@ -6,13 +6,14 @@ package reveal
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/modules/metas/internal/key"
-	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/schema/x/data"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	constantProperties "github.com/AssetMantle/schema/x/properties/constants"
+
+	"github.com/AssetMantle/modules/modules/metas/internal/key"
+	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 )
 
 type transactionKeeper struct {

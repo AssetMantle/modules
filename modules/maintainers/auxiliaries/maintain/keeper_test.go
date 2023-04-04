@@ -8,6 +8,16 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/schema/schema"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	baseDocuments "github.com/AssetMantle/schema/x/documents/base"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	"github.com/AssetMantle/schema/x/lists/base"
+	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -23,15 +33,6 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
 	maintainerUtilities "github.com/AssetMantle/modules/modules/maintainers/internal/utilities"
-	baseData "github.com/AssetMantle/schema/x/data/base"
-	baseDocuments "github.com/AssetMantle/schema/x/documents/base"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	"github.com/AssetMantle/schema/x/lists/base"
-	baseProperties "github.com/AssetMantle/schema/x/properties/base"
-	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 )
 
 type TestKeepers struct {

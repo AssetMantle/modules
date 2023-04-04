@@ -7,11 +7,10 @@ import (
 	"math/rand"
 	"strconv"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-
 	"github.com/AssetMantle/schema/x/ids"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )
 
 func GenerateRandomID(r *rand.Rand) ids.ID {

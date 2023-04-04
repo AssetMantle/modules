@@ -6,8 +6,9 @@ package classification
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/schema/x/helpers"
+
+	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 )
 
 type queryKeeper struct {

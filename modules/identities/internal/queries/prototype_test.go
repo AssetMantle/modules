@@ -8,9 +8,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/modules/identities/internal/queries/identity"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/identities/internal/queries/identity"
 )
 
 func TestPrototype(t *testing.T) {

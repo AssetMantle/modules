@@ -8,13 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/std"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/stretchr/testify/require"
-
+	"github.com/AssetMantle/schema/schema"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	"github.com/AssetMantle/schema/x/helpers/constants"
@@ -23,6 +17,12 @@ import (
 	"github.com/AssetMantle/schema/x/lists/utilities"
 	propertiesUtilities "github.com/AssetMantle/schema/x/properties/utilities"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/std"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_newTransactionRequest(t *testing.T) {

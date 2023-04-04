@@ -6,8 +6,9 @@ package split
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	"github.com/AssetMantle/schema/x/helpers"
+
+	"github.com/AssetMantle/modules/modules/splits/internal/key"
 )
 
 type queryKeeper struct {

@@ -7,10 +7,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/modules/splits/internal/module"
-	"github.com/AssetMantle/modules/modules/splits/internal/parameters/wrapAllowedCoins"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/splits/internal/module"
+	"github.com/AssetMantle/modules/modules/splits/internal/parameters/wrapAllowedCoins"
 )
 
 func TestPrototype(t *testing.T) {

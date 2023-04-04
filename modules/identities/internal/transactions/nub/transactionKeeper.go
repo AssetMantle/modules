@@ -6,11 +6,6 @@ package nub
 import (
 	"context"
 
-	"github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
-	"github.com/AssetMantle/modules/modules/identities/internal/key"
-	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents/base"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
@@ -20,6 +15,11 @@ import (
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 	"github.com/AssetMantle/schema/x/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	"github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
+	"github.com/AssetMantle/modules/modules/identities/internal/key"
+	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 )
 
 type transactionKeeper struct {

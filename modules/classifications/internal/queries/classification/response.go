@@ -6,9 +6,10 @@ package classification
 import (
 	"errors"
 
-	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 )
 
 // type queryResponse struct {

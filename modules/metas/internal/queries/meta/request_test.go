@@ -7,17 +7,17 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/modules/metas/internal/common"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	"github.com/AssetMantle/schema/x/helpers/constants"
 	"github.com/AssetMantle/schema/x/ids"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/spf13/viper"
+	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/modules/metas/internal/common"
 )
 
 var (

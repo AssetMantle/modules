@@ -4,10 +4,11 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/modules/metas/internal/module"
-	"github.com/AssetMantle/modules/modules/metas/internal/parameters/revealEnabled"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/metas/internal/module"
+	"github.com/AssetMantle/modules/modules/metas/internal/parameters/revealEnabled"
 )
 
 func Prototype() helpers.ParameterManager {

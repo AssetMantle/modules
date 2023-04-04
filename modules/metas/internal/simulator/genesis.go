@@ -6,6 +6,10 @@ package simulator
 import (
 	"math/rand"
 
+	"github.com/AssetMantle/schema/x/data"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
@@ -15,10 +19,6 @@ import (
 	metasModule "github.com/AssetMantle/modules/modules/metas/internal/module"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters/revealEnabled"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/schema/x/data"
-	baseData "github.com/AssetMantle/schema/x/data/base"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {

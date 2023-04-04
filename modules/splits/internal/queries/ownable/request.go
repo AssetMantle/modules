@@ -4,14 +4,13 @@
 package ownable
 
 import (
-	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client"
-
 	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/helpers/base"
 	"github.com/AssetMantle/schema/x/helpers/constants"
 	"github.com/AssetMantle/schema/x/ids"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	"github.com/asaskevich/govalidator"
+	"github.com/cosmos/cosmos-sdk/client"
 )
 
 // type queryRequest struct {

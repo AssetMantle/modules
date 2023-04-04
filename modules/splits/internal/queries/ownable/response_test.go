@@ -6,11 +6,11 @@ package ownable
 import (
 	"testing"
 
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 )
 
 func Test_Split_Response(t *testing.T) {

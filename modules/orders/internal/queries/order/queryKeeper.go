@@ -6,8 +6,9 @@ package order
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/modules/orders/internal/key"
 	"github.com/AssetMantle/schema/x/helpers"
+
+	"github.com/AssetMantle/modules/modules/orders/internal/key"
 )
 
 type queryKeeper struct {

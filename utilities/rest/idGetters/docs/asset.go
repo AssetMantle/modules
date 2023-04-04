@@ -3,13 +3,12 @@ package docs
 import (
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/types/rest"
-
 	"github.com/AssetMantle/schema/x/data"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/AssetMantle/schema/x/properties"
 	"github.com/AssetMantle/schema/x/properties/constants"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
 func assetClassificationHandler(context client.Context) http.HandlerFunc {

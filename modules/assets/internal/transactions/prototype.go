@@ -4,6 +4,9 @@
 package transactions
 
 import (
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/burn"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/define"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/deputize"
@@ -11,8 +14,6 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/mutate"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/renumerate"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/revoke"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.Transactions {

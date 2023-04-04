@@ -6,6 +6,7 @@ package transactions
 import (
 	"testing"
 
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/burn"
@@ -15,7 +16,6 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/mutate"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/renumerate"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/revoke"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

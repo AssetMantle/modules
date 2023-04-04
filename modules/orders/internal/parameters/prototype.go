@@ -4,10 +4,11 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/modules/orders/internal/module"
-	"github.com/AssetMantle/modules/modules/orders/internal/parameters/maxOrderLife"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/orders/internal/module"
+	"github.com/AssetMantle/modules/modules/orders/internal/parameters/maxOrderLife"
 )
 
 func Prototype() helpers.ParameterManager {

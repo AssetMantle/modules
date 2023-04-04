@@ -4,11 +4,12 @@
 package parameters
 
 import (
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
 	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/bondRate"
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/maxPropertyCount"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.ParameterManager {

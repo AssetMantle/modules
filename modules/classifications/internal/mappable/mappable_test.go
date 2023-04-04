@@ -7,10 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	documentsSchema "github.com/AssetMantle/schema/x/documents"
 	baseDocuments "github.com/AssetMantle/schema/x/documents/base"
@@ -21,6 +17,10 @@ import (
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 	"github.com/AssetMantle/schema/x/qualified"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 )
 
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, *Mappable) {

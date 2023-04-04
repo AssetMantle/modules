@@ -4,6 +4,9 @@
 package splits
 
 import (
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries"
 	"github.com/AssetMantle/modules/modules/splits/internal/block"
 	"github.com/AssetMantle/modules/modules/splits/internal/genesis"
@@ -14,8 +17,6 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/queries"
 	"github.com/AssetMantle/modules/modules/splits/internal/simulator"
 	"github.com/AssetMantle/modules/modules/splits/internal/transactions"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.Module {

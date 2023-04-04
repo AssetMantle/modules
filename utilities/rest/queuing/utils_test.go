@@ -6,6 +6,7 @@ package queuing
 import (
 	"testing"
 
+	"github.com/AssetMantle/schema/schema"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"

@@ -5,13 +5,7 @@ package burn
 
 import (
 	"context"
-	"github.com/AssetMantle/modules/modules/assets/internal/key"
-	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
-	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
-	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
-	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
+
 	"github.com/AssetMantle/schema/x/data"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 	"github.com/AssetMantle/schema/x/helpers"
@@ -19,6 +13,14 @@ import (
 	"github.com/AssetMantle/schema/x/properties/constants"
 	baseTypes "github.com/AssetMantle/schema/x/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/modules/assets/internal/key"
+	"github.com/AssetMantle/modules/modules/assets/internal/mappable"
+	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/unbond"
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
+	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
 )
 
 type transactionKeeper struct {

@@ -4,10 +4,11 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
-	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters/deputizeAllowed"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
+	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters/deputizeAllowed"
 )
 
 func Prototype() helpers.ParameterManager {

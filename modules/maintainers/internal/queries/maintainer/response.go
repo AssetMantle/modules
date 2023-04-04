@@ -6,9 +6,10 @@ package maintainer
 import (
 	"errors"
 
-	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/maintainers/internal/mappable"
 )
 
 // type queryResponse struct {

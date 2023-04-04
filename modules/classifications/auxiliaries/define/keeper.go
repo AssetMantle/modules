@@ -6,13 +6,6 @@ package define
 import (
 	"context"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-
-	"github.com/AssetMantle/modules/modules/classifications/internal/key"
-	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
-	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 	"github.com/AssetMantle/schema/x/data"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents/base"
@@ -23,6 +16,13 @@ import (
 	"github.com/AssetMantle/schema/x/properties/constants"
 	"github.com/AssetMantle/schema/x/properties/utilities"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+
+	"github.com/AssetMantle/modules/modules/classifications/internal/key"
+	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
+	"github.com/AssetMantle/modules/modules/classifications/internal/module"
 )
 
 type auxiliaryKeeper struct {

@@ -4,12 +4,13 @@
 package parameters
 
 import (
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
 	"github.com/AssetMantle/modules/modules/assets/internal/module"
 	"github.com/AssetMantle/modules/modules/assets/internal/parameters/burnEnabled"
 	"github.com/AssetMantle/modules/modules/assets/internal/parameters/mintEnabled"
 	"github.com/AssetMantle/modules/modules/assets/internal/parameters/renumerateEnabled"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.ParameterManager {

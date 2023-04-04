@@ -4,6 +4,9 @@
 package metas
 
 import (
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries"
 	"github.com/AssetMantle/modules/modules/metas/internal/block"
 	"github.com/AssetMantle/modules/modules/metas/internal/genesis"
@@ -14,8 +17,6 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/queries"
 	"github.com/AssetMantle/modules/modules/metas/internal/simulator"
 	"github.com/AssetMantle/modules/modules/metas/internal/transactions"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.Module {

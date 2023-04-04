@@ -6,8 +6,9 @@ package ownable
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/modules/splits/internal/utilities"
 	"github.com/AssetMantle/schema/x/helpers"
+
+	"github.com/AssetMantle/modules/modules/splits/internal/utilities"
 )
 
 type queryKeeper struct {

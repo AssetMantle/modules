@@ -8,11 +8,12 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
 	"github.com/AssetMantle/modules/modules/splits/internal/transactions/send"
 	"github.com/AssetMantle/modules/modules/splits/internal/transactions/unwrap"
 	"github.com/AssetMantle/modules/modules/splits/internal/transactions/wrap"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

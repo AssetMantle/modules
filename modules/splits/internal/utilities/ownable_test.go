@@ -7,9 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/ids"
@@ -18,6 +15,9 @@ import (
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 	baseTypes "github.com/AssetMantle/schema/x/types/base"
+	"github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 )
 
 func TestGetOwnableTotalSplitsValue(t *testing.T) {

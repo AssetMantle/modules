@@ -4,10 +4,11 @@
 package mapper
 
 import (
-	"github.com/AssetMantle/modules/modules/orders/internal/key"
-	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/orders/internal/key"
+	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 )
 
 func Prototype() helpers.Mapper {

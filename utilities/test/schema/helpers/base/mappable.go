@@ -1,9 +1,8 @@
 package base
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-
 	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 // mappable struct, implements helpers.Mappable

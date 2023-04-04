@@ -4,8 +4,6 @@
 package wrapAllowedCoins
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/schema/x/data"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
@@ -16,6 +14,7 @@ import (
 	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 	"github.com/AssetMantle/schema/x/properties/base"
 	constantProperties "github.com/AssetMantle/schema/x/properties/constants"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()

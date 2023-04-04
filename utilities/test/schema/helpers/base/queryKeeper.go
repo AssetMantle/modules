@@ -8,9 +8,8 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/cosmos/cosmos-sdk/client"
-
 	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/cosmos/cosmos-sdk/client"
 )
 
 type TestQueryKeeper struct {

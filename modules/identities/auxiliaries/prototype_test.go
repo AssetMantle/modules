@@ -7,8 +7,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
+	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 )
 
 func TestPrototype(t *testing.T) {

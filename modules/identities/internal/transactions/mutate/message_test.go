@@ -7,12 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/modules/identities/internal/module"
-	"github.com/AssetMantle/modules/utilities/transaction"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/ids"
@@ -22,6 +16,12 @@ import (
 	"github.com/AssetMantle/schema/x/properties"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/modules/identities/internal/module"
+	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 type fields struct {

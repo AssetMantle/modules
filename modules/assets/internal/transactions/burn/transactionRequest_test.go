@@ -9,6 +9,10 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/helpers/base"
+	"github.com/AssetMantle/schema/x/helpers/constants"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -16,10 +20,6 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/AssetMantle/modules/utilities/transaction"
-	"github.com/AssetMantle/schema/x/helpers"
-	"github.com/AssetMantle/schema/x/helpers/base"
-	"github.com/AssetMantle/schema/x/helpers/constants"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 )
 
 var (

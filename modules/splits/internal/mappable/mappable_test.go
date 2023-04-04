@@ -7,10 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/modules/splits/internal/key"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
@@ -19,6 +15,10 @@ import (
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 	"github.com/AssetMantle/schema/x/types"
 	baseTypes "github.com/AssetMantle/schema/x/types/base"
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/modules/splits/internal/key"
 )
 
 var (

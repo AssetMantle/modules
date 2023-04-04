@@ -6,8 +6,9 @@ package asset
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/modules/assets/internal/key"
 	"github.com/AssetMantle/schema/x/helpers"
+
+	"github.com/AssetMantle/modules/modules/assets/internal/key"
 )
 
 type queryKeeper struct {

@@ -4,9 +4,8 @@
 package module
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-
 	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 func RegisterLegacyAminoCodec(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) *codec.LegacyAmino {

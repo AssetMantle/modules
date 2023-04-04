@@ -4,12 +4,13 @@
 package transactions
 
 import (
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
 	"github.com/AssetMantle/modules/modules/orders/internal/transactions/cancel"
 	"github.com/AssetMantle/modules/modules/orders/internal/transactions/define"
 	"github.com/AssetMantle/modules/modules/orders/internal/transactions/make"
 	"github.com/AssetMantle/modules/modules/orders/internal/transactions/take"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.Transactions {

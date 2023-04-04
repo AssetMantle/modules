@@ -4,6 +4,9 @@
 package classifications
 
 import (
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries"
 	"github.com/AssetMantle/modules/modules/classifications/internal/block"
 	"github.com/AssetMantle/modules/modules/classifications/internal/genesis"
@@ -14,8 +17,6 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/queries"
 	"github.com/AssetMantle/modules/modules/classifications/internal/simulator"
 	"github.com/AssetMantle/modules/modules/classifications/internal/transactions"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.Module {

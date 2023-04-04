@@ -4,6 +4,9 @@
 package assets
 
 import (
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+
 	"github.com/AssetMantle/modules/modules/assets/auxiliaries"
 	"github.com/AssetMantle/modules/modules/assets/internal/block"
 	"github.com/AssetMantle/modules/modules/assets/internal/genesis"
@@ -14,8 +17,6 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/queries"
 	"github.com/AssetMantle/modules/modules/assets/internal/simulator"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.Module {

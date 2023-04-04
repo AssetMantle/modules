@@ -4,11 +4,10 @@
 package deputize
 
 import (
-	"github.com/asaskevich/govalidator"
-
 	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/ids"
 	"github.com/AssetMantle/schema/x/lists"
+	"github.com/asaskevich/govalidator"
 )
 
 type auxiliaryRequest struct {
