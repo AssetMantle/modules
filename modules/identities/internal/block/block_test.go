@@ -7,8 +7,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/AssetMantle/schema/x"
-
+	schema "github.com/AssetMantle/schema/x"
 	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -26,7 +25,7 @@ import (
 
 func CreateTestInput(t *testing.T) context.Context {
 	var legacyAmino = codec.NewLegacyAmino()
-	x.RegisterLegacyAminoCodec(legacyAmino)
+	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 

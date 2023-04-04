@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/x"
+	schema "github.com/AssetMantle/schema/x"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents"
 	"github.com/AssetMantle/schema/x/documents/base"
@@ -51,7 +51,7 @@ func createTestData() (*baseIDs.MaintainerID, documents.Maintainer) {
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
-	x.RegisterLegacyAminoCodec(legacyAmino)
+	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 

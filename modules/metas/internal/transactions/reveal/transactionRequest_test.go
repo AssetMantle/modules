@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/AssetMantle/schema/schema"
+	schema "github.com/AssetMantle/schema/x"
 	"github.com/AssetMantle/schema/x/data/utilities"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"

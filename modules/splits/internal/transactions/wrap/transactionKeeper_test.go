@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/schema"
+	schema "github.com/AssetMantle/schema/x"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
@@ -30,7 +30,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/libs/log"
@@ -132,7 +131,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	intToken := sdkTypes.TokensFromConsensusPower(1000000, sdkTypes.NewInt(100))
 	initCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(context), intToken))
 	totalSupply := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(context), intToken.MulRaw(int64(len(TestAddrs)))))
-	supplyKeeper.SetSupply(context, supply.NewSupply(totalSupply))
+	SetSupply(context, NewSupply(totalSupply))
 
 	for _, addr := range TestAddrs {
 		_, err := bankKeeper.AddCoins(context, addr, initCoins)
@@ -187,10 +186,10 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		paramsKeeper.Subspace(auth.DefaultParamspace),
 		auth.ProtoBaseAccount, // prototype
 	)
-	feeCollectorAcc := supply.NewEmptyModuleAccount(authTypes.FeeCollectorName)
-	notBondedPool := supply.NewEmptyModuleAccount(staking.NotBondedPoolName, authTypes.Burner, authTypes.Staking)
-	bondPool := supply.NewEmptyModuleAccount(staking.BondedPoolName, authTypes.Burner, authTypes.Staking)
-	distrAcc := supply.NewEmptyModuleAccount(types.ModuleName)
+	feeCollectorAcc := authTypes.NewEmptyModuleAccount(authTypes.FeeCollectorName)
+	notBondedPool := authTypes.NewEmptyModuleAccount(staking.NotBondedPoolName, authTypes.Burner, authTypes.Staking)
+	bondPool := authTypes.NewEmptyModuleAccount(staking.BondedPoolName, authTypes.Burner, authTypes.Staking)
+	distrAcc := authTypes.NewEmptyModuleAccount(types.ModuleName)
 	blacklistedAddrs := make(map[string]bool)
 	blacklistedAddrs[feeCollectorAcc.GetAddress().String()] = true
 	blacklistedAddrs[notBondedPool.GetAddress().String()] = true
@@ -207,11 +206,11 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
-	supplyKeeper := supply.NewKeeper(legacyAmino, sdkTypes.NewKVStoreKey(supply.StoreKey), accountKeeper, bankKeeper, maccPerms)
+	supplyKeeper := NewKeeper(legacyAmino, sdkTypes.NewKVStoreKey(authTypes.StoreKey), accountKeeper, bankKeeper, maccPerms)
 	type fields struct {
 		mapper                helpers.Mapper
 		parameterManager      helpers.ParameterManager
-		supplyKeeper          supply.Keeper
+		supplyKeeper          Keeper
 		authenticateAuxiliary helpers.Auxiliary
 	}
 	type args struct {
@@ -251,7 +250,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	type fields struct {
 		mapper                helpers.Mapper
 		parameterManager      helpers.ParameterManager
-		supplyKeeper          supply.Keeper
+		supplyKeeper          Keeper
 		authenticateAuxiliary helpers.Auxiliary
 	}
 	type args struct {

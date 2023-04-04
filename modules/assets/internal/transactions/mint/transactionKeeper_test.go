@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/schema"
+	schema "github.com/AssetMantle/schema/x"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents/base"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"

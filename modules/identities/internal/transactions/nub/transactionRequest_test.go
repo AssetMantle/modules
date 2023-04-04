@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/schema"
+	schema "github.com/AssetMantle/schema/x"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	"github.com/AssetMantle/schema/x/helpers/constants"

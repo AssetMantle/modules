@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/schema"
+	schema "github.com/AssetMantle/schema/x"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
@@ -27,7 +27,6 @@ import (
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/libs/log"
@@ -125,7 +124,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	initCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(context), intToken))
 	testCoin := sdkTypes.NewCoins(sdkTypes.NewCoin("stake", intToken))
 	totalSupply := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(context), intToken.MulRaw(int64(len(TestAddrs)))))
-	supplyKeeper.SetSupply(context, supply.NewSupply(totalSupply))
+	supplyKeeper.SetSupply(context, NewSupply(totalSupply))
 
 	for _, addr := range TestAddrs {
 		_, err := bankKeeper.AddCoins(context, addr, initCoins)
@@ -170,7 +169,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 	type fields struct {
 		mapper                helpers.Mapper
 		parameterManager      helpers.ParameterManager
-		supplyKeeper          supply.Keeper
+		supplyKeeper          Keeper
 		authenticateAuxiliary helpers.Auxiliary
 	}
 	type args struct {
@@ -211,7 +210,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	type fields struct {
 		mapper                helpers.Mapper
 		parameterManager      helpers.ParameterManager
-		supplyKeeper          supply.Keeper
+		supplyKeeper          Keeper
 		authenticateAuxiliary helpers.Auxiliary
 	}
 	type args struct {
