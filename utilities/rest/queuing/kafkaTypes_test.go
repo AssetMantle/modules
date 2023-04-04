@@ -12,7 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema"
+	schema "github.com/AssetMantle/schema/x"
+
 	"github.com/AssetMantle/modules/utilities/random"
 )
 

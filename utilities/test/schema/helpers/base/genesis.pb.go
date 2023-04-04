@@ -5,7 +5,7 @@ package base
 
 import (
 	fmt "fmt"
-	base "github.com/AssetMantle/modules/schema/parameters/base"
+	base "github.com/AssetMantle/schema/x/parameters/base"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"

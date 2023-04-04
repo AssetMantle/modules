@@ -8,16 +8,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/ids"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	"github.com/AssetMantle/modules/schema/properties/constants"
-	propertiesUtilities "github.com/AssetMantle/modules/schema/properties/utilities"
-	"github.com/AssetMantle/modules/schema/qualified"
-	"github.com/AssetMantle/modules/schema/qualified/base"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	"github.com/AssetMantle/schema/x/ids"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	"github.com/AssetMantle/schema/x/lists"
+	"github.com/AssetMantle/schema/x/lists/utilities"
+	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	"github.com/AssetMantle/schema/x/properties/constants"
+	propertiesUtilities "github.com/AssetMantle/schema/x/properties/utilities"
+	"github.com/AssetMantle/schema/x/qualified"
+	"github.com/AssetMantle/schema/x/qualified/base"
+
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 

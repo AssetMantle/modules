@@ -6,11 +6,10 @@ package base
 import (
 	"encoding/json"
 
+	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 var _ helpers.Message = (*TestMessage)(nil)

@@ -3,18 +3,17 @@ package docs
 import (
 	"net/http"
 
+	"github.com/AssetMantle/schema/x/data"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseLists "github.com/AssetMantle/schema/x/lists/base"
+	"github.com/AssetMantle/schema/x/properties"
+	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	"github.com/AssetMantle/schema/x/properties/constants"
+	"github.com/AssetMantle/schema/x/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-
-	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/properties"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	"github.com/AssetMantle/modules/schema/properties/constants"
-	"github.com/AssetMantle/modules/schema/qualified/base"
 )
 
 func nubIDHandler(context client.Context) http.HandlerFunc {

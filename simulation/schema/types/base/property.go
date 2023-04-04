@@ -8,9 +8,9 @@ import (
 
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/properties"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	"github.com/AssetMantle/schema/x/properties"
+	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 )
 
 func GenerateRandomProperty(r *rand.Rand) properties.Property {

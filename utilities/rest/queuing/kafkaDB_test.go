@@ -6,14 +6,14 @@ package queuing
 import (
 	"testing"
 
+	schema "github.com/AssetMantle/schema/x"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/schema"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/random"
 )
 

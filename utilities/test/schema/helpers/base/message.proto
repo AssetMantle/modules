@@ -1,7 +1,0 @@
-syntax = "proto3";
-package test;
-
-message TestMessage {
-  bytes from = 1;
-  string i_d = 2;
-}

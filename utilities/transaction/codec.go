@@ -4,10 +4,8 @@
 package transaction
 
 import (
+	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 func RegisterLegacyAminoCodec(messagePrototype func() helpers.Message) *codec.LegacyAmino {

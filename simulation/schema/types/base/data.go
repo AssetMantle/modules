@@ -7,12 +7,11 @@ import (
 	"math"
 	"math/rand"
 
+	"github.com/AssetMantle/schema/x/data"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	baseTypes "github.com/AssetMantle/schema/x/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-
-	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 )
 
 func GenerateRandomData(r *rand.Rand) data.Data {
