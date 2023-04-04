@@ -1,7 +1,0 @@
-syntax = "proto3";
-package test;
-
-message TestMappable {
-  string i_d = 1;
-  string value = 2;
-}

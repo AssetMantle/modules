@@ -2,13 +2,17 @@
 version: v1
 deps:
   - remote: buf.build
+    owner: assetmantle
+    repository: schema
+    commit: 60958afb43e24be7ba6cffde283b5151
+  - remote: buf.build
     owner: cosmos
     repository: cosmos-proto
     commit: 1935555c206d4afb9e94615dfd0fad31
   - remote: buf.build
     owner: cosmos
     repository: cosmos-sdk
-    commit: fdef37ae59634f77bf9f6466e54c571b
+    commit: 8dc523b705c34317bfd4a961fba89e72
   - remote: buf.build
     owner: cosmos
     repository: gogo-proto
@@ -16,4 +20,4 @@ deps:
   - remote: buf.build
     owner: googleapis
     repository: googleapis
-    commit: 75b4300737fb4efca0831636be94e517
+    commit: 5ae7f88519b04fe1965da0f8a375a088
