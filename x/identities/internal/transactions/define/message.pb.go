@@ -9,8 +9,8 @@ import (
 	math "math"
 	math_bits "math/bits"
 
-	base "github.com/AssetMantle/modules/x/ids/base"
-	base1 "github.com/AssetMantle/modules/x/lists/base"
+	base "github.com/AssetMantle/schema/x/ids/base"
+	base1 "github.com/AssetMantle/schema/x/lists/base"
 	proto "github.com/gogo/protobuf/proto"
 )
 

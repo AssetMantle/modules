@@ -9,7 +9,7 @@ import (
 	math "math"
 	math_bits "math/bits"
 
-	base "github.com/AssetMantle/modules/x/data/base"
+	base "github.com/AssetMantle/schema/x/data/base"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 )

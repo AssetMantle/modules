@@ -9,7 +9,7 @@ import (
 	math "math"
 	math_bits "math/bits"
 
-	base "github.com/AssetMantle/modules/x/ids/base"
+	base "github.com/AssetMantle/schema/x/ids/base"
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
