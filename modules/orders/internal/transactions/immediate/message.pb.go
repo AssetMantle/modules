@@ -5,9 +5,9 @@ package immediate
 
 import (
 	fmt "fmt"
-	base "github.com/AssetMantle/modules/schema/ids/base"
-	base2 "github.com/AssetMantle/modules/schema/lists/base"
-	base1 "github.com/AssetMantle/modules/schema/types/base"
+	base "github.com/AssetMantle/schema/x/ids/base"
+	base2 "github.com/AssetMantle/schema/x/lists/base"
+	base1 "github.com/AssetMantle/schema/x/types/base"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"

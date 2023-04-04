@@ -16,13 +16,13 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/lists/utilities"
-	"github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+	"github.com/AssetMantle/schema/x/helpers/constants"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseLists "github.com/AssetMantle/schema/x/lists/base"
+	"github.com/AssetMantle/schema/x/lists/utilities"
+	"github.com/AssetMantle/schema/x/qualified/base"
 )
 
 var (

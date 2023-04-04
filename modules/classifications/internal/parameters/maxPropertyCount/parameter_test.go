@@ -6,10 +6,10 @@ package maxPropertyCount
 import (
 	"testing"
 
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
+	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 )
 
 func Test_validator(t *testing.T) {

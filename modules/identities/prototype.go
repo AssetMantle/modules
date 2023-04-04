@@ -14,8 +14,8 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/queries"
 	"github.com/AssetMantle/modules/modules/identities/internal/simulator"
 	"github.com/AssetMantle/modules/modules/identities/internal/transactions"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.Module {

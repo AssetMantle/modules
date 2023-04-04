@@ -7,9 +7,9 @@ import (
 
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 )
 
 var _ helpers.Genesis = (*Genesis)(nil)

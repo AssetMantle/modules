@@ -7,11 +7,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/ids"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 )
 
 var _ helpers.Key = (*Key)(nil)

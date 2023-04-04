@@ -15,11 +15,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/viper"
 
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/transaction"
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/helpers/base"
+	"github.com/AssetMantle/schema/x/helpers/constants"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 )
 
 var (

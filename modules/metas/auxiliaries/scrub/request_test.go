@@ -8,11 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/properties"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	"github.com/AssetMantle/schema/x/lists/base"
+	"github.com/AssetMantle/schema/x/properties"
+	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 )
 
 func Test_Scrub_Request(t *testing.T) {

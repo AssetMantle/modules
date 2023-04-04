@@ -25,8 +25,8 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/parameters"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
 	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Auxiliary, helpers.Auxiliary, helpers.Auxiliary) {

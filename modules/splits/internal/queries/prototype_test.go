@@ -10,7 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/splits/internal/queries/ownable"
 	"github.com/AssetMantle/modules/modules/splits/internal/queries/split"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

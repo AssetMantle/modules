@@ -8,7 +8,7 @@ import (
 
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/schema/x/helpers"
 )
 
 type block struct {

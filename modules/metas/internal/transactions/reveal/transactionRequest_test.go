@@ -14,10 +14,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/data/utilities"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/AssetMantle/schema/x/data/utilities"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+	"github.com/AssetMantle/schema/x/helpers/constants"
 )
 
 func Test_Reveal_Request(t *testing.T) {

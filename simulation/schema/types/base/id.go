@@ -10,8 +10,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"github.com/AssetMantle/modules/schema/ids"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/schema/x/ids"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 )
 
 func GenerateRandomID(r *rand.Rand) ids.ID {

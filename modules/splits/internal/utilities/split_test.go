@@ -20,14 +20,14 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/modules/modules/splits/internal/mapper"
 	"github.com/AssetMantle/modules/schema"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/ids"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseLists "github.com/AssetMantle/schema/x/lists/base"
+	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	baseTypes "github.com/AssetMantle/schema/x/types/base"
 )
 
 func createTestInput1(t *testing.T) (sdkTypes.Context, helpers.Mapper) {

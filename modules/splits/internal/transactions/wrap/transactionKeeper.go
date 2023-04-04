@@ -12,12 +12,12 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/internal/utilities"
-	"github.com/AssetMantle/modules/schema/data/base"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/schema/x/data/base"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/ids"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	"github.com/AssetMantle/schema/x/properties/constants"
 )
 
 type transactionKeeper struct {

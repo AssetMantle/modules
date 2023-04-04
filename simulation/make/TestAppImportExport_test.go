@@ -32,7 +32,7 @@ import (
 	"github.com/AssetMantle/modules/modules/metas"
 	"github.com/AssetMantle/modules/modules/orders"
 	"github.com/AssetMantle/modules/modules/splits"
-	"github.com/AssetMantle/modules/schema/applications/base"
+	"github.com/AssetMantle/schema/x/applications/base"
 )
 
 // GetProperty flags every time the simulator is run

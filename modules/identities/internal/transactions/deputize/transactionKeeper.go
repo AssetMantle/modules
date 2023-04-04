@@ -10,7 +10,7 @@ import (
 
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/deputize"
-	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/schema/x/helpers"
 )
 
 type transactionKeeper struct {

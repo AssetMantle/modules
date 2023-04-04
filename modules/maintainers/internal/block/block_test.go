@@ -20,7 +20,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/mapper"
 	"github.com/AssetMantle/modules/modules/maintainers/internal/parameters"
 	"github.com/AssetMantle/modules/schema"
-	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/schema/x/helpers"
 )
 
 func CreateTestInput(t *testing.T) context.Context {

@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/common"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 )
 
 func Test_Split_Response(t *testing.T) {

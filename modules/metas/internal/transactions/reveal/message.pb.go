@@ -5,8 +5,8 @@ package reveal
 
 import (
 	fmt "fmt"
-	base "github.com/AssetMantle/modules/schema/data/base"
-	_ "github.com/AssetMantle/modules/schema/ids/base"
+	base "github.com/AssetMantle/schema/x/data/base"
+	_ "github.com/AssetMantle/schema/x/ids/base"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"

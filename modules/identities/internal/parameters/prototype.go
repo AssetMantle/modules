@@ -6,8 +6,8 @@ package parameters
 import (
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters/maxProvisionAddressCount"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.ParameterManager {

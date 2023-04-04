@@ -13,9 +13,9 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/key"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseTypes "github.com/AssetMantle/schema/x/types/base"
 )
 
 type transactionKeeper struct {

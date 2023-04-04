@@ -7,10 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/ids/constansts"
-	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/schema/x/ids"
+	"github.com/AssetMantle/schema/x/ids/constansts"
+	"github.com/AssetMantle/schema/x/lists"
+	"github.com/AssetMantle/schema/x/lists/base"
 )
 
 func TestSetPermissions(t *testing.T) {

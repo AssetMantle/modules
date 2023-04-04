@@ -7,8 +7,8 @@ import (
 	"context"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/utilities"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
 )
 
 type auxiliaryKeeper struct {

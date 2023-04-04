@@ -8,14 +8,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	"github.com/AssetMantle/modules/schema/lists"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	typesSchema "github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/ids"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	"github.com/AssetMantle/schema/x/lists"
+	baseLists "github.com/AssetMantle/schema/x/lists/base"
+	typesSchema "github.com/AssetMantle/schema/x/types"
+	baseTypes "github.com/AssetMantle/schema/x/types/base"
 )
 
 var _ helpers.Message = (*Message)(nil)

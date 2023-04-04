@@ -4,7 +4,7 @@
 package authenticate
 
 import (
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 var Auxiliary = baseHelpers.NewAuxiliary(

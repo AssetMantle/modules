@@ -5,8 +5,8 @@ package mint
 
 import (
 	fmt "fmt"
-	base "github.com/AssetMantle/modules/schema/ids/base"
-	base1 "github.com/AssetMantle/modules/schema/lists/base"
+	base "github.com/AssetMantle/schema/x/ids/base"
+	base1 "github.com/AssetMantle/schema/x/lists/base"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"

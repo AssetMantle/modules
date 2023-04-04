@@ -18,7 +18,7 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/common"
 	"github.com/AssetMantle/modules/modules/assets/internal/mapper"
 	"github.com/AssetMantle/modules/schema"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {

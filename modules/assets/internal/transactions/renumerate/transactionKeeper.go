@@ -14,13 +14,13 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
-	"github.com/AssetMantle/modules/schema/data"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/properties"
-	"github.com/AssetMantle/modules/schema/properties/constants"
-	"github.com/AssetMantle/modules/schema/qualified/base"
+	"github.com/AssetMantle/schema/x/data"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseLists "github.com/AssetMantle/schema/x/lists/base"
+	"github.com/AssetMantle/schema/x/properties"
+	"github.com/AssetMantle/schema/x/properties/constants"
+	"github.com/AssetMantle/schema/x/qualified/base"
 )
 
 type transactionKeeper struct {

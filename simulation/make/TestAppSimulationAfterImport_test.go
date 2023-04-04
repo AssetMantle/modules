@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/AssetMantle/modules/schema/applications/base"
+	"github.com/AssetMantle/schema/x/applications/base"
 )
 
 func TestAppSimulationAfterImport(t *testing.T) {

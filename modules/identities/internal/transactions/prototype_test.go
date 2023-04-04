@@ -15,7 +15,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/transactions/provision"
 	"github.com/AssetMantle/modules/modules/identities/internal/transactions/revoke"
 	"github.com/AssetMantle/modules/modules/identities/internal/transactions/unprovision"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

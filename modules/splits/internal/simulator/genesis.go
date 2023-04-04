@@ -15,14 +15,14 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	splitsModule "github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/internal/parameters/wrapAllowedCoins"
-	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
+	"github.com/AssetMantle/schema/x/data"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
+	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	"github.com/AssetMantle/schema/x/types/base"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {

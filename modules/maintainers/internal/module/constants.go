@@ -4,8 +4,8 @@
 package module
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
+	"github.com/AssetMantle/schema/x/helpers/constants"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 )
 
 const Name = "maintainers"

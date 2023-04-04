@@ -11,14 +11,14 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/orders/internal/key"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/documents"
-	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	"github.com/AssetMantle/schema/x/documents"
+	baseDocuments "github.com/AssetMantle/schema/x/documents/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseLists "github.com/AssetMantle/schema/x/lists/base"
+	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 )
 
 var (

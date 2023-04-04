@@ -11,14 +11,14 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/modules/splits/internal/key"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
-	"github.com/AssetMantle/modules/schema/types"
-	baseTypes "github.com/AssetMantle/modules/schema/types/base"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseLists "github.com/AssetMantle/schema/x/lists/base"
+	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	"github.com/AssetMantle/schema/x/types"
+	baseTypes "github.com/AssetMantle/schema/x/types/base"
 )
 
 var (

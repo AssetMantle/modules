@@ -7,8 +7,8 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/transactions/send"
 	"github.com/AssetMantle/modules/modules/splits/internal/transactions/unwrap"
 	"github.com/AssetMantle/modules/modules/splits/internal/transactions/wrap"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.Transactions {

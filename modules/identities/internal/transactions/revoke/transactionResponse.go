@@ -6,7 +6,7 @@ package revoke
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/schema/x/helpers"
 )
 
 var _ helpers.TransactionResponse = (*TransactionResponse)(nil)

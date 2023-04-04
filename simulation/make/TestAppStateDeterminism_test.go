@@ -18,7 +18,7 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/schema/applications/base"
+	"github.com/AssetMantle/schema/x/applications/base"
 )
 
 func TestAppStateDeterminism(t *testing.T) {

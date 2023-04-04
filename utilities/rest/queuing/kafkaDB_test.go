@@ -13,8 +13,8 @@ import (
 	dbm "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/schema"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
 	"github.com/AssetMantle/modules/utilities/random"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 )
 
 func Test_Kafka_DB(t *testing.T) {

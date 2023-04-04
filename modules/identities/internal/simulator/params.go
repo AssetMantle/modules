@@ -13,7 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/common"
 	"github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters/maxProvisionAddressCount"
-	"github.com/AssetMantle/modules/schema/data/base"
+	"github.com/AssetMantle/schema/x/data/base"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {

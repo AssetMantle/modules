@@ -12,7 +12,7 @@ import (
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func (simulator) WeightedOperations(simulationState module.SimulationState) simulation.WeightedOperations {

@@ -14,11 +14,11 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/properties/constants"
-	"github.com/AssetMantle/modules/schema/properties/utilities"
-	"github.com/AssetMantle/modules/schema/qualified/base"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/properties/constants"
+	"github.com/AssetMantle/schema/x/properties/utilities"
+	"github.com/AssetMantle/schema/x/qualified/base"
 )
 
 type transactionKeeper struct {

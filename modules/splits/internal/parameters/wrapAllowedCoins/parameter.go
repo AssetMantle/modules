@@ -6,16 +6,16 @@ package wrapAllowedCoins
 import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
-	"github.com/AssetMantle/modules/schema/ids"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
-	"github.com/AssetMantle/modules/schema/properties/base"
-	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/schema/x/data"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+	"github.com/AssetMantle/schema/x/ids"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
+	"github.com/AssetMantle/schema/x/properties/base"
+	constantProperties "github.com/AssetMantle/schema/x/properties/constants"
 )
 
 var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()

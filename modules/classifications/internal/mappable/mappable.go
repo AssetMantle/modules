@@ -7,10 +7,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
-	"github.com/AssetMantle/modules/schema/documents"
-	"github.com/AssetMantle/modules/schema/documents/base"
-	"github.com/AssetMantle/modules/schema/helpers"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	"github.com/AssetMantle/schema/x/documents"
+	"github.com/AssetMantle/schema/x/documents/base"
+	"github.com/AssetMantle/schema/x/helpers"
 )
 
 var _ helpers.Mappable = (*Mappable)(nil)

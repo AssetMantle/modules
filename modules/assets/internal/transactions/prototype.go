@@ -11,8 +11,8 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/mutate"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/renumerate"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/revoke"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.Transactions {

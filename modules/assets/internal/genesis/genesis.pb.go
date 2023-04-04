@@ -6,7 +6,7 @@ package genesis
 import (
 	fmt "fmt"
 	mappable "github.com/AssetMantle/modules/modules/assets/internal/mappable"
-	base "github.com/AssetMantle/modules/schema/parameters/base"
+	base "github.com/AssetMantle/schema/x/parameters/base"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"

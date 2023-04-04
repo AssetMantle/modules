@@ -7,8 +7,8 @@ import (
 	"reflect"
 	"testing"
 
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
 )
 
 func Test_auxiliaryResponse_GetError(t *testing.T) {

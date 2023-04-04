@@ -3,7 +3,7 @@
 
 package deputize
 
-import "github.com/AssetMantle/modules/schema/helpers"
+import "github.com/AssetMantle/schema/x/helpers"
 
 type auxiliaryResponse struct {
 }

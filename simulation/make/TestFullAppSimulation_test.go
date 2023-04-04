@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema/applications/base"
+	"github.com/AssetMantle/schema/x/applications/base"
 )
 
 func TestFullAppSimulation(t *testing.T) {

@@ -4,13 +4,13 @@
 package module
 
 import (
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/helpers/constants"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	"github.com/AssetMantle/schema/x/helpers/constants"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseLists "github.com/AssetMantle/schema/x/lists/base"
+	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	constantProperties "github.com/AssetMantle/schema/x/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 )
 
 const Name = "orders"

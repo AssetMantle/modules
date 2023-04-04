@@ -11,16 +11,16 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	documentsSchema "github.com/AssetMantle/modules/schema/documents"
-	baseDocuments "github.com/AssetMantle/modules/schema/documents/base"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	baseProperties "github.com/AssetMantle/modules/schema/properties/base"
-	"github.com/AssetMantle/modules/schema/qualified"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	documentsSchema "github.com/AssetMantle/schema/x/documents"
+	baseDocuments "github.com/AssetMantle/schema/x/documents/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/ids"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseLists "github.com/AssetMantle/schema/x/lists/base"
+	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	"github.com/AssetMantle/schema/x/qualified"
+	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 )
 
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, *Mappable) {

@@ -6,10 +6,10 @@ package member
 import (
 	"github.com/asaskevich/govalidator"
 
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/ids"
-	"github.com/AssetMantle/modules/schema/qualified"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/ids"
+	"github.com/AssetMantle/schema/x/qualified"
 )
 
 type auxiliaryRequest struct {

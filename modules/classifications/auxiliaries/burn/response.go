@@ -4,7 +4,7 @@
 package burn
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers"
+	"github.com/AssetMantle/schema/x/helpers"
 )
 
 type auxiliaryResponse struct {

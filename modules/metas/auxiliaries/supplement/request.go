@@ -6,8 +6,8 @@ package supplement
 import (
 	"github.com/asaskevich/govalidator"
 
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/properties"
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/properties"
 )
 
 type auxiliaryRequest struct {

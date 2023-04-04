@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/AssetMantle/modules/schema/applications/base"
+	"github.com/AssetMantle/schema/x/applications/base"
 )
 
 func BenchmarkInvariants(b *testing.B) {

@@ -14,14 +14,14 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	identitiesModule "github.com/AssetMantle/modules/modules/identities/internal/module"
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters/maxProvisionAddressCount"
-	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/documents/base"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
+	"github.com/AssetMantle/schema/x/data"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	"github.com/AssetMantle/schema/x/documents/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
+	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {

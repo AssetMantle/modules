@@ -14,13 +14,13 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	classificationsModule "github.com/AssetMantle/modules/modules/classifications/internal/module"
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters/bondRate"
-	"github.com/AssetMantle/modules/schema/data"
-	baseData "github.com/AssetMantle/modules/schema/data/base"
-	"github.com/AssetMantle/modules/schema/documents/base"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseParameters "github.com/AssetMantle/modules/schema/parameters/base"
-	baseQualified "github.com/AssetMantle/modules/schema/qualified/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
+	"github.com/AssetMantle/schema/x/data"
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	"github.com/AssetMantle/schema/x/documents/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
+	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {

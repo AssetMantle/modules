@@ -4,7 +4,7 @@
 package module
 
 import (
-	"github.com/AssetMantle/modules/schema/helpers/constants"
+	"github.com/AssetMantle/schema/x/helpers/constants"
 )
 
 const Name = "splits"

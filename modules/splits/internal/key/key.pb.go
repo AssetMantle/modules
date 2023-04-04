@@ -5,7 +5,7 @@ package key
 
 import (
 	fmt "fmt"
-	base "github.com/AssetMantle/modules/schema/ids/base"
+	base "github.com/AssetMantle/schema/x/ids/base"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"

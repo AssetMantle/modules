@@ -7,10 +7,10 @@ import (
 	"context"
 
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	baseLists "github.com/AssetMantle/modules/schema/lists/base"
-	"github.com/AssetMantle/modules/schema/properties"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseLists "github.com/AssetMantle/schema/x/lists/base"
+	"github.com/AssetMantle/schema/x/properties"
 )
 
 type auxiliaryKeeper struct {

@@ -15,7 +15,7 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/mutate"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/renumerate"
 	"github.com/AssetMantle/modules/modules/assets/internal/transactions/revoke"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

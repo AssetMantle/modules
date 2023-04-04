@@ -2,8 +2,8 @@ package utilities
 
 import (
 	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
-	"github.com/AssetMantle/modules/schema/lists"
-	"github.com/AssetMantle/modules/schema/lists/base"
+	"github.com/AssetMantle/schema/x/lists"
+	"github.com/AssetMantle/schema/x/lists/base"
 )
 
 func SetPermissions(mint bool, burn bool, renumerate bool, add bool, remove bool, mutate bool) lists.IDList {

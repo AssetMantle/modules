@@ -9,8 +9,8 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/revoke"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func Prototype() helpers.Auxiliaries {

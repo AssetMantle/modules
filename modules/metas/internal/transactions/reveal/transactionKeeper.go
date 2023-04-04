@@ -8,11 +8,11 @@ import (
 
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
-	"github.com/AssetMantle/modules/schema/data"
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
-	baseIDs "github.com/AssetMantle/modules/schema/ids/base"
-	constantProperties "github.com/AssetMantle/modules/schema/properties/constants"
+	"github.com/AssetMantle/schema/x/data"
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/AssetMantle/schema/x/helpers"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	constantProperties "github.com/AssetMantle/schema/x/properties/constants"
 )
 
 type transactionKeeper struct {

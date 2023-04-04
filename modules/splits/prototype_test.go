@@ -18,7 +18,7 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/queries"
 	"github.com/AssetMantle/modules/modules/splits/internal/simulator"
 	"github.com/AssetMantle/modules/modules/splits/internal/transactions"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

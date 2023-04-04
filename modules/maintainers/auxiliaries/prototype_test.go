@@ -13,7 +13,7 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/revoke"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
-	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
+	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

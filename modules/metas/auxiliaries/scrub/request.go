@@ -6,8 +6,8 @@ package scrub
 import (
 	"github.com/asaskevich/govalidator"
 
-	"github.com/AssetMantle/modules/schema/helpers"
-	"github.com/AssetMantle/modules/schema/lists"
+	"github.com/AssetMantle/schema/x/helpers"
+	"github.com/AssetMantle/schema/x/lists"
 )
 
 type auxiliaryRequest struct {
