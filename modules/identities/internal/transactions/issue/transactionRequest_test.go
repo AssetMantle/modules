@@ -16,7 +16,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"

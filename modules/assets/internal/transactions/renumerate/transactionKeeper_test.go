@@ -26,7 +26,6 @@ import (
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/modules/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/renumerate"
-	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents/base"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"

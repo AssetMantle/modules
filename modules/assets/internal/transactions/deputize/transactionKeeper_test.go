@@ -24,7 +24,6 @@ import (
 	"github.com/AssetMantle/modules/modules/assets/internal/parameters"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/deputize"
-	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents/base"
 	"github.com/AssetMantle/schema/x/helpers"

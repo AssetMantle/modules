@@ -10,8 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/schema"
 )
 
 func TestKafkaProducerDeliverMessage(t *testing.T) {

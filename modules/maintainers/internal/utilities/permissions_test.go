@@ -4,11 +4,11 @@
 package utilities
 
 import (
+	"github.com/AssetMantle/modules/modules/maintainers/internal/module"
 	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/schema/x/ids"
-	"github.com/AssetMantle/schema/x/ids/constansts"
 	"github.com/AssetMantle/schema/x/lists"
 	"github.com/AssetMantle/schema/x/lists/base"
 )
@@ -28,13 +28,13 @@ func TestSetPermissions(t *testing.T) {
 		args args
 		want lists.IDList
 	}{
-		{"+ve for can Mint", args{true, false, false, false, false, false}, idList.Add(constansts.Mint)},
-		{"+ve for can Burn", args{false, true, false, false, false, false}, idList.Add(constansts.Burn)},
-		{"+ve for can Remunerate", args{false, false, true, false, false, false}, idList.Add(constansts.Renumerate)},
-		{"+ve for can Add", args{false, false, false, true, false, false}, idList.Add(constansts.Add)},
-		{"+ve for can remove", args{false, false, false, false, true, false}, idList.Add(constansts.Remove)},
-		{"+ve for can mutate", args{false, false, false, false, false, true}, idList.Add(constansts.Mutate)},
-		{"+ve", args{true, true, true, true, true, true}, idList.Add([]ids.ID{constansts.Mint, constansts.Burn, constansts.Renumerate, constansts.Add, constansts.Remove, constansts.Mutate}...)},
+		{"+ve for can Mint", args{true, false, false, false, false, false}, idList.Add(module.Mint)},
+		{"+ve for can Burn", args{false, true, false, false, false, false}, idList.Add(module.Burn)},
+		{"+ve for can Remunerate", args{false, false, true, false, false, false}, idList.Add(module.Renumerate)},
+		{"+ve for can Add", args{false, false, false, true, false, false}, idList.Add(module.Add)},
+		{"+ve for can remove", args{false, false, false, false, true, false}, idList.Add(module.Remove)},
+		{"+ve for can mutate", args{false, false, false, false, false, true}, idList.Add(module.Mutate)},
+		{"+ve", args{true, true, true, true, true, true}, idList.Add([]ids.ID{module.Mint, module.Burn, module.Renumerate, module.Add, module.Remove, module.Mutate}...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

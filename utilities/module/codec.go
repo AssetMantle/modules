@@ -6,7 +6,6 @@ package module
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/schema/x/helpers"
 )
 

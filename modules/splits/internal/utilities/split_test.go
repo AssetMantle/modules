@@ -19,7 +19,6 @@ import (
 
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/modules/modules/splits/internal/mapper"
-	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/ids"

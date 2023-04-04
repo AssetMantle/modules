@@ -19,8 +19,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/schema"
 )
 
 func TestHandler(t *testing.T) {

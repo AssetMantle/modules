@@ -12,7 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/modules/utilities/random"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 )

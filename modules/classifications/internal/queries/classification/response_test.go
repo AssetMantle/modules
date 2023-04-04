@@ -17,7 +17,6 @@ import (
 
 	"github.com/AssetMantle/modules/modules/classifications/internal/common"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mapper"
-	"github.com/AssetMantle/modules/schema"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 )
 

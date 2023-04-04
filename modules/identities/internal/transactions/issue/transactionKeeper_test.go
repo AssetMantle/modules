@@ -25,7 +25,6 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/identities/internal/parameters"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
-	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	baseDocuments "github.com/AssetMantle/schema/x/documents/base"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"

@@ -36,7 +36,6 @@ import (
 	"github.com/AssetMantle/modules/modules/splits/internal/mappable"
 	"github.com/AssetMantle/modules/modules/splits/internal/module"
 	"github.com/AssetMantle/modules/modules/splits/internal/parameters"
-	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"

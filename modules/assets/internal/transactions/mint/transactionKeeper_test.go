@@ -25,7 +25,6 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/verify"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/mint"
-	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents/base"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"

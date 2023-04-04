@@ -19,7 +19,6 @@ import (
 
 	"github.com/AssetMantle/modules/modules/metas/internal/mapper"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
-	"github.com/AssetMantle/modules/schema"
 	"github.com/AssetMantle/schema/x/helpers"
 )
 

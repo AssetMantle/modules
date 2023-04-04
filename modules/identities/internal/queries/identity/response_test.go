@@ -20,7 +20,6 @@ import (
 	"github.com/AssetMantle/modules/modules/identities/internal/common"
 	"github.com/AssetMantle/modules/modules/identities/internal/mappable"
 	"github.com/AssetMantle/modules/modules/identities/internal/mapper"
-	"github.com/AssetMantle/modules/schema"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 	"github.com/AssetMantle/schema/x/helpers"
 )

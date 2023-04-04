@@ -20,7 +20,6 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/internal/key"
 	"github.com/AssetMantle/modules/modules/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/modules/classifications/internal/parameters"
-	"github.com/AssetMantle/modules/schema"
 	baseDocuments "github.com/AssetMantle/schema/x/documents/base"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"

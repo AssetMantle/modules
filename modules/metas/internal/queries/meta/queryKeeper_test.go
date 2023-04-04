@@ -22,7 +22,6 @@ import (
 	"github.com/AssetMantle/modules/modules/metas/internal/key"
 	"github.com/AssetMantle/modules/modules/metas/internal/mappable"
 	"github.com/AssetMantle/modules/modules/metas/internal/parameters"
-	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"

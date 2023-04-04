@@ -25,7 +25,6 @@ import (
 	"github.com/AssetMantle/modules/modules/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/modules/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/modules/maintainers/auxiliaries/super"
-	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents/base"
 	"github.com/AssetMantle/schema/x/helpers"

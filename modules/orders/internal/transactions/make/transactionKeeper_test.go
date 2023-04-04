@@ -27,7 +27,6 @@ import (
 	"github.com/AssetMantle/modules/modules/orders/internal/mappable"
 	"github.com/AssetMantle/modules/modules/orders/internal/parameters"
 	"github.com/AssetMantle/modules/modules/splits/auxiliaries/transfer"
-	"github.com/AssetMantle/modules/schema"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	baseDocuments "github.com/AssetMantle/schema/x/documents/base"
 	"github.com/AssetMantle/schema/x/helpers"

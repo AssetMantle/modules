@@ -11,8 +11,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/schema"
 )
 
 func Test_Rest_Utils(t *testing.T) {
