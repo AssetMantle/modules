@@ -7,10 +7,10 @@ import (
 	"github.com/AssetMantle/schema/x/data"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
 	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	"github.com/AssetMantle/schema/x/ids"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	"github.com/AssetMantle/schema/x/parameters"
 	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 	"github.com/AssetMantle/schema/x/properties/base"
 	constantProperties "github.com/AssetMantle/schema/x/properties/constants"
@@ -24,7 +24,7 @@ func validator(i interface{}) error {
 	var listData *baseData.ListData
 	var ok bool
 	switch value := i.(type) {
-	case helpers.Parameter:
+	case parameters.Parameter:
 		if listData, ok = value.GetMetaProperty().GetData().Get().(*baseData.ListData); !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
 			return errorConstants.IncorrectFormat
 		}
