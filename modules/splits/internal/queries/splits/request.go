@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package orders
+package splits
 
 import (
 	"github.com/asaskevich/govalidator"
@@ -16,25 +16,26 @@ import (
 )
 
 // type queryRequest struct {
-//	ids.OrderID `json:"orderID" valid:"required~required field orderID missing"`
+//	ids.SplitID `json:"splitID" valid:"required~required field splitID missing"`
 // }
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
 // Validate godoc
-// @Summary Query order using order id
-// @Description Able to query the order
+// @Summary Query split using split id
+// @Description Able to query the asset
 // @Accept json
 // @Produce json
-// @Tags Orders
-// @Param orderID path string true "order ID"
-// @Success 200 {object} queryResponse "Message for a successful response"
+// @Tags Splits
+// @Param splitID path string true "split ID"
+// @Success 200 {object} queryResponse "Message for a successful query response"
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
-// @Router /orders/orders/{orderID} [get]
+// @Router /splits/splits/{splitID} [get]
 func (queryRequest *QueryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
 }
+
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
 	if offset, err := strconv.Atoi(cliCommand.ReadString(constants.Offset)); err != nil {
 		return &QueryRequest{}, err
