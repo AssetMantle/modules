@@ -4,19 +4,17 @@
 package base
 
 import (
+	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
+	"github.com/AssetMantle/modules/schema/helpers"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gogo/protobuf/grpc"
-	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"golang.org/x/net/context"
 	"net/http"
-
-	errorConstants "github.com/AssetMantle/modules/schema/errors/constants"
-	"github.com/AssetMantle/modules/schema/helpers"
 )
 
 type query struct {
@@ -89,8 +87,7 @@ func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
 		if !ok {
 			return
 		}
-
-		queryRequest, err := query.requestPrototype().FromMap(mux.Vars(httpRequest))
+		queryRequest, err := query.requestPrototype().FromHTTPRequest(httpRequest)
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return

@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package meta
+package metas
 
 import (
 	"context"
@@ -17,10 +17,9 @@ import (
 )
 
 var Query = baseHelpers.NewQuery(
-	"meta",
+	"metas",
 	"",
 	"",
-
 	module.Name,
 
 	requestPrototype,

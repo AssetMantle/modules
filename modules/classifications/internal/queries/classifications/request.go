@@ -7,6 +7,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"net/http"
 	"strconv"
 
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -41,8 +42,8 @@ func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (h
 		return newQueryRequest(&query.PageRequest{Offset: uint64(offset)}), nil
 	}
 }
-func (*QueryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
-	if offset, err := strconv.Atoi(vars[Query.GetName()]); err != nil {
+func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
+	if offset, err := strconv.Atoi(httpRequest.URL.Query().Get(Query.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
 		return newQueryRequest(&query.PageRequest{Offset: uint64(offset)}), nil

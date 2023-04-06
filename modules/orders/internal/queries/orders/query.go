@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package meta
+package orders
 
 import (
 	"context"
@@ -10,17 +10,16 @@ import (
 	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
-	"github.com/AssetMantle/modules/modules/metas/internal/module"
+	"github.com/AssetMantle/modules/modules/orders/internal/module"
 	"github.com/AssetMantle/modules/schema/helpers"
 	baseHelpers "github.com/AssetMantle/modules/schema/helpers/base"
 	"github.com/AssetMantle/modules/schema/helpers/constants"
 )
 
 var Query = baseHelpers.NewQuery(
-	"meta",
+	"orders",
 	"",
 	"",
-
 	module.Name,
 
 	requestPrototype,
@@ -34,5 +33,5 @@ var Query = baseHelpers.NewQuery(
 		return RegisterServiceHandlerClient(context.Background(), serveMux, NewServiceClient(clientContext))
 	},
 
-	constants.DataID,
+	constants.OrderID,
 )

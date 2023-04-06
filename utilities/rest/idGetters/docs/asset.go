@@ -15,7 +15,7 @@ import (
 func assetClassificationHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		id, immutables, _ := ReadAndProcess(context, false, true, responseWriter, httpRequest)
-		rest.PostProcessResponse(responseWriter, context, newResponse(id.AsString(), immutables.GetProperty(constants.BondAmountProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.NumberData).AsString(), nil))
+		rest.PostProcessResponse(responseWriter, context, newResponse(id.AsString(), immutables.GetProperty(constants.BondAmountProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.NumberData).ToAnyData().AsString(), nil))
 	}
 }
 func assetIDHandler(context client.Context) http.HandlerFunc {

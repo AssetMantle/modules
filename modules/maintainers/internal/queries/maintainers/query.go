@@ -20,7 +20,6 @@ var Query = baseHelpers.NewQuery(
 	"maintainers",
 	"",
 	"",
-
 	module.Name,
 
 	requestPrototype,

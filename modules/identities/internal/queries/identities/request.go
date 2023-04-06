@@ -4,9 +4,11 @@
 package identities
 
 import (
+	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"net/http"
 	"strconv"
 
 	"github.com/AssetMantle/modules/schema/helpers"
@@ -41,11 +43,16 @@ func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (h
 		return newQueryRequest(&query.PageRequest{Offset: uint64(offset)}), nil
 	}
 }
-func (*QueryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
-	if offset, err := strconv.Atoi(vars[Query.GetName()]); err != nil {
+func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
+	x := httpRequest.URL.Query()
+	y := x.Get("offset")
+	fmt.Print(y)
+	if offset, err := strconv.Atoi(httpRequest.URL.Query().Get("offset")); err != nil {
+		return &QueryRequest{}, err
+	} else if limit, err := strconv.Atoi(httpRequest.URL.Query().Get("pageSize")); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(&query.PageRequest{Offset: uint64(offset)}), nil
+		return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
 	}
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {

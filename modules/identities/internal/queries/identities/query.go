@@ -15,7 +15,6 @@ var Query = baseHelpers.NewQuery(
 	"identities",
 	"",
 	"",
-
 	module.Name,
 
 	requestPrototype,

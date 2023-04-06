@@ -20,7 +20,6 @@ var Query = baseHelpers.NewQuery(
 	"classifications",
 	"",
 	"",
-
 	module.Name,
 
 	requestPrototype,

@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package maintainers
+package orders
 
 import (
 	"github.com/asaskevich/govalidator"
@@ -16,26 +16,25 @@ import (
 )
 
 // type queryRequest struct {
-//	ids.MaintainerID `json:"maintainerID" valid:"required~required field maintainerID missing"`
+//	ids.OrderID `json:"orderID" valid:"required~required field orderID missing"`
 // }
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
 // Validate godoc
-// @Summary Search for a maintainer by maintainer ID
-// @Description Able to query the maintainers details
+// @Summary Query order using order id
+// @Description Able to query the order
 // @Accept json
 // @Produce json
-// @Tags Maintainers
-// @Param maintainerID path string true "Unique identifier of a maintainer."
-// @Success 200 {object} queryResponse "Message for a successful query response"
+// @Tags Orders
+// @Param orderID path string true "order ID"
+// @Success 200 {object} queryResponse "Message for a successful response"
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
-// @Router /maintainers/maintainers/{maintainerID} [get]
+// @Router /orders/orders/{orderID} [get]
 func (queryRequest *QueryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
 }
-
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
 	if offset, err := strconv.Atoi(cliCommand.ReadString(constants.Offset)); err != nil {
 		return &QueryRequest{}, err
@@ -43,7 +42,6 @@ func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (h
 		return newQueryRequest(&query.PageRequest{Offset: uint64(offset)}), nil
 	}
 }
-
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
 	if offset, err := strconv.Atoi(httpRequest.URL.Query().Get(Query.GetName())); err != nil {
 		return &QueryRequest{}, err
@@ -51,11 +49,9 @@ func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRe
 		return newQueryRequest(&query.PageRequest{Offset: uint64(offset)}), nil
 	}
 }
-
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
 	return base.CodecPrototype().MarshalJSON(queryRequest)
 }
-
 func (queryRequest *QueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
 	if err := base.CodecPrototype().UnmarshalJSON(bytes, queryRequest); err != nil {
 		return nil, err
@@ -66,7 +62,6 @@ func (queryRequest *QueryRequest) Decode(bytes []byte) (helpers.QueryRequest, er
 func requestPrototype() helpers.QueryRequest {
 	return &QueryRequest{}
 }
-
 func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	switch value := request.(type) {
 	case *QueryRequest:
@@ -75,7 +70,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 		return &QueryRequest{}
 	}
 }
-
 func newQueryRequest(pagination *query.PageRequest) helpers.QueryRequest {
 	return &QueryRequest{Pagination: pagination}
 }
