@@ -17,7 +17,7 @@ import (
 )
 
 var Query = baseHelpers.NewQuery(
-	"metas",
+	"meta",
 	"",
 	"",
 
