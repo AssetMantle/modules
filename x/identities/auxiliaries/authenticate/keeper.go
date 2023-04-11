@@ -7,8 +7,8 @@ import (
 	"context"
 
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/internal/key"
 	"github.com/AssetMantle/modules/x/identities/internal/mappable"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"

@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/x/data/base"
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/ids"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	baseLists "github.com/AssetMantle/schema/x/lists/base"
@@ -17,6 +16,7 @@ import (
 	baseTypes "github.com/AssetMantle/schema/x/types/base"
 	"github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/internal/mappable"
 )
 

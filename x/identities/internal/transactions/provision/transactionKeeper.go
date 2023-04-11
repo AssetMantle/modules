@@ -8,10 +8,10 @@ import (
 
 	"github.com/AssetMantle/schema/x/data"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/x/identities/internal/key"
 	"github.com/AssetMantle/modules/x/identities/internal/mappable"

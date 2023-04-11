@@ -6,11 +6,10 @@ package base
 import (
 	"math/rand"
 
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/AssetMantle/schema/x/properties"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )
 
 func GenerateRandomProperty(r *rand.Rand) properties.Property {

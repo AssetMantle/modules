@@ -4,7 +4,7 @@
 package module
 
 import (
-	"github.com/AssetMantle/schema/x/helpers/constants"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 const Name = "assets"

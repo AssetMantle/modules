@@ -4,8 +4,8 @@
 package auxiliaries
 
 import (
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 func Prototype() helpers.Auxiliaries {

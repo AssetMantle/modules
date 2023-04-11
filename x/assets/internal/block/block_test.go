@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	schema "github.com/AssetMantle/schema/x"
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -21,6 +20,7 @@ import (
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/internal/mapper"
 	"github.com/AssetMantle/modules/x/assets/internal/parameters"
 )

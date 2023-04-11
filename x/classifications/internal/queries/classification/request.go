@@ -4,13 +4,14 @@
 package classification
 
 import (
-	"github.com/AssetMantle/schema/x/helpers"
-	"github.com/AssetMantle/schema/x/helpers/base"
-	"github.com/AssetMantle/schema/x/helpers/constants"
 	"github.com/AssetMantle/schema/x/ids"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 // type queryRequest struct {

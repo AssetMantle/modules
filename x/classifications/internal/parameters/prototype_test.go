@@ -7,9 +7,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
-
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/internal/module"
 	"github.com/AssetMantle/modules/x/classifications/internal/parameters/bondRate"
 	"github.com/AssetMantle/modules/x/classifications/internal/parameters/maxPropertyCount"

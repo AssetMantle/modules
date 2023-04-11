@@ -6,10 +6,10 @@ package unwrap
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/splits/internal/module"
 	"github.com/AssetMantle/modules/x/splits/internal/utilities"

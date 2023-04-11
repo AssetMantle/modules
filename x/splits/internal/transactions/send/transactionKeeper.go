@@ -6,9 +6,9 @@ package send
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/x/helpers"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/splits/internal/utilities"
 )

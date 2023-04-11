@@ -8,11 +8,11 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/x/data/base"
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/ids"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/metas/internal/module"
 )
 

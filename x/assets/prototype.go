@@ -4,9 +4,8 @@
 package assets
 
 import (
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
-
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/assets/auxiliaries"
 	"github.com/AssetMantle/modules/x/assets/internal/block"
 	"github.com/AssetMantle/modules/x/assets/internal/genesis"

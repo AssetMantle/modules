@@ -6,16 +6,15 @@ package renumerate
 import (
 	"encoding/json"
 
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
-	"github.com/AssetMantle/schema/x/helpers"
-	"github.com/AssetMantle/schema/x/helpers/constants"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/constants"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 

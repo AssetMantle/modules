@@ -10,7 +10,6 @@ import (
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents/base"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	baseLists "github.com/AssetMantle/schema/x/lists/base"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
@@ -20,6 +19,7 @@ import (
 	baseTypes "github.com/AssetMantle/schema/x/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"

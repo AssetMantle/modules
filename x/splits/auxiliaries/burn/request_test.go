@@ -7,15 +7,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/types"
-
 	baseData "github.com/AssetMantle/schema/x/data/base"
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/ids"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	baseLists "github.com/AssetMantle/schema/x/lists/base"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	"github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func createTestInput1() (ids.IdentityID, ids.OwnableID, types.Dec) {

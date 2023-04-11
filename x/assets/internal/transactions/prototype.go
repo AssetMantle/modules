@@ -4,9 +4,8 @@
 package transactions
 
 import (
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
-
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/assets/internal/transactions/burn"
 	"github.com/AssetMantle/modules/x/assets/internal/transactions/define"
 	"github.com/AssetMantle/modules/x/assets/internal/transactions/deputize"

@@ -8,13 +8,14 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/x/data/base"
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/ids"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	baseLists "github.com/AssetMantle/schema/x/lists/base"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 	"github.com/AssetMantle/schema/x/qualified"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func TestNewAuxiliaryRequest(t *testing.T) {

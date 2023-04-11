@@ -10,7 +10,6 @@ import (
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/documents/base"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 	"github.com/AssetMantle/schema/x/properties/constants"
@@ -20,6 +19,7 @@ import (
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/internal/key"
 	"github.com/AssetMantle/modules/x/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/x/classifications/internal/module"

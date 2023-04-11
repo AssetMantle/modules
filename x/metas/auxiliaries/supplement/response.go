@@ -5,8 +5,9 @@ package supplement
 
 import (
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/lists"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryResponse struct {
