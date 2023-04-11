@@ -6,9 +6,10 @@ package ownable
 import (
 	"errors"
 
-	"github.com/AssetMantle/schema/x/helpers"
-	"github.com/AssetMantle/schema/x/helpers/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
 )
 
 // type queryResponse struct {

@@ -6,9 +6,9 @@ package splits
 import (
 	"testing"
 
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	"github.com/stretchr/testify/require"
 
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
 	"github.com/AssetMantle/modules/x/splits/internal/block"
 	"github.com/AssetMantle/modules/x/splits/internal/genesis"

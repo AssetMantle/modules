@@ -9,8 +9,6 @@ import (
 	"testing"
 
 	schema "github.com/AssetMantle/schema/x"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	baseTypes "github.com/AssetMantle/schema/x/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -36,6 +34,8 @@ import (
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/splits/internal/key"
 	"github.com/AssetMantle/modules/x/splits/internal/mappable"

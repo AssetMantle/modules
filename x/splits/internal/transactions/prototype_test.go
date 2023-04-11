@@ -8,9 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
-
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/splits/internal/transactions/send"
 	"github.com/AssetMantle/modules/x/splits/internal/transactions/unwrap"
 	"github.com/AssetMantle/modules/x/splits/internal/transactions/wrap"

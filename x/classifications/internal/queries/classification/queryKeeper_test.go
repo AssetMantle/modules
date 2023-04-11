@@ -8,8 +8,6 @@ import (
 
 	schema "github.com/AssetMantle/schema/x"
 	baseDocuments "github.com/AssetMantle/schema/x/documents/base"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/AssetMantle/schema/x/lists/utilities"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
@@ -24,6 +22,8 @@ import (
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/internal/key"
 	"github.com/AssetMantle/modules/x/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/x/classifications/internal/parameters"

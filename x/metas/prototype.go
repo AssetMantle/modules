@@ -4,9 +4,8 @@
 package metas
 
 import (
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
-
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries"
 	"github.com/AssetMantle/modules/x/metas/internal/block"
 	"github.com/AssetMantle/modules/x/metas/internal/genesis"

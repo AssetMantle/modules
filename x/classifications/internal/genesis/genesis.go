@@ -4,11 +4,11 @@ import (
 	"context"
 
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
 	parametersSchema "github.com/AssetMantle/schema/x/parameters"
 	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/internal/mappable"
 	"github.com/AssetMantle/modules/x/classifications/internal/parameters"
 )

@@ -6,9 +6,9 @@ package revoke
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/revoke"
 )

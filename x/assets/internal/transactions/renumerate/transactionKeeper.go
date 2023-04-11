@@ -8,13 +8,13 @@ import (
 
 	"github.com/AssetMantle/schema/x/data"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
 	baseLists "github.com/AssetMantle/schema/x/lists/base"
 	"github.com/AssetMantle/schema/x/properties"
 	"github.com/AssetMantle/schema/x/properties/constants"
 	"github.com/AssetMantle/schema/x/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/internal/key"
 	"github.com/AssetMantle/modules/x/assets/internal/mappable"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"

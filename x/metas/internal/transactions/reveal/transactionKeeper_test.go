@@ -11,8 +11,6 @@ import (
 	schema "github.com/AssetMantle/schema/x"
 	"github.com/AssetMantle/schema/x/data/utilities"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -24,6 +22,8 @@ import (
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/metas/internal/key"
 	"github.com/AssetMantle/modules/x/metas/internal/mappable"
 	"github.com/AssetMantle/modules/x/metas/internal/parameters"

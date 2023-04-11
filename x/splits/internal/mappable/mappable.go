@@ -4,11 +4,12 @@
 package mappable
 
 import (
-	"github.com/AssetMantle/schema/x/helpers"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/AssetMantle/schema/x/types"
 	baseTypes "github.com/AssetMantle/schema/x/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/AssetMantle/modules/helpers"
 
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/x/splits/internal/key"

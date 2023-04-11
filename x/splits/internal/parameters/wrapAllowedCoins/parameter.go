@@ -7,7 +7,6 @@ import (
 	"github.com/AssetMantle/schema/x/data"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	"github.com/AssetMantle/schema/x/ids"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/AssetMantle/schema/x/parameters"
@@ -15,6 +14,8 @@ import (
 	"github.com/AssetMantle/schema/x/properties/base"
 	constantProperties "github.com/AssetMantle/schema/x/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()

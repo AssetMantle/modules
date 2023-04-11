@@ -6,10 +6,10 @@ package mint
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/x/helpers"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/AssetMantle/schema/x/types/base"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/internal/key"
 	"github.com/AssetMantle/modules/x/splits/internal/mappable"
 )

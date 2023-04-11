@@ -8,10 +8,11 @@ import (
 
 	"github.com/AssetMantle/schema/x/data"
 	baseData "github.com/AssetMantle/schema/x/data/base"
-	"github.com/AssetMantle/schema/x/helpers"
 	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+
+	"github.com/AssetMantle/modules/helpers"
 
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/metas/internal/common"

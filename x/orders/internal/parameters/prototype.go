@@ -4,9 +4,8 @@
 package parameters
 
 import (
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
-
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/internal/module"
 	"github.com/AssetMantle/modules/x/orders/internal/parameters/maxOrderLife"
 )

@@ -7,10 +7,11 @@ import (
 
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 var _ helpers.Genesis = (*Genesis)(nil)

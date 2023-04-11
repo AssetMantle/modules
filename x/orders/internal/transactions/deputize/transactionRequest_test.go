@@ -17,14 +17,15 @@ import (
 	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/schema/x/data/base"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
-	"github.com/AssetMantle/schema/x/helpers/constants"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/AssetMantle/schema/x/lists/base"
 	"github.com/AssetMantle/schema/x/lists/utilities"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var (

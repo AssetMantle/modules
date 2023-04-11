@@ -4,17 +4,17 @@
 package make
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/codec/types"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/ids"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/AssetMantle/schema/x/lists"
 	baseLists "github.com/AssetMantle/schema/x/lists/base"
 	typesSchema "github.com/AssetMantle/schema/x/types"
 	baseTypes "github.com/AssetMantle/schema/x/types/base"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
 
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )

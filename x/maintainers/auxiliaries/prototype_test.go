@@ -6,9 +6,9 @@ package auxiliaries
 import (
 	"testing"
 
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
 	"github.com/stretchr/testify/require"
 
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/deputize"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/revoke"

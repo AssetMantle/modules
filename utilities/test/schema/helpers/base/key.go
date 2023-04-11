@@ -6,8 +6,9 @@ package base
 import (
 	"bytes"
 
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 // key struct, implements helpers.Key

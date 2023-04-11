@@ -9,10 +9,10 @@ import (
 
 	"github.com/AssetMantle/schema/x/data"
 	"github.com/AssetMantle/schema/x/data/base"
-	"github.com/AssetMantle/schema/x/helpers"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/metas/internal/key"
 )
 
