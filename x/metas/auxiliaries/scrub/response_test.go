@@ -6,14 +6,13 @@ package scrub
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/AssetMantle/schema/x/lists/base"
 	"github.com/AssetMantle/schema/x/properties"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_Super_Response(t *testing.T) {

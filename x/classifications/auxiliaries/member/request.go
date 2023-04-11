@@ -4,11 +4,10 @@
 package member
 
 import (
-	"github.com/asaskevich/govalidator"
-
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 	"github.com/AssetMantle/schema/x/ids"
 	"github.com/AssetMantle/schema/x/qualified"
+	"github.com/asaskevich/govalidator"
 
 	"github.com/AssetMantle/modules/helpers"
 )

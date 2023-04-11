@@ -3,13 +3,12 @@ package base
 import (
 	"context"
 
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
-
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	"github.com/AssetMantle/schema/x/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
 )

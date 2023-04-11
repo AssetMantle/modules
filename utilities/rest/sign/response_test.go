@@ -6,11 +6,10 @@ package sign
 import (
 	"testing"
 
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/require"
-
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 )
 
 func Test_SignTx_Response(t *testing.T) {

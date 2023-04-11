@@ -17,7 +17,6 @@ import (
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/AssetMantle/modules/helpers"
-
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/splits/internal/common"
 	"github.com/AssetMantle/modules/x/splits/internal/genesis"

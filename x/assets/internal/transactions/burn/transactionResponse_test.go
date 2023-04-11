@@ -6,9 +6,8 @@ package burn
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_Burn_Response(t *testing.T) {

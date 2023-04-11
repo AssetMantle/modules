@@ -20,7 +20,7 @@ var Transaction = baseHelpers.NewTransaction(
 	"",
 	"",
 
-	requestPrototype,
+	requestPrototyppe,
 	messagePrototype,
 	keeperPrototype,
 

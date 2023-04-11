@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math/rand"
 
+	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -19,8 +20,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
-
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
 
 	"github.com/AssetMantle/modules/helpers"
 )

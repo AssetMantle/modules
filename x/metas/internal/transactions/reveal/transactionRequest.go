@@ -15,7 +15,6 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
-
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 

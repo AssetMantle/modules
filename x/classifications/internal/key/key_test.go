@@ -16,7 +16,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
-
 	baseHelpers "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/internal/module"
 )

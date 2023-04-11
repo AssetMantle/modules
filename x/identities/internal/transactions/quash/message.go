@@ -11,7 +11,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
-
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 

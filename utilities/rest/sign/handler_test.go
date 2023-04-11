@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	schema "github.com/AssetMantle/schema/x"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -23,8 +24,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
-
-	schema "github.com/AssetMantle/schema/x"
 
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )

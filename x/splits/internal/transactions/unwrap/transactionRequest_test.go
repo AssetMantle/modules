@@ -10,18 +10,17 @@ import (
 	"reflect"
 	"testing"
 
+	baseData "github.com/AssetMantle/schema/x/data/base"
+	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseLists "github.com/AssetMantle/schema/x/lists/base"
+	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
-
-	baseData "github.com/AssetMantle/schema/x/data/base"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	baseLists "github.com/AssetMantle/schema/x/lists/base"
-	baseProperties "github.com/AssetMantle/schema/x/properties/base"
-	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"

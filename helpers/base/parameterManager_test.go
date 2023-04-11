@@ -6,14 +6,13 @@ package base
 import (
 	"testing"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/stretchr/testify/require"
-
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 	parametersSchema "github.com/AssetMantle/schema/x/parameters/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/utilities/test"
 )

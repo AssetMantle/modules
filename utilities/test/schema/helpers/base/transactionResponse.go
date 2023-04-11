@@ -13,7 +13,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
 	"github.com/AssetMantle/modules/helpers"
-
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
