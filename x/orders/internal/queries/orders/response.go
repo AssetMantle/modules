@@ -6,9 +6,9 @@ package orders
 import (
 	"errors"
 
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/internal/mappable"
-	"github.com/AssetMantle/schema/x/helpers"
-	"github.com/AssetMantle/schema/x/helpers/base"
 )
 
 // type queryResponse struct {

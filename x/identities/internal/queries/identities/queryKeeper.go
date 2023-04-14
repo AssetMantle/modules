@@ -7,8 +7,8 @@ import (
 	"context"
 	"github.com/AssetMantle/schema/x/ids/base"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/internal/key"
-	"github.com/AssetMantle/schema/x/helpers"
 )
 
 type queryKeeper struct {
