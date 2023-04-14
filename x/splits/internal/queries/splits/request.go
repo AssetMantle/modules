@@ -39,16 +39,16 @@ func (queryRequest *QueryRequest) Validate() error {
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
 	if offset, err := strconv.Atoi(cliCommand.ReadString(constants.Offset)); err != nil {
 		return &QueryRequest{}, err
-	} else if limit, err := strconv.Atoi(cliCommand.ReadString(constants.PageSize)); err != nil {
+	} else if limit, err := strconv.Atoi(cliCommand.ReadString(constants.Limit)); err != nil {
 		return &QueryRequest{}, err
 	} else {
 		return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
 	}
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	if offset, err := strconv.Atoi(httpRequest.URL.Query().Get("offset")); err != nil {
+	if offset, err := strconv.Atoi(httpRequest.URL.Query().Get(constants.Offset.GetName())); err != nil {
 		return &QueryRequest{}, err
-	} else if limit, err := strconv.Atoi(httpRequest.URL.Query().Get("pageSize")); err != nil {
+	} else if limit, err := strconv.Atoi(httpRequest.URL.Query().Get(constants.Limit.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
 		return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
