@@ -8,6 +8,7 @@ import (
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
+	"net/http"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
@@ -42,8 +43,8 @@ func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (h
 		return newQueryRequest(splitID), nil
 	}
 }
-func (*QueryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
-	if splitID, err := baseIDs.ReadSplitID(vars[Query.GetName()]); err != nil {
+func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
+	if splitID, err := baseIDs.ReadSplitID(httpRequest.URL.Query().Get(Query.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
 		return newQueryRequest(splitID), nil

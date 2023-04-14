@@ -41,8 +41,8 @@ func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (h
 		return newQueryRequest(dataID), nil
 	}
 }
-func (*QueryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
-	if dataID, err := baseIDs.ReadDataID(vars[Query.GetName()]); err != nil {
+func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
+	if dataID, err := baseIDs.ReadDataID(httpRequest.URL.Query().Get(Query.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
 		return newQueryRequest(dataID), nil
