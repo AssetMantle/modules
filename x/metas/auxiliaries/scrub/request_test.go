@@ -6,13 +6,12 @@ package scrub
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	"github.com/AssetMantle/schema/x/lists/base"
 	"github.com/AssetMantle/schema/x/properties"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_Scrub_Request(t *testing.T) {

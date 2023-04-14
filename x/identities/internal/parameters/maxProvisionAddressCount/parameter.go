@@ -7,11 +7,12 @@ import (
 	"github.com/AssetMantle/schema/x/data"
 	baseData "github.com/AssetMantle/schema/x/data/base"
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+	"github.com/AssetMantle/schema/x/parameters"
 	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
 	"github.com/AssetMantle/schema/x/properties/base"
 	constantProperties "github.com/AssetMantle/schema/x/properties/constants"
+
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 var ID = constantProperties.MaxProvisionAddressCountProperty.GetKey()
@@ -21,7 +22,7 @@ func validator(i interface{}) error {
 	var number *baseData.NumberData
 	var ok bool
 	switch value := i.(type) {
-	case helpers.Parameter:
+	case parameters.Parameter:
 		number, ok = value.GetMetaProperty().GetData().Get().(*baseData.NumberData)
 		if !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
 			return errorConstants.IncorrectFormat.Wrapf("incorrect format for maxPropertyCount parameter, expected %T, got %T", baseData.NewNumberData(22), i)

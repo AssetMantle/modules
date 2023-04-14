@@ -4,11 +4,10 @@
 package queries
 
 import (
-	"github.com/AssetMantle/modules/x/orders/internal/queries/orders"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
-
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/internal/queries/order"
+	"github.com/AssetMantle/modules/x/orders/internal/queries/orders"
 )
 
 func Prototype() helpers.Queries {

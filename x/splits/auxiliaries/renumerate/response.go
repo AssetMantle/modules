@@ -3,7 +3,7 @@
 
 package renumerate
 
-import "github.com/AssetMantle/schema/x/helpers"
+import "github.com/AssetMantle/modules/helpers"
 
 type auxiliaryResponse struct {
 }

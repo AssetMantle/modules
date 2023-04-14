@@ -7,9 +7,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
-
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/assets/internal/module"
 	"github.com/AssetMantle/modules/x/assets/internal/parameters/burnEnabled"
 	"github.com/AssetMantle/modules/x/assets/internal/parameters/mintEnabled"

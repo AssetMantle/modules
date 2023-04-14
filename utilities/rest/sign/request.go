@@ -4,10 +4,11 @@
 package sign
 
 import (
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type request struct {

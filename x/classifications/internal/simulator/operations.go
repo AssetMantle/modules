@@ -6,12 +6,13 @@ package simulator
 import (
 	"math/rand"
 
-	"github.com/AssetMantle/schema/x/helpers/base"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+
+	"github.com/AssetMantle/modules/helpers/base"
 )
 
 func (simulator) WeightedOperations(simulationState module.SimulationState) simulation.WeightedOperations {

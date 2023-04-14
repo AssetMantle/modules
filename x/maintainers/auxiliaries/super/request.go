@@ -4,10 +4,11 @@
 package super
 
 import (
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/ids"
 	"github.com/AssetMantle/schema/x/qualified"
 	"github.com/asaskevich/govalidator"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {

@@ -3,7 +3,7 @@
 
 package simulator
 
-import "github.com/AssetMantle/schema/x/helpers"
+import "github.com/AssetMantle/modules/helpers"
 
 func Prototype() helpers.Simulator {
 	return newSimulator()

@@ -11,7 +11,6 @@ import (
 	"github.com/AssetMantle/schema/x/documents"
 	"github.com/AssetMantle/schema/x/documents/base"
 	"github.com/AssetMantle/schema/x/documents/constants"
-	"github.com/AssetMantle/schema/x/helpers"
 	baseIDs "github.com/AssetMantle/schema/x/ids/base"
 	baseLists "github.com/AssetMantle/schema/x/lists/base"
 	baseProperties "github.com/AssetMantle/schema/x/properties/base"
@@ -19,6 +18,7 @@ import (
 	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/maintainers/internal/key"
 )
 

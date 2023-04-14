@@ -4,8 +4,9 @@
 package modify
 
 import (
-	"github.com/AssetMantle/schema/x/helpers"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 var _ helpers.TransactionResponse = (*TransactionResponse)(nil)

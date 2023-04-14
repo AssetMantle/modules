@@ -6,9 +6,9 @@ package mappable
 import (
 	"github.com/AssetMantle/schema/x/documents"
 	"github.com/AssetMantle/schema/x/documents/base"
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/cosmos/cosmos-sdk/codec"
 
+	"github.com/AssetMantle/modules/helpers"
 	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/x/classifications/internal/key"
 )

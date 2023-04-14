@@ -4,7 +4,7 @@
 package define
 
 import (
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 var Auxiliary = baseHelpers.NewAuxiliary(

@@ -6,8 +6,7 @@ package identity
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/x/helpers"
-
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/internal/key"
 )
 

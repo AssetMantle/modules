@@ -8,7 +8,8 @@ import (
 	"testing"
 
 	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/helpers"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func Test_newTransactionResponse(t *testing.T) {

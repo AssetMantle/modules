@@ -4,8 +4,9 @@
 package sign
 
 import (
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type response struct {

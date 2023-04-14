@@ -4,12 +4,11 @@
 package queries
 
 import (
-	"github.com/AssetMantle/modules/x/splits/internal/queries/splits"
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
-
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/splits/internal/queries/ownable"
 	"github.com/AssetMantle/modules/x/splits/internal/queries/split"
+	"github.com/AssetMantle/modules/x/splits/internal/queries/splits"
 )
 
 func Prototype() helpers.Queries {

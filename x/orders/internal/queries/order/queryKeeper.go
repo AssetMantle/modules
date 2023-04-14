@@ -6,8 +6,7 @@ package order
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/x/helpers"
-
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/orders/internal/key"
 )
 

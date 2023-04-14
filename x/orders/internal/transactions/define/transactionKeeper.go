@@ -6,12 +6,12 @@ package define
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/x/helpers"
 	"github.com/AssetMantle/schema/x/properties/constants"
 	"github.com/AssetMantle/schema/x/properties/utilities"
 	"github.com/AssetMantle/schema/x/qualified/base"
 	"github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/super"

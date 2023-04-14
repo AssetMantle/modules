@@ -6,9 +6,8 @@ package split
 import (
 	"errors"
 
-	"github.com/AssetMantle/schema/x/helpers"
-	"github.com/AssetMantle/schema/x/helpers/base"
-
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/splits/internal/mappable"
 )
 

@@ -4,9 +4,8 @@
 package orders
 
 import (
-	"github.com/AssetMantle/schema/x/helpers"
-	baseHelpers "github.com/AssetMantle/schema/x/helpers/base"
-
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/auxiliaries"
 	"github.com/AssetMantle/modules/x/orders/internal/block"
 	"github.com/AssetMantle/modules/x/orders/internal/genesis"
