@@ -4,7 +4,6 @@
 package identities
 
 import (
-	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -40,9 +39,6 @@ func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (h
 	}
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	x := httpRequest.URL.Query()
-	y := x.Get(constants.Offset.GetName())
-	fmt.Print(y)
 	if offset, err := strconv.Atoi(httpRequest.URL.Query().Get(constants.Offset.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else if limit, err := strconv.Atoi(httpRequest.URL.Query().Get(constants.Limit.GetName())); err != nil {
