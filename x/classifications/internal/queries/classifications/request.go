@@ -73,6 +73,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 		return &QueryRequest{}
 	}
 }
-func newQueryRequest(pagination *query.PageRequest) helpers.QueryRequest {
-	return &QueryRequest{pagination}
+func newQueryRequest(pageRequest *query.PageRequest) helpers.QueryRequest {
+	return &QueryRequest{pageRequest}
 }
