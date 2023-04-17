@@ -15,10 +15,6 @@ import (
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-// type queryRequest struct {
-//	ids.IdentityID `json:"identityID" valid:"required~required field identityID missing"`
-// }
-
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
 // Validate godoc

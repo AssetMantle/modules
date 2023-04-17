@@ -15,10 +15,6 @@ import (
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-// type queryRequest struct {
-//	ids.SplitID `json:"splitID" valid:"required~required field splitID missing"`
-// }
-
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
 // Validate godoc

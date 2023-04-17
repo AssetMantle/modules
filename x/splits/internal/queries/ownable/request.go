@@ -15,10 +15,6 @@ import (
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-// type queryRequest struct {
-//	ids.OwnableID `json:"ownableID" valid:"required~required field ownableID missing"`
-// }
-
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
 // Validate godoc

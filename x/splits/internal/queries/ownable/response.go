@@ -12,12 +12,6 @@ import (
 	"github.com/AssetMantle/modules/helpers/base"
 )
 
-// type queryResponse struct {
-//	Success bool         `json:"success"`
-//	Error   error        `json:"error" swaggertype:"string"`
-//	Value   sdkTypes.Dec `json:"value" swaggertype:"string"`
-// }
-
 var _ helpers.QueryResponse = (*QueryResponse)(nil)
 
 func (queryResponse *QueryResponse) IsSuccessful() bool {

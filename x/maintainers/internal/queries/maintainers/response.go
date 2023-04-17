@@ -11,12 +11,6 @@ import (
 	"github.com/AssetMantle/modules/x/maintainers/internal/mappable"
 )
 
-// type queryResponse struct {
-//	Success bool               `json:"success"`
-//	Error   error              `json:"error" swaggertype:"string"`
-//	List    []helpers.Mappable `json:"list"`
-// }
-
 var _ helpers.QueryResponse = (*QueryResponse)(nil)
 
 func (queryResponse *QueryResponse) IsSuccessful() bool {
