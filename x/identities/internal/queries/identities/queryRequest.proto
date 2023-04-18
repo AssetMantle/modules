@@ -4,5 +4,5 @@ package identities.queries.identities;
 import "cosmos/base/query/v1beta1/pagination.proto";
 
 message QueryRequest {
-  cosmos.base.query.v1beta1.PageRequest page_request = 2;
+  cosmos.base.query.v1beta1.PageRequest page_request = 1;
 }
