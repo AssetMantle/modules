@@ -44,7 +44,7 @@ func (cliCommand cliCommand) ReadInt64(cliFlag helpers.CLIFlag) int64 {
 }
 func (cliCommand cliCommand) ReadUInt64(cliFlag helpers.CLIFlag) uint64 {
 	switch cliFlag.GetValue().(type) {
-	case int64:
+	case uint64:
 		for _, registeredCliFlag := range cliCommand.cliFlagList {
 			if registeredCliFlag == cliFlag {
 				return cliFlag.ReadCLIValue().(uint64)
