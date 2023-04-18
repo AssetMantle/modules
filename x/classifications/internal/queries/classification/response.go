@@ -19,7 +19,7 @@ func (queryResponse *QueryResponse) Decode(bytes []byte) (helpers.QueryResponse,
 		return nil, err
 	}
 
-	return queryResponse, err
+	return queryResponse, nil
 }
 func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
