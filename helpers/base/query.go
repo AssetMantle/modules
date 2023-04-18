@@ -78,7 +78,11 @@ func (query query) HandleQuery(context context.Context, requestQuery abciTypes.R
 		return nil, err
 	}
 
-	return query.queryKeeper.Enquire(context, request).Encode()
+	result, err := query.queryKeeper.Enquire(context, request)
+	if err != nil {
+		return nil, err
+	}
+	return result.Encode()
 }
 
 func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
