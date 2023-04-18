@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	schema "github.com/AssetMantle/schema/x"
-	baseDocuments "github.com/AssetMantle/schema/x/documents/base"
+	schema "github.com/AssetMantle/schema/go"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"

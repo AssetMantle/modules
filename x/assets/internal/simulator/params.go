@@ -6,7 +6,7 @@ package simulator
 import (
 	"math/rand"
 
-	"github.com/AssetMantle/schema/x/data/base"
+	"github.com/AssetMantle/schema/go/data/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"

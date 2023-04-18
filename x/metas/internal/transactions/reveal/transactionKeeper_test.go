@@ -8,9 +8,9 @@ import (
 	"reflect"
 	"testing"
 
-	schema "github.com/AssetMantle/schema/x"
-	"github.com/AssetMantle/schema/x/data/utilities"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	schema "github.com/AssetMantle/schema/go"
+	"github.com/AssetMantle/schema/go/data/utilities"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"

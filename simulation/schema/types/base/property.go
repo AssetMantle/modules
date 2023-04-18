@@ -6,9 +6,9 @@ package base
 import (
 	"math/rand"
 
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	"github.com/AssetMantle/schema/x/properties"
-	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/schema/go/properties"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )
 

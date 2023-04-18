@@ -6,10 +6,10 @@ package supplement
 import (
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/x/data/base"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	"github.com/AssetMantle/schema/x/properties"
-	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/schema/go/properties"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	"github.com/stretchr/testify/require"
 )
 

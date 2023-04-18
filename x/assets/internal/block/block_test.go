@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"testing"
 
-	schema "github.com/AssetMantle/schema/x"
+	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"

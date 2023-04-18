@@ -7,9 +7,9 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/AssetMantle/schema/x/lists"
-	baseLists "github.com/AssetMantle/schema/x/lists/base"
-	"github.com/AssetMantle/schema/x/properties"
+	"github.com/AssetMantle/schema/go/lists"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	"github.com/AssetMantle/schema/go/properties"
 )
 
 func GenerateRandomPropertyList(r *rand.Rand) lists.PropertyList {

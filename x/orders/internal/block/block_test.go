@@ -6,7 +6,7 @@ package block
 import (
 	"testing"
 
-	schema "github.com/AssetMantle/schema/x"
+	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"

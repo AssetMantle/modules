@@ -4,12 +4,12 @@
 package module
 
 import (
-	baseData "github.com/AssetMantle/schema/x/data/base"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	baseLists "github.com/AssetMantle/schema/x/lists/base"
-	baseProperties "github.com/AssetMantle/schema/x/properties/base"
-	constantProperties "github.com/AssetMantle/schema/x/properties/constants"
-	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 
 	"github.com/AssetMantle/modules/helpers/constants"
 )

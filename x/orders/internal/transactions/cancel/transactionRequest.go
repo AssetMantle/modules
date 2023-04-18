@@ -6,7 +6,7 @@ package cancel
 import (
 	"encoding/json"
 
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

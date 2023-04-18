@@ -4,9 +4,9 @@
 package mappable
 
 import (
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	"github.com/AssetMantle/schema/x/types"
-	baseTypes "github.com/AssetMantle/schema/x/types/base"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/schema/go/types"
+	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"

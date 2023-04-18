@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 

@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	schema "github.com/AssetMantle/schema/x"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	schema "github.com/AssetMantle/schema/go"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"

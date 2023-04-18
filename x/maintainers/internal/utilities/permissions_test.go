@@ -7,9 +7,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/x/ids"
-	"github.com/AssetMantle/schema/x/lists"
-	"github.com/AssetMantle/schema/x/lists/base"
+	"github.com/AssetMantle/schema/go/ids"
+	"github.com/AssetMantle/schema/go/lists"
+	"github.com/AssetMantle/schema/go/lists/base"
 
 	"github.com/AssetMantle/modules/x/maintainers/internal/module"
 )

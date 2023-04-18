@@ -7,9 +7,9 @@ import (
 	"reflect"
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/x/data/base"
-	"github.com/AssetMantle/schema/x/ids"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"

@@ -3,10 +3,10 @@ package docs
 import (
 	"net/http"
 
-	"github.com/AssetMantle/schema/x/data"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	"github.com/AssetMantle/schema/x/properties"
-	"github.com/AssetMantle/schema/x/properties/constants"
+	"github.com/AssetMantle/schema/go/data"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/schema/go/properties"
+	"github.com/AssetMantle/schema/go/properties/constants"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 )

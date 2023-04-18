@@ -6,11 +6,11 @@ package burn
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/x/data"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/properties"
-	"github.com/AssetMantle/schema/x/properties/constants"
-	baseTypes "github.com/AssetMantle/schema/x/types/base"
+	"github.com/AssetMantle/schema/go/data"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/properties"
+	"github.com/AssetMantle/schema/go/properties/constants"
+	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"

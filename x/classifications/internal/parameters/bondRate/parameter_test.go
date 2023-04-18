@@ -6,10 +6,10 @@ package bondRate
 import (
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/x/data/base"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
-	baseProperties "github.com/AssetMantle/schema/x/properties/base"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 )
 
 func Test_validator(t *testing.T) {

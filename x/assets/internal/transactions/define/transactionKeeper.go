@@ -6,8 +6,8 @@ package define
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/x/properties/utilities"
-	"github.com/AssetMantle/schema/x/qualified/base"
+	"github.com/AssetMantle/schema/go/properties/utilities"
+	"github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"

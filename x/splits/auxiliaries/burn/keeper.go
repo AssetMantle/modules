@@ -6,8 +6,8 @@ package burn
 import (
 	"context"
 
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"

@@ -4,8 +4,8 @@
 package mappable
 
 import (
-	"github.com/AssetMantle/schema/x/documents"
-	"github.com/AssetMantle/schema/x/documents/base"
+	"github.com/AssetMantle/schema/go/documents"
+	"github.com/AssetMantle/schema/go/documents/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
