@@ -4,7 +4,7 @@
 package transaction
 
 import (
-	schema "github.com/AssetMantle/schema/x"
+	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"

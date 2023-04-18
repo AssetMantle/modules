@@ -4,7 +4,7 @@
 package supplement
 
 import (
-	"github.com/AssetMantle/schema/x/properties"
+	"github.com/AssetMantle/schema/go/properties"
 	"github.com/asaskevich/govalidator"
 
 	"github.com/AssetMantle/modules/helpers"

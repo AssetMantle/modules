@@ -6,9 +6,9 @@ package simulator
 import (
 	"math/rand"
 
-	"github.com/AssetMantle/schema/x/data"
-	baseData "github.com/AssetMantle/schema/x/data/base"
-	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 

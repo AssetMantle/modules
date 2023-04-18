@@ -6,11 +6,11 @@ package classification
 import (
 	"testing"
 
-	schema "github.com/AssetMantle/schema/x"
-	baseDocuments "github.com/AssetMantle/schema/x/documents/base"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	"github.com/AssetMantle/schema/x/lists/utilities"
-	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	schema "github.com/AssetMantle/schema/go"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/schema/go/lists/utilities"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"

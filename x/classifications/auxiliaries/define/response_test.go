@@ -7,13 +7,13 @@ import (
 	"reflect"
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/x/data/base"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/ids"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	baseLists "github.com/AssetMantle/schema/x/lists/base"
-	baseProperties "github.com/AssetMantle/schema/x/properties/base"
-	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 
 	"github.com/AssetMantle/modules/helpers"
 )

@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 
 	"github.com/AssetMantle/modules/helpers"
 )

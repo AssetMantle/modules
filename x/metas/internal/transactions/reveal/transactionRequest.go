@@ -6,7 +6,7 @@ package reveal
 import (
 	"encoding/json"
 
-	"github.com/AssetMantle/schema/x/data/base"
+	"github.com/AssetMantle/schema/go/data/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

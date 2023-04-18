@@ -10,7 +10,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/AssetMantle/schema/x"
+	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -27,7 +27,7 @@ import (
 func TestTransaction(t *testing.T) {
 	context, storeKey, _ := test.SetupTest(t)
 	var legacyAmino = sdkCodec.NewLegacyAmino()
-	x.RegisterLegacyAminoCodec(legacyAmino)
+	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)

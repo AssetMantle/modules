@@ -3,7 +3,7 @@ package helpers
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/x/parameters"
+	"github.com/AssetMantle/schema/go/parameters"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/gogo/protobuf/proto"
 )

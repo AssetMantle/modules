@@ -6,10 +6,10 @@ package reveal
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/x/data"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	constantProperties "github.com/AssetMantle/schema/x/properties/constants"
+	"github.com/AssetMantle/schema/go/data"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/metas/internal/key"

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"

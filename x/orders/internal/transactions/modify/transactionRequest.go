@@ -6,9 +6,9 @@ package modify
 import (
 	"encoding/json"
 
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	"github.com/AssetMantle/schema/x/lists/utilities"
-	baseTypes "github.com/AssetMantle/schema/x/types/base"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/schema/go/lists/utilities"
+	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

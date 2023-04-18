@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	schema "github.com/AssetMantle/schema/x"
-	"github.com/AssetMantle/schema/x/data/utilities"
+	schema "github.com/AssetMantle/schema/go"
+	"github.com/AssetMantle/schema/go/data/utilities"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
