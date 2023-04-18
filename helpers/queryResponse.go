@@ -7,7 +7,6 @@ import "github.com/gogo/protobuf/proto"
 
 type QueryResponse interface {
 	proto.Message
-	Response
 	Encode() ([]byte, error)
 	Decode([]byte) (QueryResponse, error)
 }

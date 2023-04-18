@@ -64,7 +64,7 @@ func Test_newQueryResponse(t *testing.T) {
 	}{
 
 		{"+ve", args{collection: collection, error: nil}, &QueryResponse{Success: true, Error: ""}},
-		{"-ve with error", args{collection: collection, error: errorConstants.IncorrectFormat}, &QueryResponse{Success: false, Error: errorConstants.IncorrectFormat.Error()}},
+		{"-ve with error", args{collection: collection, error: errorConstants.IncorrectFormat}, &QueryResponse{Error: errorConstants.IncorrectFormat.Error()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -121,7 +121,7 @@ func Test_queryResponse_Encode(t *testing.T) {
 	context := CreateTestInputContext(t)
 	collection := mapper.Prototype().NewCollection(context)
 	encodedByte, err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: true, Error: "", List: mappable.MappablesFromInterface(collection.GetList())})
-	encodedByteWithError, _err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: false, Error: errorConstants.IncorrectFormat.Error(), List: mappable.MappablesFromInterface(collection.GetList())})
+	encodedByteWithError, _err := common.LegacyAmino.MarshalJSON(&QueryResponse{Error: errorConstants.IncorrectFormat.Error(), List: mappable.MappablesFromInterface(collection.GetList())})
 	require.Nil(t, err)
 	type fields struct {
 		Success bool
@@ -136,7 +136,7 @@ func Test_queryResponse_Encode(t *testing.T) {
 	}{
 
 		{"+ve", fields{Success: true, Error: nil, List: collection.GetList()}, encodedByte, false},
-		{"-ve with error", fields{Success: false, Error: _err, List: collection.GetList()}, encodedByteWithError, true},
+		{"-ve with error", fields{Error: _err, List: collection.GetList()}, encodedByteWithError, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -199,7 +199,7 @@ func Test_queryResponse_IsSuccessful(t *testing.T) {
 	}{
 
 		{"+ve", fields{Success: true, Error: nil}, true},
-		{"+ve", fields{Success: false, Error: nil}, false},
+		{"+ve", fields{Error: nil}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

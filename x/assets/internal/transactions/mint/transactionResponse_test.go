@@ -14,7 +14,7 @@ func Test_Mint_Response(t *testing.T) {
 	testTransactionResponse := newTransactionResponse(errorConstants.IncorrectFormat)
 	testTransactionResponse2 := newTransactionResponse(nil)
 
-	require.Equal(t, transactionResponse{Success: false, Error: errorConstants.IncorrectFormat}, testTransactionResponse)
+	require.Equal(t, transactionResponse{Error: errorConstants.IncorrectFormat}, testTransactionResponse)
 	require.Equal(t, false, testTransactionResponse.IsSuccessful())
 	require.Equal(t, true, testTransactionResponse2.IsSuccessful())
 

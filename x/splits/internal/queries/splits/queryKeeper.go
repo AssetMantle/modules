@@ -17,9 +17,9 @@ type queryKeeper struct {
 
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 
-func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest helpers.QueryRequest) helpers.QueryResponse {
-	queryResponse, _ := queryKeeper.Handle(context, queryRequestFromInterface(queryRequest))
-	return queryResponse
+func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest helpers.QueryRequest) (helpers.QueryResponse, error) {
+	queryResponse, err := queryKeeper.Handle(context, queryRequestFromInterface(queryRequest))
+	return queryResponse, err
 }
 func (queryKeeper queryKeeper) Handle(context context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
 	return newQueryResponse(queryKeeper.mapper.NewCollection(context).FetchPaginated(key.NewKey(base.PrototypeSplitID()), queryRequest.PageRequest), nil), nil

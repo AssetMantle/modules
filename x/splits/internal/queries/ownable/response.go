@@ -4,8 +4,6 @@
 package ownable
 
 import (
-	"errors"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -14,12 +12,6 @@ import (
 
 var _ helpers.QueryResponse = (*QueryResponse)(nil)
 
-func (queryResponse *QueryResponse) IsSuccessful() bool {
-	return queryResponse.Success
-}
-func (queryResponse *QueryResponse) GetError() error {
-	return errors.New(queryResponse.Error)
-}
 func (queryResponse *QueryResponse) Encode() ([]byte, error) {
 	return base.CodecPrototype().MarshalJSON(queryResponse)
 }
@@ -28,7 +20,7 @@ func (queryResponse *QueryResponse) Decode(bytes []byte) (helpers.QueryResponse,
 		return nil, err
 	}
 
-	return queryResponse, nil
+	return queryResponse, err
 }
 func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
@@ -36,15 +28,13 @@ func responsePrototype() helpers.QueryResponse {
 func newQueryResponse(value sdkTypes.Dec, error error) *QueryResponse {
 	if error != nil {
 		return &QueryResponse{
-			Success: false,
-			Error:   error.Error(),
-			Value:   value.String(),
+
+			Value: value.String(),
 		}
 	}
 
 	return &QueryResponse{
-		Success: true,
-		Error:   "",
-		Value:   value.String(),
+		Error: "",
+		Value: value.String(),
 	}
 }

@@ -6,7 +6,5 @@ import "x/classifications/internal/mappable/mappable.proto";
 
 message QueryResponse {
   option (gogoproto.goproto_getters) = false;
-  bool success = 1;
-  string error = 2;
-  repeated classifications.Mappable list = 3;
+  repeated classifications.Mappable list = 1;
 }
