@@ -35,4 +35,6 @@ var Query = baseHelpers.NewQuery(
 	},
 
 	constants.SplitID,
+	constants.Offset,
+	constants.Limit,
 )

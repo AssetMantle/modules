@@ -29,4 +29,6 @@ var Query = baseHelpers.NewQuery(
 	},
 
 	constants.IdentityID,
+	constants.Offset,
+	constants.Limit,
 )

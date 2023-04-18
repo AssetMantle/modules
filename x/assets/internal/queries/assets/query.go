@@ -35,4 +35,6 @@ var Query = baseHelpers.NewQuery(
 	},
 
 	constants.AssetID,
+	constants.Offset,
+	constants.Limit,
 )

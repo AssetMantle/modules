@@ -33,8 +33,8 @@ func (queryRequest *QueryRequest) Validate() error {
 }
 
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	offset := cliCommand.ReadUInt64(constants.Offset)
-	limit := cliCommand.ReadUInt64(constants.Limit)
+	offset := cliCommand.ReadInt(constants.Offset)
+	limit := cliCommand.ReadInt(constants.Limit)
 
 	return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
 }

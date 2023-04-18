@@ -42,20 +42,6 @@ func (cliCommand cliCommand) ReadInt64(cliFlag helpers.CLIFlag) int64 {
 	}
 	panic(fmt.Errorf("uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue()))
 }
-func (cliCommand cliCommand) ReadUInt64(cliFlag helpers.CLIFlag) uint64 {
-	switch cliFlag.GetValue().(type) {
-	case uint64:
-		for _, registeredCliFlag := range cliCommand.cliFlagList {
-			if registeredCliFlag == cliFlag {
-				return cliFlag.ReadCLIValue().(uint64)
-			}
-		}
-	default:
-		panic(fmt.Errorf("flag %v not an uint64 flag, Flag type: %T, ", cliFlag.GetName(), cliFlag.GetValue()))
-	}
-	panic(fmt.Errorf("uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue()))
-}
-
 func (cliCommand cliCommand) ReadInt(cliFlag helpers.CLIFlag) int {
 	switch cliFlag.GetValue().(type) {
 	case int:

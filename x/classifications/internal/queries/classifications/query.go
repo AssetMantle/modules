@@ -34,4 +34,6 @@ var Query = baseHelpers.NewQuery(
 	},
 
 	constants.ClassificationID,
+	constants.Offset,
+	constants.Limit,
 )
