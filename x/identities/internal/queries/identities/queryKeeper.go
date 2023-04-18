@@ -5,7 +5,7 @@ package identities
 
 import (
 	"context"
-	"github.com/AssetMantle/schema/x/ids/base"
+	"github.com/AssetMantle/schema/go/ids/base"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/internal/key"

@@ -38,17 +38,17 @@ func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (h
 
 	return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
 }
-}
 
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	if offset, err := strconv.Atoi(httpRequest.URL.Query().Get(constants.Offset.GetName())); err != nil {
+	var offset, limit int
+	var err error
+	if offset, err = strconv.Atoi(httpRequest.URL.Query().Get(constants.Offset.GetName())); err != nil {
 		offset = 0
-	} else if limit, err := strconv.Atoi(httpRequest.URL.Query().Get(constants.Limit.GetName())); err != nil {
-		limit = query.DefaultLimit
-	} else {
-		return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
 	}
-	return &QueryRequest{}, nil
+	if limit, err = strconv.Atoi(httpRequest.URL.Query().Get(constants.Limit.GetName())); err != nil {
+		limit = query.DefaultLimit
+	}
+	return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
 }
 
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
