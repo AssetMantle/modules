@@ -11,6 +11,7 @@ import (
 
 type CLICommand interface {
 	ReadInt64(CLIFlag) int64
+	ReadUInt64(CLIFlag) uint64
 	ReadInt(CLIFlag) int
 	ReadBool(CLIFlag) bool
 	ReadString(CLIFlag) string

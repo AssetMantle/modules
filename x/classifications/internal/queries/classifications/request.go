@@ -4,8 +4,6 @@
 package classifications
 
 import (
-	"errors"
-	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -34,35 +32,21 @@ func (queryRequest *QueryRequest) Validate() error {
 	return err
 }
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	if offset, err := strconv.Atoi(cliCommand.ReadString(constants.Offset)); err != nil {
-		return &QueryRequest{}, err
-	} else if limit, err := strconv.Atoi(cliCommand.ReadString(constants.Limit)); err != nil {
-		return &QueryRequest{}, err
-	} else {
-		if offset < 0 {
-			return &QueryRequest{}, errors.New("invalid offset value")
-		}
-		if limit > query.DefaultLimit || limit < 0 {
-			return &QueryRequest{}, errors.New(fmt.Sprintf("invalid limit(max value %d)", query.DefaultLimit))
-		}
-		return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
-	}
+	offset := cliCommand.ReadUInt64(constants.Offset)
+	limit := cliCommand.ReadUInt64(constants.Limit)
+
+	return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
+}
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
 	if offset, err := strconv.Atoi(httpRequest.URL.Query().Get(constants.Offset.GetName())); err != nil {
-		return &QueryRequest{}, err
+		offset = 0
 	} else if limit, err := strconv.Atoi(httpRequest.URL.Query().Get(constants.Limit.GetName())); err != nil {
-		return &QueryRequest{}, err
+		limit = query.DefaultLimit
 	} else {
-		if offset < 0 {
-			return &QueryRequest{}, errors.New("invalid offset value")
-		}
-		if limit > query.DefaultLimit || limit < 0 {
-			return &QueryRequest{}, errors.New(fmt.Sprintf("invalid limit(max value %d)", query.DefaultLimit))
-		}
 		return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
 	}
-
+	return &QueryRequest{}, nil
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
 	return base.CodecPrototype().MarshalJSON(queryRequest)
