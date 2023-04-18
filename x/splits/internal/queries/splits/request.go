@@ -4,6 +4,8 @@
 package splits
 
 import (
+	"errors"
+	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -38,6 +40,12 @@ func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (h
 	} else if limit, err := strconv.Atoi(cliCommand.ReadString(constants.Limit)); err != nil {
 		return &QueryRequest{}, err
 	} else {
+		if offset < 0 {
+			return &QueryRequest{}, errors.New("invalid offset value")
+		}
+		if limit > query.DefaultLimit || limit < 0 {
+			return &QueryRequest{}, errors.New(fmt.Sprintf("invalid limit(max value %d)", query.DefaultLimit))
+		}
 		return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
 	}
 }
@@ -47,6 +55,12 @@ func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRe
 	} else if limit, err := strconv.Atoi(httpRequest.URL.Query().Get(constants.Limit.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
+		if offset < 0 {
+			return &QueryRequest{}, errors.New("invalid offset value")
+		}
+		if limit > query.DefaultLimit || limit < 0 {
+			return &QueryRequest{}, errors.New(fmt.Sprintf("invalid limit(max value %d)", query.DefaultLimit))
+		}
 		return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
 	}
 }

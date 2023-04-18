@@ -99,6 +99,10 @@ func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
 			return
 		}
 
+		if err := queryRequest.Validate(); err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+		}
+
 		response, height, err := query.query(queryRequest, clientContext)
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
