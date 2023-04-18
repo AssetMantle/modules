@@ -6,13 +6,13 @@ package modify
 import (
 	"context"
 
-	baseData "github.com/AssetMantle/schema/x/data/base"
-	"github.com/AssetMantle/schema/x/documents/base"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	baseProperties "github.com/AssetMantle/schema/x/properties/base"
-	"github.com/AssetMantle/schema/x/properties/constants"
-	"github.com/AssetMantle/schema/x/properties/utilities"
-	baseTypes "github.com/AssetMantle/schema/x/types/base"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents/base"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	"github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/go/properties/utilities"
+	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"

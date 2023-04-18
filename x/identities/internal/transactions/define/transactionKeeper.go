@@ -6,10 +6,10 @@ package define
 import (
 	"context"
 
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/properties/constants"
-	"github.com/AssetMantle/schema/x/properties/utilities"
-	"github.com/AssetMantle/schema/x/qualified/base"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/go/properties/utilities"
+	"github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"

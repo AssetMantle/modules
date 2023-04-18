@@ -6,14 +6,14 @@ package issue
 import (
 	"context"
 
-	baseData "github.com/AssetMantle/schema/x/data/base"
-	"github.com/AssetMantle/schema/x/documents/base"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	baseProperties "github.com/AssetMantle/schema/x/properties/base"
-	"github.com/AssetMantle/schema/x/properties/constants"
-	"github.com/AssetMantle/schema/x/properties/utilities"
-	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents/base"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	"github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/go/properties/utilities"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"

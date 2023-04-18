@@ -6,7 +6,7 @@ package renumerate
 import (
 	"context"
 
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/internal/utilities"

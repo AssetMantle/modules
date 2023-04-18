@@ -4,8 +4,8 @@
 package supplement
 
 import (
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/lists"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/lists"
 
 	"github.com/AssetMantle/modules/helpers"
 )

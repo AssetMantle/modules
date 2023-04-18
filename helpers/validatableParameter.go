@@ -1,8 +1,8 @@
 package helpers
 
 import (
-	"github.com/AssetMantle/schema/x/data"
-	"github.com/AssetMantle/schema/x/parameters"
+	"github.com/AssetMantle/schema/go/data"
+	"github.com/AssetMantle/schema/go/parameters"
 )
 
 type ValidatableParameter interface {

@@ -6,9 +6,9 @@ package scrub
 import (
 	"context"
 
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	baseLists "github.com/AssetMantle/schema/x/lists/base"
-	"github.com/AssetMantle/schema/x/properties"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	"github.com/AssetMantle/schema/go/properties"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/metas/internal/mappable"

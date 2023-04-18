@@ -10,8 +10,7 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/AssetMantle/schema/utilities/random"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -28,6 +27,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/utilities/rest/queuing"
 )
 

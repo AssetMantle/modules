@@ -7,8 +7,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/AssetMantle/schema/x/ids"
-	"github.com/AssetMantle/schema/x/parameters"
+	"github.com/AssetMantle/schema/go/ids"
+	"github.com/AssetMantle/schema/go/parameters"
 	"github.com/cosmos/cosmos-sdk/client"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )

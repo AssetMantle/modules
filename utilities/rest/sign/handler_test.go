@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	schema "github.com/AssetMantle/schema/x"
+	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"

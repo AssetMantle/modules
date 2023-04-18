@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/x"
+	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -21,7 +21,7 @@ import (
 
 func initialize() (helpers.CLICommand, []helpers.CLIFlag) {
 	var legacyAmino = sdkCodec.NewLegacyAmino()
-	x.RegisterLegacyAminoCodec(legacyAmino)
+	schema.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 

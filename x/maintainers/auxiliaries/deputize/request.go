@@ -4,8 +4,8 @@
 package deputize
 
 import (
-	"github.com/AssetMantle/schema/x/ids"
-	"github.com/AssetMantle/schema/x/lists"
+	"github.com/AssetMantle/schema/go/ids"
+	"github.com/AssetMantle/schema/go/lists"
 	"github.com/asaskevich/govalidator"
 
 	"github.com/AssetMantle/modules/helpers"

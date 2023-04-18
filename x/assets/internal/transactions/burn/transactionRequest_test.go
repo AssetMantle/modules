@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"testing"
 
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"

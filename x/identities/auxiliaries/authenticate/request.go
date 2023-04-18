@@ -4,7 +4,7 @@
 package authenticate
 
 import (
-	"github.com/AssetMantle/schema/x/ids"
+	"github.com/AssetMantle/schema/go/ids"
 	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 

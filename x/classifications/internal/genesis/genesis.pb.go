@@ -10,7 +10,7 @@ import (
 	math_bits "math/bits"
 
 	mappable "github.com/AssetMantle/modules/x/classifications/internal/mappable"
-	base "github.com/AssetMantle/schema/x/parameters/base"
+	base "github.com/AssetMantle/schema/go/parameters/base"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 )

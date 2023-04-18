@@ -6,10 +6,10 @@ package mutate
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/x/documents/base"
-	errorConstants "github.com/AssetMantle/schema/x/errors/constants"
-	"github.com/AssetMantle/schema/x/properties/utilities"
-	baseQualified "github.com/AssetMantle/schema/x/qualified/base"
+	"github.com/AssetMantle/schema/go/documents/base"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/properties/utilities"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"

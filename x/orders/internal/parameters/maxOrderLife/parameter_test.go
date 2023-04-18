@@ -6,11 +6,11 @@ package maxOrderLife
 import (
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/x/data/base"
-	baseIDs "github.com/AssetMantle/schema/x/ids/base"
-	baseParameters "github.com/AssetMantle/schema/x/parameters/base"
-	baseProperties "github.com/AssetMantle/schema/x/properties/base"
-	"github.com/AssetMantle/schema/x/types/base"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	"github.com/AssetMantle/schema/go/types/base"
 )
 
 func Test_validator(t *testing.T) {
