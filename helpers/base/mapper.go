@@ -88,7 +88,7 @@ func (mapper mapper) IteratePaginated(context context.Context, pageRequest *sdkT
 		return nil
 	})
 	if err != nil {
-		panic("Pagination failure: " + err.Error())
+		panic("Paginated query failure: " + err.Error())
 	}
 }
 func (mapper mapper) IterateAll(context context.Context, accumulator func(helpers.Mappable) bool) {
