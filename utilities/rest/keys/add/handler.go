@@ -5,19 +5,14 @@ package add
 
 import (
 	"fmt"
-	"net/http"
-	"strings"
-
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/go-bip39"
 	"github.com/gorilla/mux"
-	"github.com/spf13/viper"
+	"net/http"
 )
 
 func handler(context client.Context) http.HandlerFunc {
@@ -34,7 +29,7 @@ func handler(context client.Context) http.HandlerFunc {
 			return
 		}
 
-		Keyring, err := keyring.New(sdkTypes.KeyringServiceName(), flags.DefaultKeyringBackend, viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
+		Keyring := context.Keyring //, err := keyring.New(sdkTypes.KeyringServiceName(), flags.DefaultKeyringBackend, viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
