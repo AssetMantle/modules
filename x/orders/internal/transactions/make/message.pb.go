@@ -5,9 +5,9 @@ package make
 
 import (
 	fmt "fmt"
-	base "github.com/AssetMantle/schema/x/ids/base"
-	base2 "github.com/AssetMantle/schema/x/lists/base"
-	base1 "github.com/AssetMantle/schema/x/types/base"
+	base "github.com/AssetMantle/schema/go/ids/base"
+	base2 "github.com/AssetMantle/schema/go/lists/base"
+	base1 "github.com/AssetMantle/schema/go/types/base"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"

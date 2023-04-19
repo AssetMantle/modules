@@ -5,7 +5,7 @@ package mappable
 
 import (
 	fmt "fmt"
-	base "github.com/AssetMantle/schema/x/data/base"
+	base "github.com/AssetMantle/schema/go/data/base"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"

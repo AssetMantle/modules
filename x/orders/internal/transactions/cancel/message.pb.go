@@ -5,7 +5,7 @@ package cancel
 
 import (
 	fmt "fmt"
-	base "github.com/AssetMantle/schema/x/ids/base"
+	base "github.com/AssetMantle/schema/go/ids/base"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"

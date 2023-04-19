@@ -5,8 +5,8 @@ package deputize
 
 import (
 	fmt "fmt"
-	base "github.com/AssetMantle/schema/x/ids/base"
-	base1 "github.com/AssetMantle/schema/x/lists/base"
+	base "github.com/AssetMantle/schema/go/ids/base"
+	base1 "github.com/AssetMantle/schema/go/lists/base"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
