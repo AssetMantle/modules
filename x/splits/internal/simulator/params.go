@@ -19,7 +19,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 		simulation.NewSimParamChange(module.Name,
 			string(wrapAllowedCoins.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON("L|I|COI|Snake")
+				bytes, err := common.LegacyAmino.MarshalJSON("L|I|COI|Snake, L|I|COI|Cat")
 				if err != nil {
 					panic(err)
 				}
