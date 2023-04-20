@@ -4,11 +4,12 @@
 package orders
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"net/http"
-	"strconv"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
