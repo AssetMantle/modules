@@ -32,12 +32,13 @@ func GenerateRandomData(r *rand.Rand) data.Data {
 	}
 }
 
-func GenerateRandomCoinListString(r *rand.Rand) string {
+func GenerateRandomCoinListString(listCount int) string {
+	r := rand.New(rand.NewSource(3))
 	prefix := "I|COI|"
 	list := ""
 
-	for i := 0; i < int(math.Abs(float64(r.Int()))); i++ {
-		list += prefix + simulationTypes.RandStringOfLength(r, r.Intn(99)) + ","
+	for i := 0; i < listCount; i++ {
+		list += prefix + simulationTypes.RandStringOfLength(r, r.Intn(127)) + ","
 	}
 
 	return strings.TrimSuffix(list, ",")
