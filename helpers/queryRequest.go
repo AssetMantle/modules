@@ -4,8 +4,9 @@
 package helpers
 
 import (
-	"github.com/cosmos/cosmos-sdk/client"
 	"net/http"
+
+	"github.com/cosmos/cosmos-sdk/client"
 )
 
 type QueryRequest interface {

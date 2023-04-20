@@ -5,12 +5,13 @@ package reveal
 
 import (
 	fmt "fmt"
-	base "github.com/AssetMantle/schema/x/data/base"
-	_ "github.com/AssetMantle/schema/x/ids/base"
-	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
 	math_bits "math/bits"
+
+	base "github.com/AssetMantle/schema/x/data/base"
+	_ "github.com/AssetMantle/schema/x/ids/base"
+	proto "github.com/gogo/protobuf/proto"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

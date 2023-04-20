@@ -5,13 +5,14 @@ package make
 
 import (
 	fmt "fmt"
+	io "io"
+	math "math"
+	math_bits "math/bits"
+
 	base "github.com/AssetMantle/schema/x/ids/base"
 	base2 "github.com/AssetMantle/schema/x/lists/base"
 	base1 "github.com/AssetMantle/schema/x/types/base"
 	proto "github.com/gogo/protobuf/proto"
-	io "io"
-	math "math"
-	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
