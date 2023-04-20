@@ -32,6 +32,9 @@ func validator(i interface{}) error {
 		if !ok {
 			return errorConstants.IncorrectFormat.Wrapf("incorrect format for maxPropertyCount parameter, expected %T, got %T", baseData.NewNumberData(22), i)
 		}
+	case string:
+		_, err := baseData.PrototypeNumberData().FromString(value)
+		return err
 	default:
 		return errorConstants.IncorrectFormat.Wrapf("incorrect format for maxPropertyCount parameter, expected %T, got %T", baseData.NewNumberData(22), i)
 	}

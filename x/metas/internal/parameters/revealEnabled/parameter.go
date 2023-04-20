@@ -28,6 +28,10 @@ func validator(i interface{}) error {
 		if _, ok := i.(*baseData.BooleanData); ok {
 			return nil
 		}
+		return errorConstants.IncorrectFormat
+	case string:
+		_, err := baseData.PrototypeBooleanData().FromString(value)
+		return err
 	}
 
 	return errorConstants.IncorrectFormat

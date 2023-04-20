@@ -33,6 +33,9 @@ func validator(i interface{}) error {
 		if listData, ok = i.(*baseData.ListData); !ok {
 			return errorConstants.IncorrectFormat
 		}
+	case string:
+		_, err := baseData.PrototypeListData().FromString(value)
+		return err
 	default:
 		return errorConstants.IncorrectFormat
 	}

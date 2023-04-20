@@ -32,6 +32,9 @@ func validator(i interface{}) error {
 		if !ok {
 			return errorConstants.IncorrectFormat
 		}
+	case string:
+		_, err := baseData.PrototypeNumberData().FromString(value)
+		return err
 	default:
 		return errorConstants.IncorrectFormat
 	}
