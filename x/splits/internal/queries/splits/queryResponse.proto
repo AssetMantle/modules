@@ -1,0 +1,10 @@
+syntax = "proto3";
+package splits.queries.splits;
+
+import "gogoproto/gogo.proto";
+import "x/splits/internal/mappable/mappable.proto";
+
+message QueryResponse {
+  option (gogoproto.goproto_getters) = false;
+  repeated Mappable list = 1;
+}

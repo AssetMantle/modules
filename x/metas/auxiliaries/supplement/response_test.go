@@ -26,7 +26,7 @@ func Test_Super_Response(t *testing.T) {
 	require.Equal(t, nil, testAuxiliaryResponse.GetError())
 
 	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList, errorConstants.IncorrectFormat)
-	require.Equal(t, auxiliaryResponse{Success: false, Error: errorConstants.IncorrectFormat, PropertyList: nil}, testAuxiliaryResponse2)
+	require.Equal(t, auxiliaryResponse{Error: errorConstants.IncorrectFormat, PropertyList: nil}, testAuxiliaryResponse2)
 	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
 	require.Equal(t, errorConstants.IncorrectFormat, testAuxiliaryResponse2.GetError())
 
