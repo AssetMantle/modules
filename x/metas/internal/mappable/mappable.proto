@@ -1,11 +1,11 @@
 syntax = "proto3";
 package metas;
 
-import "x/data/base/anyData.proto";
+import "data/base/any_data.proto";
 import "gogoproto/gogo.proto";
 
 message Mappable {
   option (gogoproto.goproto_getters) = false;
 
-  data.AnyData data = 1;
+  data.base.AnyData data = 1;
 }

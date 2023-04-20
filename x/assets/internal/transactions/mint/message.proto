@@ -1,17 +1,17 @@
 syntax = "proto3";
 package assets.transactions.mint;
 
-import "x/ids/base/classificationID.proto";
-import "x/ids/base/identityID.proto";
-import "x/lists/base/propertyList.proto";
+import "ids/base/classification_id.proto";
+import "ids/base/identity_id.proto";
+import "lists/base/property_list.proto";
 
 message Message {
   string from = 1;
-  ids.IdentityID from_i_d = 2;
-  ids.IdentityID to_i_d = 3;
-  ids.ClassificationID classification_i_d = 4;
-  lists.PropertyList immutable_meta_properties = 5;
-  lists.PropertyList immutable_properties = 6;
-  lists.PropertyList mutable_meta_properties = 7;
-  lists.PropertyList mutable_properties = 8;
+  ids.base.IdentityID from_i_d = 2;
+  ids.base.IdentityID to_i_d = 3;
+  ids.base.ClassificationID classification_i_d = 4;
+  lists.base.PropertyList immutable_meta_properties = 5;
+  lists.base.PropertyList immutable_properties = 6;
+  lists.base.PropertyList mutable_meta_properties = 7;
+  lists.base.PropertyList mutable_properties = 8;
 }

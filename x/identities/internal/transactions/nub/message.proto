@@ -1,10 +1,10 @@
 syntax = "proto3";
 package identities.transactions.nub;
 
-import "x/ids/base/identityID.proto";
-import "x/ids/base/stringID.proto";
+import "ids/base/identity_id.proto";
+import "ids/base/string_id.proto";
 
 message Message {
   string from = 1;
-  ids.StringID nub_i_d = 2;
+  ids.base.StringID nub_i_d = 2;
 }

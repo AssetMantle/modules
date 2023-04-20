@@ -1,8 +1,8 @@
 syntax = "proto3";
 package classifications;
 
-import "x/ids/base/classificationID.proto";
+import "ids/base/classification_id.proto";
 
 message Key {
-  ids.ClassificationID classification_i_d = 1;
+  ids.base.ClassificationID classification_i_d = 1;
 }

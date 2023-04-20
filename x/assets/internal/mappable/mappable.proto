@@ -1,7 +1,7 @@
 syntax = "proto3";
 package assets;
 
-import "x/documents/base/document.proto";
+import "documents/base/document.proto";
 message Mappable {
-  documents.Document asset = 1;
+  documents.base.Document asset = 1;
 }

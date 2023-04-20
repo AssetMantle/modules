@@ -1,8 +1,8 @@
 syntax = "proto3";
 package splits;
 
-import "x/types/base/split.proto";
+import "types/base/split.proto";
 
 message Mappable {
-  types.Split split = 1;
+  types.base.Split split = 1;
 }

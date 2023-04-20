@@ -1,12 +1,12 @@
 syntax = "proto3";
 package identities.transactions.revoke;
 
-import "x/ids/base/classificationID.proto";
-import "x/ids/base/identityID.proto";
+import "ids/base/classification_id.proto";
+import "ids/base/identity_id.proto";
 
 message Message {
   string from = 1;
-  ids.IdentityID from_i_d = 2;
-  ids.IdentityID to_i_d = 3;
-  ids.ClassificationID classification_i_d = 4;
+  ids.base.IdentityID from_i_d = 2;
+  ids.base.IdentityID to_i_d = 3;
+  ids.base.ClassificationID classification_i_d = 4;
 }

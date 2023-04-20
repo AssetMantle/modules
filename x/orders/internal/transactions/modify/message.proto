@@ -2,19 +2,19 @@ syntax = "proto3";
 package orders.transactions.modify;
 
 import "gogoproto/gogo.proto";
-import "x/ids/base/classificationID.proto";
-import "x/ids/base/identityID.proto";
-import "x/ids/base/orderID.proto";
-import "x/lists/base/propertyList.proto";
-import "x/types/base/height.proto";
+import "ids/base/classification_id.proto";
+import "ids/base/identity_id.proto";
+import "ids/base/order_id.proto";
+import "lists/base/property_list.proto";
+import "types/base/height.proto";
 
 message Message {
   string from = 1;
-  ids.IdentityID from_i_d = 2;
-  ids.OrderID order_i_d = 3;
+  ids.base.IdentityID from_i_d = 2;
+  ids.base.OrderID order_i_d = 3;
   string maker_ownable_split = 4 ;
   string taker_ownable_split = 5 ;
-  types.Height expires_in = 6;
-  lists.PropertyList mutable_meta_properties = 7;
-  lists.PropertyList mutable_properties = 8;
+  types.base.Height expires_in = 6;
+  lists.base.PropertyList mutable_meta_properties = 7;
+  lists.base.PropertyList mutable_properties = 8;
 }

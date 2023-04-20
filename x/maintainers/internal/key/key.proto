@@ -1,8 +1,8 @@
 syntax = "proto3";
 package maintainers;
 
-import "x/ids/base/maintainerID.proto";
+import "ids/base/maintainer_id.proto";
 
 message Key {
-  ids.MaintainerID maintainer_i_d = 1;
+  ids.base.MaintainerID maintainer_i_d = 1;
 }
