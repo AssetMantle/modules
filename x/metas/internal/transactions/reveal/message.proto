@@ -1,10 +1,10 @@
 syntax = "proto3";
 package metas.transactions.reveal;
 
-import "x/data/base/anyData.proto";
-import "x/ids/base/identityID.proto";
+import "data/base/any_data.proto";
+import "ids/base/identity_id.proto";
 
 message Message {
   string from = 1;
-  data.AnyData data = 2;
+  data.base.AnyData data = 2;
 }

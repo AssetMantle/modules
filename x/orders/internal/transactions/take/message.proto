@@ -2,12 +2,12 @@ syntax = "proto3";
 package orders.transactions.take;
 
 import "gogoproto/gogo.proto";
-import "x/ids/base/identityID.proto";
-import "x/ids/base/orderID.proto";
+import "ids/base/identity_id.proto";
+import "ids/base/order_id.proto";
 
 message Message {
   string from = 1;
-  ids.IdentityID from_i_d = 2;
+  ids.base.IdentityID from_i_d = 2;
   string taker_ownable_split = 3 ;
-  ids.OrderID order_i_d = 4;
+  ids.base.OrderID order_i_d = 4;
 }

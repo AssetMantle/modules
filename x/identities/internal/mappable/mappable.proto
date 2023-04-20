@@ -1,8 +1,8 @@
 syntax = "proto3";
 package identities;
 
-import "x/documents/base/document.proto";
+import "documents/base/document.proto";
 
 message Mappable {
-  documents.Document identity = 1;
+  documents.base.Document identity = 1;
 }

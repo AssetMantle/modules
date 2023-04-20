@@ -1,11 +1,11 @@
 syntax = "proto3";
 package assets.transactions.renumerate;
 
-import "x/ids/base/assetID.proto";
-import "x/ids/base/identityID.proto";
+import "ids/base/asset_id.proto";
+import "ids/base/identity_id.proto";
 
 message Message {
   string from = 1;
-  ids.IdentityID from_i_d = 2;
-  ids.AssetID asset_i_d = 3;
+  ids.base.IdentityID from_i_d = 2;
+  ids.base.AssetID asset_i_d = 3;
 }

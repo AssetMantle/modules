@@ -1,8 +1,8 @@
 syntax = "proto3";
 package assets;
 
-import "x/ids/base/assetID.proto";
+import "ids/base/asset_id.proto";
 
 message Key {
-  ids.AssetID asset_i_d = 1;
+  ids.base.AssetID asset_i_d = 1;
 }

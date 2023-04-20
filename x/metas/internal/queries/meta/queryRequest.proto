@@ -1,11 +1,11 @@
 syntax = "proto3";
 package metas.queries.meta;
 
-import "x/ids/base/dataID.proto";
+import "ids/base/data_id.proto";
 import "gogoproto/gogo.proto";
 
 message QueryRequest {
   option (gogoproto.goproto_getters) = false;
 
-  ids.DataID data_i_d = 1;
+  ids.base.DataID data_i_d = 1;
 }

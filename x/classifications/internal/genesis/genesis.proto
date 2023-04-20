@@ -3,11 +3,11 @@ package classifications;
 
 import "gogoproto/gogo.proto";
 import "x/classifications/internal/mappable/mappable.proto";
-import "x/parameters/base/parameterList.proto";
+import "parameters/base/parameter_list.proto";
 
 message Genesis {
   option (gogoproto.goproto_getters) = false;
 
   repeated Mappable mappables = 1;
-  parameters.ParameterList parameterList = 2;
+  parameters.base.ParameterList parameterList = 2;
 }

@@ -8,7 +8,7 @@ managed:
       - buf.build/cosmos/gogo-proto
       - buf.build/cosmos/cosmos-sdk
     override:
-      buf.build/assetmantle/schema: github.com/AssetMantle/schema
+      buf.build/assetmantle/schema: github.com/AssetMantle/schema/go
 plugins:
   - name: gocosmos
     out: .
