@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	"github.com/AssetMantle/modules/simulation/schema/types/base"
 	"math/rand"
 
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -19,7 +20,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 		simulation.NewSimParamChange(module.Name,
 			string(wrapAllowedCoins.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON("L|I|COI|Snake, L|I|COI|Cat")
+				bytes, err := common.LegacyAmino.MarshalJSON(base.GenerateRandomCoinListString(rand.New(rand.NewSource(7))))
 				if err != nil {
 					panic(err)
 				}
