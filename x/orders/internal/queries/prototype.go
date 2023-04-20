@@ -7,10 +7,12 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/internal/queries/order"
+	"github.com/AssetMantle/modules/x/orders/internal/queries/orders"
 )
 
 func Prototype() helpers.Queries {
 	return baseHelpers.NewQueries(
 		order.Query,
+		orders.Query,
 	)
 }

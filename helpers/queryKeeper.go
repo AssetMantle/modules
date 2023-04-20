@@ -8,6 +8,6 @@ import (
 )
 
 type QueryKeeper interface {
-	Enquire(context.Context, QueryRequest) QueryResponse
+	Enquire(context.Context, QueryRequest) (QueryResponse, error)
 	Keeper
 }

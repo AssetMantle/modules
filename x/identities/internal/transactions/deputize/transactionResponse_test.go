@@ -23,7 +23,7 @@ func Test_newTransactionResponse(t *testing.T) {
 	}{
 
 		{"+ve", args{error: nil}, transactionResponse{Success: true, Error: nil}},
-		{"-ve", args{error: errorConstants.IncorrectFormat}, transactionResponse{Success: false, Error: errorConstants.IncorrectFormat}},
+		{"-ve", args{error: errorConstants.IncorrectFormat}, transactionResponse{Error: errorConstants.IncorrectFormat}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -46,7 +46,7 @@ func Test_transactionResponse_GetError(t *testing.T) {
 	}{
 
 		{"+ve", fields{Success: true, Error: nil}, false},
-		{"-ve", fields{Success: false, Error: errorConstants.IncorrectFormat}, true},
+		{"-ve", fields{Error: errorConstants.IncorrectFormat}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -73,7 +73,7 @@ func Test_transactionResponse_IsSuccessful(t *testing.T) {
 	}{
 
 		{"+ve", fields{Success: true, Error: nil}, true},
-		{"-ve", fields{Success: false, Error: errorConstants.IncorrectFormat}, false},
+		{"-ve", fields{Error: errorConstants.IncorrectFormat}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

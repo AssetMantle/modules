@@ -1,0 +1,12 @@
+syntax = "proto3";
+package splits.queries.splits;
+
+import "google/api/annotations.proto";
+import "x/splits/internal/queries/splits/queryRequest.proto";
+import "x/splits/internal/queries/splits/queryResponse.proto";
+
+service Service{
+  rpc Handle(QueryRequest) returns(QueryResponse){
+    option (google.api.http).get = "/mantle/splits/v1beta1/splits";
+  }
+}
