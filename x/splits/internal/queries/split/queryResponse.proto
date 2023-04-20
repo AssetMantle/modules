@@ -6,7 +6,5 @@ import "x/splits/internal/mappable/mappable.proto";
 
 message QueryResponse {
   option (gogoproto.goproto_getters) = false;
-  bool success = 1;
-  string error = 2;
-  repeated splits.Mappable list = 3;
+  repeated splits.Mappable list = 1;
 }

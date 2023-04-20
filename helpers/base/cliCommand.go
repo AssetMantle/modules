@@ -42,7 +42,6 @@ func (cliCommand cliCommand) ReadInt64(cliFlag helpers.CLIFlag) int64 {
 	}
 	panic(fmt.Errorf("uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue()))
 }
-
 func (cliCommand cliCommand) ReadInt(cliFlag helpers.CLIFlag) int {
 	switch cliFlag.GetValue().(type) {
 	case int:

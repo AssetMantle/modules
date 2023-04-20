@@ -43,7 +43,7 @@ func Test_transactionResponse_GetError(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{Success: true, Error: nil}, false},
-		{"-ve", fields{Success: false, Error: errorConstants.IncorrectFormat}, true},
+		{"-ve", fields{Error: errorConstants.IncorrectFormat}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -69,7 +69,7 @@ func Test_transactionResponse_IsSuccessful(t *testing.T) {
 		want   bool
 	}{
 		{"+ve", fields{Success: true, Error: nil}, true},
-		{"-ve", fields{Success: false, Error: errorConstants.IncorrectFormat}, false},
+		{"-ve", fields{Error: errorConstants.IncorrectFormat}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -8,15 +8,12 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
+	"net/http"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
 )
-
-// type queryRequest struct {
-//	ids.MaintainerID `json:"maintainerID" valid:"required~required field maintainerID missing"`
-// }
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
 
@@ -43,8 +40,8 @@ func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (h
 	}
 }
 
-func (*QueryRequest) FromMap(vars map[string]string) (helpers.QueryRequest, error) {
-	if maintainerID, err := baseIDs.ReadMaintainerID(vars[Query.GetName()]); err != nil {
+func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
+	if maintainerID, err := baseIDs.ReadMaintainerID(httpRequest.URL.Query().Get(Query.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
 		return newQueryRequest(maintainerID), nil
