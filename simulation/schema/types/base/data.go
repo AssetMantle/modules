@@ -4,6 +4,7 @@
 package base
 
 import (
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"math"
 	"math/rand"
 
@@ -17,7 +18,7 @@ import (
 func GenerateRandomData(r *rand.Rand) data.Data {
 	randomPositiveInt := int(math.Abs(float64(r.Int())))
 
-	switch randomPositiveInt % 4 {
+	switch randomPositiveInt % 5 {
 	case 0:
 		return baseData.NewIDData(GenerateRandomID(r))
 	case 1:
@@ -26,7 +27,19 @@ func GenerateRandomData(r *rand.Rand) data.Data {
 		return baseData.NewDecData(simulationTypes.RandomDecAmount(r, sdkTypes.NewDec(99)))
 	case 3:
 		return baseData.NewHeightData(baseTypes.NewHeight(r.Int63()))
+	case 4:
+		return GenerateRandomListData(r)
 	default:
 		return nil
 	}
+}
+
+func GenerateRandomListData(r *rand.Rand) data.ListData {
+	listData := baseData.NewListData(baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(sdkTypes.DefaultBondDenom)).ToAnyID()))
+
+	for i := 0; i < int(math.Abs(float64(r.Int()))); i++ {
+		listData.Add(baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(99))))))
+	}
+
+	return listData
 }
