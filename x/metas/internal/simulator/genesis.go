@@ -4,7 +4,7 @@
 package simulator
 
 import (
-	base2 "github.com/AssetMantle/modules/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"math/rand"
 
 	"github.com/AssetMantle/schema/go/data"
@@ -40,5 +40,5 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(revealEnabled.Parameter.Mutate(Data)))
 
-	simulationState.GenState[metasModule.Name] = base2.CodecPrototype().MustMarshalJSON(genesisState)
+	simulationState.GenState[metasModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }
