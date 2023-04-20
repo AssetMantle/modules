@@ -8,6 +8,7 @@ import (
 	"github.com/AssetMantle/modules/x/assets/internal/parameters/burnEnabled"
 	"github.com/AssetMantle/modules/x/assets/internal/parameters/renumerateEnabled"
 	"math/rand"
+	"strconv"
 
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
@@ -22,7 +23,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 		simulation.NewSimParamChange(module.Name,
 			string(mintEnabled.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(random.GenerateRandomBool())
+				bytes, err := common.LegacyAmino.MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))
 				if err != nil {
 					panic(err)
 				}
@@ -31,7 +32,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 		simulation.NewSimParamChange(module.Name,
 			string(burnEnabled.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(random.GenerateRandomBool())
+				bytes, err := common.LegacyAmino.MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))
 				if err != nil {
 					panic(err)
 				}
@@ -40,7 +41,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 		simulation.NewSimParamChange(module.Name,
 			string(renumerateEnabled.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(random.GenerateRandomBool())
+				bytes, err := common.LegacyAmino.MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))
 				if err != nil {
 					panic(err)
 				}
