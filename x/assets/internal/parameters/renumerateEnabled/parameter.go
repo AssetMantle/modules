@@ -4,6 +4,7 @@
 package renumerateEnabled
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
@@ -11,8 +12,6 @@ import (
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	"github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 var ID = constantProperties.RenumerateEnabledProperty.GetKey()
@@ -28,6 +27,9 @@ func validator(i interface{}) error {
 		if _, ok := i.(*baseData.BooleanData); ok {
 			return nil
 		}
+	case string:
+		_, err := baseData.PrototypeBooleanData().FromString(value)
+		return err
 	}
 
 	return errorConstants.IncorrectFormat.Wrapf("incorrect format for renumerateEnabled parameter, expected %T, got %T", baseData.NewBooleanData(false), i)
