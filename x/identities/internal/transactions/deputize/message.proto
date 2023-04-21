@@ -7,10 +7,10 @@ import "lists/base/property_list.proto";
 
 message Message {
   string from = 1;
-  ids.base.IdentityID from_i_d = 2;
-  ids.base.IdentityID to_i_d = 3;
-  ids.base.ClassificationID classification_i_d = 4;
-  lists.base.PropertyList maintained_properties = 5;
+  assetmantle.schema.ids.base.IdentityID from_i_d = 2;
+  assetmantle.schema.ids.base.IdentityID to_i_d = 3;
+  assetmantle.schema.ids.base.ClassificationID classification_i_d = 4;
+  assetmantle.schema.lists.base.PropertyList maintained_properties = 5;
   bool can_mint_asset = 6;
   bool can_burn_asset = 7;
   bool can_renumerate_asset = 8;

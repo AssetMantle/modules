@@ -9,16 +9,16 @@ import "types/base/height.proto";
 
 message Message {
   string from = 1;
-  ids.base.IdentityID from_i_d = 2;
-  ids.base.ClassificationID classification_i_d = 3;
-  ids.base.IdentityID taker_i_d = 4;
-  ids.base.AnyOwnableID maker_ownable_i_d = 5;
-  ids.base.AnyOwnableID taker_ownable_i_d = 6;
-  types.base.Height expires_in = 7;
+  assetmantle.schema.ids.base.IdentityID from_i_d = 2;
+  assetmantle.schema.ids.base.ClassificationID classification_i_d = 3;
+  assetmantle.schema.ids.base.IdentityID taker_i_d = 4;
+  assetmantle.schema.ids.base.AnyOwnableID maker_ownable_i_d = 5;
+  assetmantle.schema.ids.base.AnyOwnableID taker_ownable_i_d = 6;
+  assetmantle.schema.types.base.Height expires_in = 7;
   string maker_ownable_split = 8;
   string taker_ownable_split = 9;
-  lists.base.PropertyList immutable_meta_properties = 10;
-  lists.base.PropertyList immutable_properties = 11;
-  lists.base.PropertyList mutable_meta_properties = 12;
-  lists.base.PropertyList mutable_properties = 13;
+  assetmantle.schema.lists.base.PropertyList immutable_meta_properties = 10;
+  assetmantle.schema.lists.base.PropertyList immutable_properties = 11;
+  assetmantle.schema.lists.base.PropertyList mutable_meta_properties = 12;
+  assetmantle.schema.lists.base.PropertyList mutable_properties = 13;
 }

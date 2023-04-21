@@ -4,5 +4,5 @@ package splits.queries.split;
 import "ids/base/split_id.proto";
 
 message QueryRequest {
-  ids.base.SplitID split_i_d = 1;
+  assetmantle.schema.ids.base.SplitID split_i_d = 1;
 }

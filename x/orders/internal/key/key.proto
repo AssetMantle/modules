@@ -4,5 +4,5 @@ package orders;
 import "ids/base/order_id.proto";
 
 message Key {
-  ids.base.OrderID order_i_d = 1;
+  assetmantle.schema.ids.base.OrderID order_i_d = 1;
 }

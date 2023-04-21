@@ -5,6 +5,6 @@ import "ids/base/asset_id.proto";
 
 message Message{
   string from = 1;
-  ids.base.IdentityID from_i_d = 2;
-  ids.base.AssetID asset_i_d = 3;
+  assetmantle.schema.ids.base.IdentityID from_i_d = 2;
+  assetmantle.schema.ids.base.AssetID asset_i_d = 3;
 }

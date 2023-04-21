@@ -6,5 +6,5 @@ import "ids/base/string_id.proto";
 
 message Message {
   string from = 1;
-  ids.base.StringID nub_i_d = 2;
+  assetmantle.schema.ids.base.StringID nub_i_d = 2;
 }

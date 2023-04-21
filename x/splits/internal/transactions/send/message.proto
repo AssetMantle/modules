@@ -7,8 +7,8 @@ import "ids/base/any_ownable_id.proto";
 
 message Message {
   string from = 1;
-  ids.base.IdentityID from_i_d = 2;
-  ids.base.IdentityID to_i_d = 3;
-  ids.base.AnyOwnableID ownable_i_d = 4;
+  assetmantle.schema.ids.base.IdentityID from_i_d = 2;
+  assetmantle.schema.ids.base.IdentityID to_i_d = 3;
+  assetmantle.schema.ids.base.AnyOwnableID ownable_i_d = 4;
   string value = 5 ;
 }

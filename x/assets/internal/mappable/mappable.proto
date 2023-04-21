@@ -3,5 +3,5 @@ package assets;
 
 import "documents/base/document.proto";
 message Mappable {
-  documents.base.Document asset = 1;
+  assetmantle.schema.documents.base.Document asset = 1;
 }

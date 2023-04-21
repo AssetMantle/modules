@@ -4,5 +4,5 @@ package metas;
 import "ids/base/data_id.proto";
 
 message Key {
-  ids.base.DataID data_i_d = 1;
+  assetmantle.schema.ids.base.DataID data_i_d = 1;
 }

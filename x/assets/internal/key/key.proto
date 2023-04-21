@@ -4,5 +4,5 @@ package assets;
 import "ids/base/asset_id.proto";
 
 message Key {
-  ids.base.AssetID asset_i_d = 1;
+  assetmantle.schema.ids.base.AssetID asset_i_d = 1;
 }

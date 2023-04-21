@@ -7,5 +7,5 @@ import "gogoproto/gogo.proto";
 message Mappable {
   option (gogoproto.goproto_getters) = false;
 
-  data.base.AnyData data = 1;
+  assetmantle.schema.data.base.AnyData data = 1;
 }

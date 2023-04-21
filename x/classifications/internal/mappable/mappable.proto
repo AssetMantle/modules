@@ -3,5 +3,5 @@ package classifications;
 
 import "documents/base/document.proto";
 message Mappable {
-  documents.base.Document classification = 1;
+  assetmantle.schema.documents.base.Document classification = 1;
 }

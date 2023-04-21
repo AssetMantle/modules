@@ -4,5 +4,5 @@ package splits.queries.ownable;
 import "ids/base/any_ownable_id.proto";
 
 message QueryRequest {
-  ids.base.AnyOwnableID ownable_i_d = 1;
+  assetmantle.schema.ids.base.AnyOwnableID ownable_i_d = 1;
 }

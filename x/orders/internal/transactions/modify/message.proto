@@ -10,11 +10,11 @@ import "types/base/height.proto";
 
 message Message {
   string from = 1;
-  ids.base.IdentityID from_i_d = 2;
-  ids.base.OrderID order_i_d = 3;
+  assetmantle.schema.ids.base.IdentityID from_i_d = 2;
+  assetmantle.schema.ids.base.OrderID order_i_d = 3;
   string maker_ownable_split = 4 ;
   string taker_ownable_split = 5 ;
-  types.base.Height expires_in = 6;
-  lists.base.PropertyList mutable_meta_properties = 7;
-  lists.base.PropertyList mutable_properties = 8;
+  assetmantle.schema.types.base.Height expires_in = 6;
+  assetmantle.schema.lists.base.PropertyList mutable_meta_properties = 7;
+  assetmantle.schema.lists.base.PropertyList mutable_properties = 8;
 }

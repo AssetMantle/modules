@@ -6,5 +6,5 @@ import "ids/base/identity_id.proto";
 
 message Message {
   string from = 1;
-  data.base.AnyData data = 2;
+  assetmantle.schema.data.base.AnyData data = 2;
 }

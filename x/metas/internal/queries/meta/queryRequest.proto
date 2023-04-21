@@ -7,5 +7,5 @@ import "gogoproto/gogo.proto";
 message QueryRequest {
   option (gogoproto.goproto_getters) = false;
 
-  ids.base.DataID data_i_d = 1;
+  assetmantle.schema.ids.base.DataID data_i_d = 1;
 }
