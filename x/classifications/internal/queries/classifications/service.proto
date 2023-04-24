@@ -3,7 +3,7 @@ package assetmantle.modules.classifications.queries.classifications;
 
 import "google/api/annotations.proto";
 import "x/classifications/internal/queries/classifications/query_request.proto";
-import "x/classifications/internal/queries/classifications/queryResponse.proto";
+import "x/classifications/internal/queries/classifications/query_response.proto";
 
 service Service{
   rpc Handle(QueryRequest) returns(QueryResponse){

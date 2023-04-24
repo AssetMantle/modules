@@ -3,7 +3,7 @@ package assetmantle.modules.splits.queries.splits;
 
 import "google/api/annotations.proto";
 import "x/splits/internal/queries/splits/query_request.proto";
-import "x/splits/internal/queries/splits/queryResponse.proto";
+import "x/splits/internal/queries/splits/query_response.proto";
 
 service Service{
   rpc Handle(QueryRequest) returns(QueryResponse){

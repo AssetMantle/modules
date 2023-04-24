@@ -3,7 +3,7 @@ package assetmantle.modules.orders.queries.orders;
 
 import "google/api/annotations.proto";
 import "x/orders/internal/queries/orders/query_request.proto";
-import "x/orders/internal/queries/orders/queryResponse.proto";
+import "x/orders/internal/queries/orders/query_response.proto";
 
 service Service{
   rpc Handle(QueryRequest) returns(QueryResponse){

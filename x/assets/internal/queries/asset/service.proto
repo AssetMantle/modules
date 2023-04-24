@@ -3,7 +3,7 @@ package assetmantle.modules.assets.queries.asset;
 
 import "google/api/annotations.proto";
 import "x/assets/internal/queries/asset/query_request.proto";
-import "x/assets/internal/queries/asset/queryResponse.proto";
+import "x/assets/internal/queries/asset/query_response.proto";
 
 service Service{
   rpc Handle(QueryRequest) returns(QueryResponse){
