@@ -1,8 +1,7 @@
 syntax = "proto3";
-package metas.transactions.reveal;
+package assetmantle.modules.metas.transactions.reveal;
 
 import "data/base/any_data.proto";
-import "ids/base/identity_id.proto";
 
 message Message {
   string from = 1;

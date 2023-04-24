@@ -1,5 +1,5 @@
 syntax = "proto3";
-package orders.transactions.revoke;
+package assetmantle.modules.orders.transactions.revoke;
 
 import "ids/base/classification_id.proto";
 import "ids/base/identity_id.proto";

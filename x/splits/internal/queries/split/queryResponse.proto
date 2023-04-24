@@ -1,5 +1,5 @@
 syntax = "proto3";
-package splits.queries.split;
+package assetmantle.modules.splits.queries.split;
 
 import "gogoproto/gogo.proto";
 import "x/splits/internal/mappable/mappable.proto";

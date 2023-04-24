@@ -1,5 +1,5 @@
 syntax = "proto3";
-package identities.transactions.deputize;
+package assetmantle.modules.identities.transactions.deputize;
 
 import "ids/base/classification_id.proto";
 import "ids/base/identity_id.proto";

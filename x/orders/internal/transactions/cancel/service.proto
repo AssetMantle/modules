@@ -1,9 +1,9 @@
 syntax = "proto3";
-package orders.transactions.cancel;
+package assetmantle.modules.orders.transactions.cancel;
 
 import "google/api/annotations.proto";
 import "x/orders/internal/transactions/cancel/message.proto";
-import "x/orders/internal/transactions/cancel/transactionResponse.proto";
+import "x/orders/internal/transactions/cancel/transaction_response.proto";
 
 service Service {
   rpc Handle(Message) returns (TransactionResponse) {

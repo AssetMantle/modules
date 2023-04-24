@@ -1,5 +1,5 @@
 syntax = "proto3";
-package metas.queries.metas;
+package assetmantle.modules.metas.queries.metas;
 
 import "gogoproto/gogo.proto";
 import "x/metas/internal/mappable/mappable.proto";

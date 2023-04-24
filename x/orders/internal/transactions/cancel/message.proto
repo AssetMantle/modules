@@ -1,9 +1,10 @@
 syntax = "proto3";
-package orders.transactions.cancel;
+package assetmantle.modules.orders.transactions.cancel;
+
 import "ids/base/identity_id.proto";
 import "ids/base/order_id.proto";
 
-message Message{
+message Message {
   string from = 1;
   assetmantle.schema.ids.base.IdentityID from_i_d = 2;
   assetmantle.schema.ids.base.OrderID order_i_d = 3;

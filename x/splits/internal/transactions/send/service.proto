@@ -1,9 +1,9 @@
 syntax = "proto3";
-package splits.transactions.send;
+package assetmantle.modules.splits.transactions.send;
 
 import "google/api/annotations.proto";
 import "x/splits/internal/transactions/send/message.proto";
-import "x/splits/internal/transactions/send/transactionResponse.proto";
+import "x/splits/internal/transactions/send/transaction_response.proto";
 
 service Service {
   rpc Handle(Message) returns (TransactionResponse) {

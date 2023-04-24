@@ -1,5 +1,5 @@
 syntax = "proto3";
-package classifications;
+package assetmantle.modules.classifications;
 
 import "ids/base/classification_id.proto";
 

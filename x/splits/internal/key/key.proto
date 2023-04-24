@@ -1,5 +1,5 @@
 syntax = "proto3";
-package splits;
+package assetmantle.modules.splits;
 
 import "ids/base/split_id.proto";
 

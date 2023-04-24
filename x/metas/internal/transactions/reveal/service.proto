@@ -1,9 +1,9 @@
 syntax = "proto3";
-package metas.transactions.reveal;
+package assetmantle.modules.metas.transactions.reveal;
 
 import "google/api/annotations.proto";
 import "x/metas/internal/transactions/reveal/message.proto";
-import "x/metas/internal/transactions/reveal/transactionResponse.proto";
+import "x/metas/internal/transactions/reveal/transaction_response.proto";
 
 service Service {
   rpc Handle(Message) returns (TransactionResponse) {

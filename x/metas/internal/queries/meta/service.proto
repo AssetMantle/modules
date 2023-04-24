@@ -1,5 +1,5 @@
 syntax = "proto3";
-package metas.queries.meta;
+package assetmantle.modules.metas.queries.meta;
 
 import "google/api/annotations.proto";
 import "x/metas/internal/queries/meta/queryRequest.proto";

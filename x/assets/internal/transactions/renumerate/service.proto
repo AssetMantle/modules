@@ -1,9 +1,9 @@
 syntax = "proto3";
-package assets.transactions.renumerate;
+package assetmantle.modules.assets.transactions.renumerate;
 
 import "google/api/annotations.proto";
 import "x/assets/internal/transactions/renumerate/message.proto";
-import "x/assets/internal/transactions/renumerate/transactionResponse.proto";
+import "x/assets/internal/transactions/renumerate/transaction_response.proto";
 
 service Service {
   rpc Handle(Message) returns (TransactionResponse) {

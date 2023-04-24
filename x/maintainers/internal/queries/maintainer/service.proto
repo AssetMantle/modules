@@ -1,5 +1,5 @@
 syntax = "proto3";
-package maintainers.queries.maintainer;
+package assetmantle.modules.maintainers.queries.maintainer;
 
 import "google/api/annotations.proto";
 import "x/maintainers/internal/queries/maintainer/queryRequest.proto";

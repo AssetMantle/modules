@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assets.queries.assets;
+package assetmantle.modules.assets.queries.assets;
 
 import "cosmos/base/query/v1beta1/pagination.proto";
 

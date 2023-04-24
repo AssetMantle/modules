@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assets;
+package assetmantle.modules.assets;
 
 import "documents/base/document.proto";
 message Mappable {

@@ -1,7 +1,6 @@
 syntax = "proto3";
-package splits.transactions.send;
+package assetmantle.modules.splits.transactions.send;
 
-import "gogoproto/gogo.proto";
 import "ids/base/identity_id.proto";
 import "ids/base/any_ownable_id.proto";
 

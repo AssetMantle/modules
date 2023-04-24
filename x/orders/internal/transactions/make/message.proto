@@ -1,5 +1,5 @@
 syntax = "proto3";
-package orders.transactions.make;
+package assetmantle.modules.orders.transactions.make;
 
 import "ids/base/classification_id.proto";
 import "ids/base/identity_id.proto";

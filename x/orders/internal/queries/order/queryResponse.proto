@@ -1,5 +1,5 @@
 syntax = "proto3";
-package orders.queries.order;
+package assetmantle.modules.orders.queries.order;
 
 import "gogoproto/gogo.proto";
 import "x/orders/internal/mappable/mappable.proto";

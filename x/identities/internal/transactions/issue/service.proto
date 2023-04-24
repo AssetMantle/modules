@@ -1,9 +1,9 @@
 syntax = "proto3";
-package identities.transactions.issue;
+package assetmantle.modules.identities.transactions.issue;
 
 import "google/api/annotations.proto";
 import "x/identities/internal/transactions/issue/message.proto";
-import "x/identities/internal/transactions/issue/transactionResponse.proto";
+import "x/identities/internal/transactions/issue/transaction_response.proto";
 
 service Service {
   rpc Handle(Message) returns (TransactionResponse) {

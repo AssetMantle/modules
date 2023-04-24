@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assets.transactions.mutate;
+package assetmantle.modules.assets.transactions.mutate;
 
 import "ids/base/asset_id.proto";
 import "ids/base/identity_id.proto";

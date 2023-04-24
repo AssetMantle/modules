@@ -1,9 +1,9 @@
 syntax = "proto3";
-package orders.transactions.define;
+package assetmantle.modules.orders.transactions.define;
 
 import "google/api/annotations.proto";
 import "x/orders/internal/transactions/define/message.proto";
-import "x/orders/internal/transactions/define/transactionResponse.proto";
+import "x/orders/internal/transactions/define/transaction_response.proto";
 
 service Service {
   rpc Handle(Message) returns (TransactionResponse) {

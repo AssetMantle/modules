@@ -1,5 +1,5 @@
 syntax = "proto3";
-package identities.transactions.quash;
+package assetmantle.modules.identities.transactions.quash;
 
 import "ids/base/identity_id.proto";
 

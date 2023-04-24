@@ -1,5 +1,5 @@
 syntax = "proto3";
-package identities.queries.identities;
+package assetmantle.modules.identities.queries.identities;
 
 import "google/api/annotations.proto";
 import "x/identities/internal/queries/identities/queryRequest.proto";

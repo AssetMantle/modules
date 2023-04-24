@@ -1,5 +1,5 @@
 syntax = "proto3";
-package splits.queries.ownable;
+package assetmantle.modules.splits.queries.ownable;
 
 import "google/api/annotations.proto";
 import "x/splits/internal/queries/ownable/queryRequest.proto";

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package identities.transactions.unprovision;
+package assetmantle.modules.identities.transactions.unprovision;
 
 import "ids/base/identity_id.proto";
 

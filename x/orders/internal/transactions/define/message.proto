@@ -1,5 +1,5 @@
 syntax = "proto3";
-package orders.transactions.define;
+package assetmantle.modules.orders.transactions.define;
 
 import "ids/base/identity_id.proto";
 import "lists/base/property_list.proto";

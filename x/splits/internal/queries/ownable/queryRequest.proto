@@ -1,5 +1,5 @@
 syntax = "proto3";
-package splits.queries.ownable;
+package assetmantle.modules.splits.queries.ownable;
 
 import "ids/base/any_ownable_id.proto";
 

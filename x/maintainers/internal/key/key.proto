@@ -1,5 +1,5 @@
 syntax = "proto3";
-package maintainers;
+package assetmantle.modules.maintainers;
 
 import "ids/base/maintainer_id.proto";
 

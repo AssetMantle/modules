@@ -1,5 +1,5 @@
 syntax = "proto3";
-package classifications.queries.classifications;
+package assetmantle.modules.classifications.queries.classifications;
 
 import "google/api/annotations.proto";
 import "x/classifications/internal/queries/classifications/queryRequest.proto";

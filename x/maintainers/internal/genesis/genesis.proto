@@ -1,5 +1,5 @@
 syntax = "proto3";
-package maintainers;
+package assetmantle.modules.maintainers;
 
 import "gogoproto/gogo.proto";
 import "x/maintainers/internal/mappable/mappable.proto";
