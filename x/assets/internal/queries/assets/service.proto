@@ -2,7 +2,7 @@ syntax = "proto3";
 package assetmantle.modules.assets.queries.assets;
 
 import "google/api/annotations.proto";
-import "x/assets/internal/queries/assets/queryRequest.proto";
+import "x/assets/internal/queries/assets/query_request.proto";
 import "x/assets/internal/queries/assets/queryResponse.proto";
 
 service Service{
