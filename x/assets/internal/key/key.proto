@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assetmantle.modules.assets;
+package assetmantle.modules.assets.key;
 
 import "ids/base/asset_id.proto";
 
