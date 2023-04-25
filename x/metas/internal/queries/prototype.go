@@ -7,10 +7,12 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/metas/internal/queries/meta"
+	"github.com/AssetMantle/modules/x/metas/internal/queries/metas"
 )
 
 func Prototype() helpers.Queries {
 	return baseHelpers.NewQueries(
 		meta.Query,
+		metas.Query,
 	)
 }

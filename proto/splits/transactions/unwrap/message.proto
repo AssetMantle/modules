@@ -1,0 +1,12 @@
+syntax = "proto3";
+package assetmantle.modules.splits.transactions.unwrap;
+
+import "ids/base/identity_id.proto";
+import "ids/base/any_ownable_id.proto";
+
+message Message {
+  string from = 1;
+  assetmantle.schema.ids.base.IdentityID from_i_d = 2;
+  assetmantle.schema.ids.base.AnyOwnableID ownable_i_d = 3;
+  string value = 4 ;
+}

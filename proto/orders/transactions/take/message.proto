@@ -1,0 +1,12 @@
+syntax = "proto3";
+package assetmantle.modules.orders.transactions.take;
+
+import "ids/base/identity_id.proto";
+import "ids/base/order_id.proto";
+
+message Message {
+  string from = 1;
+  assetmantle.schema.ids.base.IdentityID from_i_d = 2;
+  string taker_ownable_split = 3 ;
+  assetmantle.schema.ids.base.OrderID order_i_d = 4;
+}

@@ -1,6 +1,0 @@
-syntax = "proto3";
-package splits.transactions.wrap;
-
-message TransactionResponse {
-  string coin_i_d = 1;
-}

@@ -1,0 +1,6 @@
+syntax = "proto3";
+package assetmantle.modules.assets.transactions.define;
+
+message TransactionResponse {
+  string classification_i_d = 1;
+}

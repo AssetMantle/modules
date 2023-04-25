@@ -1,0 +1,8 @@
+syntax = "proto3";
+package assetmantle.modules.orders.queries.order;
+
+import "ids/base/order_id.proto";
+
+message QueryRequest {
+  assetmantle.schema.ids.base.OrderID order_i_d = 1;
+}

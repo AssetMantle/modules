@@ -1,0 +1,11 @@
+syntax = "proto3";
+package assetmantle.modules.metas.queries.meta;
+
+import "ids/base/data_id.proto";
+import "gogoproto/gogo.proto";
+
+message QueryRequest {
+  option (gogoproto.goproto_getters) = false;
+
+  assetmantle.schema.ids.base.DataID data_i_d = 1;
+}

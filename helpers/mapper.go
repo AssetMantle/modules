@@ -6,6 +6,8 @@ package helpers
 import (
 	"context"
 
+	"github.com/cosmos/cosmos-sdk/types/query"
+
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 )
@@ -18,6 +20,7 @@ type Mapper interface {
 	Delete(context.Context, Key)
 	IterateAll(context.Context, func(Mappable) bool)
 	Iterate(context.Context, Key, func(Mappable) bool)
+	IteratePaginated(context.Context, *query.PageRequest, func(Mappable) bool)
 	ReverseIterate(context.Context, Key, func(Mappable) bool)
 
 	StoreDecoder(kv.Pair, kv.Pair) string
