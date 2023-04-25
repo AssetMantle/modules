@@ -1,0 +1,12 @@
+syntax = "proto3";
+package assetmantle.modules.classifications.queries.classifications;
+
+import "google/api/annotations.proto";
+import "classifications/queries/classifications/query_request.proto";
+import "classifications/queries/classifications/query_response.proto";
+
+service Service{
+  rpc Handle(QueryRequest) returns(QueryResponse){
+    option (google.api.http).get = "/mantle/classifications/v1beta1/classifications";
+  }
+}

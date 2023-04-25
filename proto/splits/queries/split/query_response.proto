@@ -1,0 +1,10 @@
+syntax = "proto3";
+package assetmantle.modules.splits.queries.split;
+
+import "gogoproto/gogo.proto";
+import "splits/mappable/mappable.proto";
+
+message QueryResponse {
+  option (gogoproto.goproto_getters) = false;
+  repeated mappable.Mappable list = 1;
+}

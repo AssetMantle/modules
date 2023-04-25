@@ -1,0 +1,12 @@
+syntax = "proto3";
+package assetmantle.modules.orders.transactions.define;
+
+import "google/api/annotations.proto";
+import "orders/transactions/define/message.proto";
+import "orders/transactions/define/transaction_response.proto";
+
+service Service {
+  rpc Handle(Message) returns (TransactionResponse) {
+    option (google.api.http).post = "/mantle/orders/define";
+  }
+}
