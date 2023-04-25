@@ -1,0 +1,12 @@
+syntax = "proto3";
+package assetmantle.modules.identities.transactions.issue;
+
+import "google/api/annotations.proto";
+import "identities/transactions/issue/message.proto";
+import "identities/transactions/issue/transaction_response.proto";
+
+service Service {
+  rpc Handle(Message) returns (TransactionResponse) {
+    option (google.api.http).post = "/mantle/identities/issue";
+  }
+}

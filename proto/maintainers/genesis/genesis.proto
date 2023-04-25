@@ -1,0 +1,13 @@
+syntax = "proto3";
+package assetmantle.modules.maintainers.genesis;
+
+import "gogoproto/gogo.proto";
+import "maintainers/mappable/mappable.proto";
+import "parameters/base/parameter_list.proto";
+
+message Genesis {
+  option (gogoproto.goproto_getters) = false;
+
+  repeated mappable.Mappable mappables = 1;
+  assetmantle.schema.parameters.base.ParameterList parameter_list = 2;
+}

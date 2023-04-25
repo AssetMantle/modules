@@ -1,0 +1,12 @@
+syntax = "proto3";
+package assetmantle.modules.identities.transactions.nub;
+
+import "google/api/annotations.proto";
+import "identities/transactions/nub/message.proto";
+import "identities/transactions/nub/transaction_response.proto";
+
+service Service {
+  rpc Handle(Message) returns (TransactionResponse) {
+    option (google.api.http).post = "/mantle/identities/nub";
+  }
+}

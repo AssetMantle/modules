@@ -1,0 +1,10 @@
+syntax = "proto3";
+package assetmantle.modules.maintainers.queries.maintainer;
+
+import "gogoproto/gogo.proto";
+import "ids/base/maintainer_id.proto";
+
+message QueryRequest {
+  option (gogoproto.goproto_getters) = false;
+  assetmantle.schema.ids.base.MaintainerID maintainer_i_d = 1;
+}

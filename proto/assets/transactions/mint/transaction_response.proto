@@ -1,0 +1,6 @@
+syntax = "proto3";
+package assetmantle.modules.assets.transactions.mint;
+
+message TransactionResponse {
+  string asset_i_d = 1;
+}
