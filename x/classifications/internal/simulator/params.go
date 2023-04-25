@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	"github.com/AssetMantle/modules/x/classifications/internal/parameters/maxPropertyCount"
 	"math"
 	"math/rand"
 
@@ -19,6 +20,15 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(module.Name,
 			string(bondRate.Parameter.GetMetaProperty().GetID().Bytes()),
+			func(r *rand.Rand) string {
+				bytes, err := common.LegacyAmino.MarshalJSON(rand.Intn(math.MaxInt))
+				if err != nil {
+					panic(err)
+				}
+				return string(bytes)
+			}),
+		simulation.NewSimParamChange(module.Name,
+			string(maxPropertyCount.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := common.LegacyAmino.MarshalJSON(rand.Intn(math.MaxInt))
 				if err != nil {
