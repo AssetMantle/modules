@@ -1,8 +1,0 @@
-syntax = "proto3";
-package identities.queries.identity;
-
-import "ids/base/identity_id.proto";
-
-message QueryRequest {
-  ids.base.IdentityID identity_i_d = 1;
-}

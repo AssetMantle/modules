@@ -1,0 +1,12 @@
+syntax = "proto3";
+package assetmantle.modules.splits.queries.ownable;
+
+import "google/api/annotations.proto";
+import "splits/queries/ownable/query_request.proto";
+import "splits/queries/ownable/query_response.proto";
+
+service Service{
+  rpc Handle(QueryRequest) returns(QueryResponse){
+    option (google.api.http).get = "/mantle/splits/v1beta1/ownable";
+  }
+}

@@ -1,0 +1,24 @@
+syntax = "proto3";
+package assetmantle.modules.orders.transactions.make;
+
+import "ids/base/classification_id.proto";
+import "ids/base/identity_id.proto";
+import "ids/base/any_ownable_id.proto";
+import "lists/base/property_list.proto";
+import "types/base/height.proto";
+
+message Message {
+  string from = 1;
+  assetmantle.schema.ids.base.IdentityID from_i_d = 2;
+  assetmantle.schema.ids.base.ClassificationID classification_i_d = 3;
+  assetmantle.schema.ids.base.IdentityID taker_i_d = 4;
+  assetmantle.schema.ids.base.AnyOwnableID maker_ownable_i_d = 5;
+  assetmantle.schema.ids.base.AnyOwnableID taker_ownable_i_d = 6;
+  assetmantle.schema.types.base.Height expires_in = 7;
+  string maker_ownable_split = 8;
+  string taker_ownable_split = 9;
+  assetmantle.schema.lists.base.PropertyList immutable_meta_properties = 10;
+  assetmantle.schema.lists.base.PropertyList immutable_properties = 11;
+  assetmantle.schema.lists.base.PropertyList mutable_meta_properties = 12;
+  assetmantle.schema.lists.base.PropertyList mutable_properties = 13;
+}

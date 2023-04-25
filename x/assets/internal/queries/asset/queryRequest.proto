@@ -1,8 +1,0 @@
-syntax = "proto3";
-package assets.queries.asset;
-
-import "ids/base/asset_id.proto";
-
-message QueryRequest {
-  ids.base.AssetID asset_i_d = 1;
-}

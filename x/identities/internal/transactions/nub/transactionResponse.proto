@@ -1,6 +1,0 @@
-syntax = "proto3";
-package identities.transactions.nub;
-
-message TransactionResponse {
-  string nub_i_d = 1;
-}

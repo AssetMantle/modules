@@ -1,8 +1,0 @@
-syntax = "proto3";
-package classifications.queries.classification;
-
-import "ids/base/classification_id.proto";
-
-message QueryRequest {
-  ids.base.ClassificationID classification_i_d = 1;
-}

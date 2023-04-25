@@ -1,7 +1,0 @@
-syntax = "proto3";
-package orders;
-
-import "documents/base/document.proto";
-message Mappable {
-  documents.base.Document order = 1;
-}
