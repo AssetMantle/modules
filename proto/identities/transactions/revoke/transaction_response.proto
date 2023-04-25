@@ -1,0 +1,4 @@
+syntax = "proto3";
+package assetmantle.modules.identities.transactions.revoke;
+
+message TransactionResponse {}

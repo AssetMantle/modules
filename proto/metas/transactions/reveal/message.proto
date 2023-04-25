@@ -1,0 +1,9 @@
+syntax = "proto3";
+package assetmantle.modules.metas.transactions.reveal;
+
+import "data/base/any_data.proto";
+
+message Message {
+  string from = 1;
+  assetmantle.schema.data.base.AnyData data = 2;
+}

@@ -1,8 +1,0 @@
-syntax = "proto3";
-package identities;
-
-import "x/documents/base/document.proto";
-
-message Mappable {
-  documents.Document identity = 1;
-}

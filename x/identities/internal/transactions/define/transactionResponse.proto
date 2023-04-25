@@ -1,6 +1,0 @@
-syntax = "proto3";
-package identities.transactions.define;
-
-message TransactionResponse {
-  string classification_i_d = 1;
-}

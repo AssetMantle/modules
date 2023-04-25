@@ -1,0 +1,11 @@
+syntax = "proto3";
+package assetmantle.modules.assets.transactions.burn;
+
+import "ids/base/asset_id.proto";
+import "ids/base/identity_id.proto";
+
+message Message {
+  string from = 1;
+  assetmantle.schema.ids.base.IdentityID from_i_d = 2;
+  assetmantle.schema.ids.base.AssetID asset_i_d = 3;
+}

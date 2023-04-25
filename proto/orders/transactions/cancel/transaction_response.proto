@@ -1,0 +1,4 @@
+syntax = "proto3";
+package assetmantle.modules.orders.transactions.cancel;
+
+message TransactionResponse {}

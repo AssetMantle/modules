@@ -11,7 +11,6 @@ import (
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gogo/protobuf/grpc"
-	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -79,7 +78,11 @@ func (query query) HandleQuery(context context.Context, requestQuery abciTypes.R
 		return nil, err
 	}
 
-	return query.queryKeeper.Enquire(context, request).Encode()
+	result, err := query.queryKeeper.Enquire(context, request)
+	if err != nil {
+		return nil, err
+	}
+	return result.Encode()
 }
 
 func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
@@ -90,11 +93,14 @@ func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
 		if !ok {
 			return
 		}
-
-		queryRequest, err := query.requestPrototype().FromMap(mux.Vars(httpRequest))
+		queryRequest, err := query.requestPrototype().FromHTTPRequest(httpRequest)
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
+		}
+
+		if err := queryRequest.Validate(); err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 		}
 
 		response, height, err := query.query(queryRequest, clientContext)
