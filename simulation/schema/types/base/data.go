@@ -18,8 +18,6 @@ import (
 )
 
 func GenerateRandomData(r *rand.Rand, randomPositiveInt int) data.Data {
-	//randomPositiveInt := int(math.Abs(float64(r.Int())))
-
 	switch randomPositiveInt % 8 {
 	case 0:
 		return baseData.NewIDData(GenerateRandomID(r))
