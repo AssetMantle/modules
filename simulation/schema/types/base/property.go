@@ -4,6 +4,7 @@
 package base
 
 import (
+	"math"
 	"math/rand"
 
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -13,5 +14,8 @@ import (
 )
 
 func GenerateRandomProperty(r *rand.Rand) properties.Property {
-	return baseProperties.NewMesaProperty(baseIDs.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(99))), GenerateRandomData(r))
+	return baseProperties.NewMesaProperty(baseIDs.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(99))), GenerateRandomData(r, int(math.Abs(float64(r.Int())))))
+}
+func GenerateRandomMetaProperty(r *rand.Rand) properties.Property {
+	return baseProperties.NewMetaProperty(baseIDs.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(99))), GenerateRandomData(r, int(math.Abs(float64(r.Intn(99))))))
 }
