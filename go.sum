@@ -41,8 +41,6 @@ github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 h1:/vQbFIOMb
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4/go.mod h1:hN7oaIRCjzsZ2dE+yG5k+rsdt3qcwykqK6HVGcKwsw4=
 github.com/99designs/keyring v1.2.1 h1:tYLp1ULvO7i3fI5vE21ReQuj99QFSs7lGm0xWyJo87o=
 github.com/99designs/keyring v1.2.1/go.mod h1:fc+wB5KTk9wQ9sDx0kFXB3A0MaeGHM9AwRStKOQ5vOA=
-github.com/AssetMantle/schema/go v0.0.0-20230420130303-79c49e9c51b4 h1:aXGRtij4Qg+LzlMWF00/Ys/U6tdbt2D5t4/eLHkSQUo=
-github.com/AssetMantle/schema/go v0.0.0-20230420130303-79c49e9c51b4/go.mod h1:XcC+dU8a8ie2rT/VkfLGnGWDp+NLbC9Z+7qBydV8Omg=
 github.com/AssetMantle/schema/go v0.0.0-20230421101331-0162822ba4bc h1:8xePQnNVcoJbbGPwX5rWm5IUIAzKHNwNMqP2Pzan4j0=
 github.com/AssetMantle/schema/go v0.0.0-20230421101331-0162822ba4bc/go.mod h1:XcC+dU8a8ie2rT/VkfLGnGWDp+NLbC9Z+7qBydV8Omg=
 github.com/Azure/azure-pipeline-go v0.2.1/go.mod h1:UGSo8XybXnIGZ3epmeBw7Jdz+HiUVpqIlpz/HKHylF4=
