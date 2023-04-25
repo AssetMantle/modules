@@ -6,19 +6,20 @@ package orders
 import (
 	"testing"
 
+	"github.com/AssetMantle/modules/x/orders/block"
+	"github.com/AssetMantle/modules/x/orders/genesis"
+	"github.com/AssetMantle/modules/x/orders/invariants"
+	"github.com/AssetMantle/modules/x/orders/mapper"
+	"github.com/AssetMantle/modules/x/orders/module"
+	"github.com/AssetMantle/modules/x/orders/parameters"
+	"github.com/AssetMantle/modules/x/orders/queries"
+	"github.com/AssetMantle/modules/x/orders/simulator"
+	"github.com/AssetMantle/modules/x/orders/transactions"
+
 	"github.com/stretchr/testify/require"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
-	"github.com/AssetMantle/modules/x/orders/internal/block"
-	"github.com/AssetMantle/modules/x/orders/internal/genesis"
-	"github.com/AssetMantle/modules/x/orders/internal/invariants"
-	"github.com/AssetMantle/modules/x/orders/internal/mapper"
-	"github.com/AssetMantle/modules/x/orders/internal/module"
-	"github.com/AssetMantle/modules/x/orders/internal/parameters"
-	"github.com/AssetMantle/modules/x/orders/internal/queries"
-	"github.com/AssetMantle/modules/x/orders/internal/simulator"
-	"github.com/AssetMantle/modules/x/orders/internal/transactions"
 )
 
 func TestPrototype(t *testing.T) {

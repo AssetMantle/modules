@@ -6,19 +6,20 @@ package maintainers
 import (
 	"testing"
 
+	"github.com/AssetMantle/modules/x/maintainers/block"
+	"github.com/AssetMantle/modules/x/maintainers/genesis"
+	"github.com/AssetMantle/modules/x/maintainers/invariants"
+	"github.com/AssetMantle/modules/x/maintainers/mapper"
+	"github.com/AssetMantle/modules/x/maintainers/module"
+	"github.com/AssetMantle/modules/x/maintainers/parameters"
+	"github.com/AssetMantle/modules/x/maintainers/queries"
+	"github.com/AssetMantle/modules/x/maintainers/simulator"
+	"github.com/AssetMantle/modules/x/maintainers/transactions"
+
 	"github.com/stretchr/testify/require"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
-	"github.com/AssetMantle/modules/x/maintainers/internal/block"
-	"github.com/AssetMantle/modules/x/maintainers/internal/genesis"
-	"github.com/AssetMantle/modules/x/maintainers/internal/invariants"
-	"github.com/AssetMantle/modules/x/maintainers/internal/mapper"
-	"github.com/AssetMantle/modules/x/maintainers/internal/module"
-	"github.com/AssetMantle/modules/x/maintainers/internal/parameters"
-	"github.com/AssetMantle/modules/x/maintainers/internal/queries"
-	"github.com/AssetMantle/modules/x/maintainers/internal/simulator"
-	"github.com/AssetMantle/modules/x/maintainers/internal/transactions"
 )
 
 func TestPrototype(t *testing.T) {

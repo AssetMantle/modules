@@ -6,12 +6,13 @@ package mint
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/x/splits/key"
+	"github.com/AssetMantle/modules/x/splits/mappable"
+
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/types/base"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/internal/key"
-	"github.com/AssetMantle/modules/x/splits/internal/mappable"
 )
 
 type auxiliaryKeeper struct {

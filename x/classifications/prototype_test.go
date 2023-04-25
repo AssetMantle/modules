@@ -6,19 +6,20 @@ package classifications
 import (
 	"testing"
 
+	"github.com/AssetMantle/modules/x/classifications/block"
+	"github.com/AssetMantle/modules/x/classifications/genesis"
+	"github.com/AssetMantle/modules/x/classifications/invariants"
+	"github.com/AssetMantle/modules/x/classifications/mapper"
+	"github.com/AssetMantle/modules/x/classifications/module"
+	"github.com/AssetMantle/modules/x/classifications/parameters"
+	"github.com/AssetMantle/modules/x/classifications/queries"
+	"github.com/AssetMantle/modules/x/classifications/simulator"
+	"github.com/AssetMantle/modules/x/classifications/transactions"
+
 	"github.com/stretchr/testify/require"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
-	"github.com/AssetMantle/modules/x/classifications/internal/block"
-	"github.com/AssetMantle/modules/x/classifications/internal/genesis"
-	"github.com/AssetMantle/modules/x/classifications/internal/invariants"
-	"github.com/AssetMantle/modules/x/classifications/internal/mapper"
-	"github.com/AssetMantle/modules/x/classifications/internal/module"
-	"github.com/AssetMantle/modules/x/classifications/internal/parameters"
-	"github.com/AssetMantle/modules/x/classifications/internal/queries"
-	"github.com/AssetMantle/modules/x/classifications/internal/simulator"
-	"github.com/AssetMantle/modules/x/classifications/internal/transactions"
 )
 
 func TestPrototype(t *testing.T) {

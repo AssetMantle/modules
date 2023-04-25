@@ -6,19 +6,20 @@ package identities
 import (
 	"testing"
 
+	"github.com/AssetMantle/modules/x/identities/block"
+	"github.com/AssetMantle/modules/x/identities/genesis"
+	"github.com/AssetMantle/modules/x/identities/invariants"
+	"github.com/AssetMantle/modules/x/identities/mapper"
+	"github.com/AssetMantle/modules/x/identities/module"
+	"github.com/AssetMantle/modules/x/identities/parameters"
+	"github.com/AssetMantle/modules/x/identities/queries"
+	"github.com/AssetMantle/modules/x/identities/simulator"
+	"github.com/AssetMantle/modules/x/identities/transactions"
+
 	"github.com/stretchr/testify/require"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
-	"github.com/AssetMantle/modules/x/identities/internal/block"
-	"github.com/AssetMantle/modules/x/identities/internal/genesis"
-	"github.com/AssetMantle/modules/x/identities/internal/invariants"
-	"github.com/AssetMantle/modules/x/identities/internal/mapper"
-	"github.com/AssetMantle/modules/x/identities/internal/module"
-	"github.com/AssetMantle/modules/x/identities/internal/parameters"
-	"github.com/AssetMantle/modules/x/identities/internal/queries"
-	"github.com/AssetMantle/modules/x/identities/internal/simulator"
-	"github.com/AssetMantle/modules/x/identities/internal/transactions"
 )
 
 func TestPrototype(t *testing.T) {

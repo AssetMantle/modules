@@ -8,6 +8,10 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/x/metas/key"
+	"github.com/AssetMantle/modules/x/metas/mappable"
+	"github.com/AssetMantle/modules/x/metas/parameters"
+
 	schema "github.com/AssetMantle/schema/go"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -27,9 +31,6 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/metas/internal/key"
-	"github.com/AssetMantle/modules/x/metas/internal/mappable"
-	"github.com/AssetMantle/modules/x/metas/internal/parameters"
 )
 
 var (

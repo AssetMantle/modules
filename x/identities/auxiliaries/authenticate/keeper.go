@@ -6,11 +6,12 @@ package authenticate
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/x/identities/key"
+	"github.com/AssetMantle/modules/x/identities/mappable"
+
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/identities/internal/key"
-	"github.com/AssetMantle/modules/x/identities/internal/mappable"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 )
 
