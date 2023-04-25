@@ -5,9 +5,9 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/utilities/random"
+	"github.com/AssetMantle/schema/go/ids/base"
 	"math"
 	"math/rand"
-	"strings"
 	"time"
 
 	"github.com/AssetMantle/schema/go/data"
@@ -42,14 +42,12 @@ func GenerateRandomData(r *rand.Rand, randomPositiveInt int) data.Data {
 
 func GenerateRandomCoinListString(listCount int) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	prefix := "I|COI|"
-	list := "I|COI|stake,"
+	list := baseData.NewListData(baseData.NewIDData(base.NewCoinID(base.NewStringID("stake")).ToAnyID()))
 
 	for i := 0; i < listCount; i++ {
-		list += prefix + simulationTypes.RandStringOfLength(r, r.Intn(127)) + ","
+		list.Add(baseData.NewIDData(base.NewCoinID(base.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(127)))).ToAnyID()))
 	}
-
-	return strings.TrimSuffix(list, ",")
+	return list.AsString()
 }
 
 func GenerateRandomListData(r *rand.Rand) data.ListData {
