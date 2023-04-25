@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assetmantle.modules.splits;
+package assetmantle.modules.splits.mappable;
 
 import "types/base/split.proto";
 

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assetmantle.modules.maintainers;
+package assetmantle.modules.maintainers.mappable;
 
 import "documents/base/document.proto";
 
