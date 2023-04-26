@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"math/rand"
 
 	"github.com/AssetMantle/schema/go/data"
@@ -16,7 +17,6 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/x/classifications/internal/common"
 	"github.com/AssetMantle/modules/x/classifications/internal/genesis"
 	"github.com/AssetMantle/modules/x/classifications/internal/mappable"
 	classificationsModule "github.com/AssetMantle/modules/x/classifications/internal/module"
@@ -44,5 +44,5 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(bondRate.Parameter.Mutate(Data)))
 
-	simulationState.GenState[classificationsModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
+	simulationState.GenState[classificationsModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

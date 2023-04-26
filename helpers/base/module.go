@@ -52,6 +52,9 @@ var _ helpers.Module = (*module)(nil)
 func (module module) Name() string {
 	return module.name
 }
+func (module module) GetTransactions() helpers.Transactions {
+	return module.transactions
+}
 func (module module) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
 	for _, transaction := range module.transactionsPrototype().GetList() {
 		transaction.RegisterLegacyAminoCodec(legacyAmino)
@@ -142,7 +145,7 @@ func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDec
 	storeDecoderRegistry[module.name] = module.mapperPrototype().StoreDecoder
 }
 func (module module) WeightedOperations(simulationState sdkModuleTypes.SimulationState) []simulationTypes.WeightedOperation {
-	return module.simulatorPrototype().WeightedOperations(simulationState)
+	return module.simulatorPrototype().WeightedOperations(simulationState, module)
 }
 func (module module) RegisterInvariants(invariantRegistry sdkTypes.InvariantRegistry) {
 	module.invariantsPrototype().Register(invariantRegistry)

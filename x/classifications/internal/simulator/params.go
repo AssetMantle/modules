@@ -4,10 +4,10 @@
 package simulator
 
 import (
+	"github.com/AssetMantle/modules/x/classifications/internal/parameters/maxPropertyCount"
+	"math"
 	"math/rand"
 
-	"github.com/AssetMantle/schema/go/data/base"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
@@ -19,9 +19,18 @@ import (
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(module.Name,
-			bondRate.ID.AsString(),
+			string(bondRate.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(bondRate.Parameter.Mutate(base.NewDecData(sdk.NewDecWithPrec(int64(r.Intn(99)), 2))))
+				bytes, err := common.LegacyAmino.MarshalJSON(rand.Intn(math.MaxInt))
+				if err != nil {
+					panic(err)
+				}
+				return string(bytes)
+			}),
+		simulation.NewSimParamChange(module.Name,
+			string(maxPropertyCount.Parameter.GetMetaProperty().GetID().Bytes()),
+			func(r *rand.Rand) string {
+				bytes, err := common.LegacyAmino.MarshalJSON(rand.Intn(math.MaxInt))
 				if err != nil {
 					panic(err)
 				}

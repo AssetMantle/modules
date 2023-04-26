@@ -4,10 +4,12 @@
 package simulator
 
 import (
+	"github.com/AssetMantle/modules/utilities/random"
+	"github.com/AssetMantle/modules/x/assets/internal/parameters/burnEnabled"
+	"github.com/AssetMantle/modules/x/assets/internal/parameters/renumerateEnabled"
 	"math/rand"
+	"strconv"
 
-	"github.com/AssetMantle/schema/go/data/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
@@ -19,9 +21,27 @@ import (
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(module.Name,
-			mintEnabled.ID.AsString(),
+			string(mintEnabled.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(mintEnabled.Parameter.Mutate(base.NewDecData(sdkTypes.NewDecWithPrec(int64(r.Intn(99)), 2))))
+				bytes, err := common.LegacyAmino.MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))
+				if err != nil {
+					panic(err)
+				}
+				return string(bytes)
+			}),
+		simulation.NewSimParamChange(module.Name,
+			string(burnEnabled.Parameter.GetMetaProperty().GetID().Bytes()),
+			func(r *rand.Rand) string {
+				bytes, err := common.LegacyAmino.MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))
+				if err != nil {
+					panic(err)
+				}
+				return string(bytes)
+			}),
+		simulation.NewSimParamChange(module.Name,
+			string(renumerateEnabled.Parameter.GetMetaProperty().GetID().Bytes()),
+			func(r *rand.Rand) string {
+				bytes, err := common.LegacyAmino.MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))
 				if err != nil {
 					panic(err)
 				}

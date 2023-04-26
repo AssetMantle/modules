@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"math/rand"
 
 	"github.com/AssetMantle/schema/go/data"
@@ -17,7 +18,6 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/x/orders/internal/common"
 	"github.com/AssetMantle/modules/x/orders/internal/genesis"
 	"github.com/AssetMantle/modules/x/orders/internal/mappable"
 	ordersModule "github.com/AssetMantle/modules/x/orders/internal/module"
@@ -45,5 +45,5 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(maxOrderLife.Parameter.Mutate(Data)))
 
-	simulationState.GenState[ordersModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
+	simulationState.GenState[ordersModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

@@ -21,4 +21,6 @@ type Module interface {
 	DecodeModuleTransactionRequest(string, json.RawMessage) (sdkTypes.Msg, error)
 
 	Initialize(*sdkTypes.KVStoreKey, paramsTypes.Subspace, ...interface{}) Module
+
+	GetTransactions() Transactions
 }

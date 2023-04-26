@@ -4,10 +4,10 @@
 package simulator
 
 import (
+	"github.com/AssetMantle/modules/utilities/random"
 	"math/rand"
+	"strconv"
 
-	"github.com/AssetMantle/schema/go/data/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
@@ -19,12 +19,9 @@ import (
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(module.Name,
-			deputizeAllowed.ID.AsString(),
+			string(deputizeAllowed.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(deputizeAllowed.Parameter.Mutate(base.NewDecData(sdkTypes.NewDecWithPrec(int64(r.Intn(99)), 2))))
-				if err != nil {
-					panic(err)
-				}
+				bytes, _ := common.LegacyAmino.MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))
 				return string(bytes)
 			}),
 	}
