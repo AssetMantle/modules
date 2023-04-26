@@ -9,7 +9,6 @@ import (
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/parameters"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	"github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
@@ -22,23 +21,7 @@ var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()
 var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewListData(baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(sdkTypes.DefaultBondDenom)).ToAnyID()))))
 
 func validator(i interface{}) error {
-	var listData *baseData.ListData
-	var ok bool
 	switch value := i.(type) {
-	case parameters.Parameter:
-		if listData, ok = value.GetMetaProperty().GetData().Get().(*baseData.ListData); !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
-			return errorConstants.IncorrectFormat
-		} else if err := ValidateCoins(listData); err != nil {
-			return err
-		}
-		return listData.ValidateBasic()
-	case data.ListData:
-		if listData, ok = i.(*baseData.ListData); !ok {
-			return errorConstants.IncorrectFormat
-		} else if err := ValidateCoins(listData); err != nil {
-			return err
-		}
-		return listData.ValidateBasic()
 	case string:
 		if data, err := baseData.PrototypeListData().FromString(value); err != nil {
 			return err
