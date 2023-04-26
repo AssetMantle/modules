@@ -22,7 +22,7 @@ func validator(i interface{}) error {
 		if number, err := baseData.PrototypeNumberData().FromString(value); err != nil {
 			return err
 		} else if number.(*baseData.NumberData).Get() <= 0 {
-			return errorConstants.IncorrectFormat.Wrapf("incorrect format for maxPropertyCount parameter, has to be a positive whole number", baseData.NewBooleanData(false), i)
+			return errorConstants.IncorrectFormat.Wrapf("incorrect format for maxPropertyCount parameter, has to be a positive whole number")
 		} else {
 			err = number.(*baseData.NumberData).ValidateBasic()
 			return err
