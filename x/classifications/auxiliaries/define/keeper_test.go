@@ -9,6 +9,10 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/x/classifications/key"
+	"github.com/AssetMantle/modules/x/classifications/mappable"
+	"github.com/AssetMantle/modules/x/classifications/parameters"
+
 	schema "github.com/AssetMantle/schema/go"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
@@ -31,9 +35,6 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/internal/key"
-	"github.com/AssetMantle/modules/x/classifications/internal/mappable"
-	"github.com/AssetMantle/modules/x/classifications/internal/parameters"
 )
 
 type TestKeepers struct {

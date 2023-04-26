@@ -4,11 +4,12 @@
 package base
 
 import (
+	"math"
+	"math/rand"
+
 	"github.com/AssetMantle/schema/go/lists"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/properties"
-	"math"
-	"math/rand"
 )
 
 func GenerateRandomPropertyList(r *rand.Rand) lists.PropertyList {

@@ -4,11 +4,12 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/utilities/random"
-	"github.com/AssetMantle/schema/go/ids/base"
 	"math"
 	"math/rand"
 	"time"
+
+	"github.com/AssetMantle/modules/utilities/random"
+	"github.com/AssetMantle/schema/go/ids/base"
 
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"

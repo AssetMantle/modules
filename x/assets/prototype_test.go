@@ -6,18 +6,19 @@ package assets
 import (
 	"testing"
 
+	"github.com/AssetMantle/modules/x/assets/block"
+	"github.com/AssetMantle/modules/x/assets/genesis"
+	"github.com/AssetMantle/modules/x/assets/invariants"
+	"github.com/AssetMantle/modules/x/assets/mapper"
+	"github.com/AssetMantle/modules/x/assets/module"
+	"github.com/AssetMantle/modules/x/assets/parameters"
+	"github.com/AssetMantle/modules/x/assets/queries"
+	"github.com/AssetMantle/modules/x/assets/simulator"
+	"github.com/AssetMantle/modules/x/assets/transactions"
+
 	"github.com/stretchr/testify/require"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/assets/internal/block"
-	"github.com/AssetMantle/modules/x/assets/internal/genesis"
-	"github.com/AssetMantle/modules/x/assets/internal/invariants"
-	"github.com/AssetMantle/modules/x/assets/internal/mapper"
-	"github.com/AssetMantle/modules/x/assets/internal/module"
-	"github.com/AssetMantle/modules/x/assets/internal/parameters"
-	"github.com/AssetMantle/modules/x/assets/internal/queries"
-	"github.com/AssetMantle/modules/x/assets/internal/simulator"
-	"github.com/AssetMantle/modules/x/assets/internal/transactions"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
 )
 

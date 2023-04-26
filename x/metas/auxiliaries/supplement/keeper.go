@@ -6,14 +6,15 @@ package supplement
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/x/metas/key"
+	"github.com/AssetMantle/modules/x/metas/mappable"
+
 	"github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/metas/internal/key"
-	"github.com/AssetMantle/modules/x/metas/internal/mappable"
 )
 
 type auxiliaryKeeper struct {

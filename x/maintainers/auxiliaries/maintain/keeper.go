@@ -6,6 +6,9 @@ package maintain
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/x/maintainers/key"
+	"github.com/AssetMantle/modules/x/maintainers/mappable"
+
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/constants"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
@@ -16,8 +19,6 @@ import (
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/maintainers/internal/key"
-	"github.com/AssetMantle/modules/x/maintainers/internal/mappable"
 )
 
 type auxiliaryKeeper struct {

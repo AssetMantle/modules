@@ -52,7 +52,11 @@ func (parameterManager parameterManager) GetValidatableParameter(propertyID ids.
 func (parameterManager parameterManager) ValidateParameter(parameter parameters.Parameter) error {
 	validator := parameterManager.GetValidatableParameter(parameter.GetMetaProperty().GetID())
 	if validator != nil {
-		return validator.GetValidator()(parameter)
+		if err := parameter.ValidateBasic(); err != nil {
+			return err
+		}
+
+		return validator.GetValidator()(parameter.GetMetaProperty().GetData().Get().AsString())
 	}
 	return errorConstants.EntityNotFound.Wrapf("parameter with id %s not found", parameter.GetMetaProperty().GetID().AsString())
 }

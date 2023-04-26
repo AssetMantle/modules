@@ -6,13 +6,14 @@ package burn
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/x/splits/key"
+	"github.com/AssetMantle/modules/x/splits/mappable"
+
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/internal/key"
-	"github.com/AssetMantle/modules/x/splits/internal/mappable"
 )
 
 type auxiliaryKeeper struct {

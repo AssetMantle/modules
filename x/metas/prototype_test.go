@@ -6,19 +6,20 @@ package metas
 import (
 	"testing"
 
+	"github.com/AssetMantle/modules/x/metas/block"
+	"github.com/AssetMantle/modules/x/metas/genesis"
+	"github.com/AssetMantle/modules/x/metas/invariants"
+	"github.com/AssetMantle/modules/x/metas/mapper"
+	"github.com/AssetMantle/modules/x/metas/module"
+	"github.com/AssetMantle/modules/x/metas/parameters"
+	"github.com/AssetMantle/modules/x/metas/queries"
+	"github.com/AssetMantle/modules/x/metas/simulator"
+	"github.com/AssetMantle/modules/x/metas/transactions"
+
 	"github.com/stretchr/testify/require"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
-	"github.com/AssetMantle/modules/x/metas/internal/block"
-	"github.com/AssetMantle/modules/x/metas/internal/genesis"
-	"github.com/AssetMantle/modules/x/metas/internal/invariants"
-	"github.com/AssetMantle/modules/x/metas/internal/mapper"
-	"github.com/AssetMantle/modules/x/metas/internal/module"
-	"github.com/AssetMantle/modules/x/metas/internal/parameters"
-	"github.com/AssetMantle/modules/x/metas/internal/queries"
-	"github.com/AssetMantle/modules/x/metas/internal/simulator"
-	"github.com/AssetMantle/modules/x/metas/internal/transactions"
 )
 
 func TestPrototype(t *testing.T) {
