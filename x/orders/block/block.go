@@ -54,14 +54,13 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 		key.NewKey(baseIDs.PrototypeOrderID()),
 		func(Mappable helpers.Mappable) bool {
 			order := mappable.GetOrder(Mappable)
-
 			if order.GetExpiryHeight().Compare(baseTypes.CurrentHeight(context)) <= 0 {
 				// TODO ***** check security of sending and receiving from module and module account security
 				if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); err != nil {
-					panic(err)
+					//panic(err)
 				}
 				if _, err := block.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(order.GetClassificationID())); err != nil {
-					panic(err)
+					//panic(err)
 				}
 				orders.Remove(mappable.NewMappable(order))
 			} else {

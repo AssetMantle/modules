@@ -26,12 +26,13 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 		},
 	)
 
-	return simulation.WeightedOperations{
-		simulation.NewWeightedOperation(
-			weightMsg,
-			simulateMsg(),
-		),
-	}
+	//return simulation.WeightedOperations{
+	//	simulation.NewWeightedOperation(
+	//		weightMsg,
+	//		simulateMsg(),
+	//	),
+	//}
+	return nil
 }
 
 func simulateMsg() simulationTypes.Operation {

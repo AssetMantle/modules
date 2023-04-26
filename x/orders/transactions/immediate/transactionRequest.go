@@ -143,7 +143,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	}
 	mutableProperties = mutableProperties.ScrubData()
 
-	return newMessage(
+	return NewMessage(
 		from,
 		fromID,
 		classificationID,

@@ -103,7 +103,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	return newMessage(
+	return NewMessage(
 		from,
 		fromID,
 		toID,
