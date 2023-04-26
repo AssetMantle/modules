@@ -28,26 +28,40 @@ func validator(i interface{}) error {
 	case parameters.Parameter:
 		if listData, ok = value.GetMetaProperty().GetData().Get().(*baseData.ListData); !ok || value.GetMetaProperty().GetID().GetKey().Compare(ID) != 0 {
 			return errorConstants.IncorrectFormat
+		} else if err := ValidateCoins(listData); err != nil {
+			return err
 		}
+		return listData.ValidateBasic()
 	case data.ListData:
 		if listData, ok = i.(*baseData.ListData); !ok {
 			return errorConstants.IncorrectFormat
+		} else if err := ValidateCoins(listData); err != nil {
+			return err
 		}
+		return listData.ValidateBasic()
 	case string:
-		_, err := baseData.PrototypeListData().FromString(value)
-		return err
+		if data, err := baseData.PrototypeListData().FromString(value); err != nil {
+			return err
+		} else if err = ValidateCoins(data.(*baseData.ListData)); err != nil {
+			return err
+		} else {
+			return data.(*baseData.ListData).ValidateBasic()
+		}
 	default:
 		return errorConstants.IncorrectFormat
 	}
+}
 
+func ValidateCoins(listData data.ListData) error {
 	for _, anyData := range listData.Get() {
 		if idData, ok := anyData.Get().(*baseData.IDData); !ok {
 			return errorConstants.IncorrectFormat
-		} else if _, ok := idData.Get().Get().(ids.AnyOwnableID).Get().(*baseIDs.CoinID); !ok {
+		} else if coinID, ok := idData.Get().Get().(ids.AnyOwnableID).Get().(*baseIDs.CoinID); !ok {
 			return errorConstants.IncorrectFormat
+		} else if err := coinID.ValidateBasic(); err != nil {
+			return err
 		}
 	}
-
 	return nil
 }
 
