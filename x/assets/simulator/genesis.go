@@ -6,7 +6,8 @@ package simulator
 import (
 	"math/rand"
 
-	"github.com/AssetMantle/modules/x/assets/common"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+
 	"github.com/AssetMantle/modules/x/assets/genesis"
 	"github.com/AssetMantle/modules/x/assets/mappable"
 	assetsModule "github.com/AssetMantle/modules/x/assets/module"
@@ -46,5 +47,5 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(mintEnabled.Parameter.Mutate(Data)))
 
-	simulationState.GenState[assetsModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
+	simulationState.GenState[assetsModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

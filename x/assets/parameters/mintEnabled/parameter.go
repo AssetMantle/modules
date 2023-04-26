@@ -4,10 +4,8 @@
 package mintEnabled
 
 import (
-	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	"github.com/AssetMantle/schema/go/parameters"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	"github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
@@ -20,17 +18,12 @@ var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.Ne
 
 func validator(i interface{}) error {
 	switch value := i.(type) {
-	case parameters.Parameter:
-		if _, ok := value.GetMetaProperty().GetData().Get().(*baseData.BooleanData); ok && value.GetMetaProperty().GetID().GetKey().Compare(ID) == 0 {
-			return nil
-		}
-	case data.BooleanData:
-		if _, ok := i.(*baseData.BooleanData); ok {
-			return nil
-		}
+	case string:
+		_, err := baseData.PrototypeBooleanData().FromString(value)
+		return err
+	default:
+		return errorConstants.IncorrectFormat.Wrapf("incorrect format for mintEnabled parameter, expected %T, got %T", baseData.NewBooleanData(false), i)
 	}
-
-	return errorConstants.IncorrectFormat.Wrapf("incorrect format for mintEnabled parameter, expected %T, got %T", baseData.NewBooleanData(false), i)
 }
 
 var ValidatableParameter = baseHelpers.NewValidatableParameter(Parameter, validator)

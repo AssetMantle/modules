@@ -6,6 +6,8 @@ package simulator
 import (
 	"math/rand"
 
+	"github.com/AssetMantle/modules/helpers"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -15,7 +17,7 @@ import (
 	"github.com/AssetMantle/modules/helpers/base"
 )
 
-func (simulator) WeightedOperations(simulationState module.SimulationState) simulation.WeightedOperations {
+func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
 	var weightMsg int
 
 	simulationState.AppParams.GetOrGenerate(nil, OpWeightMsg, &weightMsg, nil,

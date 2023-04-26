@@ -6,13 +6,15 @@ package simulator
 import (
 	"math/rand"
 
-	"github.com/AssetMantle/modules/x/maintainers/common"
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
+	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/maintainers/genesis"
 	"github.com/AssetMantle/modules/x/maintainers/mappable"
 	maintainersModule "github.com/AssetMantle/modules/x/maintainers/module"
 	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
 	"github.com/AssetMantle/modules/x/maintainers/utilities"
-
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
@@ -22,10 +24,6 @@ import (
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/utilities/random"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -42,6 +40,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
 
 	var classificationID ids.ClassificationID
+
 	for i := range mappableList {
 		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
 		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
@@ -51,5 +50,5 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(deputizeAllowed.Parameter.Mutate(Data)))
 
-	simulationState.GenState[maintainersModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
+	simulationState.GenState[maintainersModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

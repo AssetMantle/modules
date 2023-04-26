@@ -4,14 +4,13 @@
 package simulator
 
 import (
+	"math"
 	"math/rand"
 
 	"github.com/AssetMantle/modules/x/orders/common"
 	"github.com/AssetMantle/modules/x/orders/module"
 	"github.com/AssetMantle/modules/x/orders/parameters/maxOrderLife"
 
-	"github.com/AssetMantle/schema/go/data/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
@@ -19,9 +18,9 @@ import (
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(module.Name,
-			maxOrderLife.ID.AsString(),
+			string(maxOrderLife.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(maxOrderLife.Parameter.Mutate(base.NewDecData(sdkTypes.NewDecWithPrec(int64(r.Intn(99)), 2))))
+				bytes, err := common.LegacyAmino.MarshalJSON(rand.Intn(math.MaxInt))
 				if err != nil {
 					panic(err)
 				}

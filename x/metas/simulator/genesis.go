@@ -4,9 +4,11 @@
 package simulator
 
 import (
+	"math"
 	"math/rand"
 
-	"github.com/AssetMantle/modules/x/metas/common"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+
 	"github.com/AssetMantle/modules/x/metas/genesis"
 	"github.com/AssetMantle/modules/x/metas/mappable"
 	metasModule "github.com/AssetMantle/modules/x/metas/module"
@@ -36,10 +38,10 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
 
 	for i := range mappableList {
-		mappableList[i] = mappable.NewMappable(baseSimulation.GenerateRandomData(simulationState.Rand))
+		mappableList[i] = mappable.NewMappable(baseSimulation.GenerateRandomData(simulationState.Rand, int(math.Abs(float64(simulationState.Rand.Int())))))
 	}
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(revealEnabled.Parameter.Mutate(Data)))
 
-	simulationState.GenState[metasModule.Name] = common.LegacyAmino.MustMarshalJSON(genesisState)
+	simulationState.GenState[metasModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

@@ -6,12 +6,10 @@ package simulator
 import (
 	"math/rand"
 
+	"github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/splits/common"
 	"github.com/AssetMantle/modules/x/splits/module"
 	"github.com/AssetMantle/modules/x/splits/parameters/wrapAllowedCoins"
-
-	"github.com/AssetMantle/schema/go/data/base"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
@@ -19,9 +17,9 @@ import (
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(module.Name,
-			wrapAllowedCoins.ID.AsString(),
+			string(wrapAllowedCoins.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(wrapAllowedCoins.Parameter.Mutate(base.NewDecData(sdk.NewDecWithPrec(int64(r.Intn(99)), 2))))
+				bytes, err := common.LegacyAmino.MarshalJSON(base.GenerateRandomCoinListString(5))
 				if err != nil {
 					panic(err)
 				}

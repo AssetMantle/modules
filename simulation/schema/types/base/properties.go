@@ -23,3 +23,15 @@ func GenerateRandomPropertyList(r *rand.Rand) lists.PropertyList {
 
 	return baseLists.NewPropertyList(propertyList...)
 }
+
+func GenerateRandomMetaPropertyList(r *rand.Rand) lists.PropertyList {
+	randomPositiveInt := int(math.Abs(float64(r.Int()))) % 11
+
+	propertyList := make([]properties.Property, randomPositiveInt)
+
+	for i := 0; i < randomPositiveInt; i++ {
+		propertyList[i] = GenerateRandomMetaProperty(r)
+	}
+
+	return baseLists.NewPropertyList(propertyList...)
+}
