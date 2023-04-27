@@ -33,7 +33,14 @@ func GetClassificationID(address sdkTypes.Address) ids.ClassificationID {
 func GetRandomAccNubIDPair() (sdkTypes.AccAddress, ids.IdentityID) {
 	for x, i := range AccountNubIDPairs {
 		id, _ := base.ReadIdentityID(i)
-		return sdkTypes.AccAddress(x), id
+		address, _ := sdkTypes.AccAddressFromBech32(x)
+		return address, id
 	}
 	return nil, nil
+}
+
+func ClearAll() {
+	AccountNubIDPairs = make(map[string]string)
+	AccountClassificationIDPairs = make(map[string]string)
+	AccountIssuedIdentities = make(map[string]map[string]string)
 }
