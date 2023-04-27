@@ -7,21 +7,18 @@ import (
 	"math"
 	"math/rand"
 
+	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-
+	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/metas/genesis"
 	"github.com/AssetMantle/modules/x/metas/mappable"
 	metasModule "github.com/AssetMantle/modules/x/metas/module"
 	"github.com/AssetMantle/modules/x/metas/parameters/revealEnabled"
-
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {

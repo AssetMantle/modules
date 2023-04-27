@@ -6,14 +6,12 @@ package burn
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/key"
 	"github.com/AssetMantle/modules/x/splits/mappable"
-
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryKeeper struct {
@@ -34,9 +32,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	split := mappable.GetSplit(Mappable)
 
 	switch split = split.Send(auxiliaryRequest.Value); {
-	case split.GetValue().LT(sdkTypes.ZeroDec()):
+	case split.GetValue().LT(sdkTypes.ZeroInt()):
 		return nil, errorConstants.InvalidRequest.Wrapf("split value cannot be negative")
-	case split.GetValue().Equal(sdkTypes.ZeroDec()):
+	case split.GetValue().Equal(sdkTypes.ZeroInt()):
 		splits.Remove(mappable.NewMappable(split))
 	default:
 		splits.Mutate(mappable.NewMappable(split))

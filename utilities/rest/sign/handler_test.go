@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -24,8 +25,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestHandler(t *testing.T) {

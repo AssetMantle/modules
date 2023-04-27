@@ -6,15 +6,13 @@ package reveal
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/metas/key"
 	"github.com/AssetMantle/modules/x/metas/mappable"
-
 	"github.com/AssetMantle/schema/go/data"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type transactionKeeper struct {

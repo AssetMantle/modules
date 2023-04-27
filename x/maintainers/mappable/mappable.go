@@ -4,6 +4,8 @@
 package mappable
 
 import (
+	"github.com/AssetMantle/modules/helpers"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/x/maintainers/key"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents"
@@ -15,9 +17,6 @@ import (
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/helpers"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 var _ helpers.Mappable = (*Mappable)(nil)

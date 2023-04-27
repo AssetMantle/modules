@@ -4,6 +4,8 @@
 package immediate
 
 import (
+	"github.com/AssetMantle/modules/helpers"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists"
@@ -13,9 +15,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 var _ helpers.Message = (*Message)(nil)

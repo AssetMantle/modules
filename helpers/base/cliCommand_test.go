@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
 	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
@@ -15,8 +16,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 func initialize() (helpers.CLICommand, []helpers.CLIFlag) {

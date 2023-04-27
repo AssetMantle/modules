@@ -6,11 +6,12 @@ package deputize
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/x/maintainers/key"
 	"github.com/AssetMantle/modules/x/maintainers/mappable"
 	"github.com/AssetMantle/modules/x/maintainers/module"
 	internalUtilities "github.com/AssetMantle/modules/x/maintainers/utilities"
-
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
@@ -22,9 +23,6 @@ import (
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	propertiesUtilities "github.com/AssetMantle/schema/go/properties/utilities"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
 )
 
 type auxiliaryKeeper struct {

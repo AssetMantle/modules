@@ -4,17 +4,16 @@
 package utilities
 
 import (
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/key"
 	"github.com/AssetMantle/modules/x/splits/mappable"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
-func GetOwnableTotalSplitsValue(collection helpers.Collection, ownableID ids.ID) sdkTypes.Dec {
-	value := sdkTypes.ZeroDec()
+func GetOwnableTotalSplitsValue(collection helpers.Collection, ownableID ids.ID) sdkTypes.Int {
+	value := sdkTypes.ZeroInt()
 	accumulator := func(Mappable helpers.Mappable) bool {
 		if mappable.GetSplit(Mappable).GetOwnableID().Compare(ownableID) == 0 {
 			value = value.Add(mappable.GetSplit(Mappable).GetValue())

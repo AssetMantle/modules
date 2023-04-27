@@ -4,14 +4,13 @@
 package module
 
 import (
+	"github.com/AssetMantle/modules/helpers/constants"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-
-	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 const Name = "orders"

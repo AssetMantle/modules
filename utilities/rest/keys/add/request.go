@@ -4,9 +4,8 @@
 package add
 
 import (
-	"github.com/asaskevich/govalidator"
-
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/asaskevich/govalidator"
 )
 
 type request struct {

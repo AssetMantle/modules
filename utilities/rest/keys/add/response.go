@@ -4,9 +4,8 @@
 package add
 
 import (
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 )
 
 type response struct {

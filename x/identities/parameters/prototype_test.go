@@ -7,11 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/x/identities/module"
-	"github.com/AssetMantle/modules/x/identities/parameters/maxProvisionAddressCount"
-
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/identities/module"
+	"github.com/AssetMantle/modules/x/identities/parameters/maxProvisionAddressCount"
 )
 
 func TestPrototype(t *testing.T) {

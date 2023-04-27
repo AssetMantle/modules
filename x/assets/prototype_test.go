@@ -6,6 +6,7 @@ package assets
 import (
 	"testing"
 
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/assets/block"
 	"github.com/AssetMantle/modules/x/assets/genesis"
 	"github.com/AssetMantle/modules/x/assets/invariants"
@@ -15,11 +16,8 @@ import (
 	"github.com/AssetMantle/modules/x/assets/queries"
 	"github.com/AssetMantle/modules/x/assets/simulator"
 	"github.com/AssetMantle/modules/x/assets/transactions"
-
-	"github.com/stretchr/testify/require"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPrototype(t *testing.T) {

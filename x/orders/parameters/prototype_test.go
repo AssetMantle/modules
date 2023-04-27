@@ -7,11 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/x/orders/module"
-	"github.com/AssetMantle/modules/x/orders/parameters/maxOrderLife"
-
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/orders/module"
+	"github.com/AssetMantle/modules/x/orders/parameters/maxOrderLife"
 )
 
 func TestPrototype(t *testing.T) {

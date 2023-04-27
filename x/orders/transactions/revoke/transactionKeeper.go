@@ -6,11 +6,10 @@ package revoke
 import (
 	"context"
 
-	"github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/revoke"
+	"github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {

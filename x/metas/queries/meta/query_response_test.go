@@ -8,7 +8,6 @@ import (
 
 	"github.com/AssetMantle/modules/x/metas/common"
 	"github.com/AssetMantle/modules/x/metas/mapper"
-
 	schema "github.com/AssetMantle/schema/go"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/codec"

@@ -6,9 +6,8 @@ package maintainer
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/x/maintainers/key"
-
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/maintainers/key"
 )
 
 type queryKeeper struct {

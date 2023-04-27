@@ -6,16 +6,14 @@ package unbond
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/key"
 	"github.com/AssetMantle/modules/x/classifications/mappable"
 	"github.com/AssetMantle/modules/x/classifications/module"
-
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryKeeper struct {
@@ -37,7 +35,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	}
 	classification := mappable.GetClassification(Mappable)
 
-	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), module.Name, auxiliaryRequest.accAddress, sdkTypes.NewCoins(sdkTypes.NewCoin(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), sdkTypes.NewInt(classification.GetBondAmount())))); err != nil {
+	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), module.Name, auxiliaryRequest.accAddress, sdkTypes.NewCoins(sdkTypes.NewCoin(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), classification.GetBondAmount()))); err != nil {
 		return nil, err
 	}
 
