@@ -14,7 +14,7 @@ var _ helpers.TransactionResponse = (*TransactionResponse)(nil)
 
 func (transactionResponse *TransactionResponse) GetResult() *sdkTypes.Result {
 	return &sdkTypes.Result{
-		Data: []byte(transactionResponse.IdentityID.AsString()),
+		Data: []byte(transactionResponse.ClassificationID.AsString()),
 	}
 }
 func newTransactionResponse(classificationID ids.ClassificationID) *TransactionResponse {
