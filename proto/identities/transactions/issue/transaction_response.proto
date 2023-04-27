@@ -1,6 +1,8 @@
 syntax = "proto3";
 package assetmantle.modules.identities.transactions.issue;
 
+import "ids/base/identity_id.proto";
+
 message TransactionResponse {
-  string identity_i_d = 1;
+  assetmantle.schema.ids.base.IdentityID identity_i_d = 1;
 }
