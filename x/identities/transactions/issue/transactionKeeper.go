@@ -82,7 +82,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	identities.Add(mappable.NewMappable(base.NewIdentity(message.ClassificationID, immutables, mutables)))
 
-	return newTransactionResponse(identityID.AsString()), nil
+	return newTransactionResponse(identityID), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

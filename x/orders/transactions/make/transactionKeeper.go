@@ -108,7 +108,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	orders.Add(mappable.NewMappable(base.NewOrder(message.ClassificationID, immutables, mutables)))
 
-	return newTransactionResponse(orderID.AsString()), nil
+	return newTransactionResponse(orderID), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
