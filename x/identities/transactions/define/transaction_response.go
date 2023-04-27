@@ -12,10 +12,11 @@ import (
 
 var _ helpers.TransactionResponse = (*TransactionResponse)(nil)
 
-func (*TransactionResponse) GetResult() *sdkTypes.Result {
-	return &sdkTypes.Result{}
+func (transactionResponse *TransactionResponse) GetResult() *sdkTypes.Result {
+	return &sdkTypes.Result{
+		Data: []byte(transactionResponse.ClassificationID.AsString()),
+	}
 }
-
 func newTransactionResponse(classificationID ids.ClassificationID) *TransactionResponse {
 	return &TransactionResponse{classificationID.(*baseIDs.ClassificationID)}
 }
