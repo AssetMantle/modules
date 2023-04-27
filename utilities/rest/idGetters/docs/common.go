@@ -3,6 +3,8 @@ package docs
 import (
 	"net/http"
 
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -25,10 +27,10 @@ func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, request{})
 }
 
-func GetTotalWeight(immutables qualified.Immutables, mutables qualified.Mutables) int64 {
-	totalWeight := int64(0)
+func GetTotalWeight(immutables qualified.Immutables, mutables qualified.Mutables) sdkTypes.Int {
+	totalWeight := sdkTypes.ZeroInt()
 	for _, property := range append(immutables.GetImmutablePropertyList().GetList(), mutables.GetMutablePropertyList().GetList()...) {
-		totalWeight += property.Get().GetBondWeight()
+		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
 	}
 	return totalWeight
 }
@@ -80,7 +82,7 @@ func Process(immutableMetaProperties, immutableProperties, mutableMetaProperties
 	}
 	var Immutables qualified.Immutables
 	if addBond {
-		Immutables = base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewNumberData(GetTotalWeight(immutables, Mutables)*baseData.NewNumberData(1).Get()))))
+		Immutables = base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewNumberData(GetTotalWeight(immutables, Mutables).Mul(baseData.NewNumberData(sdkTypes.OneInt()).Get())))))
 	} else {
 		Immutables = immutables
 	}

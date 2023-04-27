@@ -161,7 +161,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 			}
 		}
 
-		fromAddress, fromName, _, err := client.GetFromFields(context.Keyring, baseReq.From, viper.GetBool(flags.FlagGenerateOnly))
+		fromAddress, fromName, _, err := client.GetFromFields(context, context.Keyring, baseReq.From)
 		if err != nil {
 			rest.CheckBadRequestError(responseWriter, err)
 			return
