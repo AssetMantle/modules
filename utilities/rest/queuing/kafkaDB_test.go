@@ -6,6 +6,7 @@ package queuing
 import (
 	"testing"
 
+	"github.com/AssetMantle/modules/utilities/random"
 	schema "github.com/AssetMantle/schema/go"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -13,8 +14,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/stretchr/testify/require"
 	dbm "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/utilities/random"
 )
 
 func Test_Kafka_DB(t *testing.T) {

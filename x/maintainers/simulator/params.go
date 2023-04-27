@@ -8,11 +8,9 @@ import (
 	"strconv"
 
 	"github.com/AssetMantle/modules/utilities/random"
-
 	"github.com/AssetMantle/modules/x/maintainers/common"
 	"github.com/AssetMantle/modules/x/maintainers/module"
 	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
-
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )

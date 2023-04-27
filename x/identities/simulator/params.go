@@ -10,7 +10,6 @@ import (
 	"github.com/AssetMantle/modules/x/identities/common"
 	"github.com/AssetMantle/modules/x/identities/module"
 	"github.com/AssetMantle/modules/x/identities/parameters/maxProvisionAddressCount"
-
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )

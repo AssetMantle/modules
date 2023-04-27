@@ -6,14 +6,13 @@ package classification
 import (
 	"net/http"
 
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)

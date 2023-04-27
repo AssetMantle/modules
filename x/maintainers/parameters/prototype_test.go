@@ -7,11 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/x/maintainers/module"
-	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
-
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/maintainers/module"
+	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
 )
 
 func TestPrototype(t *testing.T) {

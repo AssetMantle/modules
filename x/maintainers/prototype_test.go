@@ -6,6 +6,8 @@ package maintainers
 import (
 	"testing"
 
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
 	"github.com/AssetMantle/modules/x/maintainers/block"
 	"github.com/AssetMantle/modules/x/maintainers/genesis"
 	"github.com/AssetMantle/modules/x/maintainers/invariants"
@@ -15,11 +17,7 @@ import (
 	"github.com/AssetMantle/modules/x/maintainers/queries"
 	"github.com/AssetMantle/modules/x/maintainers/simulator"
 	"github.com/AssetMantle/modules/x/maintainers/transactions"
-
 	"github.com/stretchr/testify/require"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
 )
 
 func TestPrototype(t *testing.T) {

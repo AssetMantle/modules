@@ -6,10 +6,14 @@ package take
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/burn"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/orders/key"
 	"github.com/AssetMantle/modules/x/orders/mappable"
 	"github.com/AssetMantle/modules/x/orders/module"
-
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
@@ -19,12 +23,6 @@ import (
 	"github.com/AssetMantle/schema/go/properties/constants"
 	"github.com/AssetMantle/schema/go/properties/utilities"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/burn"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 )
 
 type transactionKeeper struct {
@@ -65,36 +63,36 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("taker ID %s is not authorized to take private order with ID %s", message.FromID.AsString(), message.OrderID.AsString())
 	}
 	takerOwnableSplit, err := sdkTypes.NewDecFromStr(message.TakerOwnableSplit)
-	makerReceiveTakerOwnableSplit := order.GetMakerOwnableSplit().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
+	makerReceiveTakerOwnableSplit := order.GetMakerOwnableSplit().ToDec().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
 	takerReceiveMakerOwnableSplit := takerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(order.GetExchangeRate())
 
-	switch updatedMakerOwnableSplit := order.GetMakerOwnableSplit().Sub(takerReceiveMakerOwnableSplit); {
-	case updatedMakerOwnableSplit.Equal(sdkTypes.ZeroDec()):
+	switch updatedMakerOwnableSplit := order.GetMakerOwnableSplit().Sub(takerReceiveMakerOwnableSplit.TruncateInt()); {
+	case updatedMakerOwnableSplit.Equal(sdkTypes.ZeroInt()):
 		if takerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
 			return nil, errorConstants.InsufficientBalance.Wrapf("taker ownable split %s is less than the required amount %s for order execution", message.TakerOwnableSplit, makerReceiveTakerOwnableSplit.String())
 		}
 
 		orders.Remove(mappable.NewMappable(order))
-	case updatedMakerOwnableSplit.LT(sdkTypes.ZeroDec()):
+	case updatedMakerOwnableSplit.LT(sdkTypes.ZeroInt()):
 		if takerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
 			return nil, errorConstants.InsufficientBalance.Wrapf("taker ownable split %s is less than the required amount %s for order execution", message.TakerOwnableSplit, makerReceiveTakerOwnableSplit.String())
 		}
 
-		takerReceiveMakerOwnableSplit = order.GetMakerOwnableSplit()
+		takerReceiveMakerOwnableSplit = order.GetMakerOwnableSplit().ToDec()
 
 		orders.Remove(mappable.NewMappable(order))
 	default:
 		makerReceiveTakerOwnableSplit = takerOwnableSplit
-		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(updatedMakerOwnableSplit)))
+		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(updatedMakerOwnableSplit)))
 
 		orders.Mutate(mappable.NewMappable(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutableProperties.GetList()...)...))))
 	}
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), makerReceiveTakerOwnableSplit)); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), makerReceiveTakerOwnableSplit.TruncateInt())); err != nil {
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), takerReceiveMakerOwnableSplit)); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), takerReceiveMakerOwnableSplit.TruncateInt())); err != nil {
 		return nil, err
 	}
 

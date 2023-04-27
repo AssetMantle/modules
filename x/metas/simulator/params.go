@@ -8,11 +8,9 @@ import (
 	"strconv"
 
 	"github.com/AssetMantle/modules/utilities/random"
-
 	"github.com/AssetMantle/modules/x/metas/common"
 	"github.com/AssetMantle/modules/x/metas/module"
 	"github.com/AssetMantle/modules/x/metas/parameters/revealEnabled"
-
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )

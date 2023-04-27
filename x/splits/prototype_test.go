@@ -6,6 +6,8 @@ package splits
 import (
 	"testing"
 
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
 	"github.com/AssetMantle/modules/x/splits/block"
 	"github.com/AssetMantle/modules/x/splits/genesis"
 	"github.com/AssetMantle/modules/x/splits/invariants"
@@ -15,11 +17,7 @@ import (
 	"github.com/AssetMantle/modules/x/splits/queries"
 	"github.com/AssetMantle/modules/x/splits/simulator"
 	"github.com/AssetMantle/modules/x/splits/transactions"
-
 	"github.com/stretchr/testify/require"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
 )
 
 func TestPrototype(t *testing.T) {

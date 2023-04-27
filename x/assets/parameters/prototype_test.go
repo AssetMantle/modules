@@ -7,13 +7,12 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/assets/module"
 	"github.com/AssetMantle/modules/x/assets/parameters/burnEnabled"
 	"github.com/AssetMantle/modules/x/assets/parameters/mintEnabled"
 	"github.com/AssetMantle/modules/x/assets/parameters/renumerateEnabled"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

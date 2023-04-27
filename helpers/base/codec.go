@@ -1,6 +1,7 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/helpers"
 	schema "github.com/AssetMantle/schema/go"
 	sdkClient "github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
@@ -8,8 +9,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/std"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth/tx"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type codec struct {

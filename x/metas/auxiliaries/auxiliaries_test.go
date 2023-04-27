@@ -6,11 +6,10 @@ package auxiliaries
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPrototype(t *testing.T) {

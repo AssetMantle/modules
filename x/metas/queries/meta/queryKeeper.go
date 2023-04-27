@@ -6,9 +6,8 @@ package meta
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/x/metas/key"
-
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/metas/key"
 )
 
 type queryKeeper struct {

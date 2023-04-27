@@ -6,9 +6,8 @@ package auxiliaries
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_Auxiliary_Prototype(t *testing.T) {

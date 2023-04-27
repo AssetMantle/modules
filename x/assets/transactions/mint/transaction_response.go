@@ -4,9 +4,8 @@
 package mint
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var _ helpers.TransactionResponse = (*TransactionResponse)(nil)

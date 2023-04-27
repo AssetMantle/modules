@@ -4,10 +4,9 @@
 package scrub
 
 import (
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/go/lists"
 	"github.com/asaskevich/govalidator"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {

@@ -3,15 +3,13 @@ package genesis
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/helpers"
 	mappable2 "github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/parameters"
-
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	parametersSchema "github.com/AssetMantle/schema/go/parameters"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 var _ helpers.Genesis = (*Genesis)(nil)

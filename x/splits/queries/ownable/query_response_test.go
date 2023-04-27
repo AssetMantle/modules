@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/AssetMantle/modules/x/splits/common"
-
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"

@@ -4,6 +4,7 @@
 package wrapAllowedCoins
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
@@ -13,8 +14,6 @@ import (
 	"github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()

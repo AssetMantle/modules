@@ -6,11 +6,9 @@ package maintainers
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/x/maintainers/key"
-
-	"github.com/AssetMantle/schema/go/ids/base"
-
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/maintainers/key"
+	"github.com/AssetMantle/schema/go/ids/base"
 )
 
 type queryKeeper struct {

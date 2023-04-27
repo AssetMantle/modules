@@ -9,10 +9,9 @@ import (
 	"time"
 
 	"github.com/AssetMantle/modules/utilities/random"
-	"github.com/AssetMantle/schema/go/ids/base"
-
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/ids/base"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -33,7 +32,7 @@ func GenerateRandomData(r *rand.Rand, randomPositiveInt int) data.Data {
 	case 5:
 		return baseData.NewAccAddressData(simulationTypes.RandomAccounts(r, 1)[0].Address)
 	case 6:
-		return baseData.NewNumberData(int64(r.Intn(99)))
+		return baseData.NewNumberData(sdkTypes.NewInt(int64(r.Intn(99))))
 	case 7:
 		return GenerateRandomListData(r)
 	default:

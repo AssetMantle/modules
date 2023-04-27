@@ -7,12 +7,11 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 func CustomEncoder(moduleList ...helpers.Module) wasm.CustomEncoder {

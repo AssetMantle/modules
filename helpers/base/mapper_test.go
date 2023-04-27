@@ -7,11 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/utilities/test"
 	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMapper(t *testing.T) {

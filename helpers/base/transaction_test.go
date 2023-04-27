@@ -10,6 +10,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/utilities/test"
+	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
@@ -18,10 +21,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/utilities/test"
-	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestTransaction(t *testing.T) {

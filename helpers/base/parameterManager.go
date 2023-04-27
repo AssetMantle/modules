@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/parameters"
@@ -16,8 +17,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"golang.org/x/net/context"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type parameterManager struct {

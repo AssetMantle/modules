@@ -6,9 +6,8 @@ package identity
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/x/identities/key"
-
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/identities/key"
 )
 
 type queryKeeper struct {

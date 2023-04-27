@@ -6,17 +6,15 @@ package quash
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/x/identities/key"
-	"github.com/AssetMantle/modules/x/identities/mappable"
-
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/unbond"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/identities/key"
+	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
