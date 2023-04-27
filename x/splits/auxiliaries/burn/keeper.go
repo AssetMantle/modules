@@ -34,9 +34,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	split := mappable.GetSplit(Mappable)
 
 	switch split = split.Send(auxiliaryRequest.Value); {
-	case split.GetValue().LT(sdkTypes.ZeroDec()):
+	case split.GetValue().LT(sdkTypes.ZeroInt()):
 		return nil, errorConstants.InvalidRequest.Wrapf("split value cannot be negative")
-	case split.GetValue().Equal(sdkTypes.ZeroDec()):
+	case split.GetValue().Equal(sdkTypes.ZeroInt()):
 		splits.Remove(mappable.NewMappable(split))
 	default:
 		splits.Mutate(mappable.NewMappable(split))

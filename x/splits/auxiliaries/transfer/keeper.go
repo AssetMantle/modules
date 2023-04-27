@@ -25,7 +25,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	if auxiliaryRequest.Value.LTE(sdkTypes.ZeroDec()) {
+	if auxiliaryRequest.Value.LTE(sdkTypes.ZeroInt()) {
 		return nil, errorConstants.InvalidRequest.Wrapf("transfer value must be greater than zero")
 	}
 
@@ -39,9 +39,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	fromSplit := mappable.GetSplit(Mappable)
 
 	switch fromSplit = fromSplit.Send(auxiliaryRequest.Value); {
-	case fromSplit.GetValue().LT(sdkTypes.ZeroDec()):
+	case fromSplit.GetValue().LT(sdkTypes.ZeroInt()):
 		return nil, errorConstants.InsufficientBalance.Wrapf("insufficient balance")
-	case fromSplit.GetValue().Equal(sdkTypes.ZeroDec()):
+	case fromSplit.GetValue().Equal(sdkTypes.ZeroInt()):
 		splits.Remove(mappable.NewMappable(fromSplit))
 	default:
 		splits.Mutate(mappable.NewMappable(fromSplit))

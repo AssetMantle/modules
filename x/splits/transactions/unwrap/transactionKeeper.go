@@ -6,6 +6,8 @@ package unwrap
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/go/errors/constants"
+
 	"github.com/AssetMantle/modules/x/splits/module"
 	"github.com/AssetMantle/modules/x/splits/utilities"
 
@@ -39,14 +41,17 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err
 	}
-	value, err := types.NewDecFromStr(message.Value)
+	value, ok := types.NewIntFromString(message.Value)
+	if !ok {
+		return nil, constants.IncorrectFormat.Wrapf("Value %s is not a valid integer", message.Value)
+	}
+
 	splits := transactionKeeper.mapper.NewCollection(context)
 	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, value); err != nil {
 		return nil, err
 	}
 
-	// TODO ******* : Check if roundint() is apt
-	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(types.UnwrapSDKContext(context), module.Name, fromAddress, types.NewCoins(types.NewCoin(message.OwnableID.AsString(), value.RoundInt()))); err != nil {
+	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(types.UnwrapSDKContext(context), module.Name, fromAddress, types.NewCoins(types.NewCoin(message.OwnableID.AsString(), value))); err != nil {
 		return nil, err
 	}
 

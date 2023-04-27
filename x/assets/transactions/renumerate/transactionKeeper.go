@@ -72,7 +72,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	metaProperties := supplement.GetMetaPropertiesFromResponse(auxiliaryResponse)
 
 	if supplyMetaProperty := metaProperties.GetProperty(constants.SupplyProperty.GetID()); supplyMetaProperty != nil && supplyMetaProperty.IsMeta() {
-		value := supplyMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.DecData).Get()
+		value := supplyMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
 		if _, err := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); err != nil {
 			return nil, err
 		}

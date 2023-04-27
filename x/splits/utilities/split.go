@@ -15,8 +15,8 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 )
 
-func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) (helpers.Collection, error) {
-	if value.LTE(sdkTypes.ZeroDec()) {
+func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Int) (helpers.Collection, error) {
+	if value.LTE(sdkTypes.ZeroInt()) {
 		return nil, errorConstants.InvalidRequest.Wrapf("value must be greater than zero")
 	}
 
@@ -32,8 +32,8 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.
 	return splits, nil
 }
 
-func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) (helpers.Collection, error) {
-	if value.LTE(sdkTypes.ZeroDec()) {
+func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Int) (helpers.Collection, error) {
+	if value.LTE(sdkTypes.ZeroInt()) {
 		return nil, errorConstants.InvalidRequest.Wrapf("value must be greater than zero")
 	}
 
@@ -46,9 +46,9 @@ func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID
 	split := mappable.GetSplit(Mappable)
 
 	switch split = split.Send(value); {
-	case split.GetValue().LT(sdkTypes.ZeroDec()):
+	case split.GetValue().LT(sdkTypes.ZeroInt()):
 		return nil, errorConstants.InvalidRequest.Wrapf("split value cannot be negative")
-	case split.GetValue().Equal(sdkTypes.ZeroDec()):
+	case split.GetValue().Equal(sdkTypes.ZeroInt()):
 		splits.Remove(mappable.NewMappable(split))
 	default:
 		splits.Mutate(mappable.NewMappable(split))

@@ -55,7 +55,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			return nil, errorConstants.NotAuthorized.Wrapf("coin %s is not allowed to be wrapped", coin.Denom)
 		}
 		coinID = baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom))
-		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, coinID, sdkTypes.NewDecFromInt(coin.Amount)); err != nil {
+		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, coinID, coin.Amount); err != nil {
 			return nil, err
 		}
 	}

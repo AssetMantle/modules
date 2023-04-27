@@ -6,12 +6,11 @@ package send
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/x/splits/utilities"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/splits/utilities"
+	"github.com/AssetMantle/schema/go/errors/constants"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -38,7 +37,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	splits := transactionKeeper.mapper.NewCollection(context)
-	value, err := sdkTypes.NewDecFromStr(message.Value)
+	value, ok := sdkTypes.NewIntFromString(message.Value)
+	if !ok {
+		return nil, constants.IncorrectFormat.Wrapf("Value %s is not a valid integer", message.Value)
+	}
+
 	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, value); err != nil {
 		return nil, err
 	}

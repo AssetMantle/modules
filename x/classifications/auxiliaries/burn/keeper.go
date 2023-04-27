@@ -35,9 +35,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("classification with ID %s not found", auxiliaryRequest.classificationID.AsString())
 	}
+
 	classification := mappable.GetClassification(Mappable)
 
-	if err := auxiliaryKeeper.bankKeeper.BurnCoins(sdkTypes.UnwrapSDKContext(context), module.Name, sdkTypes.NewCoins(sdkTypes.NewCoin(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), sdkTypes.NewInt(classification.GetBondAmount())))); err != nil {
+	if err := auxiliaryKeeper.bankKeeper.BurnCoins(sdkTypes.UnwrapSDKContext(context), module.Name, sdkTypes.NewCoins(sdkTypes.NewCoin(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), classification.GetBondAmount()))); err != nil {
 		return nil, err
 	}
 
@@ -55,6 +56,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpe
 			auxiliaryKeeper.stakingKeeper = value
 		}
 	}
+
 	return auxiliaryKeeper
 }
 
