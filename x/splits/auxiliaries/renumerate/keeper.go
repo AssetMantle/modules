@@ -6,11 +6,9 @@ package renumerate
 import (
 	"context"
 
-	utilities2 "github.com/AssetMantle/modules/x/splits/utilities"
-
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-
 	"github.com/AssetMantle/modules/helpers"
+	utilities2 "github.com/AssetMantle/modules/x/splits/utilities"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 )
 
 type auxiliaryKeeper struct {

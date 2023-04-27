@@ -7,11 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/x/assets/key"
-	"github.com/AssetMantle/modules/x/assets/mappable"
-
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/assets/key"
+	"github.com/AssetMantle/modules/x/assets/mappable"
 )
 
 func TestPrototype(t *testing.T) {

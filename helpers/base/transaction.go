@@ -10,6 +10,9 @@ import (
 	"net/http"
 	"reflect"
 
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/utilities/random"
+	"github.com/AssetMantle/modules/utilities/rest/queuing"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -25,10 +28,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/utilities/random"
-	"github.com/AssetMantle/modules/utilities/rest/queuing"
 )
 
 type transaction struct {

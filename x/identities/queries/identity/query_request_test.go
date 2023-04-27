@@ -7,8 +7,10 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/identities/common"
-
 	schema "github.com/AssetMantle/schema/go"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
@@ -21,10 +23,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 func createTestInput() (*baseIDs.IdentityID, *baseIDs.IdentityID) {

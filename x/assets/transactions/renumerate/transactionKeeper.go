@@ -6,9 +6,13 @@ package renumerate
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mappable"
-
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
+	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/schema/go/data"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -16,12 +20,6 @@ import (
 	"github.com/AssetMantle/schema/go/properties/constants"
 	"github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
-	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
 )
 
 type transactionKeeper struct {

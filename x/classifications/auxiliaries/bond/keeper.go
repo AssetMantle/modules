@@ -6,16 +6,14 @@ package bond
 import (
 	"context"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/key"
 	"github.com/AssetMantle/modules/x/classifications/mappable"
 	"github.com/AssetMantle/modules/x/classifications/module"
-
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryKeeper struct {

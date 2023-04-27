@@ -6,10 +6,9 @@ package helpers
 import (
 	"context"
 
-	"github.com/cosmos/cosmos-sdk/types/query"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
+	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 type Mapper interface {

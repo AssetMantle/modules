@@ -6,14 +6,12 @@ package transactions
 import (
 	"testing"
 
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/transactions/cancel"
 	"github.com/AssetMantle/modules/x/orders/transactions/define"
 	make2 "github.com/AssetMantle/modules/x/orders/transactions/make"
 	"github.com/AssetMantle/modules/x/orders/transactions/take"
-
 	"github.com/stretchr/testify/require"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

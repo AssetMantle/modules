@@ -6,15 +6,13 @@ package asset
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/x/assets/module"
-
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/gogo/protobuf/grpc"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/x/assets/module"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/gogo/protobuf/grpc"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
 
 var Query = baseHelpers.NewQuery(

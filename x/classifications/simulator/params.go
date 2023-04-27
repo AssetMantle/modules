@@ -11,7 +11,6 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/module"
 	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
 	"github.com/AssetMantle/modules/x/classifications/parameters/maxPropertyCount"
-
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )

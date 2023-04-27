@@ -4,11 +4,10 @@
 package common
 
 import (
+	"github.com/AssetMantle/modules/utilities/module"
 	"github.com/AssetMantle/modules/x/classifications/key"
 	"github.com/AssetMantle/modules/x/classifications/mappable"
 	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/utilities/module"
 )
 
 var LegacyAmino *codec.LegacyAmino

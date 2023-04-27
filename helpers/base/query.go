@@ -6,6 +6,7 @@ package base
 import (
 	"net/http"
 
+	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
@@ -15,8 +16,6 @@ import (
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"golang.org/x/net/context"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type query struct {

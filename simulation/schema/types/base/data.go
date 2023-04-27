@@ -9,10 +9,9 @@ import (
 	"time"
 
 	"github.com/AssetMantle/modules/utilities/random"
-	"github.com/AssetMantle/schema/go/ids/base"
-
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/ids/base"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"

@@ -6,6 +6,8 @@ package orders
 import (
 	"testing"
 
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
 	"github.com/AssetMantle/modules/x/orders/block"
 	"github.com/AssetMantle/modules/x/orders/genesis"
 	"github.com/AssetMantle/modules/x/orders/invariants"
@@ -15,11 +17,7 @@ import (
 	"github.com/AssetMantle/modules/x/orders/queries"
 	"github.com/AssetMantle/modules/x/orders/simulator"
 	"github.com/AssetMantle/modules/x/orders/transactions"
-
 	"github.com/stretchr/testify/require"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
 )
 
 func TestPrototype(t *testing.T) {

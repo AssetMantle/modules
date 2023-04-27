@@ -6,6 +6,8 @@ package identities
 import (
 	"testing"
 
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
 	"github.com/AssetMantle/modules/x/identities/block"
 	"github.com/AssetMantle/modules/x/identities/genesis"
 	"github.com/AssetMantle/modules/x/identities/invariants"
@@ -15,11 +17,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/queries"
 	"github.com/AssetMantle/modules/x/identities/simulator"
 	"github.com/AssetMantle/modules/x/identities/transactions"
-
 	"github.com/stretchr/testify/require"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries"
 )
 
 func TestPrototype(t *testing.T) {

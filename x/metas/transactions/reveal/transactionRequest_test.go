@@ -7,6 +7,9 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 	schema "github.com/AssetMantle/schema/go"
 	"github.com/AssetMantle/schema/go/data/utilities"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -14,10 +17,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 func Test_Reveal_Request(t *testing.T) {

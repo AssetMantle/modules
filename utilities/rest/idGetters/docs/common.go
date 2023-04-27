@@ -3,8 +3,7 @@ package docs
 import (
 	"net/http"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -17,10 +16,9 @@ import (
 	"github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
-
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {

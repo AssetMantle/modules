@@ -6,13 +6,13 @@ package simulator
 import (
 	"math/rand"
 
+	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-
+	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/orders/genesis"
 	"github.com/AssetMantle/modules/x/orders/mappable"
 	ordersModule "github.com/AssetMantle/modules/x/orders/module"
 	"github.com/AssetMantle/modules/x/orders/parameters/maxOrderLife"
-
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
@@ -21,9 +21,6 @@ import (
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {

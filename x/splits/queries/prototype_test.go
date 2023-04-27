@@ -6,12 +6,10 @@ package queries
 import (
 	"testing"
 
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/splits/queries/ownable"
 	"github.com/AssetMantle/modules/x/splits/queries/split"
-
 	"github.com/stretchr/testify/require"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 func TestPrototype(t *testing.T) {

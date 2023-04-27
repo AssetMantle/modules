@@ -7,11 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/x/metas/module"
-	"github.com/AssetMantle/modules/x/metas/parameters/revealEnabled"
-
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/metas/module"
+	"github.com/AssetMantle/modules/x/metas/parameters/revealEnabled"
 )
 
 func TestPrototype(t *testing.T) {

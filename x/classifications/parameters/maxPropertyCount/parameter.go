@@ -4,14 +4,13 @@
 package maxPropertyCount
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	"github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	"github.com/cosmos/cosmos-sdk/types"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 var ID = constantProperties.MaxPropertyCountProperty.GetKey()
