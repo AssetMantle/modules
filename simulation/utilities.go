@@ -4,6 +4,11 @@
 package simulation
 
 import (
+	"context"
+	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/qualified"
 	"math/rand"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -23,4 +28,12 @@ func GenerateRandomAddresses(r *rand.Rand) []sdkTypes.AccAddress {
 	}
 
 	return addresses
+}
+
+func CalculateBondAmount(context context.Context, immutables qualified.Immutables, mutables qualified.Mutables) data.NumberData {
+	totalWeight := sdkTypes.ZeroInt()
+	for _, property := range append(immutables.GetImmutablePropertyList().GetList(), mutables.GetMutablePropertyList().GetList()...) {
+		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
+	}
+	return baseData.NewNumberData(bondRate.Parameter.MetaProperty.Data.Get().(data.NumberData).Get().Mul(totalWeight))
 }
