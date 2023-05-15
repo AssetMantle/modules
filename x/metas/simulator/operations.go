@@ -4,6 +4,9 @@
 package simulator
 
 import (
+	simulationModules "github.com/AssetMantle/modules/simulation"
+	base2 "github.com/AssetMantle/modules/simulation/schema/types/base"
+	"github.com/AssetMantle/modules/x/metas/transactions/reveal"
 	"math/rand"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -24,17 +27,23 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 		},
 	)
 
-	//return simulation.WeightedOperations{
-	//	simulation.NewWeightedOperation(
-	//		weightMsg,
-	//		simulateMsg(),
-	//	),
-	//}
+	return simulation.WeightedOperations{
+		simulation.NewWeightedOperation(
+			weightMsg+1000,
+			simulateRevealMsg(module),
+		),
+	}
 	return nil
 }
 
-func simulateMsg() simulationTypes.Operation {
+func simulateRevealMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		return simulationTypes.NewOperationMsg(nil, true, "", base.CodecPrototype().GetProtoCodec()), nil, nil
+		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+		message := reveal.NewMessage(from.Address, base2.GenerateRandomData(rand, rand.Int()))
+		result, err := simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
 	}
 }
