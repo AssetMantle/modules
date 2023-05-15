@@ -42,16 +42,6 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	identities.ClearAll()
 	index := 0
 	for i := range assets.ClassificationIDMappableBytesMap {
-		//immutables, mutables := simulation.GetGenesisProperties(simulationState.Rand)
-		//for _, property := range immutables.GetImmutablePropertyList().GetList() {
-		//	immutables = baseQualified.NewImmutables(immutables.GetImmutablePropertyList().Mutate(baseProperties.NewMetaProperty(property.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(simulationState.Rand, property.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))))
-		//}
-		//mutables = baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand).Add(constantProperties.AuthenticationProperty))
-		//classificationID := baseIDs.NewClassificationID(immutables, mutables)
-		//identityID := baseIDs.NewAssetID(classificationID, immutables)
-		//identity := base.NewIdentity(classificationID, immutables, mutables)
-		//mappableList[i] = mappableIdentities.NewMappable(identity)
-
 		mappable := &mappableAssets.Mappable{}
 		baseHelpers.CodecPrototype().MustUnmarshal(assets.ClassificationIDMappableBytesMap[i], mappable)
 		immutables := mappable.Asset.Immutables

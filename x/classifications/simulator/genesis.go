@@ -5,7 +5,6 @@ package simulator
 
 import (
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/classifications"
 	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/classifications/parameters/maxPropertyCount"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
@@ -52,7 +51,6 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	mappableList := make([]helpers.Mappable, 2*len(assets.ClassificationIDMappableBytesMap))
 	index := 0
 	accountPosition := 0
-	classifications.ClearAll()
 
 	for i := range assets.ClassificationIDMappableBytesMap {
 		mappable := &mappableAssets.Mappable{}
@@ -63,13 +61,8 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		identityClassification := base.NewClassification(immutables, baseQualified.NewMutables(mutables.GetMutablePropertyList().Add(constantProperties.AuthenticationProperty)))
 		mappableList[index] = mappableClassifications.NewMappable(assetClassification)
 		mappableList[index+1] = mappableClassifications.NewMappable(identityClassification)
+
 		index += 2
-
-		classifications.AddAssetClassificationID(simulationState.Accounts[accountPosition].Address.String(), assetClassification.GetClassificationID().AsString())
-		classifications.AddIdentityClassificationID(simulationState.Accounts[accountPosition].Address.String(), identityClassification.GetClassificationID().AsString())
-
-		classifications.AddAssetMappableBytes(assetClassification.GetClassificationID().AsString(), baseHelpers.CodecPrototype().MustMarshal(mappableClassifications.NewMappable(assetClassification)))
-		classifications.AddIdentityMappableBytes(identityClassification.GetClassificationID().AsString(), baseHelpers.CodecPrototype().MustMarshal(mappableClassifications.NewMappable(identityClassification)))
 		accountPosition++
 	}
 
