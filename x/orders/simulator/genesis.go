@@ -5,6 +5,7 @@ package simulator
 
 import (
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
+	"github.com/AssetMantle/modules/simulation/simulatedDatabase/orders"
 	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	mappableOrders "github.com/AssetMantle/modules/x/orders/mappable"
 	"github.com/AssetMantle/schema/go/documents/base"
@@ -39,6 +40,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	mappableList := make([]helpers.Mappable, len(assets.ClassificationIDMappableBytesMap))
 	index := 0
+	orders.ClearAll()
 	for i := range assets.ClassificationIDMappableBytesMap {
 		mappable := &mappableAssets.Mappable{}
 		baseHelpers.CodecPrototype().MustUnmarshal(assets.ClassificationIDMappableBytesMap[i], mappable)
@@ -53,10 +55,12 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 			constants.MakerOwnableSplitProperty.ToAnyProperty(),
 		)...))
 		classificationID := baseIDs.NewClassificationID(immutables, mutables)
-
-		mappableList[index] = mappableOrders.NewMappable(base.NewOrder(classificationID, immutables, mutables))
+		orderID := baseIDs.NewOrderID(classificationID, immutables)
+		order := base.NewOrder(classificationID, immutables, mutables)
+		mappableList[index] = mappableOrders.NewMappable(order)
+		orders.AddOrderData(simulationState.Accounts[index].Address.String(), classificationID.AsString(), orderID.AsString())
+		orders.AddMappableBytes(classificationID.AsString(), baseHelpers.CodecPrototype().MustMarshal(mappableOrders.NewMappable(order)))
 		index++
-
 	}
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(maxOrderLife.Parameter.Mutate(Data)))
