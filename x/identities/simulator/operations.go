@@ -4,21 +4,25 @@
 package simulator
 
 import (
-	"fmt"
+	"github.com/AssetMantle/modules/helpers/base"
+	simulationModules "github.com/AssetMantle/modules/simulation"
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/simulation/schema/types/database/identities"
+	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/transactions/define"
 	"github.com/AssetMantle/modules/x/identities/transactions/issue"
 	"github.com/AssetMantle/modules/x/identities/transactions/nub"
 	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	"github.com/cosmos/cosmos-sdk/baseapp"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"math/rand"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
@@ -37,29 +41,24 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 			simulateNubMsg(module),
 		),
 		simulation.NewWeightedOperation(
-			weightMsg+100,
+			weightMsg+1000,
 			simulateDefineMsg(module),
 		),
 		simulation.NewWeightedOperation(
-			weightMsg,
+			weightMsg+1000,
 			simulateIssueMsg(module),
 		),
 	}
-}
-
-func ExecuteMessage(context sdkTypes.Context, module helpers.Module, message helpers.Message) (*sdkTypes.Result, error) {
-	return module.GetTransactions().Get(message.Type()).HandleMessage(sdkTypes.WrapSDKContext(context), message)
 }
 
 func simulateNubMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		account, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		message := GenerateNubMessage(account.Address, baseTypes.GenerateRandomID(rand))
-		result, err := ExecuteMessage(context, module, message)
+		result, err := simulationModules.ExecuteMessage(context, module, message)
 		if err != nil {
 			return simulationTypes.NewOperationMsg(message, false, "error executing Nub message", base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
-		identities.AddAccountNubIDPair(account.Address, string(result.Data))
 		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
 	}
 }
@@ -67,32 +66,69 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var message helpers.Message
-		account, nubID := identities.GetRandomAccNubIDPair()
-		message = GenerateDefineMessage(account, nubID, rand)
-		result, err = ExecuteMessage(context, module, message)
+		var message *define.Message
+		var identityIDString string
+		account, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+		identityMap := identities.GetIDData(account.Address.String())
+		for _, id := range identityMap {
+			identityIDString = id
+			break
+		}
+		identityID, _ := baseIDs.ReadIdentityID(identityIDString)
+		message = GenerateDefineMessage(account.Address, identityID, rand).(*define.Message)
+		result, err = simulationModules.ExecuteMessage(context, module, message)
 		if err != nil {
 			return simulationTypes.NewOperationMsg(message, false, "error executing define message", base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
-		identities.AddAccountClassificationIDPair(account, string(result.Data))
 		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
 	}
 }
+
 func simulateIssueMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var message helpers.Message
-		from, nubID := identities.GetRandomAccNubIDPair()
-		//to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		message = GenerateIssueMessage(from, from, nubID, identities.GetClassificationID(from), rand)
-		result, err = ExecuteMessage(context, module, message)
-		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, "error executing define message", base.CodecPrototype().GetProtoCodec()), nil, nil
+		var classificationIDString, identityIDString string
+		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+		identityMap := identities.GetIDData(from.Address.String())
+		for class, id := range identityMap {
+			identityIDString = id
+			classificationIDString = class
+			break
 		}
-		identities.AddIssuedIdentity(from, string(result.Data), from)
-		x := identities.GetIssuedIdentityInfo(from)
-		fmt.Println(x)
+		identityID, _ := baseIDs.ReadIdentityID(identityIDString)
+		classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
+		mappable := &mappable.Mappable{}
+		base.CodecPrototype().Unmarshal(identities.GetMappableBytes(classificationIDString), mappable)
+		immutableMetaProperties := &baseLists.PropertyList{}
+		immutableProperties := &baseLists.PropertyList{}
+		mutableMetaProperties := &baseLists.PropertyList{}
+		mutableProperties := &baseLists.PropertyList{}
+		if mappable.Identity == nil {
+			return simulationTypes.NewOperationMsg(&issue.Message{}, false, "invalid identity", base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+		for _, i := range mappable.GetIdentity().Get().GetImmutables().GetImmutablePropertyList().GetList() {
+			if i.IsMeta() {
+				immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
+			} else {
+				immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
+			}
+		}
+		for _, i := range mappable.GetIdentity().Get().GetMutables().GetMutablePropertyList().GetList() {
+			if i.IsMeta() {
+				mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
+			} else {
+				mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
+			}
+		}
+
+		message := issue.NewMessage(from.Address, to.Address, identityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+
+		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NewOperationMsg(message, false, "error executing issue message", base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
 		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
 	}
 }

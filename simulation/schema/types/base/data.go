@@ -4,6 +4,7 @@
 package base
 
 import (
+	"github.com/AssetMantle/schema/go/ids"
 	"math"
 	"math/rand"
 	"time"
@@ -11,11 +12,35 @@ import (
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	constantsData "github.com/AssetMantle/schema/go/data/constants"
 	"github.com/AssetMantle/schema/go/ids/base"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )
+
+func GenerateRandomDataForTypeID(r *rand.Rand, id ids.StringID) data.Data {
+	switch id {
+	case constantsData.IDDataTypeID:
+		return GenerateRandomData(r, 0)
+	case constantsData.StringDataTypeID:
+		return GenerateRandomData(r, 1)
+	case constantsData.DecDataTypeID:
+		return GenerateRandomData(r, 2)
+	case constantsData.HeightDataTypeID:
+		return GenerateRandomData(r, 3)
+	case constantsData.BooleanDataTypeID:
+		return GenerateRandomData(r, 4)
+	case constantsData.AccAddressDataTypeID:
+		return GenerateRandomData(r, 5)
+	case constantsData.NumberDataTypeID:
+		return GenerateRandomData(r, 6)
+	case constantsData.ListDataTypeID:
+		return GenerateRandomData(r, 7)
+	}
+
+	return nil
+}
 
 func GenerateRandomData(r *rand.Rand, randomPositiveInt int) data.Data {
 	switch randomPositiveInt % 8 {
@@ -35,6 +60,29 @@ func GenerateRandomData(r *rand.Rand, randomPositiveInt int) data.Data {
 		return baseData.NewNumberData(sdkTypes.NewInt(int64(r.Intn(99))))
 	case 7:
 		return GenerateRandomListData(r)
+	default:
+		return nil
+	}
+}
+
+func GenerateRandomPrototypeData(r *rand.Rand, randomPositiveInt int) data.Data {
+	switch randomPositiveInt % 8 {
+	case 0:
+		return baseData.PrototypeIDData()
+	case 1:
+		return baseData.PrototypeStringData()
+	case 2:
+		return baseData.PrototypeDecData()
+	case 3:
+		return baseData.PrototypeHeightData()
+	case 4:
+		return baseData.PrototypeBooleanData()
+	case 5:
+		return baseData.PrototypeAccAddressData()
+	case 6:
+		return baseData.PrototypeNumberData()
+	case 7:
+		return baseData.PrototypeListData()
 	default:
 		return nil
 	}

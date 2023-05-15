@@ -4,14 +4,14 @@
 package simulator
 
 import (
+	simulatorIdentities "github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	mappableIdentities "github.com/AssetMantle/modules/x/identities/mappable"
+	mappableMaintainers "github.com/AssetMantle/modules/x/maintainers/mappable"
 	"math/rand"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/maintainers/genesis"
-	"github.com/AssetMantle/modules/x/maintainers/mappable"
 	maintainersModule "github.com/AssetMantle/modules/x/maintainers/module"
 	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
 	"github.com/AssetMantle/modules/x/maintainers/utilities"
@@ -21,7 +21,6 @@ import (
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 )
@@ -37,15 +36,21 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
+	mappableList := make([]helpers.Mappable, len(simulationState.Accounts))
 
 	var classificationID ids.ClassificationID
+	var identityID ids.IdentityID
 
 	for i := range mappableList {
-		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
-		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
-		classificationID = baseIDs.NewClassificationID(immutables, mutables)
-		mappableList[i] = mappable.NewMappable(base.NewMaintainer(baseIDs.NewIdentityID(classificationID, immutables), classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool())))
+		identityMap := simulatorIdentities.GetIDData(simulationState.Accounts[i].Address.String())
+		for class, id := range identityMap {
+			classificationID, _ = baseIDs.ReadClassificationID(class)
+			identityID, _ = baseIDs.ReadIdentityID(id)
+		}
+		mappable := &mappableIdentities.Mappable{}
+		baseHelpers.CodecPrototype().Unmarshal(simulatorIdentities.GetMappableBytes(classificationID.AsString()), mappable)
+		mutables := mappable.GetIdentity().Get().GetMutables()
+		mappableList[i] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true)))
 	}
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(deputizeAllowed.Parameter.Mutate(Data)))
