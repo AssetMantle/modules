@@ -197,7 +197,7 @@ func simulateRenumerateMsg(module helpers.Module) simulationTypes.Operation {
 				mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
 			}
 		}
-		//mutableMetaProperties = mutableMetaProperties.Add(baseProperties.NewMetaProperty(constants.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100)))).(*baseLists.PropertyList)
+
 		mintMessage := mint.NewMessage(from.Address, fromID, toID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 
 		result, err = simulationModules.ExecuteMessage(context, module, mintMessage.(helpers.Message))
