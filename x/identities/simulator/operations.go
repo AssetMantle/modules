@@ -8,6 +8,7 @@ import (
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	"github.com/AssetMantle/modules/x/assets/transactions/revoke"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/transactions/define"
 	"github.com/AssetMantle/modules/x/identities/transactions/deputize"
@@ -57,7 +58,7 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 		),
 		simulation.NewWeightedOperation(
 			weightMsg+1000,
-			simulateDeputizeMsg(module),
+			simulateDeputizeAndRevokeMsg(module),
 		),
 	}
 }
@@ -169,7 +170,7 @@ func simulateProvisionAndUnprovisionMsg(module helpers.Module) simulationTypes.O
 		return simulationTypes.NewOperationMsg(unprovisionMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
 	}
 }
-func simulateDeputizeMsg(module helpers.Module) simulationTypes.Operation {
+func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
@@ -210,7 +211,12 @@ func simulateDeputizeMsg(module helpers.Module) simulationTypes.Operation {
 		if err != nil {
 			return simulationTypes.NewOperationMsg(deputizeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(deputizeMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		revokeMessage := revoke.NewMessage(from.Address, fromID, toID, classificationID)
+		result, err = simulationModules.ExecuteMessage(context, module, revokeMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NewOperationMsg(revokeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+		return simulationTypes.NewOperationMsg(revokeMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
 	}
 }
 
