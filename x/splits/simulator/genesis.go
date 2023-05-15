@@ -34,9 +34,10 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, len(assets.ClassificationIDMappableBytesMap))
+	mappableList := make([]helpers.Mappable, 2*len(assets.ClassificationIDMappableBytesMap))
 
 	var assetIDString, identityIDString string
+	index := 0
 	for i := 0; i < len(assets.ClassificationIDMappableBytesMap); i++ {
 		assetMap := assets.GetAssetData(simulationState.Accounts[i].Address.String())
 		for _, id := range assetMap {
@@ -51,7 +52,9 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		}
 		identityID, _ := base.ReadIdentityID(identityIDString)
 
-		mappableList[i] = mappable.NewMappable(base2.NewSplit(identityID, assetID.ToAnyOwnableID().Get(), sdkTypes.NewInt(1)))
+		mappableList[index] = mappable.NewMappable(base2.NewSplit(identityID, assetID.ToAnyOwnableID().Get(), sdkTypes.NewInt(1)))
+		mappableList[index+1] = mappable.NewMappable(base2.NewSplit(identityID, base.NewCoinID(base.NewStringID("stake")), sdkTypes.NewInt(1000)))
+		index += 2
 	}
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(wrapAllowedCoins.Parameter.Mutate(Data)))

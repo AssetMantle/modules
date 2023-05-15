@@ -8,6 +8,8 @@ import (
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
 	"github.com/AssetMantle/modules/x/splits/transactions/send"
+	"github.com/AssetMantle/modules/x/splits/transactions/unwrap"
+	"github.com/AssetMantle/modules/x/splits/transactions/wrap"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"math/rand"
 
@@ -33,6 +35,10 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 		simulation.NewWeightedOperation(
 			weightMsg+1000,
 			simulateSendMsg(module),
+		),
+		simulation.NewWeightedOperation(
+			weightMsg+1000,
+			simulateWrapAndUnwrapMsg(module),
 		),
 	}
 	return nil
@@ -75,5 +81,36 @@ func simulateSendMsg(module helpers.Module) simulationTypes.Operation {
 			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+	}
+}
+func simulateWrapAndUnwrapMsg(module helpers.Module) simulationTypes.Operation {
+	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
+		var err error
+		var result *sdkTypes.Result
+		var identityIDString string
+
+		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+		fromIDMap := identities.GetIDData(from.Address.String())
+
+		for _, id := range fromIDMap {
+			identityIDString = id
+			break
+		}
+		fromID, _ := baseIDs.ReadIdentityID(identityIDString)
+
+		wrapMessage := wrap.NewMessage(from.Address, fromID, sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(1))))
+
+		result, err = simulationModules.ExecuteMessage(context, module, wrapMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NewOperationMsg(wrapMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+
+		unwrapMessage := unwrap.NewMessage(from.Address, fromID, baseIDs.NewCoinID(baseIDs.NewStringID("stake")), sdkTypes.NewInt(1))
+
+		result, err = simulationModules.ExecuteMessage(context, module, unwrapMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NewOperationMsg(unwrapMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+		return simulationTypes.NewOperationMsg(unwrapMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
 	}
 }
