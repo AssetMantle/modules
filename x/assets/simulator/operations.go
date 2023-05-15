@@ -14,6 +14,7 @@ import (
 	"github.com/AssetMantle/modules/x/assets/transactions/define"
 	"github.com/AssetMantle/modules/x/assets/transactions/deputize"
 	"github.com/AssetMantle/modules/x/assets/transactions/mint"
+	"github.com/AssetMantle/modules/x/assets/transactions/renumerate"
 	"github.com/AssetMantle/modules/x/assets/transactions/revoke"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -52,6 +53,10 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 		simulation.NewWeightedOperation(
 			weightMsg+1000,
 			simulateBurnMsg(module),
+		),
+		simulation.NewWeightedOperation(
+			weightMsg+1000,
+			simulateRenumerateMsg(module),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg+1000,
@@ -140,6 +145,73 @@ func simulateMintMsg(module helpers.Module) simulationTypes.Operation {
 			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+	}
+}
+func simulateRenumerateMsg(module helpers.Module) simulationTypes.Operation {
+	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
+		var err error
+		var result *sdkTypes.Result
+		var classificationIDString, identityIDString string
+		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+		fromIDMap := identities.GetIDData(from.Address.String())
+		for _, id := range fromIDMap {
+			identityIDString = id
+			break
+		}
+		fromID, _ := baseIDs.ReadIdentityID(identityIDString)
+
+		toIDMap := identities.GetIDData(to.Address.String())
+		for _, id := range toIDMap {
+			identityIDString = id
+			break
+		}
+		toID, _ := baseIDs.ReadIdentityID(identityIDString)
+
+		assetMap := assets.GetAssetData(from.Address.String())
+		for class, _ := range assetMap {
+			classificationIDString = class
+			break
+		}
+		classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
+		mappable := &mappable.Mappable{}
+		base.CodecPrototype().Unmarshal(assets.GetMappableBytes(classificationIDString), mappable)
+		immutableMetaProperties := &baseLists.PropertyList{}
+		immutableProperties := &baseLists.PropertyList{}
+		mutableMetaProperties := &baseLists.PropertyList{}
+		mutableProperties := &baseLists.PropertyList{}
+		if mappable.Asset == nil {
+			return simulationTypes.NewOperationMsg(&mint.Message{}, false, "invalid identity", base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+		for _, i := range mappable.GetAsset().Get().GetImmutables().GetImmutablePropertyList().GetList() {
+			if i.IsMeta() {
+				immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
+			} else {
+				immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
+			}
+		}
+		for _, i := range mappable.GetAsset().Get().GetMutables().GetMutablePropertyList().GetList() {
+			if i.IsMeta() {
+				mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
+			} else {
+				mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
+			}
+		}
+		//mutableMetaProperties = mutableMetaProperties.Add(baseProperties.NewMetaProperty(constants.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100)))).(*baseLists.PropertyList)
+		mintMessage := mint.NewMessage(from.Address, fromID, toID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+
+		result, err = simulationModules.ExecuteMessage(context, module, mintMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NewOperationMsg(&renumerate.Message{}, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+
+		assetID := baseIDs.NewAssetID(classificationID, baseQualified.NewImmutables(immutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(immutableProperties.GetList()...)...)))
+		renumerateMessage := renumerate.NewMessage(from.Address, fromID, assetID)
+		result, err = simulationModules.ExecuteMessage(context, module, renumerateMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NewOperationMsg(renumerateMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+		return simulationTypes.NewOperationMsg(renumerateMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
 	}
 }
 func simulateBurnMsg(module helpers.Module) simulationTypes.Operation {
