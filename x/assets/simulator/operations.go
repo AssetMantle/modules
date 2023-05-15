@@ -12,7 +12,9 @@ import (
 	"github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/assets/transactions/burn"
 	"github.com/AssetMantle/modules/x/assets/transactions/define"
+	"github.com/AssetMantle/modules/x/assets/transactions/deputize"
 	"github.com/AssetMantle/modules/x/assets/transactions/mint"
+	"github.com/AssetMantle/modules/x/assets/transactions/revoke"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -50,6 +52,10 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 		simulation.NewWeightedOperation(
 			weightMsg+1000,
 			simulateBurnMsg(module),
+		),
+		simulation.NewWeightedOperation(
+			weightMsg+1000,
+			simulateDeputizeAndRevokeMsg(module),
 		),
 	}
 	return nil
@@ -201,6 +207,62 @@ func simulateBurnMsg(module helpers.Module) simulationTypes.Operation {
 			return simulationTypes.NewOperationMsg(burnMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(burnMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+	}
+}
+func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operation {
+	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
+		var err error
+		var result *sdkTypes.Result
+		var classificationIDString, identityIDString string
+		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+		fromIDMap := identities.GetIDData(from.Address.String())
+
+		if fromIDMap == nil {
+			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "address not found", base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+
+		for _, id := range fromIDMap {
+			identityIDString = id
+			break
+
+		}
+
+		assetMap := assets.GetAssetData(from.Address.String())
+
+		for class, _ := range assetMap {
+			classificationIDString = class
+			break
+
+		}
+
+		classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
+		fromID, _ := baseIDs.ReadIdentityID(identityIDString)
+		toIDMap := identities.GetIDData(to.Address.String())
+
+		if toIDMap == nil {
+			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "address not found", base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+
+		for _, id := range toIDMap {
+			identityIDString = id
+			break
+		}
+
+		toID, _ := baseIDs.ReadIdentityID(identityIDString)
+		mappable := &mappable.Mappable{}
+		base.CodecPrototype().Unmarshal(assets.GetMappableBytes(classificationIDString), mappable)
+		deputizeMessage := deputize.NewMessage(from.Address, fromID, toID, classificationID, mappable.Asset.Mutables.PropertyList, true, true, true, true, true, true)
+		result, err = simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NewOperationMsg(deputizeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+		revokeMessage := revoke.NewMessage(from.Address, fromID, toID, classificationID)
+		result, err = simulationModules.ExecuteMessage(context, module, revokeMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NewOperationMsg(revokeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+		return simulationTypes.NewOperationMsg(revokeMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
 	}
 }
 
