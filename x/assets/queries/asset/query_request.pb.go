@@ -11,6 +11,9 @@ import (
 
 	base "github.com/AssetMantle/schema/go/ids/base"
 	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

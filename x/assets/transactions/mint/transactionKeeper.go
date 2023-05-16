@@ -91,7 +91,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	assets.Add(mappable.NewMappable(base.NewAsset(message.ClassificationID, immutables, mutables)))
 
-	return newTransactionResponse(assetID.AsString()), nil
+	return newTransactionResponse(assetID), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
