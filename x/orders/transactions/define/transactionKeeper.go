@@ -5,13 +5,13 @@ package define
 
 import (
 	"context"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/schema/go/properties/constants"
-	"github.com/AssetMantle/schema/go/properties/utilities"
 	"github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/types"
 )
@@ -43,7 +43,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	immutables := base.NewImmutables(
 		message.ImmutableMetaProperties.Add(
-			utilities.AnyPropertyListToPropertyList(
+			baseLists.AnyPropertiesToProperties(
 				message.ImmutableProperties.Add(
 					constants.ExchangeRateProperty.ToAnyProperty(),
 					constants.CreationHeightProperty.ToAnyProperty(),
@@ -51,18 +51,18 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 					constants.TakerOwnableIDProperty.ToAnyProperty(),
 					constants.MakerIDProperty.ToAnyProperty(),
 					constants.TakerIDProperty.ToAnyProperty(),
-				).GetList()...,
+				).Get()...,
 			)...,
 		),
 	)
 
 	mutables := base.NewMutables(
 		message.MutableMetaProperties.Add(
-			utilities.AnyPropertyListToPropertyList(
+			baseLists.AnyPropertiesToProperties(
 				message.MutableProperties.Add(
 					constants.ExpiryHeightProperty.ToAnyProperty(),
 					constants.MakerOwnableSplitProperty.ToAnyProperty(),
-				).GetList()...,
+				).Get()...,
 			)...,
 		),
 	)

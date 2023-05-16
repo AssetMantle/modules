@@ -4,6 +4,6 @@
 package helpers
 
 type Auxiliaries interface {
-	Get(string) Auxiliary
-	GetList() []Auxiliary
+	Get() []Auxiliary
+	GetAuxiliary(string) Auxiliary
 }

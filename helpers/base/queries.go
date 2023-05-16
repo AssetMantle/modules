@@ -11,8 +11,8 @@ type queries struct {
 
 var _ helpers.Queries = (*queries)(nil)
 
-func (queries queries) Get(name string) helpers.Query {
-	for _, query := range queries.GetList() {
+func (queries queries) GetQuery(name string) helpers.Query {
+	for _, query := range queries.Get() {
 		if query.GetName() == name {
 			return query
 		}
@@ -21,7 +21,7 @@ func (queries queries) Get(name string) helpers.Query {
 	return nil
 }
 
-func (queries queries) GetList() []helpers.Query {
+func (queries queries) Get() []helpers.Query {
 	return queries.queriesList
 }
 

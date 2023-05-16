@@ -21,7 +21,7 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.
 
 	splitID := baseIDs.NewSplitID(ownerID, ownableID)
 
-	Mappable := splits.Fetch(key.NewKey(splitID)).Get(key.NewKey(splitID))
+	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
 		splits.Add(mappable.NewMappable(base.NewSplit(ownerID, ownableID, value)))
 	} else {
@@ -38,7 +38,7 @@ func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID
 
 	splitID := baseIDs.NewSplitID(ownerID, ownableID)
 
-	Mappable := splits.Fetch(key.NewKey(splitID)).Get(key.NewKey(splitID))
+	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("split with ID %s not found", splitID.AsString())
 	}

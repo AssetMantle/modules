@@ -48,7 +48,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	identityID := baseIDs.NewIdentityID(NubClassificationID, immutables)
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
-	if identities.Get(key.NewKey(identityID)) != nil {
+	if identities.GetMappable(key.NewKey(identityID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("identity with ID %s already exists", identityID.AsString())
 	}
 

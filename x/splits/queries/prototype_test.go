@@ -14,13 +14,13 @@ import (
 
 func TestPrototype(t *testing.T) {
 	require.Panics(t, func() {
-		require.Equal(t, Prototype().Get("splits").GetName(), baseHelpers.NewQueries(
+		require.Equal(t, Prototype().GetQuery("splits").GetName(), baseHelpers.NewQueries(
 			split.Query,
 			ownable.Query,
-		).Get("splits").GetName())
-		require.Equal(t, Prototype().Get("ownable").GetName(), baseHelpers.NewQueries(
+		).GetQuery("splits").GetName())
+		require.Equal(t, Prototype().GetQuery("ownable").GetName(), baseHelpers.NewQueries(
 			split.Query,
 			ownable.Query,
-		).Get("ownable").GetName())
+		).GetQuery("ownable").GetName())
 	})
 }

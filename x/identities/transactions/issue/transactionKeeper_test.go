@@ -23,7 +23,6 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/utilities"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -161,7 +160,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	fromIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
 	identity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 	identity = identity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
-	identity.Mutate(utilities.AnyPropertyListToPropertyList(immutableMetaProperties.GetList()...)...)
+	identity.Mutate(baseLists.AnyPropertiesToProperties(immutableMetaProperties.Get()...)...)
 	keepers.IssueKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(identity))
 	type fields struct {
 		mapper                     helpers.Mapper

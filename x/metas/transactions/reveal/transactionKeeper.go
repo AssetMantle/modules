@@ -33,7 +33,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	dataID := baseIDs.GenerateDataID(message.Data)
 	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(dataID))
 
-	Mappable := metas.Get(key.NewKey(dataID))
+	Mappable := metas.GetMappable(key.NewKey(dataID))
 	if Mappable != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("data with ID %s already exists", dataID)
 	}

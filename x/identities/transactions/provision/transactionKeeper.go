@@ -32,7 +32,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.IdentityID))
-	Mappable := identities.Get(key.NewKey(message.IdentityID))
+	Mappable := identities.GetMappable(key.NewKey(message.IdentityID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.IdentityID.AsString())
 	}

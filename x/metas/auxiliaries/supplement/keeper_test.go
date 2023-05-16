@@ -18,7 +18,6 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/utilities"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -93,7 +92,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(utilities.AnyPropertyListToPropertyList(propertiesList.GetList()...)...)}, newAuxiliaryResponse(propertiesList, nil)},
+		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(baseLists.AnyPropertiesToProperties(propertiesList.Get()...)...)}, newAuxiliaryResponse(propertiesList, nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

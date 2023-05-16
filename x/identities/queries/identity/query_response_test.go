@@ -119,8 +119,8 @@ func Test_queryResponse_Decode(t *testing.T) {
 func Test_queryResponse_Encode(t *testing.T) {
 	context := CreateTestInputContext(t)
 	collection := mapper.Prototype().NewCollection(context)
-	encodedByte, err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: true, Error: "", List: mappable.MappablesFromInterface(collection.GetList())})
-	encodedByteWithError, _err := common.LegacyAmino.MarshalJSON(&QueryResponse{Error: errorConstants.IncorrectFormat.Error(), List: mappable.MappablesFromInterface(collection.GetList())})
+	encodedByte, err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: true, Error: "", List: mappable.MappablesFromInterface(collection.Get())})
+	encodedByteWithError, _err := common.LegacyAmino.MarshalJSON(&QueryResponse{Error: errorConstants.IncorrectFormat.Error(), List: mappable.MappablesFromInterface(collection.Get())})
 	require.Nil(t, err)
 	type fields struct {
 		Success bool
@@ -134,8 +134,8 @@ func Test_queryResponse_Encode(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", fields{Success: true, Error: nil, List: collection.GetList()}, encodedByte, false},
-		{"-ve with error", fields{Error: _err, List: collection.GetList()}, encodedByteWithError, true},
+		{"+ve", fields{Success: true, Error: nil, List: collection.Get()}, encodedByte, false},
+		{"-ve with error", fields{Error: _err, List: collection.Get()}, encodedByteWithError, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

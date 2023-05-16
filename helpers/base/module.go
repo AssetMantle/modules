@@ -55,12 +55,12 @@ func (module module) GetTransactions() helpers.Transactions {
 	return module.transactions
 }
 func (module module) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
-	for _, transaction := range module.transactionsPrototype().GetList() {
+	for _, transaction := range module.transactionsPrototype().Get() {
 		transaction.RegisterLegacyAminoCodec(legacyAmino)
 	}
 }
 func (module module) RegisterInterfaces(interfaceRegistry types.InterfaceRegistry) {
-	for _, transaction := range module.transactionsPrototype().GetList() {
+	for _, transaction := range module.transactionsPrototype().Get() {
 		transaction.RegisterInterfaces(interfaceRegistry)
 	}
 }
@@ -74,20 +74,20 @@ func (module module) ValidateGenesis(jsonCodec sdkCodec.JSONCodec, _ client.TxEn
 func (module module) RegisterRESTRoutes(context client.Context, router *mux.Router) {
 	router.HandleFunc("/"+module.Name()+"/parameters", module.parameterManagerPrototype().RESTQueryHandler(context)).Methods("GET")
 
-	for _, query := range module.queriesPrototype().GetList() {
+	for _, query := range module.queriesPrototype().Get() {
 		router.HandleFunc("/"+module.Name()+"/"+query.GetName(), query.RESTQueryHandler(context)).Methods("GET")
 	}
 
-	for _, transaction := range module.transactionsPrototype().GetList() {
+	for _, transaction := range module.transactionsPrototype().Get() {
 		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(context)).Methods("POST")
 	}
 }
 func (module module) RegisterGRPCGatewayRoutes(context client.Context, serveMux *runtime.ServeMux) {
-	for _, query := range module.queriesPrototype().GetList() {
+	for _, query := range module.queriesPrototype().Get() {
 		query.RegisterGRPCGatewayRoute(context, serveMux)
 	}
 
-	for _, transaction := range module.transactionsPrototype().GetList() {
+	for _, transaction := range module.transactionsPrototype().Get() {
 		transaction.RegisterGRPCGatewayRoute(context, serveMux)
 	}
 }
@@ -99,9 +99,9 @@ func (module module) GetTxCmd() *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	commandList := make([]*cobra.Command, len(module.transactionsPrototype().GetList()))
+	commandList := make([]*cobra.Command, len(module.transactionsPrototype().Get()))
 
-	for i, transaction := range module.transactionsPrototype().GetList() {
+	for i, transaction := range module.transactionsPrototype().Get() {
 		commandList[i] = transaction.Command()
 	}
 
@@ -119,9 +119,9 @@ func (module module) GetQueryCmd() *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	commandList := make([]*cobra.Command, len(module.queriesPrototype().GetList()))
+	commandList := make([]*cobra.Command, len(module.queriesPrototype().Get()))
 
-	for i, query := range module.queriesPrototype().GetList() {
+	for i, query := range module.queriesPrototype().Get() {
 		commandList[i] = query.Command()
 	}
 
@@ -156,7 +156,7 @@ func (module module) Route() sdkTypes.Route {
 		}
 
 		if message, ok := msg.(helpers.Message); ok {
-			if transaction := module.transactions.Get(message.Type()); transaction != nil {
+			if transaction := module.transactions.GetTransaction(message.Type()); transaction != nil {
 				return transaction.HandleMessage(sdkTypes.WrapSDKContext(context.WithEventManager(sdkTypes.NewEventManager())), message)
 			}
 		}
@@ -172,7 +172,7 @@ func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Quer
 			panic(errorConstants.UninitializedUsage.Wrapf("queries for module %s not initialized", module.Name()))
 		}
 
-		if query := module.queries.Get(path[0]); query != nil {
+		if query := module.queries.GetQuery(path[0]); query != nil {
 			return query.HandleQuery(sdkTypes.WrapSDKContext(context), requestQuery)
 		}
 
@@ -184,11 +184,11 @@ func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Quer
 	}
 }
 func (module module) RegisterServices(configurator sdkModuleTypes.Configurator) {
-	for _, query := range module.queries.GetList() {
+	for _, query := range module.queries.Get() {
 		query.RegisterService(configurator)
 	}
 
-	for _, transaction := range module.transactions.GetList() {
+	for _, transaction := range module.transactions.Get() {
 		transaction.RegisterService(configurator)
 	}
 }
@@ -222,7 +222,7 @@ func (module module) EndBlock(context sdkTypes.Context, endBlockRequest abciType
 }
 func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
 	if module.auxiliaries != nil {
-		if auxiliary := module.auxiliaries.Get(auxiliaryName); auxiliary != nil {
+		if auxiliary := module.auxiliaries.GetAuxiliary(auxiliaryName); auxiliary != nil {
 			return auxiliary
 		}
 	}
@@ -230,7 +230,7 @@ func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
 	panic(fmt.Errorf("auxiliary %v not found/initialized", auxiliaryName))
 }
 func (module module) DecodeModuleTransactionRequest(transactionName string, rawMessage json.RawMessage) (sdkTypes.Msg, error) {
-	if transaction := module.transactionsPrototype().Get(transactionName); transaction != nil {
+	if transaction := module.transactionsPrototype().GetTransaction(transactionName); transaction != nil {
 		return transaction.DecodeTransactionRequest(rawMessage)
 	}
 
@@ -243,9 +243,9 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 
 	module.parameterManager = module.parameterManagerPrototype().Initialize(paramsSubspace.WithKeyTable(module.parameterManagerPrototype().GetKeyTable()))
 
-	auxiliaryList := make([]helpers.Auxiliary, len(module.auxiliariesPrototype().GetList()))
+	auxiliaryList := make([]helpers.Auxiliary, len(module.auxiliariesPrototype().Get()))
 
-	for i, auxiliary := range module.auxiliariesPrototype().GetList() {
+	for i, auxiliary := range module.auxiliariesPrototype().Get() {
 		auxiliaryList[i] = auxiliary.Initialize(module.mapper, module.parameterManager, auxiliaryKeepers...)
 	}
 
@@ -255,17 +255,17 @@ func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace 
 		auxiliaryKeepers = append(auxiliaryKeepers, auxiliary)
 	}
 
-	transactionList := make([]helpers.Transaction, len(module.transactionsPrototype().GetList()))
+	transactionList := make([]helpers.Transaction, len(module.transactionsPrototype().Get()))
 
-	for i, transaction := range module.transactionsPrototype().GetList() {
+	for i, transaction := range module.transactionsPrototype().Get() {
 		transactionList[i] = transaction.InitializeKeeper(module.mapper, module.parameterManager, auxiliaryKeepers...)
 	}
 
 	module.transactions = NewTransactions(transactionList...)
 
-	queryList := make([]helpers.Query, len(module.queriesPrototype().GetList()))
+	queryList := make([]helpers.Query, len(module.queriesPrototype().Get()))
 
-	for i, query := range module.queriesPrototype().GetList() {
+	for i, query := range module.queriesPrototype().Get() {
 		queryList[i] = query.Initialize(module.mapper, module.parameterManager, auxiliaryKeepers...)
 	}
 

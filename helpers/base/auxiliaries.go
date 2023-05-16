@@ -11,7 +11,7 @@ type auxiliaries struct {
 
 var _ helpers.Auxiliaries = (*auxiliaries)(nil)
 
-func (auxiliaries auxiliaries) Get(name string) helpers.Auxiliary {
+func (auxiliaries auxiliaries) GetAuxiliary(name string) helpers.Auxiliary {
 	for _, auxiliary := range auxiliaries.auxiliaryList {
 		if auxiliary.GetName() == name {
 			return auxiliary
@@ -20,7 +20,7 @@ func (auxiliaries auxiliaries) Get(name string) helpers.Auxiliary {
 
 	return nil
 }
-func (auxiliaries auxiliaries) GetList() []helpers.Auxiliary {
+func (auxiliaries auxiliaries) Get() []helpers.Auxiliary {
 	return auxiliaries.auxiliaryList
 }
 

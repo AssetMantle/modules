@@ -8,8 +8,6 @@ import (
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/utilities/test"
-	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 )
 
 func TestNewAuxiliary(t *testing.T) {
