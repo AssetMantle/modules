@@ -16,11 +16,11 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("super").GetName(), baseHelpers.NewAuxiliaries(
+	require.Equal(t, Prototype().GetAuxiliary("super").GetName(), baseHelpers.NewAuxiliaries(
 		deputize.Auxiliary,
 		maintain.Auxiliary,
 		revoke.Auxiliary,
 		super.Auxiliary,
 		verify.Auxiliary,
-	).Get("super").GetName())
+	).GetAuxiliary("super").GetName())
 }

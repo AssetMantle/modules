@@ -13,8 +13,8 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("supplement").GetName(), baseHelpers.NewAuxiliaries(
+	require.Equal(t, Prototype().GetAuxiliary("supplement").GetName(), baseHelpers.NewAuxiliaries(
 		scrub.Auxiliary,
 		supplement.Auxiliary,
-	).Get("supplement").GetName())
+	).GetAuxiliary("supplement").GetName())
 }

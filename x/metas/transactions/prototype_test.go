@@ -12,7 +12,7 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("reveal").GetName(), baseHelpers.NewTransactions(
+	require.Equal(t, Prototype().GetTransaction("reveal").GetName(), baseHelpers.NewTransactions(
 		reveal.Transaction,
-	).Get("reveal").GetName())
+	).GetTransaction("reveal").GetName())
 }

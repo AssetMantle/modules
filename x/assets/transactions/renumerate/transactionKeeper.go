@@ -53,7 +53,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
 
-	Mappable := assets.Get(key.NewKey(message.AssetID))
+	Mappable := assets.GetMappable(key.NewKey(message.AssetID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("asset with ID %s not found", message.AssetID.AsString())
 	}

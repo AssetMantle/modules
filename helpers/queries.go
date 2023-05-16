@@ -4,6 +4,6 @@
 package helpers
 
 type Queries interface {
-	Get(string) Query
-	GetList() []Query
+	Get() []Query
+	GetQuery(string) Query
 }

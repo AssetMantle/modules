@@ -1,6 +1,7 @@
 package docs
 
 import (
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	"net/http"
 	"strconv"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/AssetMantle/schema/go/properties"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	"github.com/AssetMantle/schema/go/properties/constants"
-	propertiesUtilities "github.com/AssetMantle/schema/go/properties/utilities"
 	"github.com/AssetMantle/schema/go/qualified/base"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -41,9 +41,9 @@ func orderIDHandler(context client.Context) http.HandlerFunc {
 			Add(baseProperties.NewMetaProperty(constants.MakerIDProperty.GetKey(), baseData.NewIDData(fromID))).
 			Add(baseProperties.NewMetaProperty(constants.TakerIDProperty.GetKey(), baseData.NewIDData(takerID)))
 
-		Immutables := base.NewImmutables(immutableMetaProperties.Add(propertiesUtilities.AnyPropertyListToPropertyList(ImmutableProperties.GetList()...)...))
+		Immutables := base.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(ImmutableProperties.Get()...)...))
 
-		// Mutables := base.NewMutables(baseLists.NewPropertyList(propertiesUtilities.AnyPropertyListToPropertyList(append(mutableMetaProperties.GetList(), mutableProperties.GetList()...)...)...))
+		// Mutables := base.NewMutables(baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(append(mutableMetaProperties.Get(), mutableProperties.Get()...)...)...))
 
 		// Immutables := base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewDecData(GetTotalWeight(immutables, Mutables).Mul(sdkTypes.NewDec(1))))))
 		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewOrderID(classificationID, Immutables).AsString(), "", nil))
@@ -54,7 +54,7 @@ func orderClassificationHandler(context client.Context) http.HandlerFunc {
 		_, _, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties := Read(context, responseWriter, httpRequest)
 		immutables := base.NewImmutables(
 			immutableMetaProperties.Add(
-				propertiesUtilities.AnyPropertyListToPropertyList(
+				baseLists.AnyPropertiesToProperties(
 					immutableProperties.Add(
 						constants.ExchangeRateProperty.ToAnyProperty(),
 						constants.CreationHeightProperty.ToAnyProperty(),
@@ -62,17 +62,17 @@ func orderClassificationHandler(context client.Context) http.HandlerFunc {
 						constants.TakerOwnableIDProperty.ToAnyProperty(),
 						constants.MakerIDProperty.ToAnyProperty(),
 						constants.TakerIDProperty.ToAnyProperty(),
-					).GetList()...,
+					).Get()...,
 				)...,
 			),
 		)
 		mutables := base.NewMutables(
 			mutableMetaProperties.Add(
-				propertiesUtilities.AnyPropertyListToPropertyList(
+				baseLists.AnyPropertiesToProperties(
 					mutableProperties.Add(
 						constants.ExpiryHeightProperty.ToAnyProperty(),
 						constants.MakerOwnableSplitProperty.ToAnyProperty(),
-					).GetList()...,
+					).Get()...,
 				)...,
 			),
 		)

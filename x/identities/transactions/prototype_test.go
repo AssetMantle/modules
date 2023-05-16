@@ -18,7 +18,7 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("unprovision").GetName(), baseHelpers.NewTransactions(
+	require.Equal(t, Prototype().GetTransaction("unprovision").GetName(), baseHelpers.NewTransactions(
 		define.Transaction,
 		deputize.Transaction,
 		issue.Transaction,
@@ -26,5 +26,5 @@ func TestPrototype(t *testing.T) {
 		provision.Transaction,
 		revoke.Transaction,
 		unprovision.Transaction,
-	).Get("unprovision").GetName())
+	).GetTransaction("unprovision").GetName())
 }

@@ -8,8 +8,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/AssetMantle/modules/utilities/test"
-	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 )

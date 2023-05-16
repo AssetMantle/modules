@@ -29,7 +29,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.classificationID))
 
-	Mappable := classifications.Get(key.NewKey(auxiliaryRequest.classificationID))
+	Mappable := classifications.GetMappable(key.NewKey(auxiliaryRequest.classificationID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("classification with ID %s not found", auxiliaryRequest.classificationID.AsString())
 	}

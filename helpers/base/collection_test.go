@@ -8,8 +8,6 @@ import (
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/utilities/test"
-	"github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 	"github.com/stretchr/testify/require"
 )
 
@@ -23,7 +21,7 @@ func TestCollection(t *testing.T) {
 
 	// Add
 	collection1 := Collection.Add(base.NewMappable("test1", "value1"))
-	require.Equal(t, []helpers.Mappable{base.NewMappable("test1", "value1")}, collection1.GetList())
+	require.Equal(t, []helpers.Mappable{base.NewMappable("test1", "value1")}, collection1.Get())
 	require.Nil(t, collection1.GetKey())
 
 	_ = Collection.Add(base.NewMappable("test2", "value2"))
@@ -31,28 +29,28 @@ func TestCollection(t *testing.T) {
 
 	// Mutate
 	Collection.Mutate(base.NewMappable("test2", "value3"))
-	require.Equal(t, base.NewMappable("test2", "value3"), Collection.Fetch(base.NewKey("test2")).Get(base.NewKey("test2")))
-	require.NotEqual(t, base.NewMappable("test2", "value2"), Collection.Fetch(base.NewKey("test2")).Get(base.NewKey("test2")))
+	require.Equal(t, base.NewMappable("test2", "value3"), Collection.Fetch(base.NewKey("test2")).GetMappable(base.NewKey("test2")))
+	require.NotEqual(t, base.NewMappable("test2", "value2"), Collection.Fetch(base.NewKey("test2")).GetMappable(base.NewKey("test2")))
 
-	// Fetch
-	require.Equal(t, []helpers.Mappable{base.NewMappable("test1", "value1")}, Collection.Fetch(base.NewKey("test1")).GetList())
+	// GetAuxiliary
+	require.Equal(t, []helpers.Mappable{base.NewMappable("test1", "value1")}, Collection.Fetch(base.NewKey("test1")).Get())
 
 	// GetProperty
-	Collection.Get(base.NewKey("test1"))
-	require.Equal(t, nil, Collection.Get(base.NewKey("test1")))
-	require.Equal(t, base.NewMappable("test1", "value1"), Collection.Fetch(base.NewKey("test1")).Get(base.NewKey("test1")))
+	Collection.GetMappable(base.NewKey("test1"))
+	require.Equal(t, nil, Collection.GetMappable(base.NewKey("test1")))
+	require.Equal(t, base.NewMappable("test1", "value1"), Collection.Fetch(base.NewKey("test1")).GetMappable(base.NewKey("test1")))
 
 	// GetKey
 	require.Equal(t, nil, Collection.GetKey())
 	require.Equal(t, base.NewKey("test1"), Collection.Fetch(base.NewKey("test1")).GetKey())
 	require.Equal(t, base.NewKey("test4"), Collection.Fetch(base.NewKey("test4")).GetKey())
 
-	// Get
-	Collection.GetList()
-	require.Equal(t, []helpers.Mappable{base.NewMappable("test1", "value1")}, Collection.Fetch(base.NewKey("test1")).GetList())
+	// GetAuxiliary
+	Collection.Get()
+	require.Equal(t, []helpers.Mappable{base.NewMappable("test1", "value1")}, Collection.Fetch(base.NewKey("test1")).Get())
 
 	// Remove
 	Collection.Remove(base.NewMappable("test1", "value0"))
-	require.Equal(t, []helpers.Mappable(nil), Collection.Fetch(base.NewKey("test1")).GetList())
+	require.Equal(t, []helpers.Mappable(nil), Collection.Fetch(base.NewKey("test1")).Get())
 
 }

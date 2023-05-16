@@ -55,7 +55,7 @@ func GenerateRandomListData(r *rand.Rand) data.ListData {
 	listData := baseData.PrototypeListData()
 
 	for i := 0; i < r.Intn(10); i++ {
-		listData.Add(GenerateRandomData(r, listDataType))
+		listData.Add(GenerateRandomData(r, listDataType).(data.ListableData))
 	}
 
 	return listData

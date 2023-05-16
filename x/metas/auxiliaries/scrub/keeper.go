@@ -22,10 +22,10 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.PropertyList.GetList()))
+	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.PropertyList.Get()))
 	metas := auxiliaryKeeper.mapper.NewCollection(context)
 
-	for i, property := range auxiliaryRequest.PropertyList.GetList() {
+	for i, property := range auxiliaryRequest.PropertyList.Get() {
 		if property.IsMeta() {
 			metaProperty := property.Get().(properties.MetaProperty)
 			if metaProperty.GetData().GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {

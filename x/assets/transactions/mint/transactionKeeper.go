@@ -5,6 +5,7 @@ package mint
 
 import (
 	"context"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/key"
@@ -20,7 +21,6 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/properties"
 	"github.com/AssetMantle/schema/go/properties/constants"
-	"github.com/AssetMantle/schema/go/properties/utilities"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
@@ -60,16 +60,16 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	immutables := baseQualified.NewImmutables(message.ImmutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(message.ImmutableProperties.GetList()...)...))
+	immutables := baseQualified.NewImmutables(message.ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.ImmutableProperties.Get()...)...))
 
 	assetID := baseIDs.NewAssetID(message.ClassificationID, immutables)
 
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(assetID))
-	if assets.Get(key.NewKey(assetID)) != nil {
+	if assets.GetMappable(key.NewKey(assetID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("asset with ID %s already exists", assetID.AsString())
 	}
 
-	mutables := baseQualified.NewMutables(message.MutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(message.MutableProperties.GetList()...)...))
+	mutables := baseQualified.NewMutables(message.MutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
 
 	if _, err := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	split := sdkTypes.OneInt()
 
-	if metaPropertyList := message.ImmutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(message.MutableMetaProperties.GetList()...)...); metaPropertyList.GetProperty(constants.SupplyProperty.GetID()) != nil {
+	if metaPropertyList := message.ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableMetaProperties.Get()...)...); metaPropertyList.GetProperty(constants.SupplyProperty.GetID()) != nil {
 		split = metaPropertyList.GetProperty(constants.SupplyProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
 	}
 
