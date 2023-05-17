@@ -5,10 +5,6 @@ package asset
 
 import (
 	fmt "fmt"
-	io "io"
-	math "math"
-	math_bits "math/bits"
-
 	base "github.com/AssetMantle/schema/go/ids/base"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
