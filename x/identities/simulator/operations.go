@@ -111,43 +111,13 @@ func simulateIssueMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var classificationIDString, identityIDString string
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		identityMap := identities.GetIDData(from.Address.String())
-		for class, id := range identityMap {
-			identityIDString = id
-			classificationIDString = class
-			break
-		}
-		identityID, _ := baseIDs.ReadIdentityID(identityIDString)
-		classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
-		mappable := &mappable.Mappable{}
-		base.CodecPrototype().Unmarshal(identities.GetMappableBytes(classificationIDString), mappable)
-		immutableMetaProperties := &baseLists.PropertyList{}
-		immutableProperties := &baseLists.PropertyList{}
-		mutableMetaProperties := &baseLists.PropertyList{}
-		mutableProperties := &baseLists.PropertyList{}
-		if mappable.Identity == nil {
-			return simulationTypes.NewOperationMsg(&issue.Message{}, false, "invalid identity", base.CodecPrototype().GetProtoCodec()), nil, nil
-		}
-		for _, i := range mappable.GetIdentity().Get().GetImmutables().GetImmutablePropertyList().GetList() {
-			if i.IsMeta() {
-				immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
-			} else {
-				immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
-			}
-		}
-		for _, i := range mappable.GetIdentity().Get().GetMutables().GetMutablePropertyList().GetList() {
-			if i.IsMeta() {
-				mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
-			} else {
-				mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
-			}
-		}
 
-		message := issue.NewMessage(from.Address, to.Address, identityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
-
+		message := GetIssueMessage(from, to, rand)
+		if message == nil {
+			return simulationTypes.NewOperationMsg(&issue.Message{}, false, "error in issue message", base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
@@ -235,49 +205,19 @@ func simulateQuashMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var classificationIDString, identityIDString string
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		identityMap := identities.GetIDData(from.Address.String())
-		for class, id := range identityMap {
-			identityIDString = id
-			classificationIDString = class
-			break
-		}
-		identityID, _ := baseIDs.ReadIdentityID(identityIDString)
-		classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
-		mappable := &mappable.Mappable{}
-		base.CodecPrototype().Unmarshal(identities.GetMappableBytes(classificationIDString), mappable)
-		immutableMetaProperties := &baseLists.PropertyList{}
-		immutableProperties := &baseLists.PropertyList{}
-		mutableMetaProperties := &baseLists.PropertyList{}
-		mutableProperties := &baseLists.PropertyList{}
-		if mappable.Identity == nil {
-			return simulationTypes.NewOperationMsg(&issue.Message{}, false, "invalid identity", base.CodecPrototype().GetProtoCodec()), nil, nil
-		}
-		for _, i := range mappable.GetIdentity().Get().GetImmutables().GetImmutablePropertyList().GetList() {
-			if i.IsMeta() {
-				immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
-			} else {
-				immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
-			}
-		}
-		for _, i := range mappable.GetIdentity().Get().GetMutables().GetMutablePropertyList().GetList() {
-			if i.IsMeta() {
-				mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
-			} else {
-				mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
-			}
-		}
 
-		message := issue.NewMessage(from.Address, to.Address, identityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
-
+		message := GetIssueMessage(from, to, rand)
+		if message == nil {
+			return simulationTypes.NewOperationMsg(&issue.Message{}, false, "error in issue message", base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
-		id := baseIDs.NewIdentityID(classificationID, baseQualified.NewImmutables(immutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(immutableProperties.GetList()...)...)))
-		quashMessage := quash.NewMessage(from.Address, identityID, id)
+		id := baseIDs.NewIdentityID(message.(*issue.Message).ClassificationID, baseQualified.NewImmutables(message.(*issue.Message).ImmutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(message.(*issue.Message).ImmutableProperties.GetList()...)...)))
+		quashMessage := quash.NewMessage(from.Address, message.(*issue.Message).FromID, id)
 
 		result, err = simulationModules.ExecuteMessage(context, module, quashMessage.(helpers.Message))
 		if err != nil {
@@ -350,6 +290,39 @@ func GenerateNubMessage(from sdkTypes.AccAddress, nubID ids.ID) helpers.Message 
 func GenerateDefineMessage(from sdkTypes.AccAddress, nubID ids.IdentityID, r *rand.Rand) helpers.Message {
 	return define.NewMessage(from, nubID, baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r), baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r)).(helpers.Message)
 }
-func GenerateIssueMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, r *rand.Rand) helpers.Message {
-	return issue.NewMessage(from, to, fromID, classificationID, baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r), baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r)).(helpers.Message)
+func GetIssueMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.Msg {
+	var classificationIDString, identityIDString string
+
+	identityMap := identities.GetIDData(from.Address.String())
+	for class, id := range identityMap {
+		identityIDString = id
+		classificationIDString = class
+		break
+	}
+	fromID, _ := baseIDs.ReadIdentityID(identityIDString)
+	classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
+	mappable := &mappable.Mappable{}
+	base.CodecPrototype().Unmarshal(identities.GetMappableBytes(classificationIDString), mappable)
+	immutableMetaProperties := &baseLists.PropertyList{}
+	immutableProperties := &baseLists.PropertyList{}
+	mutableMetaProperties := &baseLists.PropertyList{}
+	mutableProperties := &baseLists.PropertyList{}
+	if mappable.Identity == nil {
+		return nil
+	}
+	for _, i := range mappable.GetIdentity().Get().GetImmutables().GetImmutablePropertyList().GetList() {
+		if i.IsMeta() {
+			immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
+		} else {
+			immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
+		}
+	}
+	for _, i := range mappable.GetIdentity().Get().GetMutables().GetMutablePropertyList().GetList() {
+		if i.IsMeta() {
+			mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
+		} else {
+			mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
+		}
+	}
+	return issue.NewMessage(from.Address, to.Address, fromID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 }

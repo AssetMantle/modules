@@ -95,10 +95,7 @@ func simulateMakeMsg(module helpers.Module) simulationTypes.Operation {
 
 		message := GetMakeMessage(from, to, rand)
 		if message == nil {
-			makeMessage := GetMakeMessage(from, to, rand)
-			if makeMessage == nil {
-				return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message", base.CodecPrototype().GetProtoCodec()), nil, nil
-			}
+			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message", base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
@@ -118,10 +115,7 @@ func simulateCancelMsg(module helpers.Module) simulationTypes.Operation {
 
 		makeMessage := GetMakeMessage(from, to, rand)
 		if makeMessage == nil {
-			makeMessage := GetMakeMessage(from, to, rand)
-			if makeMessage == nil {
-				return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message", base.CodecPrototype().GetProtoCodec()), nil, nil
-			}
+			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message", base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 
 		result, err = simulationModules.ExecuteMessage(context, module, makeMessage.(helpers.Message))
@@ -149,10 +143,7 @@ func simulateTakeMsg(module helpers.Module) simulationTypes.Operation {
 
 		makeMessage := GetMakeMessage(from, to, rand)
 		if makeMessage == nil {
-			makeMessage := GetMakeMessage(from, to, rand)
-			if makeMessage == nil {
-				return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message", base.CodecPrototype().GetProtoCodec()), nil, nil
-			}
+			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message", base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 
 		result, err = simulationModules.ExecuteMessage(context, module, makeMessage.(helpers.Message))
