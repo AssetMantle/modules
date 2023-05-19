@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	"fmt"
 	simulatorAssets "github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
 	simulatorIdentities "github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
 	utilitiesProperties "github.com/AssetMantle/schema/go/properties/utilities"
@@ -75,20 +76,21 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mutables = assetMappable.GetAsset().Get().GetMutables()
 		mappableList[index+1] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true)))
 
-		immutables := baseQualified.NewImmutables(assetMappable.GetAsset().GetImmutables().GetImmutablePropertyList().Add(utilitiesProperties.AnyPropertyListToPropertyList(constants.ExchangeRateProperty.ToAnyProperty(),
+		immutables := baseQualified.NewImmutables(assetMappable.Asset.Immutables.GetImmutablePropertyList().Add(utilitiesProperties.AnyPropertyListToPropertyList(constants.ExchangeRateProperty.ToAnyProperty(),
 			constants.CreationHeightProperty.ToAnyProperty(),
 			constants.MakerOwnableIDProperty.ToAnyProperty(),
 			constants.TakerOwnableIDProperty.ToAnyProperty(),
 			constants.MakerIDProperty.ToAnyProperty(),
 			constants.TakerIDProperty.ToAnyProperty())...))
 
-		mutables = baseQualified.NewMutables(assetMappable.GetAsset().GetMutables().GetMutablePropertyList().Add(utilitiesProperties.AnyPropertyListToPropertyList(
+		mutables = baseQualified.NewMutables(assetMappable.Asset.Mutables.GetMutablePropertyList().Add(utilitiesProperties.AnyPropertyListToPropertyList(
 			constants.ExpiryHeightProperty.ToAnyProperty(),
 			constants.MakerOwnableSplitProperty.ToAnyProperty(),
 		)...))
 
 		orderClassificationID := baseIDs.NewClassificationID(immutables, mutables)
-
+		x := orderClassificationID.AsString()
+		fmt.Println(x)
 		mappableList[index+2] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, orderClassificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true)))
 
 		index += 3

@@ -40,10 +40,19 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	mappableList := make([]helpers.Mappable, len(assets.ClassificationIDMappableBytesMap))
 	index := 0
+	var classificationIDString string
+
 	orders.ClearAll()
-	for i := range assets.ClassificationIDMappableBytesMap {
+	for i := 0; i < len(assets.ClassificationIDMappableBytesMap); i++ {
+		assetMap := assets.GetAssetData(simulationState.Accounts[i].Address.String())
+		if assetMap == nil {
+			continue
+		}
+		for class, _ := range assetMap {
+			classificationIDString = class
+		}
 		mappable := &mappableAssets.Mappable{}
-		baseHelpers.CodecPrototype().MustUnmarshal(assets.ClassificationIDMappableBytesMap[i], mappable)
+		baseHelpers.CodecPrototype().MustUnmarshal(assets.ClassificationIDMappableBytesMap[classificationIDString], mappable)
 		immutables := baseQualified.NewImmutables(mappable.Asset.Immutables.GetImmutablePropertyList().Add(utilities.AnyPropertyListToPropertyList(constants.ExchangeRateProperty.ToAnyProperty(),
 			constants.CreationHeightProperty.ToAnyProperty(),
 			constants.MakerOwnableIDProperty.ToAnyProperty(),

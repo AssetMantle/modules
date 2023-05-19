@@ -41,9 +41,18 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	identities.ClearAll()
 	index := 0
-	for i := range assets.ClassificationIDMappableBytesMap {
+	var classificationIDString string
+
+	for i := 0; i < len(assets.ClassificationIDMappableBytesMap); i++ {
+		assetMap := assets.GetAssetData(simulationState.Accounts[i].Address.String())
+		if assetMap == nil {
+			continue
+		}
+		for class, _ := range assetMap {
+			classificationIDString = class
+		}
 		mappable := &mappableAssets.Mappable{}
-		baseHelpers.CodecPrototype().MustUnmarshal(assets.ClassificationIDMappableBytesMap[i], mappable)
+		baseHelpers.CodecPrototype().MustUnmarshal(assets.ClassificationIDMappableBytesMap[classificationIDString], mappable)
 		immutables := mappable.Asset.Immutables
 		mutables := baseQualified.NewMutables(mappable.Asset.Mutables.GetMutablePropertyList().Add(constantProperties.AuthenticationProperty))
 		classificationID := baseIDs.NewClassificationID(immutables, mutables)
