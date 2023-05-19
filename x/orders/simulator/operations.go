@@ -9,7 +9,6 @@ import (
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/orders"
-	"github.com/AssetMantle/modules/x/assets/transactions/mint"
 	"github.com/AssetMantle/modules/x/orders/mappable"
 	"github.com/AssetMantle/modules/x/orders/transactions/cancel"
 	"github.com/AssetMantle/modules/x/orders/transactions/define"
@@ -90,66 +89,17 @@ func simulateMakeMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var identityIDString, classificationIDString, assetIDString string
 
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		fromIDMap := identities.GetIDData(from.Address.String())
-		for _, id := range fromIDMap {
-			identityIDString = id
-			break
-		}
-		fromID, _ := baseIDs.ReadIdentityID(identityIDString)
 
-		toIDMap := identities.GetIDData(to.Address.String())
-		for _, id := range toIDMap {
-			identityIDString = id
-			break
-		}
-
-		toID, _ := baseIDs.ReadIdentityID(identityIDString)
-
-		orderMap := orders.GetOrderData(from.Address.String())
-		for class, _ := range orderMap {
-			classificationIDString = class
-			break
-		}
-
-		classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
-
-		assetMap := assets.GetAssetData(from.Address.String())
-
-		for _, id := range assetMap {
-			assetIDString = id
-		}
-
-		assetID, _ := baseIDs.ReadAssetID(assetIDString)
-
-		mappable := &mappable.Mappable{}
-		base.CodecPrototype().Unmarshal(orders.GetMappableBytes(classificationIDString), mappable)
-		immutableMetaProperties := &baseLists.PropertyList{}
-		immutableProperties := &baseLists.PropertyList{}
-		mutableMetaProperties := &baseLists.PropertyList{}
-		mutableProperties := &baseLists.PropertyList{}
-		if mappable.Order == nil {
-			return simulationTypes.NewOperationMsg(&mint.Message{}, false, "invalid identity", base.CodecPrototype().GetProtoCodec()), nil, nil
-		}
-		for _, i := range mappable.GetOrder().Get().GetImmutables().GetImmutablePropertyList().GetList() {
-			if i.IsMeta() {
-				immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
-			} else {
-				immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
+		message := GetMakeMessage(from, to, rand)
+		if message == nil {
+			makeMessage := GetMakeMessage(from, to, rand)
+			if makeMessage == nil {
+				return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message", base.CodecPrototype().GetProtoCodec()), nil, nil
 			}
 		}
-		for _, i := range mappable.GetOrder().Get().GetMutables().GetMutablePropertyList().GetList() {
-			if i.IsMeta() {
-				mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
-			} else {
-				mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
-			}
-		}
-
-		message := make.NewMessage(from.Address, fromID, classificationID, toID, assetID.ToAnyOwnableID(), baseIDs.NewCoinID(baseIDs.NewStringID("stake")).ToAnyOwnableID(), baseTypesGo.NewHeight(-1), sdkTypes.NewInt(1), sdkTypes.NewInt(1), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
@@ -162,75 +112,26 @@ func simulateCancelMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var identityIDString, classificationIDString, assetIDString string
 
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		fromIDMap := identities.GetIDData(from.Address.String())
-		for _, id := range fromIDMap {
-			identityIDString = id
-			break
-		}
-		fromID, _ := baseIDs.ReadIdentityID(identityIDString)
 
-		toIDMap := identities.GetIDData(to.Address.String())
-		for _, id := range toIDMap {
-			identityIDString = id
-			break
-		}
-
-		toID, _ := baseIDs.ReadIdentityID(identityIDString)
-
-		orderMap := orders.GetOrderData(from.Address.String())
-		for class, _ := range orderMap {
-			classificationIDString = class
-			break
-		}
-
-		classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
-
-		assetMap := assets.GetAssetData(from.Address.String())
-
-		for _, id := range assetMap {
-			assetIDString = id
-		}
-
-		assetID, _ := baseIDs.ReadAssetID(assetIDString)
-
-		mappable := &mappable.Mappable{}
-		base.CodecPrototype().Unmarshal(orders.GetMappableBytes(classificationIDString), mappable)
-		immutableMetaProperties := &baseLists.PropertyList{}
-		immutableProperties := &baseLists.PropertyList{}
-		mutableMetaProperties := &baseLists.PropertyList{}
-		mutableProperties := &baseLists.PropertyList{}
-		if mappable.Order == nil {
-			return simulationTypes.NewOperationMsg(&mint.Message{}, false, "invalid identity", base.CodecPrototype().GetProtoCodec()), nil, nil
-		}
-		for _, i := range mappable.GetOrder().Get().GetImmutables().GetImmutablePropertyList().GetList() {
-			if i.IsMeta() {
-				immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
-			} else {
-				immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
+		makeMessage := GetMakeMessage(from, to, rand)
+		if makeMessage == nil {
+			makeMessage := GetMakeMessage(from, to, rand)
+			if makeMessage == nil {
+				return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message", base.CodecPrototype().GetProtoCodec()), nil, nil
 			}
 		}
-		for _, i := range mappable.GetOrder().Get().GetMutables().GetMutablePropertyList().GetList() {
-			if i.IsMeta() {
-				mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
-			} else {
-				mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
-			}
-		}
-
-		makeMessage := make.NewMessage(from.Address, fromID, classificationID, toID, assetID.ToAnyOwnableID(), baseIDs.NewCoinID(baseIDs.NewStringID("stake")).ToAnyOwnableID(), baseTypesGo.NewHeight(-1), sdkTypes.NewInt(1), sdkTypes.NewInt(1), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 
 		result, err = simulationModules.ExecuteMessage(context, module, makeMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(makeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 
-		orderID := baseIDs.NewOrderID(classificationID, baseQualified.NewImmutables(immutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(immutableProperties.GetList()...)...)))
+		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(makeMessage.(*make.Message).ImmutableProperties.GetList()...)...)))
 
-		cancelMessage := cancel.NewMessage(from.Address, fromID, orderID)
+		cancelMessage := cancel.NewMessage(from.Address, makeMessage.(*make.Message).FromID, orderID)
 		result, err = simulationModules.ExecuteMessage(context, module, cancelMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(cancelMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
@@ -242,75 +143,26 @@ func simulateTakeMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var identityIDString, classificationIDString, assetIDString string
 
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		fromIDMap := identities.GetIDData(from.Address.String())
-		for _, id := range fromIDMap {
-			identityIDString = id
-			break
-		}
-		fromID, _ := baseIDs.ReadIdentityID(identityIDString)
 
-		toIDMap := identities.GetIDData(to.Address.String())
-		for _, id := range toIDMap {
-			identityIDString = id
-			break
-		}
-
-		toID, _ := baseIDs.ReadIdentityID(identityIDString)
-
-		orderMap := orders.GetOrderData(from.Address.String())
-		for class, _ := range orderMap {
-			classificationIDString = class
-			break
-		}
-
-		classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
-
-		assetMap := assets.GetAssetData(from.Address.String())
-
-		for _, id := range assetMap {
-			assetIDString = id
-		}
-
-		assetID, _ := baseIDs.ReadAssetID(assetIDString)
-
-		mappable := &mappable.Mappable{}
-		base.CodecPrototype().Unmarshal(orders.GetMappableBytes(classificationIDString), mappable)
-		immutableMetaProperties := &baseLists.PropertyList{}
-		immutableProperties := &baseLists.PropertyList{}
-		mutableMetaProperties := &baseLists.PropertyList{}
-		mutableProperties := &baseLists.PropertyList{}
-		if mappable.Order == nil {
-			return simulationTypes.NewOperationMsg(&mint.Message{}, false, "invalid identity", base.CodecPrototype().GetProtoCodec()), nil, nil
-		}
-		for _, i := range mappable.GetOrder().Get().GetImmutables().GetImmutablePropertyList().GetList() {
-			if i.IsMeta() {
-				immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
-			} else {
-				immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
+		makeMessage := GetMakeMessage(from, to, rand)
+		if makeMessage == nil {
+			makeMessage := GetMakeMessage(from, to, rand)
+			if makeMessage == nil {
+				return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message", base.CodecPrototype().GetProtoCodec()), nil, nil
 			}
 		}
-		for _, i := range mappable.GetOrder().Get().GetMutables().GetMutablePropertyList().GetList() {
-			if i.IsMeta() {
-				mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
-			} else {
-				mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
-			}
-		}
-
-		makeMessage := make.NewMessage(from.Address, fromID, classificationID, toID, assetID.ToAnyOwnableID(), baseIDs.NewCoinID(baseIDs.NewStringID("stake")).ToAnyOwnableID(), baseTypesGo.NewHeight(-1), sdkTypes.NewInt(1), sdkTypes.NewInt(1), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 
 		result, err = simulationModules.ExecuteMessage(context, module, makeMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(makeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 
-		orderID := baseIDs.NewOrderID(classificationID, baseQualified.NewImmutables(immutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(immutableProperties.GetList()...)...)))
+		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(makeMessage.(*make.Message).ImmutableProperties.GetList()...)...)))
 
-		takeMessage := take.NewMessage(to.Address, toID, sdkTypes.NewInt(1), orderID)
+		takeMessage := take.NewMessage(to.Address, makeMessage.(*make.Message).TakerID, sdkTypes.NewInt(1), orderID)
 		result, err = simulationModules.ExecuteMessage(context, module, takeMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(takeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
@@ -319,6 +171,66 @@ func simulateTakeMsg(module helpers.Module) simulationTypes.Operation {
 	}
 }
 
+func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.Msg {
+	var identityIDString, classificationIDString, assetIDString string
+
+	fromIDMap := identities.GetIDData(from.Address.String())
+	for _, id := range fromIDMap {
+		identityIDString = id
+		break
+	}
+	fromID, _ := baseIDs.ReadIdentityID(identityIDString)
+
+	toIDMap := identities.GetIDData(to.Address.String())
+	for _, id := range toIDMap {
+		identityIDString = id
+		break
+	}
+
+	toID, _ := baseIDs.ReadIdentityID(identityIDString)
+
+	orderMap := orders.GetOrderData(from.Address.String())
+	for class, _ := range orderMap {
+		classificationIDString = class
+		break
+	}
+
+	classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
+
+	assetMap := assets.GetAssetData(from.Address.String())
+
+	for _, id := range assetMap {
+		assetIDString = id
+	}
+
+	assetID, _ := baseIDs.ReadAssetID(assetIDString)
+
+	mappable := &mappable.Mappable{}
+	base.CodecPrototype().Unmarshal(orders.GetMappableBytes(classificationIDString), mappable)
+	immutableMetaProperties := &baseLists.PropertyList{}
+	immutableProperties := &baseLists.PropertyList{}
+	mutableMetaProperties := &baseLists.PropertyList{}
+	mutableProperties := &baseLists.PropertyList{}
+	if mappable.Order == nil {
+		return nil
+	}
+	for _, i := range mappable.GetOrder().Get().GetImmutables().GetImmutablePropertyList().GetList() {
+		if i.IsMeta() {
+			immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
+		} else {
+			immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
+		}
+	}
+	for _, i := range mappable.GetOrder().Get().GetMutables().GetMutablePropertyList().GetList() {
+		if i.IsMeta() {
+			mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
+		} else {
+			mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
+		}
+	}
+
+	return make.NewMessage(from.Address, fromID, classificationID, toID, assetID.ToAnyOwnableID(), baseIDs.NewCoinID(baseIDs.NewStringID("stake")).ToAnyOwnableID(), baseTypesGo.NewHeight(-1), sdkTypes.NewInt(1), sdkTypes.NewInt(1), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+}
 func GenerateDefineMessage(from sdkTypes.AccAddress, identityID ids.IdentityID, r *rand.Rand) helpers.Message {
 	return define.NewMessage(from, identityID, baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r), baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r)).(helpers.Message)
 }
