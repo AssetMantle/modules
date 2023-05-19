@@ -7,7 +7,8 @@ import (
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
 	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/classifications/parameters/maxPropertyCount"
-	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/go/properties/utilities"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"math/rand"
@@ -48,21 +49,34 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		},
 	)
 
-	mappableList := make([]helpers.Mappable, 2*len(assets.ClassificationIDMappableBytesMap))
+	mappableList := make([]helpers.Mappable, 3*len(assets.ClassificationIDMappableBytesMap))
 	index := 0
 	accountPosition := 0
 
 	for i := range assets.ClassificationIDMappableBytesMap {
 		mappable := &mappableAssets.Mappable{}
 		baseHelpers.CodecPrototype().MustUnmarshal(assets.ClassificationIDMappableBytesMap[i], mappable)
+
 		immutables := mappable.Asset.Immutables
 		mutables := mappable.Asset.Mutables
+
 		assetClassification := base.NewClassification(immutables, mutables)
-		identityClassification := base.NewClassification(immutables, baseQualified.NewMutables(mutables.GetMutablePropertyList().Add(constantProperties.AuthenticationProperty)))
+		identityClassification := base.NewClassification(immutables, baseQualified.NewMutables(mutables.GetMutablePropertyList().Add(constants.AuthenticationProperty)))
+		orderClassification := base.NewClassification(baseQualified.NewImmutables(immutables.GetImmutablePropertyList().Add(utilities.AnyPropertyListToPropertyList(constants.ExchangeRateProperty.ToAnyProperty(),
+			constants.CreationHeightProperty.ToAnyProperty(),
+			constants.MakerOwnableIDProperty.ToAnyProperty(),
+			constants.TakerOwnableIDProperty.ToAnyProperty(),
+			constants.MakerIDProperty.ToAnyProperty(),
+			constants.TakerIDProperty.ToAnyProperty())...)), baseQualified.NewMutables(mappable.Asset.Mutables.GetMutablePropertyList().Add(utilities.AnyPropertyListToPropertyList(
+			constants.ExpiryHeightProperty.ToAnyProperty(),
+			constants.MakerOwnableSplitProperty.ToAnyProperty(),
+		)...)))
+
 		mappableList[index] = mappableClassifications.NewMappable(assetClassification)
 		mappableList[index+1] = mappableClassifications.NewMappable(identityClassification)
+		mappableList[index+2] = mappableClassifications.NewMappable(orderClassification)
 
-		index += 2
+		index += 3
 		accountPosition++
 	}
 

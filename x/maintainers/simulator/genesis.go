@@ -6,9 +6,13 @@ package simulator
 import (
 	simulatorAssets "github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
 	simulatorIdentities "github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	utilitiesProperties "github.com/AssetMantle/schema/go/properties/utilities"
+
 	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	mappableIdentities "github.com/AssetMantle/modules/x/identities/mappable"
 	mappableMaintainers "github.com/AssetMantle/modules/x/maintainers/mappable"
+	"github.com/AssetMantle/schema/go/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"math/rand"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -38,11 +42,12 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, 2*len(simulatorAssets.ClassificationIDMappableBytesMap))
+	mappableList := make([]helpers.Mappable, 3*len(simulatorAssets.ClassificationIDMappableBytesMap))
 
 	var classificationID ids.ClassificationID
 	var identityID ids.IdentityID
 	index := 0
+
 	for i := 0; i < len(simulatorAssets.ClassificationIDMappableBytesMap); i++ {
 		identityMap := simulatorIdentities.GetIDData(simulationState.Accounts[i].Address.String())
 		if identityMap == nil {
@@ -51,6 +56,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		for class, id := range identityMap {
 			classificationID, _ = baseIDs.ReadClassificationID(class)
 			identityID, _ = baseIDs.ReadIdentityID(id)
+			break
 		}
 		identityMappable := &mappableIdentities.Mappable{}
 		baseHelpers.CodecPrototype().Unmarshal(simulatorIdentities.GetMappableBytes(classificationID.AsString()), identityMappable)
@@ -68,7 +74,24 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		baseHelpers.CodecPrototype().Unmarshal(simulatorAssets.GetMappableBytes(classificationID.AsString()), assetMappable)
 		mutables = assetMappable.GetAsset().Get().GetMutables()
 		mappableList[index+1] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true)))
-		index += 2
+
+		immutables := baseQualified.NewImmutables(assetMappable.GetAsset().GetImmutables().GetImmutablePropertyList().Add(utilitiesProperties.AnyPropertyListToPropertyList(constants.ExchangeRateProperty.ToAnyProperty(),
+			constants.CreationHeightProperty.ToAnyProperty(),
+			constants.MakerOwnableIDProperty.ToAnyProperty(),
+			constants.TakerOwnableIDProperty.ToAnyProperty(),
+			constants.MakerIDProperty.ToAnyProperty(),
+			constants.TakerIDProperty.ToAnyProperty())...))
+
+		mutables = baseQualified.NewMutables(assetMappable.GetAsset().GetMutables().GetMutablePropertyList().Add(utilitiesProperties.AnyPropertyListToPropertyList(
+			constants.ExpiryHeightProperty.ToAnyProperty(),
+			constants.MakerOwnableSplitProperty.ToAnyProperty(),
+		)...))
+
+		orderClassificationID := baseIDs.NewClassificationID(immutables, mutables)
+
+		mappableList[index+2] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, orderClassificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true)))
+
+		index += 3
 	}
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(deputizeAllowed.Parameter.Mutate(Data)))

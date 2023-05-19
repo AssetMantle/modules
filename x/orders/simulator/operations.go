@@ -6,10 +6,18 @@ package simulator
 import (
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
+	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	"github.com/AssetMantle/modules/simulation/simulatedDatabase/orders"
+	"github.com/AssetMantle/modules/x/assets/transactions/mint"
+	"github.com/AssetMantle/modules/x/orders/mappable"
 	"github.com/AssetMantle/modules/x/orders/transactions/define"
+	"github.com/AssetMantle/modules/x/orders/transactions/make"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	baseTypesGo "github.com/AssetMantle/schema/go/types/base"
 	"math/rand"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -35,6 +43,10 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 			weightMsg+1000,
 			simulateDefineMsg(module),
 		),
+		simulation.NewWeightedOperation(
+			weightMsg+1000,
+			simulateMakeMsg(module),
+		),
 	}
 	return nil
 }
@@ -54,6 +66,78 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 		}
 		fromID, _ := baseIDs.ReadIdentityID(identityIDString)
 		message := GenerateDefineMessage(from.Address, fromID, rand)
+
+		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+	}
+}
+func simulateMakeMsg(module helpers.Module) simulationTypes.Operation {
+	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
+		var err error
+		var result *sdkTypes.Result
+		var identityIDString, classificationIDString, assetIDString string
+
+		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+		fromIDMap := identities.GetIDData(from.Address.String())
+		for _, id := range fromIDMap {
+			identityIDString = id
+			break
+		}
+		fromID, _ := baseIDs.ReadIdentityID(identityIDString)
+
+		toIDMap := identities.GetIDData(to.Address.String())
+		for _, id := range toIDMap {
+			identityIDString = id
+			break
+		}
+
+		toID, _ := baseIDs.ReadIdentityID(identityIDString)
+
+		orderMap := orders.GetOrderData(from.Address.String())
+		for class, _ := range orderMap {
+			classificationIDString = class
+			break
+		}
+
+		classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
+
+		assetMap := assets.GetAssetData(from.Address.String())
+
+		for _, id := range assetMap {
+			assetIDString = id
+		}
+
+		assetID, _ := baseIDs.ReadAssetID(assetIDString)
+
+		mappable := &mappable.Mappable{}
+		base.CodecPrototype().Unmarshal(orders.GetMappableBytes(classificationIDString), mappable)
+		immutableMetaProperties := &baseLists.PropertyList{}
+		immutableProperties := &baseLists.PropertyList{}
+		mutableMetaProperties := &baseLists.PropertyList{}
+		mutableProperties := &baseLists.PropertyList{}
+		if mappable.Order == nil {
+			return simulationTypes.NewOperationMsg(&mint.Message{}, false, "invalid identity", base.CodecPrototype().GetProtoCodec()), nil, nil
+		}
+		for _, i := range mappable.GetOrder().Get().GetImmutables().GetImmutablePropertyList().GetList() {
+			if i.IsMeta() {
+				immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
+			} else {
+				immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
+			}
+		}
+		for _, i := range mappable.GetOrder().Get().GetMutables().GetMutablePropertyList().GetList() {
+			if i.IsMeta() {
+				mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
+			} else {
+				mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
+			}
+		}
+
+		message := make.NewMessage(from.Address, fromID, classificationID, toID, assetID.ToAnyOwnableID(), baseIDs.NewCoinID(baseIDs.NewStringID("stake")).ToAnyOwnableID(), baseTypesGo.NewHeight(-1), sdkTypes.NewInt(1), sdkTypes.NewInt(1), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
