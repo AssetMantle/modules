@@ -6,6 +6,8 @@ package transactions
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/identities/transactions/define"
 	"github.com/AssetMantle/modules/x/identities/transactions/deputize"
@@ -14,11 +16,10 @@ import (
 	"github.com/AssetMantle/modules/x/identities/transactions/provision"
 	"github.com/AssetMantle/modules/x/identities/transactions/revoke"
 	"github.com/AssetMantle/modules/x/identities/transactions/unprovision"
-	"github.com/stretchr/testify/require"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("unprovision").GetName(), baseHelpers.NewTransactions(
+	require.Equal(t, Prototype().GetTransaction("unprovision").GetName(), baseHelpers.NewTransactions(
 		define.Transaction,
 		deputize.Transaction,
 		issue.Transaction,
@@ -26,5 +27,5 @@ func TestPrototype(t *testing.T) {
 		provision.Transaction,
 		revoke.Transaction,
 		unprovision.Transaction,
-	).Get("unprovision").GetName())
+	).GetTransaction("unprovision").GetName())
 }

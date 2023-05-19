@@ -4,14 +4,15 @@
 package utilities
 
 import (
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/key"
-	"github.com/AssetMantle/modules/x/splits/mappable"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/splits/key"
+	"github.com/AssetMantle/modules/x/splits/mappable"
 )
 
 func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Int) (helpers.Collection, error) {
@@ -21,7 +22,7 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.
 
 	splitID := baseIDs.NewSplitID(ownerID, ownableID)
 
-	Mappable := splits.Fetch(key.NewKey(splitID)).Get(key.NewKey(splitID))
+	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
 		splits.Add(mappable.NewMappable(base.NewSplit(ownerID, ownableID, value)))
 	} else {
@@ -38,7 +39,7 @@ func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID
 
 	splitID := baseIDs.NewSplitID(ownerID, ownableID)
 
-	Mappable := splits.Fetch(key.NewKey(splitID)).Get(key.NewKey(splitID))
+	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("split with ID %s not found", splitID.AsString())
 	}

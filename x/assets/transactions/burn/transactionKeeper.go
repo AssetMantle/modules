@@ -6,6 +6,13 @@ package burn
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/go/data"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/properties"
+	"github.com/AssetMantle/schema/go/properties/constants"
+	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mappable"
@@ -14,12 +21,6 @@ import (
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
-	"github.com/AssetMantle/schema/go/data"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	"github.com/AssetMantle/schema/go/properties"
-	"github.com/AssetMantle/schema/go/properties/constants"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -51,7 +52,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
 
-	Mappable := assets.Get(key.NewKey(message.AssetID))
+	Mappable := assets.GetMappable(key.NewKey(message.AssetID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("asset with ID %s not found", message.AssetID.AsString())
 	}

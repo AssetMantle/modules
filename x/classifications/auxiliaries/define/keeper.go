@@ -6,22 +6,23 @@ package define
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/key"
-	"github.com/AssetMantle/modules/x/classifications/mappable"
-	"github.com/AssetMantle/modules/x/classifications/module"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	"github.com/AssetMantle/schema/go/properties/constants"
-	"github.com/AssetMantle/schema/go/properties/utilities"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/classifications/key"
+	"github.com/AssetMantle/modules/x/classifications/mappable"
+	"github.com/AssetMantle/modules/x/classifications/module"
 )
 
 type auxiliaryKeeper struct {
@@ -37,23 +38,23 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	totalWeight := sdkTypes.ZeroInt()
-	for _, property := range append(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...) {
+	for _, property := range append(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get(), auxiliaryRequest.Mutables.GetMutablePropertyList().Get()...) {
 		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
 	}
 	bondAmount := baseData.NewNumberData(auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constants.BondRateProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get().Mul(totalWeight))
 	immutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), bondAmount)))
 
-	if sdkTypes.NewInt(int64(len(immutables.GetImmutablePropertyList().GetList()) + len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()))).GT(auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constants.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()) {
-		return nil, errorConstants.InvalidRequest.Wrapf("total property count %d exceeds maximum %d", len(immutables.GetImmutablePropertyList().GetList())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()), auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constants.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get())
+	if sdkTypes.NewInt(int64(len(immutables.GetImmutablePropertyList().Get()) + len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()))).GT(auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constants.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()) {
+		return nil, errorConstants.InvalidRequest.Wrapf("total property count %d exceeds maximum %d", len(immutables.GetImmutablePropertyList().Get())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()), auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constants.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get())
 	}
 
-	if utilities.IsDuplicate(append(immutables.GetImmutablePropertyList().GetList(), auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()...)) {
-		return nil, errorConstants.InvalidRequest.Wrapf("duplicate properties")
+	if err := baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(append(immutables.GetImmutablePropertyList().Get(), auxiliaryRequest.Mutables.GetMutablePropertyList().Get()...)...)...).ValidateBasic(); err != nil {
+		return nil, errorConstants.InvalidRequest.Wrapf("invalid properties: %s", err.Error())
 	}
 
 	classificationID := baseIDs.NewClassificationID(immutables, auxiliaryRequest.Mutables)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(classificationID))
-	if classifications.Get(key.NewKey(classificationID)) != nil {
+	if classifications.GetMappable(key.NewKey(classificationID)) != nil {
 		return newAuxiliaryResponse(classificationID), errorConstants.EntityAlreadyExists.Wrapf("classification with ID %s already exists", classificationID.AsString())
 	}
 

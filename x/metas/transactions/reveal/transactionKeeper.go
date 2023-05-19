@@ -6,13 +6,14 @@ package reveal
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/metas/key"
-	"github.com/AssetMantle/modules/x/metas/mappable"
 	"github.com/AssetMantle/schema/go/data"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/metas/key"
+	"github.com/AssetMantle/modules/x/metas/mappable"
 )
 
 type transactionKeeper struct {
@@ -33,7 +34,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	dataID := baseIDs.GenerateDataID(message.Data)
 	metas := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(dataID))
 
-	Mappable := metas.Get(key.NewKey(dataID))
+	Mappable := metas.GetMappable(key.NewKey(dataID))
 	if Mappable != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("data with ID %s already exists", dataID)
 	}

@@ -6,15 +6,16 @@ package auxiliaries
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
-	"github.com/stretchr/testify/require"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("supplement").GetName(), baseHelpers.NewAuxiliaries(
+	require.Equal(t, Prototype().GetAuxiliary("supplement").GetName(), baseHelpers.NewAuxiliaries(
 		scrub.Auxiliary,
 		supplement.Auxiliary,
-	).Get("supplement").GetName())
+	).GetAuxiliary("supplement").GetName())
 }

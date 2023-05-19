@@ -6,12 +6,6 @@ package deputize
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
-	"github.com/AssetMantle/modules/x/maintainers/key"
-	"github.com/AssetMantle/modules/x/maintainers/mappable"
-	"github.com/AssetMantle/modules/x/maintainers/module"
-	internalUtilities "github.com/AssetMantle/modules/x/maintainers/utilities"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
@@ -21,8 +15,14 @@ import (
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
-	propertiesUtilities "github.com/AssetMantle/schema/go/properties/utilities"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
+	"github.com/AssetMantle/modules/x/maintainers/key"
+	"github.com/AssetMantle/modules/x/maintainers/mappable"
+	"github.com/AssetMantle/modules/x/maintainers/module"
+	internalUtilities "github.com/AssetMantle/modules/x/maintainers/utilities"
 )
 
 type auxiliaryKeeper struct {
@@ -48,7 +48,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
 
-	Mappable := maintainers.Fetch(key.NewKey(fromMaintainerID)).Get(key.NewKey(fromMaintainerID))
+	Mappable := maintainers.Fetch(key.NewKey(fromMaintainerID)).GetMappable(key.NewKey(fromMaintainerID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("maintainer with ID %s not found", fromMaintainerID.AsString())
 	}
@@ -64,7 +64,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	removeMaintainedPropertyList := fromMaintainer.GetMutables().GetMutablePropertyList()
 
 	// TODO test
-	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.GetList() {
+	for _, maintainedProperty := range auxiliaryRequest.MaintainedProperties.Get() {
 		if !fromMaintainer.MaintainsProperty(maintainedProperty.GetID()) {
 			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have access to maintain property %s", maintainedProperty.GetID().AsString())
 		}
@@ -81,7 +81,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.ToID)),
 		)))
 
-	if Mappable = maintainers.Fetch(key.NewKey(toMaintainerID)).Get(key.NewKey(toMaintainerID)); Mappable == nil {
+	if Mappable = maintainers.Fetch(key.NewKey(toMaintainerID)).GetMappable(key.NewKey(toMaintainerID)); Mappable == nil {
 		if !fromMaintainer.IsPermitted(module.Add) {
 			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the permission to add maintainers")
 		}
@@ -92,7 +92,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the permission to mutate maintainers")
 		}
 
-		maintainedProperties := mappable.GetMaintainer(Mappable).GetMutables().GetMutablePropertyList().Add(propertiesUtilities.AnyPropertyListToPropertyList(auxiliaryRequest.MaintainedProperties.GetList()...)...).Remove(propertiesUtilities.AnyPropertyListToPropertyList(removeMaintainedPropertyList.GetList()...)...)
+		maintainedProperties := mappable.GetMaintainer(Mappable).GetMutables().GetMutablePropertyList().Add(baseLists.AnyPropertiesToProperties(auxiliaryRequest.MaintainedProperties.Get()...)...).Remove(baseLists.AnyPropertiesToProperties(removeMaintainedPropertyList.Get()...)...)
 		maintainers.Mutate(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ToID, auxiliaryRequest.MaintainedClassificationID, maintainedProperties.GetPropertyIDList(), internalUtilities.SetPermissions(auxiliaryRequest.CanMintAsset, auxiliaryRequest.CanBurnAsset, auxiliaryRequest.CanRenumerateAsset, auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanRemoveMaintainer, auxiliaryRequest.CanMutateMaintainer))))
 	}
 

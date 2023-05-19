@@ -6,6 +6,9 @@ package cancel
 import (
 	"context"
 
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/unbond"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
@@ -14,8 +17,6 @@ import (
 	"github.com/AssetMantle/modules/x/orders/mappable"
 	"github.com/AssetMantle/modules/x/orders/module"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -46,7 +47,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.OrderID))
 
-	Mappable := orders.Get(key.NewKey(message.OrderID))
+	Mappable := orders.GetMappable(key.NewKey(message.OrderID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("order with ID %s not found", message.OrderID.AsString())
 	}

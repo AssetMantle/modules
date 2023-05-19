@@ -6,8 +6,6 @@ package verify
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/maintainers/key"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/constants"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
@@ -16,6 +14,9 @@ import (
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/maintainers/key"
 )
 
 type auxiliaryKeeper struct {
@@ -34,7 +35,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(maintainerID))
 
-	if Mappable := maintainers.Get(key.NewKey(maintainerID)); Mappable == nil {
+	if Mappable := maintainers.GetMappable(key.NewKey(maintainerID)); Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("maintainer with ID %s not found", maintainerID.AsString())
 	}
 

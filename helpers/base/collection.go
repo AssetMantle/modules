@@ -6,8 +6,9 @@ package base
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
 	sdkTypesQuery "github.com/cosmos/cosmos-sdk/types/query"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type collection struct {
@@ -21,7 +22,7 @@ type collection struct {
 var _ helpers.Collection = (*collection)(nil)
 
 func (collection collection) GetKey() helpers.Key { return collection.Key }
-func (collection collection) Get(key helpers.Key) helpers.Mappable {
+func (collection collection) GetMappable(key helpers.Key) helpers.Mappable {
 	for _, mappable := range collection.List {
 		if mappable.GetKey().Equals(key) {
 			return mappable
@@ -30,7 +31,7 @@ func (collection collection) Get(key helpers.Key) helpers.Mappable {
 
 	return nil
 }
-func (collection collection) GetList() []helpers.Mappable {
+func (collection collection) Get() []helpers.Mappable {
 	return collection.List
 }
 func (collection collection) Iterate(partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {

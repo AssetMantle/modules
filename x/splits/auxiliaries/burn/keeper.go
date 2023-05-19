@@ -6,12 +6,13 @@ package burn
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/key"
-	"github.com/AssetMantle/modules/x/splits/mappable"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/splits/key"
+	"github.com/AssetMantle/modules/x/splits/mappable"
 )
 
 type auxiliaryKeeper struct {
@@ -25,7 +26,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	splitID := baseIDs.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
 	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(splitID))
 
-	Mappable := splits.Get(key.NewKey(splitID))
+	Mappable := splits.GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("split with ID %s not found", splitID.AsString())
 	}

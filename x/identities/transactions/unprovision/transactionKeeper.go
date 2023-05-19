@@ -6,12 +6,13 @@ package unprovision
 import (
 	"context"
 
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -30,7 +31,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	identityID := message.IdentityID
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 
-	Mappable := identities.Get(key.NewKey(identityID))
+	Mappable := identities.GetMappable(key.NewKey(identityID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", identityID.AsString())
 	}

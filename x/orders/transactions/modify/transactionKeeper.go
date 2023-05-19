@@ -6,6 +6,16 @@ package modify
 import (
 	"context"
 
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents/base"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	"github.com/AssetMantle/schema/go/properties/constants"
+	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
@@ -14,14 +24,6 @@ import (
 	"github.com/AssetMantle/modules/x/orders/mappable"
 	"github.com/AssetMantle/modules/x/orders/module"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/constants"
-	"github.com/AssetMantle/schema/go/properties/utilities"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -52,29 +54,32 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.OrderID))
 
-	Mappable := orders.Get(key.NewKey(message.OrderID))
+	Mappable := orders.GetMappable(key.NewKey(message.OrderID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("order with ID %s not found", message.OrderID.AsString())
 	}
 	order := mappable.GetOrder(Mappable)
-	makerOwnableSplit, _ := sdkTypes.NewDecFromStr(message.MakerOwnableSplit)
+	makerOwnableSplit, ok := sdkTypes.NewIntFromString(message.MakerOwnableSplit)
+	if !ok {
+		return nil, errorConstants.IncorrectFormat.Wrapf("invalid maker ownable split %s", message.MakerOwnableSplit)
+	}
 	transferMakerOwnableSplit := makerOwnableSplit.Sub(order.GetMakerOwnableSplit())
 
-	if transferMakerOwnableSplit.LT(sdkTypes.ZeroDec()) {
+	if transferMakerOwnableSplit.LT(sdkTypes.ZeroInt()) {
 		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), transferMakerOwnableSplit.Abs())); err != nil {
 			return nil, err
 		}
-	} else if transferMakerOwnableSplit.GT(sdkTypes.ZeroDec()) {
+	} else if transferMakerOwnableSplit.GT(sdkTypes.ZeroInt()) {
 		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, module.ModuleIdentityID, order.GetMakerOwnableID(), transferMakerOwnableSplit)); err != nil {
 			return nil, err
 		}
 	}
 
 	mutableMetaProperties := message.MutableMetaProperties.
-		Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewDecData(makerOwnableSplit))).
+		Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(makerOwnableSplit))).
 		Add(baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+sdkTypes.UnwrapSDKContext(context).BlockHeight()))))
 
-	updatedMutables := order.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(append(mutableMetaProperties.GetList(), message.MutableProperties.GetList()...)...)...)
+	updatedMutables := order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(append(mutableMetaProperties.Get(), message.MutableProperties.Get()...)...)...)
 
 	if _, err := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(order.GetClassificationID(), order.GetImmutables(), updatedMutables)); err != nil {
 		return nil, err

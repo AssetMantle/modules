@@ -4,6 +4,6 @@
 package helpers
 
 type Transactions interface {
-	Get(string) Transaction
-	GetList() []Transaction
+	Get() []Transaction
+	GetTransaction(string) Transaction
 }

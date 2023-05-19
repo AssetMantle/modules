@@ -6,10 +6,6 @@ package super
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/maintainers/key"
-	"github.com/AssetMantle/modules/x/maintainers/mappable"
-	"github.com/AssetMantle/modules/x/maintainers/utilities"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	"github.com/AssetMantle/schema/go/documents/constants"
@@ -19,6 +15,11 @@ import (
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/maintainers/key"
+	"github.com/AssetMantle/modules/x/maintainers/mappable"
+	"github.com/AssetMantle/modules/x/maintainers/utilities"
 )
 
 type auxiliaryKeeper struct {
@@ -36,7 +37,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		)))
 
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(maintainerID))
-	if maintainers.Get(key.NewKey(maintainerID)) != nil {
+	if maintainers.GetMappable(key.NewKey(maintainerID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("maintainer with ID %s already exists", maintainerID)
 	}
 

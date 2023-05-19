@@ -6,14 +6,15 @@ package unbond
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/key"
-	"github.com/AssetMantle/modules/x/classifications/mappable"
-	"github.com/AssetMantle/modules/x/classifications/module"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/classifications/key"
+	"github.com/AssetMantle/modules/x/classifications/mappable"
+	"github.com/AssetMantle/modules/x/classifications/module"
 )
 
 type auxiliaryKeeper struct {
@@ -29,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.classificationID))
 
-	Mappable := classifications.Get(key.NewKey(auxiliaryRequest.classificationID))
+	Mappable := classifications.GetMappable(key.NewKey(auxiliaryRequest.classificationID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("classification with ID %s not found", auxiliaryRequest.classificationID.AsString())
 	}

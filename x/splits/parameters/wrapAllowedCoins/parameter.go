@@ -4,7 +4,6 @@
 package wrapAllowedCoins
 
 import (
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
@@ -14,6 +13,8 @@ import (
 	"github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()
@@ -24,7 +25,7 @@ func validator(i interface{}) error {
 	case string:
 		if data, err := baseData.PrototypeListData().FromString(value); err != nil {
 			return err
-		} else if err = ValidateCoins(data.(*baseData.ListData)); err != nil {
+		} else if err = ValidateWrapAllowedCoinsProperty(data.(*baseData.ListData)); err != nil {
 			return err
 		} else {
 			return data.(*baseData.ListData).ValidateBasic()
@@ -34,7 +35,7 @@ func validator(i interface{}) error {
 	}
 }
 
-func ValidateCoins(listData data.ListData) error {
+func ValidateWrapAllowedCoinsProperty(listData data.ListData) error {
 	for _, anyData := range listData.Get() {
 		if idData, ok := anyData.Get().(*baseData.IDData); !ok {
 			return errorConstants.IncorrectFormat

@@ -6,6 +6,8 @@ package transactions
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/assets/transactions/burn"
 	"github.com/AssetMantle/modules/x/assets/transactions/define"
@@ -14,7 +16,6 @@ import (
 	"github.com/AssetMantle/modules/x/assets/transactions/mutate"
 	"github.com/AssetMantle/modules/x/assets/transactions/renumerate"
 	"github.com/AssetMantle/modules/x/assets/transactions/revoke"
-	"github.com/stretchr/testify/require"
 )
 
 func TestPrototype(t *testing.T) {
@@ -26,6 +27,6 @@ func TestPrototype(t *testing.T) {
 		renumerate.Transaction,
 		revoke.Transaction)
 
-	require.Equal(t, Prototype().Get(""), want.Get(""))
+	require.Equal(t, Prototype().GetTransaction(""), want.GetTransaction(""))
 
 }

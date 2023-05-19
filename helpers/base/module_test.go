@@ -8,9 +8,6 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/utilities/test"
-	baseTestUtilities "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
@@ -21,6 +18,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/require"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/utilities/test"
 )
 
 // TODO: Add grpc gateway handling for tests
@@ -93,7 +93,7 @@ func TestModule(t *testing.T) {
 
 	require.Equal(t, "test", Module.QuerierRoute())
 
-	encodedRequest, err := Module.queries.Get("testQuery").(query).requestPrototype().Encode()
+	encodedRequest, err := Module.queries.GetQuery("testQuery").(query).requestPrototype().Encode()
 	require.Nil(t, err)
 
 	queryResponse, err := Module.LegacyQuerierHandler(codec.GetLegacyAmino())(sdkTypes.UnwrapSDKContext(context), []string{"testQuery"}, abciTypes.RequestQuery{Data: encodedRequest})

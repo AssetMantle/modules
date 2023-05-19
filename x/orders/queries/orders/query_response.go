@@ -25,7 +25,7 @@ func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
 func newQueryResponse(collection helpers.Collection) *QueryResponse {
-	list := mappable.MappablesFromInterface(collection.GetList())
+	list := mappable.MappablesFromInterface(collection.Get())
 
 	return &QueryResponse{
 		List: list,

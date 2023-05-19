@@ -6,21 +6,22 @@ package queries
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/splits/queries/ownable"
 	"github.com/AssetMantle/modules/x/splits/queries/split"
-	"github.com/stretchr/testify/require"
 )
 
 func TestPrototype(t *testing.T) {
 	require.Panics(t, func() {
-		require.Equal(t, Prototype().Get("splits").GetName(), baseHelpers.NewQueries(
+		require.Equal(t, Prototype().GetQuery("splits").GetName(), baseHelpers.NewQueries(
 			split.Query,
 			ownable.Query,
-		).Get("splits").GetName())
-		require.Equal(t, Prototype().Get("ownable").GetName(), baseHelpers.NewQueries(
+		).GetQuery("splits").GetName())
+		require.Equal(t, Prototype().GetQuery("ownable").GetName(), baseHelpers.NewQueries(
 			split.Query,
 			ownable.Query,
-		).Get("ownable").GetName())
+		).GetQuery("ownable").GetName())
 	})
 }

@@ -4,16 +4,21 @@
 package issue
 
 import (
-	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 var _ helpers.TransactionResponse = (*TransactionResponse)(nil)
 
-func (*TransactionResponse) GetResult() *sdkTypes.Result {
-	return &sdkTypes.Result{}
+func (transactionResponse *TransactionResponse) GetResult() *sdkTypes.Result {
+	return &sdkTypes.Result{
+		Data: []byte(transactionResponse.IdentityID.AsString()),
+	}
 }
 
-func newTransactionResponse(identityID string) *TransactionResponse {
-	return &TransactionResponse{identityID}
+func newTransactionResponse(identityID ids.IdentityID) *TransactionResponse {
+	return &TransactionResponse{identityID.(*baseIDs.IdentityID)}
 }

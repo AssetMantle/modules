@@ -6,13 +6,14 @@ package queries
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/queries/order"
-	"github.com/stretchr/testify/require"
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("orders").GetName(), baseHelpers.NewQueries(
+	require.Equal(t, Prototype().GetQuery("orders").GetName(), baseHelpers.NewQueries(
 		order.Query,
-	).Get("orders").GetName())
+	).GetQuery("orders").GetName())
 }

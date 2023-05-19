@@ -8,13 +8,14 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids/base"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
+	"github.com/AssetMantle/modules/utilities/random"
 )
 
 func GenerateRandomData(r *rand.Rand, randomPositiveInt int) data.Data {
@@ -55,7 +56,7 @@ func GenerateRandomListData(r *rand.Rand) data.ListData {
 	listData := baseData.PrototypeListData()
 
 	for i := 0; i < r.Intn(10); i++ {
-		listData.Add(GenerateRandomData(r, listDataType))
+		listData.Add(GenerateRandomData(r, listDataType).(data.ListableData))
 	}
 
 	return listData
