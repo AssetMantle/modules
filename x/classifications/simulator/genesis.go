@@ -6,6 +6,14 @@ package simulator
 import (
 	"math/rand"
 
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
+
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
@@ -13,13 +21,6 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/mappable"
 	classificationsModule "github.com/AssetMantle/modules/x/classifications/module"
 	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/documents/base"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/module"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -41,7 +42,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMappable(base.NewClassification(immutables, mutables))
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(bondRate.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(bondRate.Parameter.Mutate(Data)))
 
 	simulationState.GenState[classificationsModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

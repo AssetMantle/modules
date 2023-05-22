@@ -8,15 +8,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/x/orders/key"
-	"github.com/AssetMantle/modules/x/orders/mappable"
-	"github.com/AssetMantle/modules/x/orders/parameters"
-	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
-	schema "github.com/AssetMantle/schema/go"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
@@ -35,6 +26,15 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/x/orders/key"
+	"github.com/AssetMantle/modules/x/orders/mappable"
+	"github.com/AssetMantle/modules/x/orders/parameters"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 )
 
 var (
@@ -49,7 +49,7 @@ type TestKeepers struct {
 
 func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 

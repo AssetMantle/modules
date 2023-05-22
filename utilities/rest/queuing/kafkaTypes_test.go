@@ -6,18 +6,18 @@ package queuing
 import (
 	"testing"
 
-	"github.com/AssetMantle/modules/utilities/random"
-	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/utilities/random"
 )
 
 func Test_Kafka_Types(t *testing.T) {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 

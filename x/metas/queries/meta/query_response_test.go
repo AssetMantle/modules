@@ -6,9 +6,6 @@ package meta
 import (
 	"testing"
 
-	"github.com/AssetMantle/modules/x/metas/common"
-	"github.com/AssetMantle/modules/x/metas/mapper"
-	schema "github.com/AssetMantle/schema/go"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -18,11 +15,14 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/x/metas/common"
+	"github.com/AssetMantle/modules/x/metas/mapper"
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 
