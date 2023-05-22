@@ -4,7 +4,7 @@ deps:
   - remote: buf.build
     owner: assetmantle
     repository: schema
-    commit: ad88b5a479db43d0a9ae7009e8e864f0
+    commit: cd5f036eb13c4d118dc3b868ed1f9cf1
   - remote: buf.build
     owner: cosmos
     repository: cosmos-proto
@@ -12,7 +12,7 @@ deps:
   - remote: buf.build
     owner: cosmos
     repository: cosmos-sdk
-    commit: 1706a742a274436cb0eabf4950ed85cf
+    commit: e7a85cef453e4b999ad9aff8714ae05f
   - remote: buf.build
     owner: cosmos
     repository: gogo-proto

@@ -3,7 +3,7 @@ package assetmantle.modules.splits.genesis;
 
 import "gogoproto/gogo.proto";
 import "splits/mappable/mappable.proto";
-import "parameters/base/parameter_list.proto";
+import "lists/base/parameter_list.proto";
 
 message Genesis {
   option (gogoproto.goproto_getters) = false;
