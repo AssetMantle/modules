@@ -7,10 +7,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/metas/mapper"
-	"github.com/AssetMantle/modules/x/metas/parameters"
-	schema "github.com/AssetMantle/schema/go"
+	schemaCodec "github.com/AssetMantle/schema/go/codec"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -20,11 +17,15 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/metas/mapper"
+	"github.com/AssetMantle/modules/x/metas/parameters"
 )
 
 func CreateTestInput(t *testing.T) context.Context {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterSchemaLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 

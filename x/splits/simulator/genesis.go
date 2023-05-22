@@ -6,6 +6,16 @@ package simulator
 import (
 	"math/rand"
 
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	"github.com/AssetMantle/schema/go/types/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
@@ -13,15 +23,6 @@ import (
 	"github.com/AssetMantle/modules/x/splits/mappable"
 	splitsModule "github.com/AssetMantle/modules/x/splits/module"
 	"github.com/AssetMantle/modules/x/splits/parameters/wrapAllowedCoins"
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"github.com/AssetMantle/schema/go/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/module"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -43,7 +44,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMappable(base.NewSplit(baseIDs.NewIdentityID(baseIDs.NewClassificationID(immutables, mutables), immutables), baseIDs.NewCoinID(baseIDs.NewStringID(simulationTypes.RandStringOfLength(simulationState.Rand, simulationState.Rand.Intn(99)))), simulationTypes.RandomAmount(simulationState.Rand, sdkTypes.NewInt(9999999999))))
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(wrapAllowedCoins.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(wrapAllowedCoins.Parameter.Mutate(Data)))
 
 	simulationState.GenState[splitsModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

@@ -4,15 +4,17 @@
 package transaction
 
 import (
-	"github.com/AssetMantle/modules/helpers"
-	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/codec"
+
+	schemaCodec "github.com/AssetMantle/schema/go/codec"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func RegisterLegacyAminoCodec(messagePrototype func() helpers.Message) *codec.LegacyAmino {
 	Codec := codec.NewLegacyAmino()
 	messagePrototype().RegisterLegacyAminoCodec(Codec)
-	schema.RegisterLegacyAminoCodec(Codec)
+	schemaCodec.RegisterLegacyAminoCodec(Codec)
 	Codec.Seal()
 
 	return Codec

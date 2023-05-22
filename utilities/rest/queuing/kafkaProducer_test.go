@@ -6,7 +6,6 @@ package queuing
 import (
 	"testing"
 
-	schema "github.com/AssetMantle/schema/go"
 	"github.com/Shopify/sarama"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -17,7 +16,7 @@ func TestKafkaProducerDeliverMessage(t *testing.T) {
 	testProducer := []string{"testProducer"}
 	var legacyAmino = codec.NewLegacyAmino()
 	require.Panics(t, func() {
-		schema.RegisterLegacyAminoCodec(legacyAmino)
+		schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 		std.RegisterLegacyAminoCodec(legacyAmino)
 
 		testKafkaMessage := kafkaMsg{Msg: nil}

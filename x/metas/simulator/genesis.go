@@ -7,6 +7,12 @@ import (
 	"math"
 	"math/rand"
 
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/lists/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
+
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
@@ -14,11 +20,6 @@ import (
 	"github.com/AssetMantle/modules/x/metas/mappable"
 	metasModule "github.com/AssetMantle/modules/x/metas/module"
 	"github.com/AssetMantle/modules/x/metas/parameters/revealEnabled"
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/module"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -38,7 +39,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMappable(baseSimulation.GenerateRandomData(simulationState.Rand, int(math.Abs(float64(simulationState.Rand.Int())))))
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(revealEnabled.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, base.NewParameterList(revealEnabled.Parameter.Mutate(Data)))
 
 	simulationState.GenState[metasModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

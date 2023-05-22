@@ -6,6 +6,15 @@ package simulator
 import (
 	"math/rand"
 
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents/base"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
+
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
@@ -13,14 +22,6 @@ import (
 	"github.com/AssetMantle/modules/x/orders/mappable"
 	ordersModule "github.com/AssetMantle/modules/x/orders/module"
 	"github.com/AssetMantle/modules/x/orders/parameters/maxOrderLife"
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/documents/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/module"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -42,7 +43,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMappable(base.NewOrder(baseIDs.NewClassificationID(immutables, mutables), immutables, mutables))
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(maxOrderLife.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(maxOrderLife.Parameter.Mutate(Data)))
 
 	simulationState.GenState[ordersModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

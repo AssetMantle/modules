@@ -7,16 +7,18 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
+	"github.com/AssetMantle/schema/go/lists"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/parameters"
-	"github.com/AssetMantle/schema/go/parameters/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"golang.org/x/net/context"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type parameterManager struct {
@@ -27,12 +29,12 @@ type parameterManager struct {
 
 var _ helpers.ParameterManager = (*parameterManager)(nil)
 
-func (parameterManager parameterManager) Get() parameters.ParameterList {
+func (parameterManager parameterManager) Get() lists.ParameterList {
 	parameters := make([]parameters.Parameter, len(parameterManager.validatableParameters))
 	for i, validatableParameter := range parameterManager.validatableParameters {
 		parameters[i] = validatableParameter.GetParameter()
 	}
-	return base.NewParameterList(parameters...)
+	return baseLists.NewParameterList(parameters...)
 }
 func (parameterManager parameterManager) GetParameter(propertyID ids.PropertyID) parameters.Parameter {
 	if validatableParameter := parameterManager.GetValidatableParameter(propertyID); validatableParameter != nil {
@@ -72,7 +74,7 @@ func (parameterManager parameterManager) Fetch(context context.Context) helpers.
 
 	return parameterManager
 }
-func (parameterManager parameterManager) Set(context context.Context, parameterList parameters.ParameterList) {
+func (parameterManager parameterManager) Set(context context.Context, parameterList lists.ParameterList) {
 	for _, parameter := range parameterList.Get() {
 		parameterManager.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData().Get().AsString())
 	}

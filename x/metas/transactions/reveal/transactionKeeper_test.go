@@ -8,12 +8,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/metas/key"
-	"github.com/AssetMantle/modules/x/metas/mappable"
-	"github.com/AssetMantle/modules/x/metas/parameters"
-	schema "github.com/AssetMantle/schema/go"
 	"github.com/AssetMantle/schema/go/data/utilities"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -26,6 +20,12 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/metas/key"
+	"github.com/AssetMantle/modules/x/metas/mappable"
+	"github.com/AssetMantle/modules/x/metas/parameters"
 )
 
 type TestKeepers struct {
@@ -34,7 +34,7 @@ type TestKeepers struct {
 
 func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 

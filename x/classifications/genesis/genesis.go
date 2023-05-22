@@ -3,13 +3,14 @@ package genesis
 import (
 	"context"
 
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/lists"
+	"github.com/AssetMantle/schema/go/lists/base"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/AssetMantle/modules/helpers"
 	mappable2 "github.com/AssetMantle/modules/x/classifications/mappable"
 	"github.com/AssetMantle/modules/x/classifications/parameters"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	parametersSchema "github.com/AssetMantle/schema/go/parameters"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 )
 
 var _ helpers.Genesis = (*Genesis)(nil)
@@ -82,7 +83,7 @@ func (genesis *Genesis) Decode(jsonCodec sdkCodec.JSONCodec, byte []byte) helper
 
 	return genesis
 }
-func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList parametersSchema.ParameterList) helpers.Genesis {
+func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList lists.ParameterList) helpers.Genesis {
 	if len(mappables) == 0 {
 		genesis.Mappables = genesis.Default().(*Genesis).Mappables
 	} else {
@@ -100,7 +101,7 @@ func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList p
 				}
 			}
 		}
-		genesis.ParameterList = baseParameters.NewParameterList(parameters...).(*baseParameters.ParameterList)
+		genesis.ParameterList = base.NewParameterList(parameters...).(*base.ParameterList)
 	}
 
 	return genesis
@@ -109,6 +110,6 @@ func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList p
 func Prototype() helpers.Genesis {
 	return &Genesis{
 		Mappables:     []*mappable2.Mappable{},
-		ParameterList: parameters.Prototype().Get().(*baseParameters.ParameterList),
+		ParameterList: parameters.Prototype().Get().(*base.ParameterList),
 	}
 }
