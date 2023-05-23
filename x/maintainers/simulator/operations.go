@@ -7,11 +7,7 @@ import (
 	"math/rand"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/cosmos/cosmos-sdk/baseapp"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
@@ -24,17 +20,5 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 		},
 	)
 
-	//return simulation.WeightedOperations{
-	//	simulation.NewWeightedOperation(
-	//		weightMsg,
-	//		simulateMsg(),
-	//	),
-	//}
 	return nil
-}
-
-func simulateMsg() simulationTypes.Operation {
-	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		return simulationTypes.NewOperationMsg(nil, true, "", base.CodecPrototype().GetProtoCodec()), nil, nil
-	}
 }
