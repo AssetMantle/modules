@@ -50,6 +50,8 @@ github.com/99designs/keyring v1.2.1/go.mod h1:fc+wB5KTk9wQ9sDx0kFXB3A0MaeGHM9AwR
 github.com/AndreasBriese/bbloom v0.0.0-20190306092124-e2d15f34fcf9/go.mod h1:bOvUY6CB00SOBii9/FifXqc0awNKxLFCL/+pkDPuyl8=
 github.com/AssetMantle/schema/go v0.0.0-20230522100841-6e470be18c0e h1:6cxb4DBdQX/TxOXjK+aRd+xlhgVI+0I6f9y6DDaRTTQ=
 github.com/AssetMantle/schema/go v0.0.0-20230522100841-6e470be18c0e/go.mod h1:UZAos6rtadqlwU1LaLygza8isTrcnAKNY+dwNNGlBhA=
+github.com/AssetMantle/schema/go v0.0.0-20230523112401-12b8011fdacb h1:jcAHjERIb58ILwch0L5iIA/K4W0Xe4O5NrrXMPvU86w=
+github.com/AssetMantle/schema/go v0.0.0-20230523112401-12b8011fdacb/go.mod h1:UZAos6rtadqlwU1LaLygza8isTrcnAKNY+dwNNGlBhA=
 github.com/Azure/azure-pipeline-go v0.2.1/go.mod h1:UGSo8XybXnIGZ3epmeBw7Jdz+HiUVpqIlpz/HKHylF4=
 github.com/Azure/azure-pipeline-go v0.2.2/go.mod h1:4rQ/NZncSvGqNkkOsNpOU1tgoNuIlp9AfUH5G1tvCHc=
 github.com/Azure/azure-storage-blob-go v0.7.0/go.mod h1:f9YQKtsG1nMisotuTPpO0tjNuEjKRYAcJU8/ydDI++4=
