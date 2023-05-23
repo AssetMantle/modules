@@ -33,11 +33,11 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 
 	return simulation.WeightedOperations{
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateSendMsg(module),
 		),
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateWrapAndUnwrapMsg(module),
 		),
 	}

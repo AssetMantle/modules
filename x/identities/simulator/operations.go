@@ -45,31 +45,31 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 
 	return simulation.WeightedOperations{
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateNubMsg(module),
 		),
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateDefineMsg(module),
 		),
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateIssueMsg(module),
 		),
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateProvisionAndUnprovisionMsg(module),
 		),
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateDeputizeAndRevokeMsg(module),
 		),
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateQuashMsg(module),
 		),
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateMutateMsg(module),
 		),
 	}

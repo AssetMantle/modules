@@ -43,19 +43,19 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 
 	return simulation.WeightedOperations{
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateDefineMsg(module),
 		),
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateMakeMsg(module),
 		),
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateCancelMsg(module),
 		),
 		simulation.NewWeightedOperation(
-			weightMsg+1000,
+			weightMsg,
 			simulateTakeMsg(module),
 		),
 	}
