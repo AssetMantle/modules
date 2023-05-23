@@ -4,8 +4,7 @@
 package make
 
 import (
-	"github.com/AssetMantle/modules/helpers"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	"github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists"
@@ -15,6 +14,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 var _ helpers.Message = (*Message)(nil)
@@ -54,10 +56,10 @@ func (message *Message) ValidateBasic() error {
 	if err := message.MutableProperties.ValidateBasic(); err != nil {
 		return err
 	}
-	if _, err := sdkTypes.NewDecFromStr(message.MakerOwnableSplit); err != nil {
-		return err
-	} else if _, err := sdkTypes.NewDecFromStr(message.TakerOwnableSplit); err != nil {
-		return err
+	if _, ok := sdkTypes.NewIntFromString(message.MakerOwnableSplit); !ok {
+		return constants.IncorrectFormat.Wrapf("maker ownable split %s is not a valid integer", message.MakerOwnableSplit)
+	} else if _, ok := sdkTypes.NewIntFromString(message.TakerOwnableSplit); ok {
+		return constants.IncorrectFormat.Wrapf("taker ownable split %s is not a valid integer", message.TakerOwnableSplit)
 	}
 	return nil
 }
@@ -86,7 +88,7 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, takerID ids.IdentityID, makerOwnableID ids.AnyOwnableID, takerOwnableID ids.AnyOwnableID, expiresIn typesSchema.Height, makerOwnableSplit sdkTypes.Dec, takerOwnableSplit sdkTypes.Dec, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, takerID ids.IdentityID, makerOwnableID ids.AnyOwnableID, takerOwnableID ids.AnyOwnableID, expiresIn typesSchema.Height, makerOwnableSplit sdkTypes.Int, takerOwnableSplit sdkTypes.Int, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 
 	return &Message{
 		From:                    from.String(),
