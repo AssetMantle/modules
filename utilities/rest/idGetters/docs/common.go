@@ -1,10 +1,11 @@
 package docs
 
 import (
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	"net/http"
 
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+
+	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"

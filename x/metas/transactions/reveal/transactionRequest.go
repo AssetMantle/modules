@@ -6,15 +6,16 @@ package reveal
 import (
 	"encoding/json"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/constants"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	"github.com/AssetMantle/schema/go/data/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 type transactionRequest struct {

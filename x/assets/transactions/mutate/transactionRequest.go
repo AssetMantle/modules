@@ -6,9 +6,7 @@ package mutate
 import (
 	"encoding/json"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/constants"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/utilities"
 	"github.com/asaskevich/govalidator"
@@ -16,6 +14,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 type transactionRequest struct {
