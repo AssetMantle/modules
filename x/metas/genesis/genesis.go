@@ -3,13 +3,14 @@ package genesis
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	mappable2 "github.com/AssetMantle/modules/x/metas/mappable"
-	"github.com/AssetMantle/modules/x/metas/parameters"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	parametersSchema "github.com/AssetMantle/schema/go/parameters"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
+	"github.com/AssetMantle/schema/go/lists"
+	"github.com/AssetMantle/schema/go/lists/base"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/metas/mappable"
+	"github.com/AssetMantle/modules/x/metas/parameters"
 )
 
 var _ helpers.Genesis = (*Genesis)(nil)
@@ -82,11 +83,11 @@ func (genesis *Genesis) Decode(jsonCodec sdkCodec.JSONCodec, byte []byte) helper
 
 	return genesis
 }
-func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList parametersSchema.ParameterList) helpers.Genesis {
+func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList lists.ParameterList) helpers.Genesis {
 	if len(mappables) == 0 {
 		genesis.Mappables = genesis.Default().(*Genesis).Mappables
 	} else {
-		genesis.Mappables = mappable2.MappablesFromInterface(mappables)
+		genesis.Mappables = mappable.MappablesFromInterface(mappables)
 	}
 
 	if len(parameterList.Get()) == 0 {
@@ -100,7 +101,7 @@ func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList p
 				}
 			}
 		}
-		genesis.ParameterList = baseParameters.NewParameterList(parameters...).(*baseParameters.ParameterList)
+		genesis.ParameterList = base.NewParameterList(parameters...).(*base.ParameterList)
 	}
 
 	return genesis
@@ -108,7 +109,7 @@ func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList p
 
 func Prototype() helpers.Genesis {
 	return &Genesis{
-		Mappables:     []*mappable2.Mappable{},
-		ParameterList: parameters.Prototype().Get().(*baseParameters.ParameterList),
+		Mappables:     []*mappable.Mappable{},
+		ParameterList: parameters.Prototype().Get().(*base.ParameterList),
 	}
 }

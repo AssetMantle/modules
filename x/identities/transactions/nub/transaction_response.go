@@ -5,6 +5,8 @@ package nub
 
 import (
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -12,10 +14,9 @@ var _ helpers.TransactionResponse = (*TransactionResponse)(nil)
 
 func (transactionResponse *TransactionResponse) GetResult() *sdkTypes.Result {
 	return &sdkTypes.Result{
-		Data: []byte(transactionResponse.NubID),
+		Data: []byte(transactionResponse.NubID.AsString()),
 	}
 }
-
-func newTransactionResponse(nubID string) *TransactionResponse {
-	return &TransactionResponse{nubID}
+func newTransactionResponse(nubID ids.IdentityID) *TransactionResponse {
+	return &TransactionResponse{nubID.(*baseIDs.IdentityID)}
 }

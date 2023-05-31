@@ -23,18 +23,18 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.ClassificationID))
 
-	Mappable := classifications.Get(key.NewKey(auxiliaryRequest.ClassificationID))
+	Mappable := classifications.GetMappable(key.NewKey(auxiliaryRequest.ClassificationID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("classification with ID %s not found", auxiliaryRequest.ClassificationID.AsString())
 	}
 	classification := mappable.GetClassification(Mappable)
 
 	if auxiliaryRequest.Immutables != nil {
-		if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().GetList()) != len(classification.GetImmutables().GetImmutablePropertyList().GetList()) {
+		if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) != len(classification.GetImmutables().GetImmutablePropertyList().Get()) {
 			return nil, errorConstants.IncorrectFormat
 		}
 
-		for _, immutableProperty := range classification.GetImmutables().GetImmutablePropertyList().GetList() {
+		for _, immutableProperty := range classification.GetImmutables().GetImmutablePropertyList().Get() {
 			if property := auxiliaryRequest.Immutables.GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) != 0 && property.GetDataID().GetHashID().Compare(immutableProperty.GetDataID().GetHashID()) != 0 {
 				return nil, errorConstants.IncorrectFormat
 			}
@@ -42,11 +42,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	}
 
 	if auxiliaryRequest.Mutables != nil {
-		if len(auxiliaryRequest.Mutables.GetMutablePropertyList().GetList()) != len(classification.GetMutables().GetMutablePropertyList().GetList()) {
+		if len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()) != len(classification.GetMutables().GetMutablePropertyList().Get()) {
 			return nil, errorConstants.IncorrectFormat
 		}
 
-		for _, mutableProperty := range classification.GetMutables().GetMutablePropertyList().GetList() {
+		for _, mutableProperty := range classification.GetMutables().GetMutablePropertyList().Get() {
 			if property := auxiliaryRequest.Mutables.GetMutablePropertyList().GetProperty(mutableProperty.GetID()); property == nil {
 				return nil, errorConstants.IncorrectFormat
 			}

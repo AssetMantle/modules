@@ -25,7 +25,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	splitID := baseIDs.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
 	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(splitID))
 
-	Mappable := splits.Get(key.NewKey(splitID))
+	Mappable := splits.GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("split with ID %s not found", splitID.AsString())
 	}

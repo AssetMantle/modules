@@ -11,7 +11,7 @@ type transactions struct {
 
 var _ helpers.Transactions = (*transactions)(nil)
 
-func (transactions transactions) Get(name string) helpers.Transaction {
+func (transactions transactions) GetTransaction(name string) helpers.Transaction {
 	for _, transaction := range transactions.transactionList {
 		if transaction.GetName() == name {
 			return transaction
@@ -21,7 +21,7 @@ func (transactions transactions) Get(name string) helpers.Transaction {
 	return nil
 }
 
-func (transactions transactions) GetList() []helpers.Transaction {
+func (transactions transactions) Get() []helpers.Transaction {
 	return transactions.transactionList
 }
 

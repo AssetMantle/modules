@@ -1,14 +1,15 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/helpers"
-	schema "github.com/AssetMantle/schema/go"
+	schemaCodec "github.com/AssetMantle/schema/go/codec"
 	sdkClient "github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkCodecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/std"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth/tx"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type codec struct {
@@ -33,7 +34,7 @@ func (codec codec) Initialize(moduleBasicManager sdkModuleTypes.BasicManager) he
 	std.RegisterLegacyAminoCodec(codec.legacyAmino)
 	std.RegisterInterfaces(codec.interfaceRegistry)
 	helpers.RegisterLegacyAminoCodec(codec.legacyAmino)
-	schema.RegisterLegacyAminoCodec(codec.legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(codec.legacyAmino)
 	moduleBasicManager.RegisterLegacyAminoCodec(codec.legacyAmino)
 	moduleBasicManager.RegisterInterfaces(codec.interfaceRegistry)
 	return codec

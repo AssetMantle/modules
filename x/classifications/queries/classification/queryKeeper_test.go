@@ -6,12 +6,6 @@ package classification
 import (
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/key"
-	"github.com/AssetMantle/modules/x/classifications/mappable"
-	"github.com/AssetMantle/modules/x/classifications/parameters"
-	schema "github.com/AssetMantle/schema/go"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/utilities"
@@ -26,11 +20,17 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/classifications/key"
+	"github.com/AssetMantle/modules/x/classifications/mappable"
+	"github.com/AssetMantle/modules/x/classifications/parameters"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 
@@ -77,6 +77,6 @@ func Test_Query_Keeper_Classification(t *testing.T) {
 	keepers.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(baseDocuments.NewClassification(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))))
 
 	testQueryRequest := newQueryRequest(classificationID)
-	require.Equal(t, &QueryResponse{Success: true, Error: "", List: mappable.MappablesFromInterface(keepers.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Fetch(key.NewKey(classificationID)).GetList())}, keepers.(queryKeeper).Enquire(sdkTypes.WrapSDKContext(context), testQueryRequest))
+	require.Equal(t, &QueryResponse{Success: true, Error: "", List: mappable.MappablesFromInterface(keepers.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Fetch(key.NewKey(classificationID)).Get())}, keepers.(queryKeeper).Enquire(sdkTypes.WrapSDKContext(context), testQueryRequest))
 
 }

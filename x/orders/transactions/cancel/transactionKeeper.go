@@ -46,7 +46,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.OrderID))
 
-	Mappable := orders.Get(key.NewKey(message.OrderID))
+	Mappable := orders.GetMappable(key.NewKey(message.OrderID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("order with ID %s not found", message.OrderID.AsString())
 	}

@@ -26,6 +26,6 @@ func TestPrototype(t *testing.T) {
 		renumerate.Transaction,
 		revoke.Transaction)
 
-	require.Equal(t, Prototype().Get(""), want.Get(""))
+	require.Equal(t, Prototype().GetTransaction(""), want.GetTransaction(""))
 
 }

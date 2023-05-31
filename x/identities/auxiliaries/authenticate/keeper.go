@@ -24,7 +24,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	Mappable := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.IdentityID)).Get(key.NewKey(auxiliaryRequest.IdentityID))
+	Mappable := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.IdentityID)).GetMappable(key.NewKey(auxiliaryRequest.IdentityID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", auxiliaryRequest.IdentityID.AsString())
 	}

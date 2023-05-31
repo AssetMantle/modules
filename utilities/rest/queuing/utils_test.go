@@ -6,7 +6,6 @@ package queuing
 import (
 	"testing"
 
-	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -28,7 +27,7 @@ func Test_Rest_Utils(t *testing.T) {
 	require.Equal(t, nil, error3)
 
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 

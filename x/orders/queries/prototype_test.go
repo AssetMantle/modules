@@ -12,7 +12,7 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("orders").GetName(), baseHelpers.NewQueries(
+	require.Equal(t, Prototype().GetQuery("orders").GetName(), baseHelpers.NewQueries(
 		order.Query,
-	).Get("orders").GetName())
+	).GetQuery("orders").GetName())
 }

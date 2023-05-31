@@ -8,14 +8,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
-	"github.com/AssetMantle/modules/x/identities/key"
-	"github.com/AssetMantle/modules/x/identities/mappable"
-	"github.com/AssetMantle/modules/x/identities/parameters"
-	"github.com/AssetMantle/modules/x/metas/auxiliaries/scrub"
-	schema "github.com/AssetMantle/schema/go"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -28,6 +20,14 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
+	"github.com/AssetMantle/modules/x/identities/key"
+	"github.com/AssetMantle/modules/x/identities/mappable"
+	"github.com/AssetMantle/modules/x/identities/parameters"
+	"github.com/AssetMantle/modules/x/metas/auxiliaries/scrub"
 )
 
 type TestKeepers struct {
@@ -36,7 +36,7 @@ type TestKeepers struct {
 
 func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 

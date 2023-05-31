@@ -12,8 +12,8 @@ import (
 // Collection a list of mappable with create CRUD methods
 type Collection interface {
 	GetKey() Key
-	Get(Key) Mappable
-	GetList() []Mappable
+	GetMappable(Key) Mappable
+	Get() []Mappable
 
 	Iterate(Key, func(Mappable) bool)
 	Fetch(Key) Collection

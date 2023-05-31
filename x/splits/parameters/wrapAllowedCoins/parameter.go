@@ -24,7 +24,7 @@ func validator(i interface{}) error {
 	case string:
 		if data, err := baseData.PrototypeListData().FromString(value); err != nil {
 			return err
-		} else if err = ValidateCoins(data.(*baseData.ListData)); err != nil {
+		} else if err = ValidateWrapAllowedCoinsProperty(data.(*baseData.ListData)); err != nil {
 			return err
 		} else {
 			return data.(*baseData.ListData).ValidateBasic()
@@ -34,7 +34,7 @@ func validator(i interface{}) error {
 	}
 }
 
-func ValidateCoins(listData data.ListData) error {
+func ValidateWrapAllowedCoinsProperty(listData data.ListData) error {
 	for _, anyData := range listData.Get() {
 		if idData, ok := anyData.Get().(*baseData.IDData); !ok {
 			return errorConstants.IncorrectFormat

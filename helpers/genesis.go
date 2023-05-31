@@ -3,7 +3,7 @@ package helpers
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/go/parameters"
+	"github.com/AssetMantle/schema/go/lists"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/gogo/protobuf/proto"
 )
@@ -21,5 +21,5 @@ type Genesis interface {
 	Encode(sdkCodec.JSONCodec) []byte
 	Decode(sdkCodec.JSONCodec, []byte) Genesis
 
-	Initialize([]Mappable, parameters.ParameterList) Genesis
+	Initialize([]Mappable, lists.ParameterList) Genesis
 }

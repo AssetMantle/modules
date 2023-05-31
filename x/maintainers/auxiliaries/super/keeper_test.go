@@ -8,12 +8,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/maintainers/key"
-	"github.com/AssetMantle/modules/x/maintainers/mappable"
-	"github.com/AssetMantle/modules/x/maintainers/parameters"
-	schema "github.com/AssetMantle/schema/go"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -30,6 +24,12 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/maintainers/key"
+	"github.com/AssetMantle/modules/x/maintainers/mappable"
+	"github.com/AssetMantle/modules/x/maintainers/parameters"
 )
 
 type TestKeepers struct {
@@ -45,7 +45,7 @@ var (
 
 func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 

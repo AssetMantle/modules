@@ -8,17 +8,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/metas/key"
-	"github.com/AssetMantle/modules/x/metas/mappable"
-	"github.com/AssetMantle/modules/x/metas/parameters"
-	schema "github.com/AssetMantle/schema/go"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/utilities"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/std"
@@ -29,6 +22,12 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/metas/key"
+	"github.com/AssetMantle/modules/x/metas/mappable"
+	"github.com/AssetMantle/modules/x/metas/parameters"
 )
 
 var (
@@ -41,7 +40,7 @@ type TestKeepers struct {
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 
@@ -93,7 +92,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(utilities.AnyPropertyListToPropertyList(propertiesList.GetList()...)...)}, newAuxiliaryResponse(propertiesList, nil)},
+		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(baseLists.AnyPropertiesToProperties(propertiesList.Get()...)...)}, newAuxiliaryResponse(propertiesList, nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -6,6 +6,18 @@ package make
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents/base"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	"github.com/AssetMantle/schema/go/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
@@ -16,17 +28,6 @@ import (
 	"github.com/AssetMantle/modules/x/orders/mappable"
 	"github.com/AssetMantle/modules/x/orders/module"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/constants"
-	"github.com/AssetMantle/schema/go/properties/utilities"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -80,11 +81,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		Add(baseProperties.NewMetaProperty(constants.MakerIDProperty.GetKey(), baseData.NewIDData(message.FromID))).
 		Add(baseProperties.NewMetaProperty(constants.TakerIDProperty.GetKey(), baseData.NewIDData(message.TakerID)))
 
-	immutables := baseQualified.NewImmutables(immutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(message.ImmutableProperties.GetList()...)...))
+	immutables := baseQualified.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.ImmutableProperties.Get()...)...))
 
 	orderID := baseIDs.NewOrderID(message.ClassificationID, immutables)
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(orderID))
-	if orders.Get(key.NewKey(orderID)) != nil {
+	if orders.GetMappable(key.NewKey(orderID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("order with ID %s already exists", orderID.AsString())
 	}
 
@@ -96,7 +97,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		Add(baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
 		Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(makerOwnableSplit)))
 
-	mutables := baseQualified.NewMutables(mutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(message.MutableProperties.GetList()...)...))
+	mutables := baseQualified.NewMutables(mutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
 
 	if _, err := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); err != nil {
 		return nil, err
@@ -108,7 +109,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	orders.Add(mappable.NewMappable(base.NewOrder(message.ClassificationID, immutables, mutables)))
 
-	return newTransactionResponse(orderID.AsString()), nil
+	return newTransactionResponse(orderID), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

@@ -36,13 +36,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(maintainerID))
 
-	Mappable := maintainers.Get(key.NewKey(maintainerID))
+	Mappable := maintainers.GetMappable(key.NewKey(maintainerID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("maintainer with ID %s not found", maintainerID.AsString())
 	}
 	maintainer := mappable.GetMaintainer(Mappable)
 
-	for _, maintainedProperty := range auxiliaryRequest.MaintainedMutables.GetMutablePropertyList().GetList() {
+	for _, maintainedProperty := range auxiliaryRequest.MaintainedMutables.GetMutablePropertyList().Get() {
 		if !maintainer.MaintainsProperty(maintainedProperty.GetID()) {
 			return nil, errorConstants.NotAuthorized.Wrapf("maintainer with ID %s does not maintain property with ID %s", maintainerID.AsString(), maintainedProperty.GetID().AsString())
 		}

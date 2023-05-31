@@ -3,7 +3,7 @@ module github.com/AssetMantle/modules
 go 1.19
 
 require (
-	github.com/AssetMantle/schema/go v0.0.0-20230427091828-87127acf74a0
+	github.com/AssetMantle/schema/go v0.0.0-20230524133137-d1ad1afcb79a
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/Shopify/sarama v1.19.0
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
@@ -20,7 +20,7 @@ require (
 	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/tendermint v0.34.26
 	github.com/tendermint/tm-db v0.6.7
-	golang.org/x/net v0.5.0
+	golang.org/x/net v0.7.0
 	google.golang.org/genproto v0.0.0-20230125152338-dcaf20b6aeaa
 	google.golang.org/grpc v1.52.3
 )
@@ -141,9 +141,9 @@ require (
 	go.etcd.io/bbolt v1.3.6 // indirect
 	golang.org/x/crypto v0.5.0 // indirect
 	golang.org/x/exp v0.0.0-20221019170559-20944726eadf // indirect
-	golang.org/x/sys v0.4.0 // indirect
-	golang.org/x/term v0.4.0 // indirect
-	golang.org/x/text v0.6.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/term v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
@@ -154,7 +154,6 @@ require (
 replace (
 	github.com/confio/ics23/go => github.com/confio/ics23/go v0.9.0
 	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.45.14
-	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.7
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.26
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2

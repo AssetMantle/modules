@@ -22,7 +22,6 @@ import (
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	"github.com/AssetMantle/schema/go/properties/constants"
-	"github.com/AssetMantle/schema/go/properties/utilities"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -126,7 +125,7 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 
 								mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))
 
-								orders.Mutate(mappable.NewMappable(base.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(utilities.AnyPropertyListToPropertyList(mutableProperties.GetList()...)...).GetMutables())))
+								orders.Mutate(mappable.NewMappable(base.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...).GetMutables())))
 								orders.Remove(mappable.NewMappable(rightOrder))
 
 								if executableOrderHeight.Compare(orderHeight) > 0 {
@@ -147,7 +146,7 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 								}
 								mutableProperties := scrub.GetPropertiesFromResponse(auxiliaryResponse)
 
-								orders.Mutate(mappable.NewMappable(base.NewOrder(rightOrder.GetClassificationID(), rightOrder.GetImmutables(), rightOrder.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutableProperties.GetList()...)...))))
+								orders.Mutate(mappable.NewMappable(base.NewOrder(rightOrder.GetClassificationID(), rightOrder.GetImmutables(), rightOrder.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
 								orders.Remove(mappable.NewMappable(leftOrder))
 
 								if orderHeight.Compare(executableOrderHeight) >= 0 {

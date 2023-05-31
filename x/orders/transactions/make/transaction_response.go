@@ -5,15 +5,18 @@ package make
 
 import (
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var _ helpers.TransactionResponse = (*TransactionResponse)(nil)
 
-func (*TransactionResponse) GetResult() *sdkTypes.Result {
-	return &sdkTypes.Result{}
+func (transactionResponse *TransactionResponse) GetResult() *sdkTypes.Result {
+	return &sdkTypes.Result{
+		Data: []byte(transactionResponse.OrderID.AsString()),
+	}
 }
-
-func newTransactionResponse(orderID string) *TransactionResponse {
-	return &TransactionResponse{orderID}
+func newTransactionResponse(orderID ids.OrderID) *TransactionResponse {
+	return &TransactionResponse{orderID.(*baseIDs.OrderID)}
 }

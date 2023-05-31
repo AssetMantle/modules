@@ -6,9 +6,7 @@ package modify
 import (
 	"encoding/json"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/constants"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/utilities"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
@@ -17,6 +15,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/constants"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type transactionRequest struct {
@@ -75,14 +77,14 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	makerOwnableSplit, err := sdkTypes.NewDecFromStr(transactionRequest.MakerOwnableSplit)
-	if err != nil {
-		return nil, err
+	makerOwnableSplit, ok := sdkTypes.NewIntFromString(transactionRequest.MakerOwnableSplit)
+	if !ok {
+		return nil, errorConstants.IncorrectFormat.Wrapf("maker ownable split %s is not a valid integer", transactionRequest.MakerOwnableSplit)
 	}
 
-	takerOwnableSplit, err := sdkTypes.NewDecFromStr(transactionRequest.TakerOwnableSplit)
-	if err != nil {
-		return nil, err
+	takerOwnableSplit, ok := sdkTypes.NewIntFromString(transactionRequest.TakerOwnableSplit)
+	if !ok {
+		return nil, errorConstants.IncorrectFormat.Wrapf("taker ownable split %s is not a valid integer", transactionRequest.TakerOwnableSplit)
 	}
 
 	mutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableMetaProperties)

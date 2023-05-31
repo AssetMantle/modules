@@ -15,11 +15,11 @@ func TestQueries(t *testing.T) {
 	Queries2 := NewQueries()
 
 	// GetProperty
-	require.Equal(t, "", Queries1.Get("").GetName())
-	require.Equal(t, nil, Queries2.Get(""))
+	require.Equal(t, "", Queries1.GetQuery("").GetName())
+	require.Equal(t, nil, Queries2.GetQuery(""))
 
-	// Get
-	require.Equal(t, []helpers.Query{query{}}, Queries1.GetList())
-	require.Equal(t, []helpers.Query(nil), Queries2.GetList())
+	// GetAuxiliary
+	require.Equal(t, []helpers.Query{query{}}, Queries1.Get())
+	require.Equal(t, []helpers.Query(nil), Queries2.Get())
 
 }

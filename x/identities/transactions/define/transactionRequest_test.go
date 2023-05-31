@@ -8,10 +8,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
-	schema "github.com/AssetMantle/schema/go"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/lists/utilities"
@@ -23,6 +19,10 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 func Test_newTransactionRequest(t *testing.T) {
@@ -126,7 +126,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 
@@ -182,7 +182,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 

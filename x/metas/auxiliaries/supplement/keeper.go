@@ -35,7 +35,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 			}
 		} else {
 			metas := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(property.GetDataID()))
-			if Mappable := metas.Get(key.NewKey(property.GetDataID())); Mappable != nil {
+			if Mappable := metas.GetMappable(key.NewKey(property.GetDataID())); Mappable != nil {
 				propertyList = propertyList.Add(baseProperties.NewMetaProperty(property.GetKey(), mappable.GetData(Mappable)))
 			}
 		}

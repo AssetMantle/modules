@@ -4,13 +4,15 @@
 package send
 
 import (
-	"github.com/AssetMantle/modules/helpers"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 var _ helpers.Message = (*Message)(nil)
@@ -29,8 +31,8 @@ func (message *Message) ValidateBasic() error {
 	if err := message.OwnableID.ValidateBasic(); err != nil {
 		return err
 	}
-	if _, err := sdkTypes.NewDecFromStr(message.Value); err != nil {
-		return err
+	if _, ok := sdkTypes.NewIntFromString(message.Value); !ok {
+		return errorConstants.IncorrectFormat.Wrapf("send value %s is not a valid integer", message.Value)
 	}
 	return nil
 }
@@ -59,7 +61,7 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Dec) sdkTypes.Msg {
+func newMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Int) sdkTypes.Msg {
 	return &Message{
 		From:      from.String(),
 		FromID:    fromID.(*baseIDs.IdentityID),

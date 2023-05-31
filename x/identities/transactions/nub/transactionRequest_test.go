@@ -8,11 +8,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/utilities/transaction"
-	schema "github.com/AssetMantle/schema/go"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -20,11 +15,16 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, sdkTypes.AccAddress, rest.BaseReq) {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 	legacyAmino.Seal()
 

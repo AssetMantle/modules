@@ -6,15 +6,15 @@ package queuing
 import (
 	"testing"
 
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
-	"github.com/AssetMantle/modules/utilities/random"
-	schema "github.com/AssetMantle/schema/go"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/stretchr/testify/require"
+
+	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	"github.com/AssetMantle/modules/utilities/random"
 )
 
 type testMessage struct {
@@ -42,7 +42,7 @@ func (testMessage) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 
 func Test_Kafka(t *testing.T) {
 	var legacyAmino = codec.NewLegacyAmino()
-	schema.RegisterLegacyAminoCodec(legacyAmino)
+	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
 	std.RegisterLegacyAminoCodec(legacyAmino)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

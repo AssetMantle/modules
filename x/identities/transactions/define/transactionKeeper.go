@@ -5,6 +5,7 @@ package define
 
 import (
 	"context"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
@@ -15,7 +16,6 @@ import (
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/properties/constants"
-	"github.com/AssetMantle/schema/go/properties/utilities"
 	"github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/types"
 )
@@ -43,7 +43,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromID)).Get(key.NewKey(message.FromID))
+	Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromID)).GetMappable(key.NewKey(message.FromID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.FromID.AsString())
 	}
@@ -53,14 +53,14 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not authorized to define identity with ID %s", message.From, message.FromID.AsString())
 	}
 
-	immutables := base.NewImmutables(message.ImmutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(message.ImmutableProperties.GetList()...)...))
+	immutables := base.NewImmutables(message.ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.ImmutableProperties.Get()...)...))
 
 	mutables := base.NewMutables(
 		message.MutableMetaProperties.Add(
-			utilities.AnyPropertyListToPropertyList(
+			baseLists.AnyPropertiesToProperties(
 				message.MutableProperties.Add(
 					constants.AuthenticationProperty.ToAnyProperty(),
-				).GetList()...,
+				).Get()...,
 			)...,
 		),
 	)
@@ -75,7 +75,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	return newTransactionResponse(classificationID.AsString()), nil
+	return newTransactionResponse(classificationID), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

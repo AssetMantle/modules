@@ -15,10 +15,10 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().Get("transfer").GetName(), baseHelpers.NewAuxiliaries(
+	require.Equal(t, Prototype().GetAuxiliary("transfer").GetName(), baseHelpers.NewAuxiliaries(
 		burn.Auxiliary,
 		mint.Auxiliary,
 		renumerate.Auxiliary,
 		transfer.Auxiliary,
-	).Get("transfer").GetName())
+	).GetAuxiliary("transfer").GetName())
 }

@@ -48,13 +48,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	identityID := baseIDs.NewIdentityID(NubClassificationID, immutables)
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
-	if identities.Get(key.NewKey(identityID)) != nil {
+	if identities.GetMappable(key.NewKey(identityID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("identity with ID %s already exists", identityID.AsString())
 	}
 
 	identities.Add(mappable.NewMappable(base.NewIdentity(NubClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(address))))))))
 
-	return newTransactionResponse(identityID.AsString()), nil
+	return newTransactionResponse(identityID), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

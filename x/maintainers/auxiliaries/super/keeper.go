@@ -36,7 +36,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		)))
 
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(maintainerID))
-	if maintainers.Get(key.NewKey(maintainerID)) != nil {
+	if maintainers.GetMappable(key.NewKey(maintainerID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("maintainer with ID %s already exists", maintainerID)
 	}
 

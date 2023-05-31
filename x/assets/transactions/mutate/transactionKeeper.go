@@ -6,17 +6,19 @@ package mutate
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/go/documents/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
-	"github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	"github.com/AssetMantle/schema/go/properties/utilities"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -45,23 +47,23 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
 
-	Mappable := assets.Get(key.NewKey(message.AssetID))
+	Mappable := assets.GetMappable(key.NewKey(message.AssetID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("asset with ID %s not found", message.AssetID.AsString())
 	}
 	asset := mappable.GetAsset(Mappable)
 
-	mutables := baseQualified.NewMutables(message.MutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(message.MutableProperties.GetList()...)...))
+	mutables := baseQualified.NewMutables(message.MutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
 
 	if _, err := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, mutables)); err != nil {
-		if _, err := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.GetClassificationID(), nil, asset.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutables.GetMutablePropertyList().GetList()...)...))); err != nil {
-			return nil, err
-		}
-	} else {
 		return nil, err
 	}
 
-	assets.Mutate(mappable.NewMappable(base.NewAsset(asset.GetClassificationID(), asset.GetImmutables(), asset.GetMutables().Mutate(utilities.AnyPropertyListToPropertyList(mutables.GetMutablePropertyList().GetList()...)...))))
+	if _, err := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.GetClassificationID(), nil, asset.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutables.GetMutablePropertyList().Get()...)...))); err != nil {
+		return nil, err
+	}
+
+	assets.Mutate(mappable.NewMappable(base.NewAsset(asset.GetClassificationID(), asset.GetImmutables(), asset.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutables.GetMutablePropertyList().Get()...)...))))
 
 	return newTransactionResponse(), nil
 }

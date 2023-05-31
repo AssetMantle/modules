@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/utilities/test/schema/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/module"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"

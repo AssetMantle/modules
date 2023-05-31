@@ -5,12 +5,12 @@ package define
 
 import (
 	"context"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/super"
-	"github.com/AssetMantle/schema/go/properties/utilities"
 	"github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
@@ -39,9 +39,9 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	immutables := base.NewImmutables(message.ImmutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(message.ImmutableProperties.GetList()...)...))
+	immutables := base.NewImmutables(message.ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.ImmutableProperties.Get()...)...))
 
-	mutables := base.NewMutables(message.MutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(message.MutableProperties.GetList()...)...))
+	mutables := base.NewMutables(message.MutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
 
 	auxiliaryResponse, err := transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(fromAddress, immutables, mutables))
 	if err != nil {
@@ -53,7 +53,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	return newTransactionResponse(classificationID.AsString()), nil
+	return newTransactionResponse(classificationID), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

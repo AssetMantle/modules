@@ -6,7 +6,6 @@ package base
 import (
 	"testing"
 
-	"github.com/AssetMantle/modules/utilities/test"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
@@ -34,7 +33,7 @@ func TestParameters(t *testing.T) {
 
 	require.Equal(t, true, ParameterManager.Equal(ParameterManager))
 
-	require.Equal(t, true, ParameterManager.GetList()[0].Equal(Parameter))
+	require.Equal(t, true, ParameterManager.Get()[0].Equal(Parameter))
 	require.Equal(t, `{"id":{"idString":"testParameter"},"data":{"value":"testData"}}`, ParameterManager.String())
 
 	err := ParameterManager.Validate()
