@@ -58,7 +58,7 @@ func (message *Message) ValidateBasic() error {
 	}
 	if _, ok := sdkTypes.NewIntFromString(message.MakerOwnableSplit); !ok {
 		return constants.IncorrectFormat.Wrapf("maker ownable split %s is not a valid integer", message.MakerOwnableSplit)
-	} else if _, ok := sdkTypes.NewIntFromString(message.TakerOwnableSplit); ok {
+	} else if _, ok := sdkTypes.NewIntFromString(message.TakerOwnableSplit); !ok {
 		return constants.IncorrectFormat.Wrapf("taker ownable split %s is not a valid integer", message.TakerOwnableSplit)
 	}
 	return nil
