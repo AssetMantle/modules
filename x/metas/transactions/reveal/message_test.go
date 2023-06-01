@@ -6,12 +6,12 @@ package reveal
 import (
 	"testing"
 
-	"github.com/AssetMantle/modules/utilities/transaction"
-	"github.com/AssetMantle/modules/x/metas/module"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/data/utilities"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/x/metas/module"
 )
 
 func Test_Reveal_Message(t *testing.T) {

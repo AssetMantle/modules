@@ -7,10 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/x/assets/common"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -20,6 +16,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var (
@@ -71,9 +71,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedQuery, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testAssetID))
+	encodedQuery, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testAssetID))
 	require.NoError(t, err)
-	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID)))
+	encodedQuery1, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID)))
 	require.NoError(t, err)
 	type fields struct {
 		AssetID *baseIDs.AssetID
@@ -109,9 +109,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testAssetID))
+	encodedQuery, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testAssetID))
 	require.NoError(t, err)
-	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID)))
+	encodedQuery1, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID)))
 	require.NoError(t, err)
 	type fields struct {
 		AssetID *baseIDs.AssetID

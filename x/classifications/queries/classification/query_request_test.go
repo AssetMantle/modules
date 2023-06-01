@@ -8,10 +8,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/x/classifications/common"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -20,6 +16,10 @@ import (
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 func createTestInput() *baseIDs.ClassificationID {
@@ -109,9 +109,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := common.LegacyAmino.MarshalJSON(&QueryRequest{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)})
+	encodedQuery, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryRequest{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)})
 	require.NoError(t, err)
-	encodedQuery1, err := common.LegacyAmino.MarshalJSON(&QueryRequest{createTestInput()})
+	encodedQuery1, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryRequest{createTestInput()})
 	require.NoError(t, err)
 	type fields struct {
 		ClassificationID *baseIDs.ClassificationID
