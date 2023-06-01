@@ -7,13 +7,14 @@ import (
 	"math/rand"
 	"strconv"
 
+	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
+
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/maintainers/module"
-	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {

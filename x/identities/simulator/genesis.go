@@ -4,24 +4,26 @@
 package simulator
 
 import (
+	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
+	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"math/rand"
 
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
+	"github.com/AssetMantle/modules/x/identities/genesis"
+	mappableIdentities "github.com/AssetMantle/modules/x/identities/mappable"
+	identitiesModule "github.com/AssetMantle/modules/x/identities/module"
+	"github.com/AssetMantle/modules/x/identities/parameters/maxProvisionAddressCount"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/x/identities/genesis"
-	"github.com/AssetMantle/modules/x/identities/mappable"
-	identitiesModule "github.com/AssetMantle/modules/x/identities/module"
-	"github.com/AssetMantle/modules/x/identities/parameters/maxProvisionAddressCount"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -35,15 +37,35 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, len(simulationState.Accounts))
+	mappableList := make([]helpers.Mappable, len(assets.ClassificationIDMappableBytesMap))
 
-	for i := range mappableList {
-		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
-		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
-		mappableList[i] = mappable.NewMappable(base.NewIdentity(baseIDs.NewClassificationID(immutables, mutables), immutables, mutables))
+	identities.ClearAll()
+	index := 0
+	var classificationIDString string
+
+	for i := 0; i < len(assets.ClassificationIDMappableBytesMap); i++ {
+		assetMap := assets.GetAssetData(simulationState.Accounts[i].Address.String())
+		if assetMap == nil {
+			continue
+		}
+		for class, _ := range assetMap {
+			classificationIDString = class
+		}
+		mappable := &mappableAssets.Mappable{}
+		baseHelpers.CodecPrototype().MustUnmarshal(assets.ClassificationIDMappableBytesMap[classificationIDString], mappable)
+		immutables := mappable.Asset.Immutables
+		mutables := baseQualified.NewMutables(mappable.Asset.Mutables.GetMutablePropertyList().Add(constantProperties.AuthenticationProperty))
+		classificationID := baseIDs.NewClassificationID(immutables, mutables)
+		identityID := baseIDs.NewIdentityID(classificationID, immutables)
+		identity := base.NewIdentity(classificationID, immutables, mutables).ProvisionAddress(simulationState.Accounts[index].Address)
+
+		mappableList[index] = mappableIdentities.NewMappable(identity)
+		identities.AddIDData(simulationState.Accounts[index].Address.String(), classificationID.AsString(), identityID.AsString())
+		identities.AddMappableBytes(classificationID.AsString(), baseHelpers.CodecPrototype().MustMarshal(mappableIdentities.NewMappable(identity)))
+		index++
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(maxProvisionAddressCount.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(maxProvisionAddressCount.Parameter.Mutate(Data)))
 
 	simulationState.GenState[identitiesModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

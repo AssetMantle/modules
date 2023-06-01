@@ -51,7 +51,7 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func newMessage(from sdkTypes.AccAddress, nubID ids.ID) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, nubID ids.ID) sdkTypes.Msg {
 	return &Message{
 		From:  from.String(),
 		NubID: nubID.(*baseIDs.StringID),

@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	"github.com/AssetMantle/schema/go/data"
 	"math"
 	"math/rand"
 
@@ -16,6 +17,7 @@ import (
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
+	currentMaxProvisionAddressCount := maxProvisionAddressCount.Parameter.GetMetaProperty().GetData().Get().(data.NumberData).Get()
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(module.Name,
 			string(maxProvisionAddressCount.Parameter.GetMetaProperty().GetID().Bytes()),
@@ -25,6 +27,17 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 					panic(err)
 				}
 				return string(bytes)
-			}),
+			},
+		),
+		simulation.NewSimParamChange(module.Name,
+			string(maxProvisionAddressCount.Parameter.GetMetaProperty().GetID().Bytes()),
+			func(r *rand.Rand) string {
+				bytes, err := common.LegacyAmino.MarshalJSON(currentMaxProvisionAddressCount)
+				if err != nil {
+					panic(err)
+				}
+				return string(bytes)
+			},
+		),
 	}
 }

@@ -114,7 +114,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	if err != nil {
 		return nil, err
 	}
-	return newMessage(
+	return NewMessage(
 		from,
 		to,
 		fromID,

@@ -71,7 +71,7 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return &Message{
 		From:                    from.String(),
 		To:                      to.String(),

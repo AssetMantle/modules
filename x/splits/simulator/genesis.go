@@ -4,25 +4,23 @@
 package simulator
 
 import (
+	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
+	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	"github.com/AssetMantle/modules/x/splits/mappable"
+	"github.com/AssetMantle/schema/go/ids/base"
+	base2 "github.com/AssetMantle/schema/go/types/base"
 	"math/rand"
-
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"github.com/AssetMantle/schema/go/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/module"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/splits/genesis"
-	"github.com/AssetMantle/modules/x/splits/mappable"
 	splitsModule "github.com/AssetMantle/modules/x/splits/module"
 	"github.com/AssetMantle/modules/x/splits/parameters/wrapAllowedCoins"
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -36,15 +34,30 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
+	mappableList := make([]helpers.Mappable, 2*len(assets.ClassificationIDMappableBytesMap))
 
-	for i := range mappableList {
-		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
-		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
-		mappableList[i] = mappable.NewMappable(base.NewSplit(baseIDs.NewIdentityID(baseIDs.NewClassificationID(immutables, mutables), immutables), baseIDs.NewCoinID(baseIDs.NewStringID(simulationTypes.RandStringOfLength(simulationState.Rand, simulationState.Rand.Intn(99)))), simulationTypes.RandomAmount(simulationState.Rand, sdkTypes.NewInt(9999999999))))
+	var assetIDString, identityIDString string
+	index := 0
+	for i := 0; i < len(assets.ClassificationIDMappableBytesMap); i++ {
+		assetMap := assets.GetAssetData(simulationState.Accounts[i].Address.String())
+		for _, id := range assetMap {
+			assetIDString = id
+		}
+		assetID, _ := base.ReadAssetID(assetIDString)
+
+		identityMap := identities.GetIDData(simulationState.Accounts[i].Address.String())
+
+		for _, id := range identityMap {
+			identityIDString = id
+		}
+		identityID, _ := base.ReadIdentityID(identityIDString)
+
+		mappableList[index] = mappable.NewMappable(base2.NewSplit(identityID, assetID.ToAnyOwnableID().Get(), sdkTypes.NewInt(1)))
+		mappableList[index+1] = mappable.NewMappable(base2.NewSplit(identityID, base.NewCoinID(base.NewStringID("stake")), sdkTypes.NewInt(1000)))
+		index += 2
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(wrapAllowedCoins.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(wrapAllowedCoins.Parameter.Mutate(Data)))
 
 	simulationState.GenState[splitsModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }
