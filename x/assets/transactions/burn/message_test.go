@@ -8,8 +8,7 @@ import (
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/utilities/transaction"
-	"github.com/AssetMantle/modules/x/assets/module"
+
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -18,6 +17,8 @@ import (
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/x/assets/module"
 )
 
 var (

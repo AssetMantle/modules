@@ -6,7 +6,6 @@ package ownable
 import (
 	"testing"
 
-	"github.com/AssetMantle/modules/x/splits/common"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -24,7 +23,7 @@ func Test_Split_Response(t *testing.T) {
 	require.Equal(t, errorConstants.IncorrectFormat, testQueryResponseWithError.GetError())
 
 	encodedResponse, _ := testQueryResponse.Encode()
-	bytes, _ := common.LegacyAmino.MarshalJSON(testQueryResponse)
+	bytes, _ := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(testQueryResponse)
 	require.Equal(t, bytes, encodedResponse)
 
 	decodedResponse, _ := (&QueryResponse{}).Decode(bytes)

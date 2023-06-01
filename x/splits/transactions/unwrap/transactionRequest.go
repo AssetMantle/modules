@@ -14,9 +14,10 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
+	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 )
 
 type transactionRequest struct {

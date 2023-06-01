@@ -24,7 +24,6 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func createTestInput(t *testing.T) (rest.BaseReq, string, *baseIDs.IdentityID, *baseIDs.IdentityID, *baseIDs.ClassificationID) {

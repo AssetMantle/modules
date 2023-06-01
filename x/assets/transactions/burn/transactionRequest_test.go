@@ -12,7 +12,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/utilities/transaction"
+
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

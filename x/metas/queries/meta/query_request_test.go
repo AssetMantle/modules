@@ -7,16 +7,16 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/x/metas/common"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var (
@@ -65,9 +65,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedQuery, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testDataID))
+	encodedQuery, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testDataID))
 	require.NoError(t, err)
-	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)))
+	encodedQuery1, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)))
 	require.NoError(t, err)
 	type fields struct {
 		DataID *baseIDs.DataID
@@ -103,9 +103,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testDataID))
+	encodedQuery, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testDataID))
 	require.NoError(t, err)
-	encodedQuery1, err := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)))
+	encodedQuery1, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)))
 	require.NoError(t, err)
 	type fields struct {
 		DataID *baseIDs.DataID

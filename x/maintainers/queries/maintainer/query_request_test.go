@@ -7,15 +7,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/x/maintainers/common"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var (
@@ -104,9 +104,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := common.LegacyAmino.MarshalJSON(&QueryRequest{testMaintainerID})
+	encodedQuery, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryRequest{testMaintainerID})
 	require.NoError(t, err)
-	encodedQuery1, err := common.LegacyAmino.MarshalJSON(&QueryRequest{testMaintainerID1})
+	encodedQuery1, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryRequest{testMaintainerID1})
 	require.NoError(t, err)
 	type fields struct {
 		MaintainerID *baseIDs.MaintainerID

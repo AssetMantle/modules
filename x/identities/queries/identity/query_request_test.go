@@ -22,7 +22,6 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/x/identities/common"
 )
 
 func createTestInput() (*baseIDs.IdentityID, *baseIDs.IdentityID) {
@@ -133,8 +132,8 @@ func Test_queryRequest_Decode(t *testing.T) {
 
 func Test_queryRequest_Encode(t *testing.T) {
 	testIdentity, emptyTestIdentity := createTestInput()
-	byteArr, _ := common.LegacyAmino.MarshalJSON(newQueryRequest(testIdentity))
-	byteArr2, _ := common.LegacyAmino.MarshalJSON(newQueryRequest(emptyTestIdentity))
+	byteArr, _ := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testIdentity))
+	byteArr2, _ := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(emptyTestIdentity))
 
 	type fields struct {
 		IdentityID *baseIDs.IdentityID

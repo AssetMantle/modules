@@ -9,8 +9,9 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
+	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
+
 	"github.com/AssetMantle/modules/helpers"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
 	"github.com/AssetMantle/modules/x/identities/key"
 )
 

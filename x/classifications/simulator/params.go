@@ -7,12 +7,13 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/AssetMantle/modules/x/classifications/common"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
+
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/module"
 	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
 	"github.com/AssetMantle/modules/x/classifications/parameters/maxPropertyCount"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
@@ -20,7 +21,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 		simulation.NewSimParamChange(module.Name,
 			string(bondRate.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(rand.Intn(math.MaxInt))
+				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(math.MaxInt))
 				if err != nil {
 					panic(err)
 				}
@@ -30,7 +31,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 		simulation.NewSimParamChange(module.Name,
 			string(maxPropertyCount.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(rand.Intn(1000) + 22)
+				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(1000) + 22)
 				if err != nil {
 					panic(err)
 				}

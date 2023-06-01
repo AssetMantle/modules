@@ -13,7 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/stretchr/testify/require"
 
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
+	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
+
 	"github.com/AssetMantle/modules/utilities/random"
 )
 

@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/tx"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
 )
 
 type codec struct {
@@ -35,6 +36,7 @@ func (codec codec) Initialize(moduleBasicManager sdkModuleTypes.BasicManager) he
 	std.RegisterInterfaces(codec.interfaceRegistry)
 	helpers.RegisterLegacyAminoCodec(codec.legacyAmino)
 	schemaCodec.RegisterLegacyAminoCodec(codec.legacyAmino)
+	docs.RegisterLegacyAminoCodec(codec.legacyAmino)
 	moduleBasicManager.RegisterLegacyAminoCodec(codec.legacyAmino)
 	moduleBasicManager.RegisterInterfaces(codec.interfaceRegistry)
 	return codec

@@ -4,13 +4,14 @@
 package key
 
 import (
-	"github.com/AssetMantle/modules/helpers"
-	codecUtilities "github.com/AssetMantle/modules/utilities/codec"
-	"github.com/AssetMantle/modules/x/orders/module"
+	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/orders/module"
 )
 
 var _ helpers.Key = (*Key)(nil)

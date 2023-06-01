@@ -16,7 +16,6 @@ import (
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
-	"github.com/AssetMantle/modules/x/metas/common"
 	"github.com/AssetMantle/modules/x/metas/mapper"
 )
 
@@ -58,7 +57,7 @@ func Test_Meta_Response(t *testing.T) {
 	require.Equal(t, errorConstants.IncorrectFormat, testQueryResponseWithError.GetError())
 
 	encodedResponse, _ := testQueryResponse.Encode()
-	bytes, _ := common.LegacyAmino.MarshalJSON(testQueryResponse)
+	bytes, _ := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(testQueryResponse)
 	require.Equal(t, bytes, encodedResponse)
 
 	decodedResponse, _ := (&QueryResponse{}).Decode(bytes)

@@ -19,7 +19,6 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/identities/common"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/mapper"
 )
@@ -119,8 +118,8 @@ func Test_queryResponse_Decode(t *testing.T) {
 func Test_queryResponse_Encode(t *testing.T) {
 	context := CreateTestInputContext(t)
 	collection := mapper.Prototype().NewCollection(context)
-	encodedByte, err := common.LegacyAmino.MarshalJSON(&QueryResponse{Success: true, Error: "", List: mappable.MappablesFromInterface(collection.Get())})
-	encodedByteWithError, _err := common.LegacyAmino.MarshalJSON(&QueryResponse{Error: errorConstants.IncorrectFormat.Error(), List: mappable.MappablesFromInterface(collection.Get())})
+	encodedByte, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryResponse{Success: true, Error: "", List: mappable.MappablesFromInterface(collection.Get())})
+	encodedByteWithError, _err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryResponse{Error: errorConstants.IncorrectFormat.Error(), List: mappable.MappablesFromInterface(collection.Get())})
 	require.Nil(t, err)
 	type fields struct {
 		Success bool

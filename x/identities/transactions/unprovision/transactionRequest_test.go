@@ -23,7 +23,6 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/utilities/transaction"
 )
 
 func createInputForMessage(t *testing.T) (*baseIDs.IdentityID, string, types.AccAddress, types.Msg, rest.BaseReq) {

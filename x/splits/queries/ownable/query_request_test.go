@@ -7,15 +7,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/x/splits/common"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var (
@@ -63,9 +63,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testOwnableID))
+	encodedReq, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testOwnableID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeOwnableID()))
+	encodedReq1, err1 := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeOwnableID()))
 	require.NoError(t, err1)
 	type fields struct {
 		OwnableID *baseIDs.AnyOwnableID
@@ -101,9 +101,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedReq, err := common.LegacyAmino.MarshalJSON(newQueryRequest(testOwnableID))
+	encodedReq, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testOwnableID))
 	require.NoError(t, err)
-	encodedReq1, err1 := common.LegacyAmino.MarshalJSON(newQueryRequest(baseIDs.PrototypeOwnableID()))
+	encodedReq1, err1 := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeOwnableID()))
 	require.NoError(t, err1)
 	type fields struct {
 		OwnableID *baseIDs.AnyOwnableID
