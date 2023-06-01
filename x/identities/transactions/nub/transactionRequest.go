@@ -64,7 +64,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	return newMessage(
+	return NewMessage(
 		from,
 		baseIDs.NewStringID(transactionRequest.NubID),
 	), nil

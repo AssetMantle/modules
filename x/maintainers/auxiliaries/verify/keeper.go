@@ -5,7 +5,6 @@ package verify
 
 import (
 	"context"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/maintainers/key"
 	baseData "github.com/AssetMantle/schema/go/data/base"

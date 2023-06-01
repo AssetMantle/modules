@@ -53,7 +53,7 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func newMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, identityID ids.IdentityID) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, identityID ids.IdentityID) sdkTypes.Msg {
 	return &Message{
 		From:       from.String(),
 		To:         to.String(),

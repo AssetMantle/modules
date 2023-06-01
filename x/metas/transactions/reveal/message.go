@@ -50,7 +50,7 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func newMessage(from sdkTypes.AccAddress, data data.Data) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, data data.Data) sdkTypes.Msg {
 	return &Message{
 		From: from.String(),
 		Data: data.ToAnyData().(*baseData.AnyData),

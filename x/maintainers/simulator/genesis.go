@@ -4,27 +4,32 @@
 package simulator
 
 import (
+	"fmt"
+	simulatorAssets "github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
+	simulatorIdentities "github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	utilitiesProperties "github.com/AssetMantle/schema/go/properties/utilities"
+
+	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
+	mappableIdentities "github.com/AssetMantle/modules/x/identities/mappable"
+	mappableMaintainers "github.com/AssetMantle/modules/x/maintainers/mappable"
+	"github.com/AssetMantle/schema/go/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"math/rand"
 
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/maintainers/genesis"
+	maintainersModule "github.com/AssetMantle/modules/x/maintainers/module"
+	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
+	"github.com/AssetMantle/modules/x/maintainers/utilities"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/utilities/random"
-	"github.com/AssetMantle/modules/x/maintainers/genesis"
-	"github.com/AssetMantle/modules/x/maintainers/mappable"
-	maintainersModule "github.com/AssetMantle/modules/x/maintainers/module"
-	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
-	"github.com/AssetMantle/modules/x/maintainers/utilities"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -38,18 +43,60 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
+	mappableList := make([]helpers.Mappable, 3*len(simulatorAssets.ClassificationIDMappableBytesMap))
 
 	var classificationID ids.ClassificationID
+	var identityID ids.IdentityID
+	index := 0
 
-	for i := range mappableList {
-		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
-		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand))
-		classificationID = baseIDs.NewClassificationID(immutables, mutables)
-		mappableList[i] = mappable.NewMappable(base.NewMaintainer(baseIDs.NewIdentityID(classificationID, immutables), classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool(), random.GenerateRandomBool())))
+	for i := 0; i < len(simulatorAssets.ClassificationIDMappableBytesMap); i++ {
+		identityMap := simulatorIdentities.GetIDData(simulationState.Accounts[i].Address.String())
+		if identityMap == nil {
+			continue
+		}
+		for class, id := range identityMap {
+			classificationID, _ = baseIDs.ReadClassificationID(class)
+			identityID, _ = baseIDs.ReadIdentityID(id)
+			break
+		}
+		identityMappable := &mappableIdentities.Mappable{}
+		baseHelpers.CodecPrototype().Unmarshal(simulatorIdentities.GetMappableBytes(classificationID.AsString()), identityMappable)
+		mutables := identityMappable.GetIdentity().Get().GetMutables()
+		mappableList[index] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true)))
+
+		assetMap := simulatorAssets.GetAssetData(simulationState.Accounts[i].Address.String())
+		if assetMap == nil {
+			continue
+		}
+		for class, _ := range assetMap {
+			classificationID, _ = baseIDs.ReadClassificationID(class)
+		}
+		assetMappable := &mappableAssets.Mappable{}
+		baseHelpers.CodecPrototype().Unmarshal(simulatorAssets.GetMappableBytes(classificationID.AsString()), assetMappable)
+		mutables = assetMappable.GetAsset().Get().GetMutables()
+		mappableList[index+1] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true)))
+
+		immutables := baseQualified.NewImmutables(assetMappable.Asset.Immutables.GetImmutablePropertyList().Add(utilitiesProperties.AnyPropertyListToPropertyList(constants.ExchangeRateProperty.ToAnyProperty(),
+			constants.CreationHeightProperty.ToAnyProperty(),
+			constants.MakerOwnableIDProperty.ToAnyProperty(),
+			constants.TakerOwnableIDProperty.ToAnyProperty(),
+			constants.MakerIDProperty.ToAnyProperty(),
+			constants.TakerIDProperty.ToAnyProperty())...))
+
+		mutables = baseQualified.NewMutables(assetMappable.Asset.Mutables.GetMutablePropertyList().Add(utilitiesProperties.AnyPropertyListToPropertyList(
+			constants.ExpiryHeightProperty.ToAnyProperty(),
+			constants.MakerOwnableSplitProperty.ToAnyProperty(),
+		)...))
+
+		orderClassificationID := baseIDs.NewClassificationID(immutables, mutables)
+		x := orderClassificationID.AsString()
+		fmt.Println(x)
+		mappableList[index+2] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, orderClassificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true)))
+
+		index += 3
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(deputizeAllowed.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(deputizeAllowed.Parameter.Mutate(Data)))
 
 	simulationState.GenState[maintainersModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }
