@@ -4,23 +4,26 @@
 package simulator
 
 import (
+	"math/rand"
+
+	"github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseTypes "github.com/AssetMantle/schema/go/types/base"
+
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
 	"github.com/AssetMantle/modules/x/splits/mappable"
-	"github.com/AssetMantle/schema/go/ids/base"
-	base2 "github.com/AssetMantle/schema/go/types/base"
-	"math/rand"
+
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/splits/genesis"
 	splitsModule "github.com/AssetMantle/modules/x/splits/module"
 	"github.com/AssetMantle/modules/x/splits/parameters/wrapAllowedCoins"
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/module"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -52,12 +55,12 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		}
 		identityID, _ := base.ReadIdentityID(identityIDString)
 
-		mappableList[index] = mappable.NewMappable(base2.NewSplit(identityID, assetID.ToAnyOwnableID().Get(), sdkTypes.NewInt(1)))
-		mappableList[index+1] = mappable.NewMappable(base2.NewSplit(identityID, base.NewCoinID(base.NewStringID("stake")), sdkTypes.NewInt(1000)))
+		mappableList[index] = mappable.NewMappable(baseTypes.NewSplit(identityID, assetID.ToAnyOwnableID().Get(), sdkTypes.NewInt(1)))
+		mappableList[index+1] = mappable.NewMappable(baseTypes.NewSplit(identityID, base.NewCoinID(base.NewStringID("stake")), sdkTypes.NewInt(1000)))
 		index += 2
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(wrapAllowedCoins.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(wrapAllowedCoins.Parameter.Mutate(Data)))
 
 	simulationState.GenState[splitsModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

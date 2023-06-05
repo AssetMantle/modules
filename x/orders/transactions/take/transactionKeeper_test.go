@@ -195,9 +195,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve Not Authorized", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID2, testRate, testOrderID).(*Message)}, newTransactionResponse(errorConstants.NotAuthorized)},
-		{"+ve", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testRate, testOrderID).(*Message)}, newTransactionResponse(nil)},
-		{"+ve Entity Not Found", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testRate, testOrderID2).(*Message)}, newTransactionResponse(errorConstants.EntityNotFound)},
+		{"+ve Not Authorized", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, testFromID2, testRate, testOrderID).(*Message)}, newTransactionResponse(errorConstants.NotAuthorized)},
+		{"+ve", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, testFromID, testRate, testOrderID).(*Message)}, newTransactionResponse(nil)},
+		{"+ve Entity Not Found", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, testFromID, testRate, testOrderID2).(*Message)}, newTransactionResponse(errorConstants.EntityNotFound)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

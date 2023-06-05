@@ -33,7 +33,7 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want *Message
 	}{
-		{"+ve", args{newMessage(fromAccAddress, fromID, ownableID, testRate).(*Message)}, &Message{fromAccAddress.String(), fromID, ownableID, testRate}},
+		{"+ve", args{NewMessage(fromAccAddress, fromID, ownableID, testRate).(*Message)}, &Message{fromAccAddress.String(), fromID, ownableID, testRate}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -221,8 +221,8 @@ func Test_newMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newMessage(tt.args.from, tt.args.fromID, tt.args.ownableID, tt.args.value); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newMessage() = %v, want %v", got, tt.want)
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.ownableID, tt.args.value); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})
 	}

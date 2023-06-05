@@ -5,16 +5,27 @@ package simulator
 
 import (
 	"fmt"
+	"math/rand"
+
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+
 	simulatorAssets "github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
 	simulatorIdentities "github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
-	utilitiesProperties "github.com/AssetMantle/schema/go/properties/utilities"
+
+	"github.com/AssetMantle/schema/go/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 
 	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	mappableIdentities "github.com/AssetMantle/modules/x/identities/mappable"
 	mappableMaintainers "github.com/AssetMantle/modules/x/maintainers/mappable"
-	"github.com/AssetMantle/schema/go/properties/constants"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"math/rand"
+
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents/base"
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
@@ -22,14 +33,6 @@ import (
 	maintainersModule "github.com/AssetMantle/modules/x/maintainers/module"
 	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
 	"github.com/AssetMantle/modules/x/maintainers/utilities"
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/documents/base"
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/module"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -76,14 +79,14 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mutables = assetMappable.GetAsset().Get().GetMutables()
 		mappableList[index+1] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true)))
 
-		immutables := baseQualified.NewImmutables(assetMappable.Asset.Immutables.GetImmutablePropertyList().Add(utilitiesProperties.AnyPropertyListToPropertyList(constants.ExchangeRateProperty.ToAnyProperty(),
+		immutables := baseQualified.NewImmutables(assetMappable.Asset.Immutables.GetImmutablePropertyList().Add(baseLists.AnyPropertiesToProperties(constants.ExchangeRateProperty.ToAnyProperty(),
 			constants.CreationHeightProperty.ToAnyProperty(),
 			constants.MakerOwnableIDProperty.ToAnyProperty(),
 			constants.TakerOwnableIDProperty.ToAnyProperty(),
 			constants.MakerIDProperty.ToAnyProperty(),
 			constants.TakerIDProperty.ToAnyProperty())...))
 
-		mutables = baseQualified.NewMutables(assetMappable.Asset.Mutables.GetMutablePropertyList().Add(utilitiesProperties.AnyPropertyListToPropertyList(
+		mutables = baseQualified.NewMutables(assetMappable.Asset.Mutables.GetMutablePropertyList().Add(baseLists.AnyPropertiesToProperties(
 			constants.ExpiryHeightProperty.ToAnyProperty(),
 			constants.MakerOwnableSplitProperty.ToAnyProperty(),
 		)...))
@@ -96,7 +99,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		index += 3
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(deputizeAllowed.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(deputizeAllowed.Parameter.Mutate(Data)))
 
 	simulationState.GenState[maintainersModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

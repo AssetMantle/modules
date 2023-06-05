@@ -4,14 +4,21 @@
 package simulator
 
 import (
+	"math/rand"
+
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	"github.com/AssetMantle/schema/go/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
 	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/classifications/parameters/maxPropertyCount"
-	"github.com/AssetMantle/schema/go/properties/constants"
-	"github.com/AssetMantle/schema/go/properties/utilities"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"math/rand"
+
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents/base"
+	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
@@ -19,11 +26,6 @@ import (
 	mappableClassifications "github.com/AssetMantle/modules/x/classifications/mappable"
 	classificationsModule "github.com/AssetMantle/modules/x/classifications/module"
 	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/documents/base"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	"github.com/cosmos/cosmos-sdk/types/module"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -62,12 +64,12 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 		assetClassification := base.NewClassification(immutables, mutables)
 		identityClassification := base.NewClassification(immutables, baseQualified.NewMutables(mutables.GetMutablePropertyList().Add(constants.AuthenticationProperty)))
-		orderClassification := base.NewClassification(baseQualified.NewImmutables(immutables.GetImmutablePropertyList().Add(utilities.AnyPropertyListToPropertyList(constants.ExchangeRateProperty.ToAnyProperty(),
+		orderClassification := base.NewClassification(baseQualified.NewImmutables(immutables.GetImmutablePropertyList().Add(baseLists.AnyPropertiesToProperties(constants.ExchangeRateProperty.ToAnyProperty(),
 			constants.CreationHeightProperty.ToAnyProperty(),
 			constants.MakerOwnableIDProperty.ToAnyProperty(),
 			constants.TakerOwnableIDProperty.ToAnyProperty(),
 			constants.MakerIDProperty.ToAnyProperty(),
-			constants.TakerIDProperty.ToAnyProperty())...)), baseQualified.NewMutables(mappable.Asset.Mutables.GetMutablePropertyList().Add(utilities.AnyPropertyListToPropertyList(
+			constants.TakerIDProperty.ToAnyProperty())...)), baseQualified.NewMutables(mappable.Asset.Mutables.GetMutablePropertyList().Add(baseLists.AnyPropertiesToProperties(
 			constants.ExpiryHeightProperty.ToAnyProperty(),
 			constants.MakerOwnableSplitProperty.ToAnyProperty(),
 		)...)))
@@ -80,7 +82,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		accountPosition++
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseParameters.NewParameterList(bondRate.Parameter.Mutate(bondRateData), maxPropertyCount.Parameter.Mutate(maxPropertyCountData)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(bondRate.Parameter.Mutate(bondRateData), maxPropertyCount.Parameter.Mutate(maxPropertyCountData)))
 
 	simulationState.GenState[classificationsModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

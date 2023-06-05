@@ -4,6 +4,15 @@
 package simulator
 
 import (
+	"math/rand"
+
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	baseTypesGo "github.com/AssetMantle/schema/go/types/base"
+
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
@@ -14,22 +23,15 @@ import (
 	"github.com/AssetMantle/modules/x/orders/transactions/define"
 	"github.com/AssetMantle/modules/x/orders/transactions/make"
 	"github.com/AssetMantle/modules/x/orders/transactions/take"
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/utilities"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	baseTypesGo "github.com/AssetMantle/schema/go/types/base"
-	"math/rand"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
 )
 
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
@@ -123,7 +125,7 @@ func simulateCancelMsg(module helpers.Module) simulationTypes.Operation {
 			return simulationTypes.NewOperationMsg(makeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 
-		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(makeMessage.(*make.Message).ImmutableProperties.GetList()...)...)))
+		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(makeMessage.(*make.Message).ImmutableProperties.Get()...)...)))
 
 		cancelMessage := cancel.NewMessage(from.Address, makeMessage.(*make.Message).FromID, orderID)
 		result, err = simulationModules.ExecuteMessage(context, module, cancelMessage.(helpers.Message))
@@ -151,7 +153,7 @@ func simulateTakeMsg(module helpers.Module) simulationTypes.Operation {
 			return simulationTypes.NewOperationMsg(makeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 
-		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(makeMessage.(*make.Message).ImmutableProperties.GetList()...)...)))
+		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(makeMessage.(*make.Message).ImmutableProperties.Get()...)...)))
 
 		takeMessage := take.NewMessage(to.Address, makeMessage.(*make.Message).TakerID, sdkTypes.NewInt(1), orderID)
 		result, err = simulationModules.ExecuteMessage(context, module, takeMessage.(helpers.Message))
@@ -205,14 +207,14 @@ func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 	if mappable.Order == nil {
 		return nil
 	}
-	for _, i := range mappable.GetOrder().Get().GetImmutables().GetImmutablePropertyList().GetList() {
+	for _, i := range mappable.GetOrder().Get().GetImmutables().GetImmutablePropertyList().Get() {
 		if i.IsMeta() {
 			immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
 		} else {
 			immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
 		}
 	}
-	for _, i := range mappable.GetOrder().Get().GetMutables().GetMutablePropertyList().GetList() {
+	for _, i := range mappable.GetOrder().Get().GetMutables().GetMutablePropertyList().Get() {
 		if i.IsMeta() {
 			mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
 		} else {

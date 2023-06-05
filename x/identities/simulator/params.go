@@ -4,9 +4,10 @@
 package simulator
 
 import (
-	"github.com/AssetMantle/schema/go/data"
 	"math"
 	"math/rand"
+
+	"github.com/AssetMantle/schema/go/data"
 
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
@@ -32,7 +33,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 		simulation.NewSimParamChange(module.Name,
 			string(maxProvisionAddressCount.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := common.LegacyAmino.MarshalJSON(currentMaxProvisionAddressCount)
+				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(currentMaxProvisionAddressCount)
 				if err != nil {
 					panic(err)
 				}

@@ -4,6 +4,16 @@
 package simulator
 
 import (
+	"math/rand"
+
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	"github.com/cosmos/cosmos-sdk/baseapp"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/AssetMantle/modules/helpers/base"
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
@@ -18,20 +28,12 @@ import (
 	"github.com/AssetMantle/modules/x/assets/transactions/renumerate"
 	"github.com/AssetMantle/modules/x/assets/transactions/revoke"
 	"github.com/AssetMantle/modules/x/identities/transactions/issue"
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/utilities"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"github.com/cosmos/cosmos-sdk/baseapp"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"math/rand"
 
-	"github.com/AssetMantle/modules/helpers"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
@@ -127,7 +129,7 @@ func simulateRenumerateMsg(module helpers.Module) simulationTypes.Operation {
 			return simulationTypes.NewOperationMsg(&renumerate.Message{}, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 
-		assetID := baseIDs.NewAssetID(mintMessage.(*mint.Message).ClassificationID, baseQualified.NewImmutables(mintMessage.(*mint.Message).ImmutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(mintMessage.(*mint.Message).ImmutableProperties.GetList()...)...)))
+		assetID := baseIDs.NewAssetID(mintMessage.(*mint.Message).ClassificationID, baseQualified.NewImmutables(mintMessage.(*mint.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(mintMessage.(*mint.Message).ImmutableProperties.Get()...)...)))
 		renumerateMessage := renumerate.NewMessage(from.Address, mintMessage.(*mint.Message).FromID, assetID)
 		result, err = simulationModules.ExecuteMessage(context, module, renumerateMessage.(helpers.Message))
 		if err != nil {
@@ -153,7 +155,7 @@ func simulateBurnMsg(module helpers.Module) simulationTypes.Operation {
 			return simulationTypes.NewOperationMsg(mintMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 
-		assetID := baseIDs.NewAssetID(mintMessage.(*mint.Message).ClassificationID, baseQualified.NewImmutables(mintMessage.(*mint.Message).ImmutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(mintMessage.(*mint.Message).ImmutableProperties.GetList()...)...)))
+		assetID := baseIDs.NewAssetID(mintMessage.(*mint.Message).ClassificationID, baseQualified.NewImmutables(mintMessage.(*mint.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(mintMessage.(*mint.Message).ImmutableProperties.Get()...)...)))
 		burnMessage := burn.NewMessage(from.Address, mintMessage.(*mint.Message).FromID, assetID)
 		result, err = simulationModules.ExecuteMessage(context, module, burnMessage.(helpers.Message))
 		if err != nil {
@@ -256,14 +258,14 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 		if mappable.Asset == nil {
 			return simulationTypes.NewOperationMsg(&issue.Message{}, false, "invalid identity", base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
-		for _, i := range mappable.GetAsset().Get().GetImmutables().GetImmutablePropertyList().GetList() {
+		for _, i := range mappable.GetAsset().Get().GetImmutables().GetImmutablePropertyList().Get() {
 			if i.IsMeta() {
 				immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
 			} else {
 				immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
 			}
 		}
-		for _, i := range mappable.GetAsset().Get().GetMutables().GetMutablePropertyList().GetList() {
+		for _, i := range mappable.GetAsset().Get().GetMutables().GetMutablePropertyList().Get() {
 			if i.IsMeta() {
 				mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
 				updatedProperties = mutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
@@ -277,7 +279,7 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 		if err != nil {
 			return simulationTypes.NewOperationMsg(mintMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
-		mintedAssetID := baseIDs.NewAssetID(classificationID, baseQualified.NewImmutables(immutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(immutableProperties.GetList()...)...)))
+		mintedAssetID := baseIDs.NewAssetID(classificationID, baseQualified.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(immutableProperties.Get()...)...)))
 		mutateMessage := mutate.NewMessage(from.Address, fromID, mintedAssetID, updatedProperties, mutableProperties)
 
 		result, err = simulationModules.ExecuteMessage(context, module, mutateMessage.(helpers.Message))
@@ -323,14 +325,14 @@ func GetMintMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 	if mappable.Asset == nil {
 		return nil
 	}
-	for _, i := range mappable.GetAsset().Get().GetImmutables().GetImmutablePropertyList().GetList() {
+	for _, i := range mappable.GetAsset().Get().GetImmutables().GetImmutablePropertyList().Get() {
 		if i.IsMeta() {
 			immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
 		} else {
 			immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
 		}
 	}
-	for _, i := range mappable.GetAsset().Get().GetMutables().GetMutablePropertyList().GetList() {
+	for _, i := range mappable.GetAsset().Get().GetMutables().GetMutablePropertyList().Get() {
 		if i.IsMeta() {
 			mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
 		} else {

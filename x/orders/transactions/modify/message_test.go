@@ -23,7 +23,7 @@ import (
 
 var (
 	expiresInHeight = base.NewHeight(60).(*base.Height)
-	testMessage     = newMessage(fromAccAddress, testFromID, testOrderID, takerOwnableSplit, makerOwnableSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties)
+	testMessage     = NewMessage(fromAccAddress, testFromID, testOrderID, takerOwnableSplit, makerOwnableSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties)
 )
 
 type fields struct {
@@ -263,8 +263,8 @@ func Test_newMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newMessage(tt.args.from, tt.args.fromID, tt.args.orderID, tt.args.takerOwnableSplit, tt.args.makerOwnableSplit, tt.args.expiresIn, tt.args.mutableMetaProperties.(*baseLists.PropertyList), tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newMessage() = %v, want %v", got, tt.want)
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.orderID, tt.args.takerOwnableSplit, tt.args.makerOwnableSplit, tt.args.expiresIn, tt.args.mutableMetaProperties.(*baseLists.PropertyList), tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})
 	}
