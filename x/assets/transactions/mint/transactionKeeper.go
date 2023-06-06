@@ -5,16 +5,9 @@ package mint
 
 import (
 	"context"
+
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/assets/key"
-	"github.com/AssetMantle/modules/x/assets/mappable"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/verify"
-	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 	"github.com/AssetMantle/schema/go/data"
 	"github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
@@ -23,16 +16,25 @@ import (
 	"github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/assets/key"
+	"github.com/AssetMantle/modules/x/assets/mappable"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 )
 
 type transactionKeeper struct {
-	mapper                     helpers.Mapper
-	parameterManager           helpers.ParameterManager
-	authenticateAuxiliary      helpers.Auxiliary
-	bondAuxiliary              helpers.Auxiliary
-	conformAuxiliary           helpers.Auxiliary
-	maintainersVerifyAuxiliary helpers.Auxiliary
-	mintAuxiliary              helpers.Auxiliary
+	mapper                helpers.Mapper
+	parameterManager      helpers.ParameterManager
+	authenticateAuxiliary helpers.Auxiliary
+	bondAuxiliary         helpers.Auxiliary
+	conformAuxiliary      helpers.Auxiliary
+	authorizeAuxiliary    helpers.Auxiliary
+	mintAuxiliary         helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -47,7 +49,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("minting is not enabled")
 	}
 
-	if _, err := transactionKeeper.maintainersVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); err != nil {
 		return nil, err
 	}
 
@@ -110,8 +112,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.conformAuxiliary = value
 			case mint.Auxiliary.GetName():
 				transactionKeeper.mintAuxiliary = value
-			case verify.Auxiliary.GetName():
-				transactionKeeper.maintainersVerifyAuxiliary = value
+			case authorize.Auxiliary.GetName():
+				transactionKeeper.authorizeAuxiliary = value
 			}
 		}
 	}

@@ -22,7 +22,7 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/verify"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/key"
@@ -31,14 +31,14 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper                     helpers.Mapper
-	parameterManager           helpers.ParameterManager
-	bondAuxiliary              helpers.Auxiliary
-	conformAuxiliary           helpers.Auxiliary
-	supplementAuxiliary        helpers.Auxiliary
-	transferAuxiliary          helpers.Auxiliary
-	authenticateAuxiliary      helpers.Auxiliary
-	maintainersVerifyAuxiliary helpers.Auxiliary
+	mapper                helpers.Mapper
+	parameterManager      helpers.ParameterManager
+	bondAuxiliary         helpers.Auxiliary
+	conformAuxiliary      helpers.Auxiliary
+	supplementAuxiliary   helpers.Auxiliary
+	transferAuxiliary     helpers.Auxiliary
+	authenticateAuxiliary helpers.Auxiliary
+	authorizeAuxiliary    helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -49,7 +49,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 
-	if _, err := transactionKeeper.maintainersVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); err != nil {
 		return nil, err
 	}
 
@@ -129,8 +129,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.transferAuxiliary = value
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
-			case verify.Auxiliary.GetName():
-				transactionKeeper.maintainersVerifyAuxiliary = value
+			case authorize.Auxiliary.GetName():
+				transactionKeeper.authorizeAuxiliary = value
 			}
 		}
 	}

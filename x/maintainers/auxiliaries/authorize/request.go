@@ -1,12 +1,13 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package verify
+package authorize
 
 import (
-	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/asaskevich/govalidator"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {

@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_Verify_Response(t *testing.T) {
+func Test_Response(t *testing.T) {
 	testAuxiliaryResponse := newAuxiliaryResponse(nil)
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil}, testAuxiliaryResponse)
 	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
