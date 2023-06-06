@@ -13,7 +13,7 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/constants"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
@@ -124,7 +124,7 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 									panic(err)
 								}
 
-								mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))
+								mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))
 
 								orders.Mutate(mappable.NewMappable(base.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...).GetMutables())))
 								orders.Remove(mappable.NewMappable(rightOrder))
@@ -141,7 +141,7 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 									panic(err)
 								}
 
-								auxiliaryResponse, err := block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder.TruncateInt()))))))
+								auxiliaryResponse, err := block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder.TruncateInt()))))))
 								if err != nil {
 									panic(err)
 								}
