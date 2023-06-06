@@ -1,13 +1,13 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package module
+package constants
 
 import (
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-const Name = "assets"
-const ConsensusVersion = 1
+const ModuleName = "assets"
+const ModuleConsensusVersion = 1
 
-var StoreKeyPrefix = constants.AssetsStoreKeyPrefix
+var ModuleStoreKeyPrefix = constants.AssetsStoreKeyPrefix

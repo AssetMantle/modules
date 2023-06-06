@@ -11,13 +11,13 @@ import (
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/x/splits/module"
+	"github.com/AssetMantle/modules/x/splits/constants"
 	"github.com/AssetMantle/modules/x/splits/parameters/wrapAllowedCoins"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
-		simulation.NewSimParamChange(module.Name,
+		simulation.NewSimParamChange(constants.ModuleName,
 			string(wrapAllowedCoins.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(base.GenerateRandomCoinListString(5))

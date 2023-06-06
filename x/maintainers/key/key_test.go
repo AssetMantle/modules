@@ -7,8 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/maintainers/module"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -16,6 +14,9 @@ import (
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/maintainers/constants"
 )
 
 func createTestData() *baseIDs.MaintainerID {
@@ -127,8 +128,8 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{createTestData()}, module.StoreKeyPrefix.GenerateStoreKey((&Key{createTestData()}).GenerateStoreKeyBytes())},
-		{"-ve", fields{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}, module.StoreKeyPrefix.GenerateStoreKey((&Key{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}).GenerateStoreKeyBytes())},
+		{"+ve", fields{createTestData()}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{createTestData()}).GenerateStoreKeyBytes())},
+		{"-ve", fields{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}).GenerateStoreKeyBytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

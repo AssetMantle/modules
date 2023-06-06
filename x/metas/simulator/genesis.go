@@ -16,9 +16,9 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
+	"github.com/AssetMantle/modules/x/metas/constants"
 	"github.com/AssetMantle/modules/x/metas/genesis"
 	"github.com/AssetMantle/modules/x/metas/mappable"
-	metasModule "github.com/AssetMantle/modules/x/metas/module"
 	"github.com/AssetMantle/modules/x/metas/parameters/revealEnabled"
 )
 
@@ -41,5 +41,5 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	genesisState := genesis.Prototype().Initialize(mappableList, base.NewParameterList(revealEnabled.Parameter.Mutate(Data)))
 
-	simulationState.GenState[metasModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
+	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

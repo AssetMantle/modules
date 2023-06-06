@@ -11,13 +11,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/module"
+	"github.com/AssetMantle/modules/x/splits/constants"
 )
 
 var _ helpers.Key = (*Key)(nil)
 
 func (key *Key) GenerateStoreKeyBytes() []byte {
-	return module.StoreKeyPrefix.GenerateStoreKey(key.SplitID.Bytes())
+	return constants.ModuleStoreKeyPrefix.GenerateStoreKey(key.SplitID.Bytes())
 }
 func (*Key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, &Key{})

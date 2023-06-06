@@ -6,10 +6,6 @@ package revoke
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/maintainers/key"
-	"github.com/AssetMantle/modules/x/maintainers/mappable"
-	"github.com/AssetMantle/modules/x/maintainers/module"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/constants"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
@@ -18,6 +14,11 @@ import (
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/maintainers/constants"
+	"github.com/AssetMantle/modules/x/maintainers/key"
+	"github.com/AssetMantle/modules/x/maintainers/mappable"
 )
 
 type auxiliaryKeeper struct {
@@ -38,7 +39,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	if Mappable := maintainers.Fetch(key.NewKey(fromMaintainerID)).GetMappable(key.NewKey(fromMaintainerID)); Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("maintainer with ID %s not found", fromMaintainerID.AsString())
-	} else if !mappable.GetMaintainer(Mappable).IsPermitted(module.Remove) {
+	} else if !mappable.GetMaintainer(Mappable).IsPermitted(constants.Remove) {
 		return nil, errorConstants.NotAuthorized.Wrapf("maintainer with ID %s is not authorized to remove maintainers", fromMaintainerID.AsString())
 	}
 

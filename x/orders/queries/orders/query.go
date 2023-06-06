@@ -6,20 +6,21 @@ package orders
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/x/orders/module"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	helperConstants "github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/x/orders/constants"
 )
 
 var Query = baseHelpers.NewQuery(
 	"orders",
 	"",
 	"",
-	module.Name,
+	constants.ModuleName,
 
 	requestPrototype,
 	responsePrototype,
@@ -32,7 +33,7 @@ var Query = baseHelpers.NewQuery(
 		return RegisterServiceHandlerClient(context.Background(), serveMux, NewServiceClient(clientContext))
 	},
 
-	constants.OrderID,
-	constants.Offset,
-	constants.Limit,
+	helperConstants.OrderID,
+	helperConstants.Offset,
+	helperConstants.Limit,
 )

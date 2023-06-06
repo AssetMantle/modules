@@ -1,17 +1,18 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package module
+package constants
 
 import (
-	"github.com/AssetMantle/modules/helpers/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-const Name = "maintainers"
-const ConsensusVersion = 1
+const ModuleName = "maintainers"
+const ModuleConsensusVersion = 1
 
-var StoreKeyPrefix = constants.MaintainersStoreKeyPrefix
+var ModuleStoreKeyPrefix = constants.MaintainersStoreKeyPrefix
 
 var (
 	Add        = baseIDs.NewStringID("add")

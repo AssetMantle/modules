@@ -11,14 +11,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/module"
+	"github.com/AssetMantle/modules/x/classifications/constants"
 	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
 	"github.com/AssetMantle/modules/x/classifications/parameters/maxPropertyCount"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
-		simulation.NewSimParamChange(module.Name,
+		simulation.NewSimParamChange(constants.ModuleName,
 			string(bondRate.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(math.MaxInt))
@@ -28,7 +28,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 				return string(bytes)
 			},
 		),
-		simulation.NewSimParamChange(module.Name,
+		simulation.NewSimParamChange(constants.ModuleName,
 			string(maxPropertyCount.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(1000) + 22)

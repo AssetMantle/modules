@@ -6,12 +6,6 @@ package deputize
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
-	"github.com/AssetMantle/modules/x/maintainers/key"
-	"github.com/AssetMantle/modules/x/maintainers/mappable"
-	"github.com/AssetMantle/modules/x/maintainers/module"
-	internalUtilities "github.com/AssetMantle/modules/x/maintainers/utilities"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
@@ -22,6 +16,13 @@ import (
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
+	"github.com/AssetMantle/modules/x/maintainers/constants"
+	"github.com/AssetMantle/modules/x/maintainers/key"
+	"github.com/AssetMantle/modules/x/maintainers/mappable"
+	internalUtilities "github.com/AssetMantle/modules/x/maintainers/utilities"
 )
 
 type auxiliaryKeeper struct {
@@ -54,7 +55,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	fromMaintainer := mappable.GetMaintainer(Mappable)
 
 	// TODO test
-	if !(fromMaintainer.IsPermitted(module.Add) || !auxiliaryRequest.CanAddMaintainer && fromMaintainer.IsPermitted(module.Mutate) || !auxiliaryRequest.CanMutateMaintainer && fromMaintainer.IsPermitted(module.Remove) || !auxiliaryRequest.CanRemoveMaintainer) {
+	if !(fromMaintainer.IsPermitted(constants.Add) || !auxiliaryRequest.CanAddMaintainer && fromMaintainer.IsPermitted(constants.Mutate) || !auxiliaryRequest.CanMutateMaintainer && fromMaintainer.IsPermitted(constants.Remove) || !auxiliaryRequest.CanRemoveMaintainer) {
 		return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the required permissions")
 	}
 
@@ -81,13 +82,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		)))
 
 	if Mappable = maintainers.Fetch(key.NewKey(toMaintainerID)).GetMappable(key.NewKey(toMaintainerID)); Mappable == nil {
-		if !fromMaintainer.IsPermitted(module.Add) {
+		if !fromMaintainer.IsPermitted(constants.Add) {
 			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the permission to add maintainers")
 		}
 
 		maintainers.Add(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ToID, auxiliaryRequest.MaintainedClassificationID, auxiliaryRequest.MaintainedProperties.GetPropertyIDList(), internalUtilities.SetPermissions(auxiliaryRequest.CanMintAsset, auxiliaryRequest.CanBurnAsset, auxiliaryRequest.CanRenumerateAsset, auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanRemoveMaintainer, auxiliaryRequest.CanMutateMaintainer))))
 	} else {
-		if !fromMaintainer.IsPermitted(module.Mutate) {
+		if !fromMaintainer.IsPermitted(constants.Mutate) {
 			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the permission to mutate maintainers")
 		}
 

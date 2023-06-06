@@ -9,7 +9,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/module"
+	"github.com/AssetMantle/modules/x/classifications/constants"
 	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
 	"github.com/AssetMantle/modules/x/classifications/parameters/maxPropertyCount"
 )
@@ -20,7 +20,7 @@ func TestPrototype(t *testing.T) {
 		want      helpers.ParameterManager
 		wantError error
 	}{
-		{"+ve", baseHelpers.NewParameterManager(module.Name, bondRate.ValidatableParameter, maxPropertyCount.ValidatableParameter), nil},
+		{"+ve", baseHelpers.NewParameterManager(constants.ModuleName, bondRate.ValidatableParameter, maxPropertyCount.ValidatableParameter), nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

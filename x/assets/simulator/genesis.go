@@ -6,26 +6,24 @@ package simulator
 import (
 	"math/rand"
 
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	"github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/constants"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-
-	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
-	"github.com/AssetMantle/modules/x/assets/mappable"
-
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/schema/go/lists/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	assetsModule "github.com/AssetMantle/modules/x/assets/constants"
+	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
+	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
+	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/genesis"
+	"github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/assets/parameters/mintEnabled"
 )
 
@@ -46,7 +44,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	for i := range mappableList {
 		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomMetaPropertyListWithoutData(simulationState.Rand))
-		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand).Add(baseProperties.NewMetaProperty(constants.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100)))))
+		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand).Add(baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100)))))
 		// for _, property := range immutables.GetImmutablePropertyList().GetList() {
 		//	immutables = base.NewImmutables(immutables.GetImmutablePropertyList().Mutate(baseProperties.NewMetaProperty(property.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(simulationState.Rand, property.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))))
 		// }
@@ -60,5 +58,5 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	genesisState := genesis.Prototype().Initialize(mappableList, base.NewParameterList(mintEnabled.Parameter.Mutate(Data)))
 
-	simulationState.GenState[assetsModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
+	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

@@ -23,9 +23,9 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
+	"github.com/AssetMantle/modules/x/identities/constants"
 	"github.com/AssetMantle/modules/x/identities/genesis"
 	mappableIdentities "github.com/AssetMantle/modules/x/identities/mappable"
-	identitiesModule "github.com/AssetMantle/modules/x/identities/module"
 	"github.com/AssetMantle/modules/x/identities/parameters/maxProvisionAddressCount"
 )
 
@@ -70,5 +70,5 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(maxProvisionAddressCount.Parameter.Mutate(Data)))
 
-	simulationState.GenState[identitiesModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
+	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

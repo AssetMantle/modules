@@ -21,8 +21,8 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/splits/constants"
 	"github.com/AssetMantle/modules/x/splits/genesis"
-	splitsModule "github.com/AssetMantle/modules/x/splits/module"
 	"github.com/AssetMantle/modules/x/splits/parameters/wrapAllowedCoins"
 )
 
@@ -62,5 +62,5 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(wrapAllowedCoins.Parameter.Mutate(Data)))
 
-	simulationState.GenState[splitsModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
+	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

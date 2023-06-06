@@ -8,7 +8,7 @@ import (
 
 	"github.com/AssetMantle/schema/go/documents/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/properties/constants"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/orders"
@@ -24,8 +24,8 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/genesis"
-	ordersModule "github.com/AssetMantle/modules/x/orders/module"
 	"github.com/AssetMantle/modules/x/orders/parameters/maxOrderLife"
 )
 
@@ -55,15 +55,15 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		}
 		mappable := &mappableAssets.Mappable{}
 		baseHelpers.CodecPrototype().MustUnmarshal(assets.ClassificationIDMappableBytesMap[classificationIDString], mappable)
-		immutables := baseQualified.NewImmutables(mappable.Asset.Immutables.GetImmutablePropertyList().Add(baseLists.AnyPropertiesToProperties(constants.ExchangeRateProperty.ToAnyProperty(),
-			constants.CreationHeightProperty.ToAnyProperty(),
-			constants.MakerOwnableIDProperty.ToAnyProperty(),
-			constants.TakerOwnableIDProperty.ToAnyProperty(),
-			constants.MakerIDProperty.ToAnyProperty(),
-			constants.TakerIDProperty.ToAnyProperty())...))
+		immutables := baseQualified.NewImmutables(mappable.Asset.Immutables.GetImmutablePropertyList().Add(baseLists.AnyPropertiesToProperties(constantProperties.ExchangeRateProperty.ToAnyProperty(),
+			constantProperties.CreationHeightProperty.ToAnyProperty(),
+			constantProperties.MakerOwnableIDProperty.ToAnyProperty(),
+			constantProperties.TakerOwnableIDProperty.ToAnyProperty(),
+			constantProperties.MakerIDProperty.ToAnyProperty(),
+			constantProperties.TakerIDProperty.ToAnyProperty())...))
 		mutables := baseQualified.NewMutables(mappable.Asset.Mutables.GetMutablePropertyList().Add(baseLists.AnyPropertiesToProperties(
-			constants.ExpiryHeightProperty.ToAnyProperty(),
-			constants.MakerOwnableSplitProperty.ToAnyProperty(),
+			constantProperties.ExpiryHeightProperty.ToAnyProperty(),
+			constantProperties.MakerOwnableSplitProperty.ToAnyProperty(),
 		)...))
 		classificationID := baseIDs.NewClassificationID(immutables, mutables)
 		orderID := baseIDs.NewOrderID(classificationID, immutables)
@@ -76,5 +76,5 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(maxOrderLife.Parameter.Mutate(Data)))
 
-	simulationState.GenState[ordersModule.Name] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
+	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

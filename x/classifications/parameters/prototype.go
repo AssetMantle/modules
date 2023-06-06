@@ -6,11 +6,11 @@ package parameters
 import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/module"
+	"github.com/AssetMantle/modules/x/classifications/constants"
 	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
 	"github.com/AssetMantle/modules/x/classifications/parameters/maxPropertyCount"
 )
 
 func Prototype() helpers.ParameterManager {
-	return baseHelpers.NewParameterManager(module.Name, bondRate.ValidatableParameter, maxPropertyCount.ValidatableParameter)
+	return baseHelpers.NewParameterManager(constants.ModuleName, bondRate.ValidatableParameter, maxPropertyCount.ValidatableParameter)
 }

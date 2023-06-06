@@ -18,7 +18,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/x/assets/module"
+	"github.com/AssetMantle/modules/x/assets/constants"
 )
 
 var (
@@ -152,7 +152,7 @@ func Test_message_Route(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID}, module.Name},
+		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID}, constants.ModuleName},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

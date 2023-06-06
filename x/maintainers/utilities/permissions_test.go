@@ -7,10 +7,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/x/maintainers/module"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/lists"
 	"github.com/AssetMantle/schema/go/lists/base"
+
+	"github.com/AssetMantle/modules/x/maintainers/constants"
 )
 
 func TestSetPermissions(t *testing.T) {
@@ -28,13 +29,13 @@ func TestSetPermissions(t *testing.T) {
 		args args
 		want lists.IDList
 	}{
-		{"+ve for can Mint", args{true, false, false, false, false, false}, idList.Add(module.Mint)},
-		{"+ve for can Burn", args{false, true, false, false, false, false}, idList.Add(module.Burn)},
-		{"+ve for can Remunerate", args{false, false, true, false, false, false}, idList.Add(module.Renumerate)},
-		{"+ve for can Add", args{false, false, false, true, false, false}, idList.Add(module.Add)},
-		{"+ve for can remove", args{false, false, false, false, true, false}, idList.Add(module.Remove)},
-		{"+ve for can mutate", args{false, false, false, false, false, true}, idList.Add(module.Mutate)},
-		{"+ve", args{true, true, true, true, true, true}, idList.Add([]ids.ID{module.Mint, module.Burn, module.Renumerate, module.Add, module.Remove, module.Mutate}...)},
+		{"+ve for can Mint", args{true, false, false, false, false, false}, idList.Add(constants.Mint)},
+		{"+ve for can Burn", args{false, true, false, false, false, false}, idList.Add(constants.Burn)},
+		{"+ve for can Remunerate", args{false, false, true, false, false, false}, idList.Add(constants.Renumerate)},
+		{"+ve for can Add", args{false, false, false, true, false, false}, idList.Add(constants.Add)},
+		{"+ve for can remove", args{false, false, false, false, true, false}, idList.Add(constants.Remove)},
+		{"+ve for can mutate", args{false, false, false, false, false, true}, idList.Add(constants.Mutate)},
+		{"+ve", args{true, true, true, true, true, true}, idList.Add([]ids.ID{constants.Mint, constants.Burn, constants.Renumerate, constants.Add, constants.Remove, constants.Mutate}...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

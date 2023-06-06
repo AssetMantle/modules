@@ -8,10 +8,10 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/auxiliaries"
 	"github.com/AssetMantle/modules/x/orders/block"
+	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/genesis"
 	"github.com/AssetMantle/modules/x/orders/invariants"
 	"github.com/AssetMantle/modules/x/orders/mapper"
-	"github.com/AssetMantle/modules/x/orders/module"
 	"github.com/AssetMantle/modules/x/orders/parameters"
 	"github.com/AssetMantle/modules/x/orders/queries"
 	"github.com/AssetMantle/modules/x/orders/simulator"
@@ -20,8 +20,8 @@ import (
 
 func Prototype() helpers.Module {
 	return baseHelpers.NewModule(
-		module.Name,
-		module.ConsensusVersion,
+		constants.ModuleName,
+		constants.ModuleConsensusVersion,
 		auxiliaries.Prototype,
 		block.Prototype,
 		genesis.Prototype,
