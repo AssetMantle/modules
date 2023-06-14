@@ -53,6 +53,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.GetClassificationID(), message.FromID, constants.CanMakeOrderPermission)); err != nil {
+		// TODO enable after permissioning is implemented
+		// return nil, err
+	}
+
 	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
 		panic("Could not get from address from Bech32 string")
@@ -84,14 +89,10 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	immutables := baseQualified.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.ImmutableProperties.Get()...)...))
 
 	orderID := baseIDs.NewOrderID(message.ClassificationID, immutables)
+
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(orderID))
 	if orders.GetMappable(key.NewKey(orderID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("order with ID %s already exists", orderID.AsString())
-	}
-
-	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(order.GetClassificationID(), message.FromID, constants.CanCancelOrderPermission)); err != nil {
-		// TODO enable after permissioning is implemented
-		// return nil, err
 	}
 
 	if message.ExpiresIn.Get() > transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get() {
