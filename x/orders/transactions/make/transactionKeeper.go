@@ -33,12 +33,12 @@ import (
 type transactionKeeper struct {
 	mapper                helpers.Mapper
 	parameterManager      helpers.ParameterManager
+	authenticateAuxiliary helpers.Auxiliary
+	authorizeAuxiliary    helpers.Auxiliary
 	bondAuxiliary         helpers.Auxiliary
 	conformAuxiliary      helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	transferAuxiliary     helpers.Auxiliary
-	authenticateAuxiliary helpers.Auxiliary
-	authorizeAuxiliary    helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -89,6 +89,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("order with ID %s already exists", orderID.AsString())
 	}
 
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(order.GetClassificationID(), message.FromID, constants.CanCancelOrderPermission)); err != nil {
+		// TODO enable after permissioning is implemented
+		// return nil, err
+	}
+
 	if message.ExpiresIn.Get() > transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get() {
 		return nil, errorConstants.InvalidRequest.Wrapf("order expiry exceeds maximum allowed %d", transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get())
 	}
@@ -119,6 +124,10 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 		switch value := externalKeeper.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
+			case authenticate.Auxiliary.GetName():
+				transactionKeeper.authenticateAuxiliary = value
+			case authorize.Auxiliary.GetName():
+				transactionKeeper.authorizeAuxiliary = value
 			case bond.Auxiliary.GetName():
 				transactionKeeper.bondAuxiliary = value
 			case conform.Auxiliary.GetName():
@@ -127,10 +136,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.supplementAuxiliary = value
 			case transfer.Auxiliary.GetName():
 				transactionKeeper.transferAuxiliary = value
-			case authenticate.Auxiliary.GetName():
-				transactionKeeper.authenticateAuxiliary = value
-			case authorize.Auxiliary.GetName():
-				transactionKeeper.authorizeAuxiliary = value
 			}
 		}
 	}
