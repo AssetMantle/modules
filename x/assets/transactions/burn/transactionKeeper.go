@@ -6,28 +6,30 @@ package burn
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/go/data"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/properties"
+	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
+	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/unbond"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
-	"github.com/AssetMantle/schema/go/data"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	"github.com/AssetMantle/schema/go/properties"
-	"github.com/AssetMantle/schema/go/properties/constants"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/burn"
 )
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
 	parameterManager      helpers.ParameterManager
 	authenticateAuxiliary helpers.Auxiliary
-	maintainAuxiliary     helpers.Auxiliary
-	renumerateAuxiliary   helpers.Auxiliary
+	authorizeAuxiliary    helpers.Auxiliary
+	burnAuxiliary         helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	unbondAuxiliary       helpers.Auxiliary
 }
@@ -40,7 +42,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 
-	if !transactionKeeper.parameterManager.Fetch(context).GetParameter(constants.BurnEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+	if !transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.BurnEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
 		return nil, errorConstants.NotAuthorized.Wrapf("burning is not enabled")
 	}
 
@@ -49,6 +51,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err
 	}
+
 	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
 
 	Mappable := assets.GetMappable(key.NewKey(message.AssetID))
@@ -57,28 +60,44 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	asset := mappable.GetAsset(Mappable)
 
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, constants.CanBurnAssetPermission)); err != nil {
+		return nil, err
+	}
+
 	auxiliaryResponse, err := transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetBurn()))
 	if err != nil {
 		return nil, err
 	}
 	metaProperties := supplement.GetMetaPropertiesFromResponse(auxiliaryResponse)
 
-	if burnHeightMetaProperty := metaProperties.GetProperty(constants.BurnHeightProperty.GetID()); burnHeightMetaProperty != nil {
+	if burnHeightMetaProperty := metaProperties.GetProperty(propertyConstants.BurnHeightProperty.GetID()); burnHeightMetaProperty != nil {
 		burnHeight := burnHeightMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.HeightData).Get()
 		if burnHeight.Compare(baseTypes.NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())) > 0 {
 			return nil, errorConstants.NotAuthorized.Wrapf("burning is not allowed until height %d", burnHeight.Get())
 		}
 	}
 
-	if _, err := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, sdkTypes.ZeroInt())); err != nil {
+	auxiliaryResponse, err = transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetSupply()))
+	if err != nil {
 		return nil, err
 	}
+	metaProperties = supplement.GetMetaPropertiesFromResponse(auxiliaryResponse)
 
-	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress)); err != nil {
-		return nil, err
+	if supplyMetaProperty := metaProperties.GetProperty(propertyConstants.SupplyProperty.GetID()); supplyMetaProperty != nil && supplyMetaProperty.IsMeta() {
+		supply := supplyMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
+
+		if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, supply)); err != nil {
+			return nil, err
+		}
+
+		if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress)); err != nil {
+			return nil, err
+		}
+
+		assets.Remove(mappable.NewMappable(asset))
+	} else {
+		return nil, errorConstants.MetaDataError.Wrapf("assets without supply cannot be burned")
 	}
-
-	assets.Remove(mappable.NewMappable(asset))
 
 	return newTransactionResponse(), nil
 }
@@ -93,10 +112,10 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			switch value.GetName() {
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
-			case maintain.Auxiliary.GetName():
-				transactionKeeper.maintainAuxiliary = value
-			case renumerate.Auxiliary.GetName():
-				transactionKeeper.renumerateAuxiliary = value
+			case authorize.Auxiliary.GetName():
+				transactionKeeper.authorizeAuxiliary = value
+			case burn.Auxiliary.GetName():
+				transactionKeeper.burnAuxiliary = value
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			case unbond.Auxiliary.GetName():
