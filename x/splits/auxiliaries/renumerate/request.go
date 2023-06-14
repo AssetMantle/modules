@@ -4,16 +4,17 @@
 package renumerate
 
 import (
-	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {
 	OwnerID       ids.IdentityID `json:"ownerID" valid:"required~required field ownerID missing"`
 	ids.OwnableID `json:"ownableID" valid:"required~required field ownableID missing"`
-	Value         sdkTypes.Int `json:"value" valid:"required~required field value missing"`
+	Supply        sdkTypes.Int `json:"supply" valid:"required~required field supply missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -32,10 +33,10 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Int) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(ownerID ids.IdentityID, ownableID ids.OwnableID, supply sdkTypes.Int) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		OwnerID:   ownerID,
 		OwnableID: ownableID,
-		Value:     value,
+		Supply:    supply,
 	}
 }
