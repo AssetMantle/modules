@@ -12,9 +12,8 @@ message Message {
   assetmantle.schema.ids.base.ClassificationID classification_i_d = 4;
   assetmantle.schema.lists.base.PropertyList maintained_properties = 5;
   bool can_make_order = 6;
-  bool can_modify_order = 7;
-  bool can_cancel_order = 8;
-  bool can_add_maintainer = 9;
-  bool can_remove_maintainer = 10;
-  bool can_mutate_maintainer = 11;
+  bool can_cancel_order = 7;
+  bool can_add_maintainer = 8;
+  bool can_remove_maintainer = 9;
+  bool can_mutate_maintainer = 10;
 }

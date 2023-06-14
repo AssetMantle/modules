@@ -6,6 +6,5 @@ import (
 
 var (
 	CanMakeOrderPermission   = baseIDs.NewStringID("make")
-	CanModifyOrderPermission = baseIDs.NewStringID("modify")
 	CanCancelOrderPermission = baseIDs.NewStringID("cancel")
 )

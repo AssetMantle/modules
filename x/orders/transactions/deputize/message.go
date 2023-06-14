@@ -62,7 +62,7 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, classificationID ids.ClassificationID, maintainedProperties lists.PropertyList, canMakeOrder bool, canModifyOrder bool, canCancelOrder bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, classificationID ids.ClassificationID, maintainedProperties lists.PropertyList, canMakeOrder bool, canCancelOrder bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) sdkTypes.Msg {
 	return &Message{
 		From:                 from.String(),
 		FromID:               fromID.(*baseIDs.IdentityID),
@@ -70,7 +70,6 @@ func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.Identi
 		ClassificationID:     classificationID.(*baseIDs.ClassificationID),
 		MaintainedProperties: maintainedProperties.(*baseLists.PropertyList),
 		CanMakeOrder:         canMakeOrder,
-		CanModifyOrder:       canModifyOrder,
 		CanCancelOrder:       canCancelOrder,
 		CanAddMaintainer:     canAddMaintainer,
 		CanRemoveMaintainer:  canRemoveMaintainer,

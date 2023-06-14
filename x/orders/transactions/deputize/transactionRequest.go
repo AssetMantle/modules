@@ -26,7 +26,6 @@ type transactionRequest struct {
 	ClassificationID     string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
 	MaintainedProperties string       `json:"maintainedProperties" valid:"required~required field maintainedProperties missing, matches(^.*$)~invalid field maintainedProperties"`
 	CanMakeOrder         bool         `json:"canMakeOrder"`
-	CanModifyOrder       bool         `json:"canModifyOrder"`
 	CanCancelOrder       bool         `json:"canCancelOrder"`
 	CanAddMaintainer     bool         `json:"canAddMaintainer"`
 	CanRemoveMaintainer  bool         `json:"canRemoveMaintainer"`
@@ -57,7 +56,6 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.MaintainedProperties),
 		cliCommand.ReadBool(constants.CanMakeOrder),
-		cliCommand.ReadBool(constants.CanModifyOrder),
 		cliCommand.ReadBool(constants.CanCancelOrder),
 		cliCommand.ReadBool(constants.CanAddMaintainer),
 		cliCommand.ReadBool(constants.CanRemoveMaintainer),
@@ -107,7 +105,6 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		classificationID,
 		maintainedProperties,
 		transactionRequest.CanMakeOrder,
-		transactionRequest.CanModifyOrder,
 		transactionRequest.CanCancelOrder,
 		transactionRequest.CanAddMaintainer,
 		transactionRequest.CanRemoveMaintainer,
@@ -120,7 +117,7 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainedProperties string, canMakeOrder bool, canModifyOrder bool, canCancelOrder bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainedProperties string, canMakeOrder bool, canCancelOrder bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:              baseReq,
 		FromID:               fromID,
@@ -128,7 +125,6 @@ func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, cla
 		ClassificationID:     classificationID,
 		MaintainedProperties: maintainedProperties,
 		CanMakeOrder:         canMakeOrder,
-		CanModifyOrder:       canModifyOrder,
 		CanCancelOrder:       canCancelOrder,
 		CanAddMaintainer:     canAddMaintainer,
 		CanRemoveMaintainer:  canRemoveMaintainer,
