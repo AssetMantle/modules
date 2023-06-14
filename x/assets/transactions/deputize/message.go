@@ -62,7 +62,7 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, classificationID ids.ClassificationID, maintainedProperties lists.PropertyList, canMintAsset bool, canBurnAsset bool, canRenumerateAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, classificationID ids.ClassificationID, maintainedProperties lists.PropertyList, canMintAsset bool, canRenumerateAsset bool, canBurnAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) sdkTypes.Msg {
 	return &Message{
 		From:                 from.String(),
 		FromID:               fromID.(*baseIDs.IdentityID),
@@ -70,8 +70,8 @@ func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.Identi
 		ClassificationID:     classificationID.(*baseIDs.ClassificationID),
 		MaintainedProperties: maintainedProperties.(*baseLists.PropertyList),
 		CanMintAsset:         canMintAsset,
-		CanBurnAsset:         canBurnAsset,
 		CanRenumerateAsset:   canRenumerateAsset,
+		CanBurnAsset:         canBurnAsset,
 		CanAddMaintainer:     canAddMaintainer,
 		CanRemoveMaintainer:  canRemoveMaintainer,
 		CanMutateMaintainer:  canMutateMaintainer,
