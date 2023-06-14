@@ -99,9 +99,9 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ClassificationID, constants.TakerID, constants.MakerOwnableID, constants.TakerOwnableID, constants.ExpiresIn, constants.MakerOwnableSplit, constants.TakerOwnableSplit, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ClassificationID, constants.TakerID, constants.MakerOwnableID, constants.TakerOwnableID, constants.ExpiresIn, constants.MakerOwnableSplit, constants.TakerOwnableSplit, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
 
-	viper.Set(constants.FromID.GetName(), testFromID.AsString())
+	viper.Set(constants.FromIdentityID.GetName(), testFromID.AsString())
 	viper.Set(constants.ClassificationID.GetName(), testClassificationID.AsString())
 	viper.Set(constants.TakerID.GetName(), testFromID.AsString())
 	viper.Set(constants.MakerOwnableID.GetName(), makerOwnableID.AsString())

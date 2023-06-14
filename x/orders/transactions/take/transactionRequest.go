@@ -46,7 +46,7 @@ func (transactionRequest transactionRequest) Validate() error {
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(context),
-		cliCommand.ReadString(constants.FromID),
+		cliCommand.ReadString(constants.FromIdentityID),
 		cliCommand.ReadString(constants.TakerOwnableSplit),
 		cliCommand.ReadString(constants.OrderID),
 	), nil
