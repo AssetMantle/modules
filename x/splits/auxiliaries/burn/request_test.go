@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -15,6 +14,8 @@ import (
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func createTestInput1() (ids.IdentityID, ids.OwnableID, types.Dec) {
@@ -91,7 +92,7 @@ func Test_auxiliaryRequest_Validate(t *testing.T) {
 			auxiliaryRequest := auxiliaryRequest{
 				OwnerID:   tt.fields.OwnerID,
 				OwnableID: tt.fields.OwnableID,
-				Value:     tt.fields.Value,
+				Supply:    tt.fields.Value,
 			}
 			if err := auxiliaryRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
