@@ -47,7 +47,7 @@ var (
 	testFromID              = baseIDs.NewIdentityID(testClassificationID, immutables)
 	maintainedProperty      = "maintainedProperty:S|maintainedProperty"
 	maintainedProperties, _ = utilities.ReadMetaPropertyList(maintainedProperty)
-	permissions             = maintainerUtilities.SetPermissions(true, true, true, true, true, true)
+	permissions             = maintainerUtilities.SetModulePermissions(true, true, true, true, true, true)
 )
 
 func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {

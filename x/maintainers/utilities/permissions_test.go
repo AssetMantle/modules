@@ -39,8 +39,8 @@ func TestSetPermissions(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := SetPermissions(tt.args.mint, tt.args.burn, tt.args.renumerate, tt.args.add, tt.args.remove, tt.args.mutate); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("SetPermissions() = %v, want %v", got, tt.want)
+			if got := SetModulePermissions(tt.args.mint, tt.args.burn, tt.args.renumerate, tt.args.add, tt.args.remove, tt.args.mutate); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SetModulePermissions() = %v, want %v", got, tt.want)
 			}
 		})
 	}

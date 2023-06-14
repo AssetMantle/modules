@@ -7,26 +7,17 @@ import (
 	"github.com/AssetMantle/modules/x/maintainers/constants"
 )
 
-func SetPermissions(mint bool, burn bool, renumerate bool, add bool, remove bool, mutate bool) lists.IDList {
+func SetModulePermissions(canAddMaintainer bool, canMutateMaintainer bool, canRemoveMaintainer bool) lists.IDList {
 	permissions := base.NewIDList()
 
-	if mint {
-		permissions = permissions.Add(constants.Mint)
+	if canAddMaintainer {
+		permissions = permissions.Add(constants.CanAddMaintainerPermission)
 	}
-	if burn {
-		permissions = permissions.Add(constants.Burn)
+	if canMutateMaintainer {
+		permissions = permissions.Add(constants.CanMutateMaintainerPermission)
 	}
-	if renumerate {
-		permissions = permissions.Add(constants.Renumerate)
-	}
-	if add {
-		permissions = permissions.Add(constants.Add)
-	}
-	if remove {
-		permissions = permissions.Add(constants.Remove)
-	}
-	if mutate {
-		permissions = permissions.Add(constants.Mutate)
+	if canRemoveMaintainer {
+		permissions = permissions.Add(constants.CanRemoveMaintainerPermission)
 	}
 
 	return permissions

@@ -4,23 +4,22 @@
 package deputize
 
 import (
-	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/lists"
 	"github.com/asaskevich/govalidator"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {
-	FromID                     ids.IdentityID       `json:"fromID" valid:"required~required field fromID missing"`
-	ToID                       ids.IdentityID       `json:"toID" valid:"required~required field toID missing"`
+	FromIdentityID             ids.IdentityID       `json:"fromIdentityID" valid:"required~required field fromIdentityID missing"`
+	ToIdentityID               ids.IdentityID       `json:"toIdentityID" valid:"required~required field toIdentityID missing"`
 	MaintainedClassificationID ids.ClassificationID `json:"maintainedClassificationID" valid:"required~required field maintainedClassificationID missing"`
 	MaintainedProperties       lists.PropertyList   `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
-	CanMintAsset               bool                 `json:"canMintAsset"`
-	CanBurnAsset               bool                 `json:"canBurnAsset"`
-	CanRenumerateAsset         bool                 `json:"canRenumerateAsset"`
-	CanAddMaintainer           bool                 `json:"canAddMaintainer"`
-	CanRemoveMaintainer        bool                 `json:"canRemoveMaintainer"`
-	CanMutateMaintainer        bool                 `json:"canMutateMaintainer"`
+	CanAddMaintainer           bool                 `json:"canAddMaintainer" valid:"required~required field canAddMaintainer missing"`
+	CanRemoveMaintainer        bool                 `json:"canRemoveMaintainer" valid:"required~required field canRemoveMaintainer missing"`
+	CanMutateMaintainer        bool                 `json:"canMutateMaintainer" valid:"required~required field canMutateMaintainer missing"`
+	PermissionIDs              []ids.StringID       `json:"permissionIDs" valid:"required~required field permissionIDs missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -39,17 +38,15 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(fromID ids.IdentityID, toID ids.IdentityID, maintainedClassificationID ids.ClassificationID, maintainedProperties lists.PropertyList, canMintAsset bool, canBurnAsset bool, canRenumerateAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(fromIdentityID ids.IdentityID, toIdentityID ids.IdentityID, maintainedClassificationID ids.ClassificationID, maintainedProperties lists.PropertyList, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool, permissionIDs ...ids.StringID) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		FromID:                     fromID,
-		ToID:                       toID,
+		FromIdentityID:             fromIdentityID,
+		ToIdentityID:               toIdentityID,
 		MaintainedClassificationID: maintainedClassificationID,
 		MaintainedProperties:       maintainedProperties,
-		CanMintAsset:               canMintAsset,
-		CanBurnAsset:               canBurnAsset,
-		CanRenumerateAsset:         canRenumerateAsset,
 		CanAddMaintainer:           canAddMaintainer,
 		CanRemoveMaintainer:        canRemoveMaintainer,
 		CanMutateMaintainer:        canMutateMaintainer,
+		PermissionIDs:              permissionIDs,
 	}
 }

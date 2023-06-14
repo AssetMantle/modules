@@ -7,9 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/lists"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func TestNewAuxiliaryRequest(t *testing.T) {
@@ -85,8 +86,8 @@ func Test_auxiliaryRequest_Validate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			auxiliaryRequest := auxiliaryRequest{
-				FromID:                     tt.fields.FromID,
-				ToID:                       tt.fields.ToID,
+				FromIdentityID:             tt.fields.FromID,
+				ToIdentityID:               tt.fields.ToID,
 				MaintainedClassificationID: tt.fields.MaintainedClassificationID,
 				MaintainedProperties:       tt.fields.MaintainedProperties,
 				CanMintAsset:               tt.fields.CanMintAsset,
