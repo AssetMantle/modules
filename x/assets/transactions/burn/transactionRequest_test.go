@@ -64,10 +64,10 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID, constants.FromID})
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID, constants.FromIdentityID})
 
 	viper.Set(constants.AssetID.GetName(), testAssetID.AsString())
-	viper.Set(constants.FromID.GetName(), fromID.AsString())
+	viper.Set(constants.FromIdentityID.GetName(), fromID.AsString())
 	type fields struct {
 		BaseReq rest.BaseReq
 		FromID  string
