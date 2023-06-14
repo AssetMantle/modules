@@ -17,6 +17,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/maintainers/key"
+	"github.com/AssetMantle/modules/x/maintainers/mappable"
 )
 
 type auxiliaryKeeper struct {
@@ -35,8 +36,16 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(maintainerID))
 
-	if Mappable := maintainers.GetMappable(key.NewKey(maintainerID)); Mappable == nil {
+	Mappable := maintainers.GetMappable(key.NewKey(maintainerID))
+	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("maintainer with ID %s not found", maintainerID.AsString())
+	}
+	maintainer := mappable.GetMaintainer(Mappable)
+
+	for _, permissionID := range auxiliaryRequest.PermissionIDs {
+		if !maintainer.IsPermitted(permissionID) {
+			return nil, errorConstants.NotAuthorized.Wrapf("maintainer with ID %s does not have permission to %s classification %s", maintainerID.AsString(), permissionID.AsString(), auxiliaryRequest.MaintainedClassificationID.AsString())
+		}
 	}
 
 	return newAuxiliaryResponse(), nil

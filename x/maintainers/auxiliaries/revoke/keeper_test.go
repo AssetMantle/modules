@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	schemaCodec "github.com/AssetMantle/schema/go/codec"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
@@ -46,7 +47,7 @@ var (
 	testFromID              = baseIDs.NewIdentityID(testClassificationID, immutables)
 	maintainedProperty      = "maintainedProperty:S|maintainedProperty"
 	maintainedProperties, _ = utilities.ReadMetaPropertyList(maintainedProperty)
-	permissions             = maintainerUtilities.SetPermissions(true, true, true, true, true, true)
+	permissions             = maintainerUtilities.SetModulePermissions(true, true, true)
 )
 
 func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {

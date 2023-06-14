@@ -55,7 +55,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	identityID := baseIDs.NewIdentityID(classificationID, immutables)
-	permissions := utilities.SetPermissions(true, true, true, true, true, true)
+	permissions := utilities.SetModulePermissions(true, true, true, true, true, true)
 
 	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",

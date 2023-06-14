@@ -39,7 +39,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	if Mappable := maintainers.Fetch(key.NewKey(fromMaintainerID)).GetMappable(key.NewKey(fromMaintainerID)); Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("maintainer with ID %s not found", fromMaintainerID.AsString())
-	} else if !mappable.GetMaintainer(Mappable).IsPermitted(constants.Remove) {
+	} else if !mappable.GetMaintainer(Mappable).IsPermitted(constants.CanRemoveMaintainerPermission) {
 		return nil, errorConstants.NotAuthorized.Wrapf("maintainer with ID %s is not authorized to remove maintainers", fromMaintainerID.AsString())
 	}
 
