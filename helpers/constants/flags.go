@@ -17,8 +17,6 @@ var (
 	CanIssueIdentity        = baseHelpers.NewCLIFlag("canIssueIdentity", false, "CanIssueIdentity")
 	CanMakeOrder            = baseHelpers.NewCLIFlag("canMakeOrder", false, "CanMakeOrder")
 	CanMintAsset            = baseHelpers.NewCLIFlag("canMintAsset", false, "CanMintAsset")
-	CanModifyOrder          = baseHelpers.NewCLIFlag("canModifyOrder", false, "CanModifyOrder")
-	CanMutateIdentity       = baseHelpers.NewCLIFlag("canMutateIdentity", false, "CanMutateIdentity")
 	CanMutateMaintainer     = baseHelpers.NewCLIFlag("canMutateMaintainer", false, "CanMutateMaintainer")
 	CanRemoveMaintainer     = baseHelpers.NewCLIFlag("canRemoveMaintainer", false, "CanRemoveMaintainer")
 	CanRenumerateAsset      = baseHelpers.NewCLIFlag("canRenumerateAsset", false, "CanRenumerateAsset")
