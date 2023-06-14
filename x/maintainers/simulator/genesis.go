@@ -4,34 +4,33 @@
 package simulator
 
 import (
-	"fmt"
 	"math/rand"
-
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-
-	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-
-	simulatorAssets "github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
-	simulatorIdentities "github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
-	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
-	mappableIdentities "github.com/AssetMantle/modules/x/identities/mappable"
-	mappableMaintainers "github.com/AssetMantle/modules/x/maintainers/mappable"
 
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	simulatorAssets "github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
+	simulatorIdentities "github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
+	assetUtilities "github.com/AssetMantle/modules/x/assets/utilities"
+	mappableIdentities "github.com/AssetMantle/modules/x/identities/mappable"
+	identityUtilities "github.com/AssetMantle/modules/x/identities/utilities"
 	"github.com/AssetMantle/modules/x/maintainers/constants"
 	"github.com/AssetMantle/modules/x/maintainers/genesis"
+	mappableMaintainers "github.com/AssetMantle/modules/x/maintainers/mappable"
 	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
 	"github.com/AssetMantle/modules/x/maintainers/utilities"
+	orderUtilities "github.com/AssetMantle/modules/x/orders/utilities"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -64,7 +63,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		identityMappable := &mappableIdentities.Mappable{}
 		baseHelpers.CodecPrototype().Unmarshal(simulatorIdentities.GetMappableBytes(classificationID.AsString()), identityMappable)
 		mutables := identityMappable.GetIdentity().Get().GetMutables()
-		mappableList[index] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true)))
+		mappableList[index] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(identityUtilities.SetModulePermissions(true, true, true))...)))
 
 		assetMap := simulatorAssets.GetAssetData(simulationState.Accounts[i].Address.String())
 		if assetMap == nil {
@@ -76,7 +75,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		assetMappable := &mappableAssets.Mappable{}
 		baseHelpers.CodecPrototype().Unmarshal(simulatorAssets.GetMappableBytes(classificationID.AsString()), assetMappable)
 		mutables = assetMappable.GetAsset().Get().GetMutables()
-		mappableList[index+1] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true)))
+		mappableList[index+1] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(assetUtilities.SetModulePermissions(true, true, true))...)))
 
 		immutables := baseQualified.NewImmutables(assetMappable.Asset.Immutables.GetImmutablePropertyList().Add(baseLists.AnyPropertiesToProperties(constantProperties.ExchangeRateProperty.ToAnyProperty(),
 			constantProperties.CreationHeightProperty.ToAnyProperty(),
@@ -91,9 +90,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		)...))
 
 		orderClassificationID := baseIDs.NewClassificationID(immutables, mutables)
-		x := orderClassificationID.AsString()
-		fmt.Println(x)
-		mappableList[index+2] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, orderClassificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetPermissions(true, true, true, true, true, true)))
+		mappableList[index+2] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, orderClassificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(orderUtilities.SetModulePermissions(true, true, true))...)))
 
 		index += 3
 	}
