@@ -13,7 +13,7 @@ import (
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/constants"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/types"
 
@@ -21,6 +21,7 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/identities/constants"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
@@ -41,8 +42,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-
-	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.ClassificationID, message.FromID, constants.CanIssueIdentityPermission)); err != nil {
 		return nil, err
 	}
 
@@ -69,7 +69,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	authenticationProperty := baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(toAddress)))
+	authenticationProperty := baseProperties.NewMetaProperty(constantProperties.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(toAddress)))
 	mutableMetaProperties := message.MutableMetaProperties.Add(authenticationProperty.ToAnyProperty().Get())
 
 	mutables := baseQualified.NewMutables(mutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))

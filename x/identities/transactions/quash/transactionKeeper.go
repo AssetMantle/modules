@@ -6,20 +6,24 @@ package quash
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/unbond"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/identities/key"
-	"github.com/AssetMantle/modules/x/identities/mappable"
-	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/unbond"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/identities/constants"
+	"github.com/AssetMantle/modules/x/identities/key"
+	"github.com/AssetMantle/modules/x/identities/mappable"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
+	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 )
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
 	authenticateAuxiliary helpers.Auxiliary
+	authorizeAuxiliary    helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	unbondAuxiliary       helpers.Auxiliary
 }
@@ -49,6 +53,10 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	identity := mappable.GetIdentity(Mappable)
 
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(identity.GetClassificationID(), message.FromID, constants.CanQuashIdentityPermission)); err != nil {
+		return nil, err
+	}
+
 	// TODO: Check if identity expired identities must be quashed at the end of block
 	if identity.GetExpiry().Compare(baseTypes.NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())) > 0 {
 		return nil, errorConstants.NotAuthorized.Wrapf("identity with ID %s is not expired yet", message.IdentityID.AsString())
@@ -72,6 +80,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			switch value.GetName() {
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
+			case authorize.Auxiliary.GetName():
+				transactionKeeper.authorizeAuxiliary = value
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			case unbond.Auxiliary.GetName():
