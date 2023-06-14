@@ -5,7 +5,6 @@ import (
 )
 
 var (
-	CanIssueIdentityPermission  = baseIDs.NewStringID("issue")
-	CanMutateIdentityPermission = baseIDs.NewStringID("mutate")
-	CanQuashIdentityPermission  = baseIDs.NewStringID("quash")
+	CanIssueIdentityPermission = baseIDs.NewStringID("issue")
+	CanQuashIdentityPermission = baseIDs.NewStringID("quash")
 )

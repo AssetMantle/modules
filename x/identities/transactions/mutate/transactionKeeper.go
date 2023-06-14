@@ -16,17 +16,14 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/identities/constants"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
-	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
 )
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
 	authenticateAuxiliary helpers.Auxiliary
-	authorizeAuxiliary    helpers.Auxiliary
 	maintainAuxiliary     helpers.Auxiliary
 	memberAuxiliary       helpers.Auxiliary
 }
@@ -55,10 +52,6 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	identity := mappable.GetIdentity(Mappable)
 
-	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(identity.GetClassificationID(), message.FromID, constants.CanMutateIdentityPermission)); err != nil {
-		return nil, err
-	}
-
 	mutables := baseQualified.NewMutables(message.MutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
 
 	if _, err := transactionKeeper.memberAuxiliary.GetKeeper().Help(context, member.NewAuxiliaryRequest(identity.GetClassificationID(), nil, mutables)); err != nil {
@@ -83,8 +76,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 			switch value.GetName() {
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
-			case authorize.Auxiliary.GetName():
-				transactionKeeper.authorizeAuxiliary = value
 			case maintain.Auxiliary.GetName():
 				transactionKeeper.maintainAuxiliary = value
 			case member.Auxiliary.GetName():

@@ -190,7 +190,7 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		toID, _ := baseIDs.ReadIdentityID(identityIDString)
 		mappable := &mappable.Mappable{}
 		base.CodecPrototype().Unmarshal(identities.GetMappableBytes(classificationIDString), mappable)
-		deputizeMessage := deputize.NewMessage(from.Address, fromID, toID, classificationID, mappable.Identity.Mutables.PropertyList, true, true, true, true, true, true)
+		deputizeMessage := deputize.NewMessage(from.Address, fromID, toID, classificationID, mappable.Identity.Mutables.PropertyList, true, true, true, true, true)
 		result, err = simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(deputizeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
