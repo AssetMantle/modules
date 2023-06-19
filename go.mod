@@ -3,7 +3,7 @@ module github.com/AssetMantle/modules
 go 1.19
 
 require (
-	github.com/AssetMantle/schema/go v0.0.0-20230614052406-dae2773cbe66
+	github.com/AssetMantle/schema/go v0.0.0-20230619133255-d790e9541d76
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/Shopify/sarama v1.19.0
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
