@@ -5,11 +5,12 @@ package base
 
 import (
 	"github.com/AssetMantle/schema/go/ids"
+	"github.com/AssetMantle/schema/go/ids/constants"
+
 	"math"
 	"math/rand"
 	"time"
 
-	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	constantsData "github.com/AssetMantle/schema/go/data/constants"
@@ -17,11 +18,13 @@ import (
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
+	"github.com/AssetMantle/modules/utilities/random"
 )
 
 func GenerateRandomDataForTypeID(r *rand.Rand, id ids.StringID) data.Data {
 	switch id {
-	case constantsData.IDDataTypeID:
+	case base.NewStringID(constants.AnyIDType):
 		return GenerateRandomData(r, 0)
 	case constantsData.StringDataTypeID:
 		return GenerateRandomData(r, 1)
