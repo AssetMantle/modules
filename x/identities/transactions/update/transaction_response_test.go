@@ -1,14 +1,15 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package mutate
+package update
 
 import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func Test_newTransactionResponse(t *testing.T) {

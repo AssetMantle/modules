@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package mutate
+package update
 
 import (
 	"encoding/json"
@@ -35,10 +35,10 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
-// @Param body body  transactionRequest true "Request body to mutate Identity"
+// @Param body body  transactionRequest true "Request body to update Identity"
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
-// @Router /identities/mutate [post]
+// @Router /identities/update [post]
 func (transactionRequest transactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
 	if err != nil {

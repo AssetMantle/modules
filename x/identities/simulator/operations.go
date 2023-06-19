@@ -23,11 +23,11 @@ import (
 	"github.com/AssetMantle/modules/x/identities/transactions/define"
 	"github.com/AssetMantle/modules/x/identities/transactions/deputize"
 	"github.com/AssetMantle/modules/x/identities/transactions/issue"
-	"github.com/AssetMantle/modules/x/identities/transactions/mutate"
 	"github.com/AssetMantle/modules/x/identities/transactions/nub"
 	"github.com/AssetMantle/modules/x/identities/transactions/provision"
 	"github.com/AssetMantle/modules/x/identities/transactions/quash"
 	"github.com/AssetMantle/modules/x/identities/transactions/unprovision"
+	"github.com/AssetMantle/modules/x/identities/transactions/update"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -276,7 +276,7 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 		issuedID := baseIDs.NewIdentityID(classificationID, baseQualified.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(immutableProperties.Get()...)...)))
-		mutateMessage := mutate.NewMessage(from.Address, fromID, issuedID, updatedProperties, mutableProperties)
+		mutateMessage := update.NewMessage(from.Address, fromID, issuedID, updatedProperties, mutableProperties)
 
 		result, err = simulationModules.ExecuteMessage(context, module, mutateMessage.(helpers.Message))
 		if err != nil {
