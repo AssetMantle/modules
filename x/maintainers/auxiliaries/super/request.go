@@ -34,10 +34,11 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(maintainedClassificationID ids.ClassificationID, toIdentityID ids.IdentityID, maintainedMutables qualified.Mutables) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(maintainedClassificationID ids.ClassificationID, toIdentityID ids.IdentityID, maintainedMutables qualified.Mutables, permissionIDs ...ids.StringID) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		MaintainedClassificationID: maintainedClassificationID,
 		ToIdentityID:               toIdentityID,
 		MaintainedMutables:         maintainedMutables,
+		PermissionIDs:              permissionIDs,
 	}
 }

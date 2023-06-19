@@ -5,19 +5,22 @@ package define
 
 import (
 	"context"
+
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
+
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/go/qualified/base"
+	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
+	"github.com/AssetMantle/modules/x/identities/utilities"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	"github.com/AssetMantle/schema/go/properties/constants"
-	"github.com/AssetMantle/schema/go/qualified/base"
-	"github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -59,7 +62,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		message.MutableMetaProperties.Add(
 			baseLists.AnyPropertiesToProperties(
 				message.MutableProperties.Add(
-					constants.AuthenticationProperty.ToAnyProperty(),
+					constants.AuthenticationProperty,
 				).Get()...,
 			)...,
 		),
@@ -71,7 +74,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	classificationID := define.GetClassificationIDFromResponse(auxiliaryResponse)
 
-	if _, err := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromID, mutables)); err != nil {
+	if _, err := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromID, base.NewMutables(mutables.GetMutablePropertyList().Remove(constants.AuthenticationProperty)), utilities.SetModulePermissions(true, true)...)); err != nil {
 		return nil, err
 	}
 
