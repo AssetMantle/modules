@@ -11,13 +11,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/orders/module"
+	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/parameters/maxOrderLife"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
-		simulation.NewSimParamChange(module.Name,
+		simulation.NewSimParamChange(constants.ModuleName,
 			string(maxOrderLife.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(math.MaxInt))

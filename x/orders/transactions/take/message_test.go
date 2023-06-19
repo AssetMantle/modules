@@ -14,11 +14,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/x/orders/module"
+	"github.com/AssetMantle/modules/x/orders/constants"
 )
 
 var (
-	testMessage = newMessage(fromAccAddress, testFromID, takerOwnableSplit, testOrderID)
+	testMessage = NewMessage(fromAccAddress, testFromID, takerOwnableSplit, testOrderID)
 )
 
 type fields struct {
@@ -144,7 +144,7 @@ func Test_message_Route(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}, module.Name},
+		{"+ve", fields{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}, constants.ModuleName},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -233,8 +233,8 @@ func Test_newMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newMessage(tt.args.from, tt.args.fromID, tt.args.takerOwnableSplit, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newMessage() = %v, want %v", got, tt.want)
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.takerOwnableSplit, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})
 	}

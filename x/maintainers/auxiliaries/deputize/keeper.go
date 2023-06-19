@@ -6,22 +6,23 @@ package deputize
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
-	"github.com/AssetMantle/modules/x/maintainers/key"
-	"github.com/AssetMantle/modules/x/maintainers/mappable"
-	"github.com/AssetMantle/modules/x/maintainers/module"
-	internalUtilities "github.com/AssetMantle/modules/x/maintainers/utilities"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
-	"github.com/AssetMantle/schema/go/documents/constants"
+	documentConstants "github.com/AssetMantle/schema/go/documents/constants"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
+	"github.com/AssetMantle/modules/x/maintainers/constants"
+	"github.com/AssetMantle/modules/x/maintainers/key"
+	"github.com/AssetMantle/modules/x/maintainers/mappable"
+	internalUtilities "github.com/AssetMantle/modules/x/maintainers/utilities"
 )
 
 type auxiliaryKeeper struct {
@@ -39,10 +40,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	fromMaintainerID := baseIDs.NewMaintainerID(constants.MaintainerClassificationID,
+	fromMaintainerID := baseIDs.NewMaintainerID(documentConstants.MaintainerClassificationID,
 		baseQualified.NewImmutables(baseLists.NewPropertyList(
 			baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.MaintainedClassificationID)),
-			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.FromID)),
+			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.FromIdentityID)),
 		)))
 
 	maintainers := auxiliaryKeeper.mapper.NewCollection(context)
@@ -54,8 +55,14 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	fromMaintainer := mappable.GetMaintainer(Mappable)
 
 	// TODO test
-	if !(fromMaintainer.IsPermitted(module.Add) || !auxiliaryRequest.CanAddMaintainer && fromMaintainer.IsPermitted(module.Mutate) || !auxiliaryRequest.CanMutateMaintainer && fromMaintainer.IsPermitted(module.Remove) || !auxiliaryRequest.CanRemoveMaintainer) {
+	if !(fromMaintainer.IsPermitted(constants.CanAddMaintainerPermission) || !auxiliaryRequest.CanAddMaintainer && fromMaintainer.IsPermitted(constants.CanMutateMaintainerPermission) || !auxiliaryRequest.CanMutateMaintainer && fromMaintainer.IsPermitted(constants.CanRemoveMaintainerPermission) || !auxiliaryRequest.CanRemoveMaintainer) {
 		return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the required permissions")
+	}
+
+	for _, permissionID := range auxiliaryRequest.PermissionIDs {
+		if !fromMaintainer.IsPermitted(permissionID) {
+			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the permission to grant permission %s", permissionID.AsString())
+		}
 	}
 
 	// Checking if the fromMaintainer has access to maintain the requested properties
@@ -74,25 +81,25 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		return nil, err
 	}
 
-	toMaintainerID := baseIDs.NewMaintainerID(constants.MaintainerClassificationID,
+	toMaintainerID := baseIDs.NewMaintainerID(documentConstants.MaintainerClassificationID,
 		baseQualified.NewImmutables(baseLists.NewPropertyList(
 			baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.MaintainedClassificationID)),
-			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.ToID)),
+			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.ToIdentityID)),
 		)))
 
 	if Mappable = maintainers.Fetch(key.NewKey(toMaintainerID)).GetMappable(key.NewKey(toMaintainerID)); Mappable == nil {
-		if !fromMaintainer.IsPermitted(module.Add) {
+		if !fromMaintainer.IsPermitted(constants.CanAddMaintainerPermission) {
 			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the permission to add maintainers")
 		}
 
-		maintainers.Add(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ToID, auxiliaryRequest.MaintainedClassificationID, auxiliaryRequest.MaintainedProperties.GetPropertyIDList(), internalUtilities.SetPermissions(auxiliaryRequest.CanMintAsset, auxiliaryRequest.CanBurnAsset, auxiliaryRequest.CanRenumerateAsset, auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanRemoveMaintainer, auxiliaryRequest.CanMutateMaintainer))))
+		maintainers.Add(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ToIdentityID, auxiliaryRequest.MaintainedClassificationID, auxiliaryRequest.MaintainedProperties.GetPropertyIDList(), internalUtilities.SetModulePermissions(auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanMutateMaintainer, auxiliaryRequest.CanRemoveMaintainer).Add(baseIDs.StringIDsToIDs(auxiliaryRequest.PermissionIDs)...))))
 	} else {
-		if !fromMaintainer.IsPermitted(module.Mutate) {
+		if !fromMaintainer.IsPermitted(constants.CanMutateMaintainerPermission) {
 			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the permission to mutate maintainers")
 		}
 
 		maintainedProperties := mappable.GetMaintainer(Mappable).GetMutables().GetMutablePropertyList().Add(baseLists.AnyPropertiesToProperties(auxiliaryRequest.MaintainedProperties.Get()...)...).Remove(baseLists.AnyPropertiesToProperties(removeMaintainedPropertyList.Get()...)...)
-		maintainers.Mutate(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ToID, auxiliaryRequest.MaintainedClassificationID, maintainedProperties.GetPropertyIDList(), internalUtilities.SetPermissions(auxiliaryRequest.CanMintAsset, auxiliaryRequest.CanBurnAsset, auxiliaryRequest.CanRenumerateAsset, auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanRemoveMaintainer, auxiliaryRequest.CanMutateMaintainer))))
+		maintainers.Mutate(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ToIdentityID, auxiliaryRequest.MaintainedClassificationID, maintainedProperties.GetPropertyIDList(), internalUtilities.SetModulePermissions(auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanMutateMaintainer, auxiliaryRequest.CanRemoveMaintainer).Add(baseIDs.StringIDsToIDs(auxiliaryRequest.PermissionIDs)...))))
 	}
 
 	return newAuxiliaryResponse(), nil

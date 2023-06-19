@@ -5,9 +5,13 @@ package unbond
 
 import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/utilities/name"
 )
 
+type dummy struct{}
+
 var Auxiliary = baseHelpers.NewAuxiliary(
-	"unbond",
+	name.GetPackageName(dummy{}),
+
 	keeperPrototype,
 )

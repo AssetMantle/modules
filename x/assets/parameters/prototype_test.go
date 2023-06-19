@@ -9,7 +9,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/assets/module"
+	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/parameters/burnEnabled"
 	"github.com/AssetMantle/modules/x/assets/parameters/mintEnabled"
 	"github.com/AssetMantle/modules/x/assets/parameters/renumerateEnabled"
@@ -21,7 +21,7 @@ func TestPrototype(t *testing.T) {
 		want      helpers.ParameterManager
 		wantError error
 	}{
-		{"+ve", baseHelpers.NewParameterManager(module.Name, burnEnabled.ValidatableParameter, mintEnabled.ValidatableParameter, renumerateEnabled.ValidatableParameter), nil},
+		{"+ve", baseHelpers.NewParameterManager(constants.ModuleName, burnEnabled.ValidatableParameter, mintEnabled.ValidatableParameter, renumerateEnabled.ValidatableParameter), nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

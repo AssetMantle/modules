@@ -6,24 +6,27 @@ package cancel
 import (
 	"context"
 
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/unbond"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/key"
 	"github.com/AssetMantle/modules/x/orders/mappable"
-	"github.com/AssetMantle/modules/x/orders/module"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
 	parameterManager      helpers.ParameterManager
+	authenticateAuxiliary helpers.Auxiliary
+	authorizeAuxiliary    helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	transferAuxiliary     helpers.Auxiliary
-	authenticateAuxiliary helpers.Auxiliary
 	unbondAuxiliary       helpers.Auxiliary
 }
 
@@ -52,6 +55,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	order := mappable.GetOrder(Mappable)
 
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(order.GetClassificationID(), message.FromID, constants.CanCancelOrderPermission)); err != nil {
+		// TODO enable after permissioning is implemented
+		// return nil, err
+	}
+
 	if message.FromID.Compare(order.GetMakerID()) != 0 {
 		return nil, errorConstants.NotAuthorized.Wrapf("order with ID %s not owned by %s", message.OrderID.AsString(), message.FromID.AsString())
 	}
@@ -60,7 +68,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); err != nil {
 		return nil, err
 	}
 
@@ -76,12 +84,14 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 		switch value := externalKeeper.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
+			case authenticate.Auxiliary.GetName():
+				transactionKeeper.authenticateAuxiliary = value
+			case authorize.Auxiliary.GetName():
+				transactionKeeper.authorizeAuxiliary = value
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			case transfer.Auxiliary.GetName():
 				transactionKeeper.transferAuxiliary = value
-			case authenticate.Auxiliary.GetName():
-				transactionKeeper.authenticateAuxiliary = value
 			case unbond.Auxiliary.GetName():
 				transactionKeeper.unbondAuxiliary = value
 			}

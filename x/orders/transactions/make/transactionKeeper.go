@@ -13,7 +13,7 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/constants"
+	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -22,23 +22,23 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/verify"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/key"
 	"github.com/AssetMantle/modules/x/orders/mappable"
-	"github.com/AssetMantle/modules/x/orders/module"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 )
 
 type transactionKeeper struct {
-	mapper                     helpers.Mapper
-	parameterManager           helpers.ParameterManager
-	bondAuxiliary              helpers.Auxiliary
-	conformAuxiliary           helpers.Auxiliary
-	supplementAuxiliary        helpers.Auxiliary
-	transferAuxiliary          helpers.Auxiliary
-	authenticateAuxiliary      helpers.Auxiliary
-	maintainersVerifyAuxiliary helpers.Auxiliary
+	mapper                helpers.Mapper
+	parameterManager      helpers.ParameterManager
+	authenticateAuxiliary helpers.Auxiliary
+	authorizeAuxiliary    helpers.Auxiliary
+	bondAuxiliary         helpers.Auxiliary
+	conformAuxiliary      helpers.Auxiliary
+	supplementAuxiliary   helpers.Auxiliary
+	transferAuxiliary     helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -49,8 +49,13 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 
-	if _, err := transactionKeeper.maintainersVerifyAuxiliary.GetKeeper().Help(context, verify.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); err != nil {
 		return nil, err
+	}
+
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.GetClassificationID(), message.FromID, constants.CanMakeOrderPermission)); err != nil {
+		// TODO enable after permissioning is implemented
+		// return nil, err
 	}
 
 	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
@@ -69,33 +74,34 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if !ok {
 		return nil, errorConstants.IncorrectFormat.Wrapf("TakerOwnableSplit is not a valid integer")
 	}
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, module.ModuleIdentityID, message.MakerOwnableID, makerOwnableSplit)); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, constants.ModuleIdentityID, message.MakerOwnableID, makerOwnableSplit)); err != nil {
 		return nil, err
 	}
 
 	immutableMetaProperties := message.ImmutableMetaProperties.
-		Add(baseProperties.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(takerOwnableSplit.ToDec().QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(makerOwnableSplit.ToDec())))).
-		Add(baseProperties.NewMetaProperty(constants.CreationHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
-		Add(baseProperties.NewMetaProperty(constants.MakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.MakerOwnableID))).
-		Add(baseProperties.NewMetaProperty(constants.TakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.TakerOwnableID))).
-		Add(baseProperties.NewMetaProperty(constants.MakerIDProperty.GetKey(), baseData.NewIDData(message.FromID))).
-		Add(baseProperties.NewMetaProperty(constants.TakerIDProperty.GetKey(), baseData.NewIDData(message.TakerID)))
+		Add(baseProperties.NewMetaProperty(propertyConstants.ExchangeRateProperty.GetKey(), baseData.NewDecData(takerOwnableSplit.ToDec().QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(makerOwnableSplit.ToDec())))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.CreationHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.MakerOwnableID))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.TakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.TakerOwnableID))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.MakerIDProperty.GetKey(), baseData.NewIDData(message.FromID))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.TakerIDProperty.GetKey(), baseData.NewIDData(message.TakerID)))
 
 	immutables := baseQualified.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.ImmutableProperties.Get()...)...))
 
 	orderID := baseIDs.NewOrderID(message.ClassificationID, immutables)
+
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(orderID))
 	if orders.GetMappable(key.NewKey(orderID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("order with ID %s already exists", orderID.AsString())
 	}
 
-	if message.ExpiresIn.Get() > transactionKeeper.parameterManager.Fetch(context).GetParameter(constants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get() {
-		return nil, errorConstants.InvalidRequest.Wrapf("order expiry exceeds maximum allowed %d", transactionKeeper.parameterManager.Fetch(context).GetParameter(constants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get())
+	if message.ExpiresIn.Get() > transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get() {
+		return nil, errorConstants.InvalidRequest.Wrapf("order expiry exceeds maximum allowed %d", transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get())
 	}
 
 	mutableMetaProperties := message.MutableMetaProperties.
-		Add(baseProperties.NewMetaProperty(constants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
-		Add(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(makerOwnableSplit)))
+		Add(baseProperties.NewMetaProperty(propertyConstants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(makerOwnableSplit)))
 
 	mutables := baseQualified.NewMutables(mutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
 
@@ -119,6 +125,10 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 		switch value := externalKeeper.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
+			case authenticate.Auxiliary.GetName():
+				transactionKeeper.authenticateAuxiliary = value
+			case authorize.Auxiliary.GetName():
+				transactionKeeper.authorizeAuxiliary = value
 			case bond.Auxiliary.GetName():
 				transactionKeeper.bondAuxiliary = value
 			case conform.Auxiliary.GetName():
@@ -127,10 +137,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.supplementAuxiliary = value
 			case transfer.Auxiliary.GetName():
 				transactionKeeper.transferAuxiliary = value
-			case authenticate.Auxiliary.GetName():
-				transactionKeeper.authenticateAuxiliary = value
-			case verify.Auxiliary.GetName():
-				transactionKeeper.maintainersVerifyAuxiliary = value
 			}
 		}
 	}

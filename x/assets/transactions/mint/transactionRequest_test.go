@@ -80,10 +80,10 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID, constants.FromID, constants.ToID, constants.ClassificationID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID, constants.FromIdentityID, constants.ToIdentityID, constants.ClassificationID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
 
-	viper.Set(constants.FromID.GetName(), fromID.AsString())
-	viper.Set(constants.ToID.GetName(), fromID.AsString())
+	viper.Set(constants.FromIdentityID.GetName(), fromID.AsString())
+	viper.Set(constants.ToIdentityID.GetName(), fromID.AsString())
 	viper.Set(constants.ClassificationID.GetName(), classificationID.AsString())
 	viper.Set(constants.ImmutableMetaProperties.GetName(), immutableMetaPropertiesString)
 	viper.Set(constants.ImmutableProperties.GetName(), immutablePropertiesString)

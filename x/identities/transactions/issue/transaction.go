@@ -6,16 +6,20 @@ package issue
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/utilities/name"
 )
 
+type dummy struct{}
+
 var Transaction = baseHelpers.NewTransaction(
-	"issue",
+	name.GetPackageName(dummy{}),
 	"",
 	"",
 
@@ -31,7 +35,7 @@ var Transaction = baseHelpers.NewTransaction(
 	},
 
 	constants.To,
-	constants.FromID,
+	constants.FromIdentityID,
 	constants.ClassificationID,
 	constants.ImmutableMetaProperties,
 	constants.ImmutableProperties,

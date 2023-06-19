@@ -6,9 +6,10 @@ package renumerate
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	utilities2 "github.com/AssetMantle/modules/x/splits/utilities"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/splits/utilities"
 )
 
 type auxiliaryKeeper struct {
@@ -21,13 +22,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
-	switch totalSplitsValue := utilities2.GetOwnableTotalSplitsValue(splits, auxiliaryRequest.OwnableID); {
-	case totalSplitsValue.LT(auxiliaryRequest.Value):
-		if _, err := utilities2.AddSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value.Sub(totalSplitsValue)); err != nil {
+	switch totalSplitsValue := utilities.GetOwnableTotalSplitsValue(splits, auxiliaryRequest.OwnableID); {
+	case totalSplitsValue.LT(auxiliaryRequest.Supply):
+		if _, err := utilities.AddSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Supply.Sub(totalSplitsValue)); err != nil {
 			return nil, err
 		}
-	case totalSplitsValue.GT(auxiliaryRequest.Value):
-		if _, err := utilities2.SubtractSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, totalSplitsValue.Sub(auxiliaryRequest.Value)); err != nil {
+	case totalSplitsValue.GT(auxiliaryRequest.Supply):
+		if _, err := utilities.SubtractSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, totalSplitsValue.Sub(auxiliaryRequest.Supply)); err != nil {
 			return nil, err
 		}
 	case totalSplitsValue.IsZero():

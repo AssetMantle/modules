@@ -6,10 +6,12 @@ package deputize
 import (
 	"context"
 
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/identities/utilities"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/deputize"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
@@ -34,7 +36,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err
 	}
-	if _, err := transactionKeeper.deputizeAuxiliary.GetKeeper().Help(context, deputize.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID, message.MaintainedProperties, message.CanMintAsset, message.CanBurnAsset, message.CanRenumerateAsset, message.CanAddMaintainer, message.CanRemoveMaintainer, message.CanMutateMaintainer)); err != nil {
+
+	if _, err := transactionKeeper.deputizeAuxiliary.GetKeeper().Help(context, deputize.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID, message.MaintainedProperties, message.CanAddMaintainer, message.CanRemoveMaintainer, message.CanMutateMaintainer, utilities.SetModulePermissions(message.CanIssueIdentity, message.CanQuashIdentity)...)); err != nil {
 		return nil, err
 	}
 

@@ -10,9 +10,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -24,6 +21,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var (
@@ -78,9 +79,9 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OwnableID, constants.FromID, constants.Value})
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OwnableID, constants.FromIdentityID, constants.Value})
 
-	viper.Set(constants.FromID.GetName(), fromID.AsString())
+	viper.Set(constants.FromIdentityID.GetName(), fromID.AsString())
 	viper.Set(constants.OwnableID.GetName(), ownableID.AsString())
 	viper.Set(constants.Value.GetName(), testRate.String())
 	type fields struct {
@@ -205,7 +206,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, newMessage(fromAccAddress, fromID, ownableID, testRate), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, NewMessage(fromAccAddress, fromID, ownableID, testRate), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -6,13 +6,14 @@ package unwrap
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/splits/module"
-	"github.com/AssetMantle/modules/x/splits/utilities"
-	"github.com/AssetMantle/schema/go/errors/constants"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/splits/constants"
+	"github.com/AssetMantle/modules/x/splits/utilities"
 )
 
 type transactionKeeper struct {
@@ -40,7 +41,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	value, ok := types.NewIntFromString(message.Value)
 	if !ok {
-		return nil, constants.IncorrectFormat.Wrapf("Value %s is not a valid integer", message.Value)
+		return nil, errorConstants.IncorrectFormat.Wrapf("Value %s is not a valid integer", message.Value)
 	}
 
 	splits := transactionKeeper.mapper.NewCollection(context)
@@ -48,7 +49,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(types.UnwrapSDKContext(context), module.Name, fromAddress, types.NewCoins(types.NewCoin(message.OwnableID.AsString(), value))); err != nil {
+	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(types.UnwrapSDKContext(context), constants.ModuleName, fromAddress, types.NewCoins(types.NewCoin(message.OwnableID.AsString(), value))); err != nil {
 		return nil, err
 	}
 

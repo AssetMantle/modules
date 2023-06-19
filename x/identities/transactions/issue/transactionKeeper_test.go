@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	schemaCodec "github.com/AssetMantle/schema/go/codec"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
@@ -33,7 +34,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/parameters"
-	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/verify"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 )
 
 type TestKeepers struct {
@@ -41,10 +42,10 @@ type TestKeepers struct {
 }
 
 var (
-	parameterManager           helpers.ParameterManager
-	authenticateAuxiliary      helpers.Auxiliary
-	conformAuxiliary           helpers.Auxiliary
-	maintainersVerifyAuxiliary helpers.Auxiliary
+	parameterManager      helpers.ParameterManager
+	authenticateAuxiliary helpers.Auxiliary
+	conformAuxiliary      helpers.Auxiliary
+	authorizeAuxiliary    helpers.Auxiliary
 )
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper) {
@@ -81,9 +82,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 
 	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
 	conformAuxiliary = conform.Auxiliary.Initialize(Mapper, parameterManager)
-	maintainersVerifyAuxiliary = verify.Auxiliary.Initialize(Mapper, parameterManager)
+	authorizeAuxiliary = authorize.Auxiliary.Initialize(Mapper, parameterManager)
 	keepers := TestKeepers{
-		IssueKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}).(helpers.TransactionKeeper),
+		IssueKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return context, keepers, Mapper
@@ -108,10 +109,10 @@ func Test_keeperPrototype(t *testing.T) {
 func Test_transactionKeeper_Initialize(t *testing.T) {
 	_, _, Mapper := CreateTestInput(t)
 	type fields struct {
-		mapper                     helpers.Mapper
-		authenticateAuxiliary      helpers.Auxiliary
-		conformAuxiliary           helpers.Auxiliary
-		maintainersVerifyAuxiliary helpers.Auxiliary
+		mapper                helpers.Mapper
+		authenticateAuxiliary helpers.Auxiliary
+		conformAuxiliary      helpers.Auxiliary
+		authorizeAuxiliary    helpers.Auxiliary
 	}
 	type args struct {
 		mapper      helpers.Mapper
@@ -125,15 +126,15 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{Mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}},
+		{"+ve", fields{Mapper, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
-				mapper:                     tt.fields.mapper,
-				authenticateAuxiliary:      tt.fields.authenticateAuxiliary,
-				conformAuxiliary:           tt.fields.conformAuxiliary,
-				maintainersVerifyAuxiliary: tt.fields.maintainersVerifyAuxiliary,
+				mapper:                tt.fields.mapper,
+				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
+				conformAuxiliary:      tt.fields.conformAuxiliary,
+				authorizeAuxiliary:    tt.fields.authorizeAuxiliary,
 			}
 			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.in1, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
@@ -163,10 +164,10 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	identity.Mutate(baseLists.AnyPropertiesToProperties(immutableMetaProperties.Get()...)...)
 	keepers.IssueKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(identity))
 	type fields struct {
-		mapper                     helpers.Mapper
-		authenticateAuxiliary      helpers.Auxiliary
-		conformAuxiliary           helpers.Auxiliary
-		maintainersVerifyAuxiliary helpers.Auxiliary
+		mapper                helpers.Mapper
+		authenticateAuxiliary helpers.Auxiliary
+		conformAuxiliary      helpers.Auxiliary
+		authorizeAuxiliary    helpers.Auxiliary
 	}
 	type args struct {
 		context sdkTypes.Context
@@ -179,16 +180,16 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want   helpers.TransactionResponse
 	}{
 		// NOTE: When test individually run 2nd test will fail
-		{"+ve", fields{mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}, args{context, newMessage(fromAccAddress, toAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
-		{"+ve Entity Already Exists", fields{mapper, authenticateAuxiliary, conformAuxiliary, maintainersVerifyAuxiliary}, args{context, newMessage(fromAccAddress, toAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(errorConstants.EntityAlreadyExists)},
+		{"+ve", fields{mapper, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{context, newMessage(fromAccAddress, toAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
+		{"+ve Entity Already Exists", fields{mapper, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{context, newMessage(fromAccAddress, toAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(errorConstants.EntityAlreadyExists)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
-				mapper:                     tt.fields.mapper,
-				authenticateAuxiliary:      tt.fields.authenticateAuxiliary,
-				conformAuxiliary:           tt.fields.conformAuxiliary,
-				maintainersVerifyAuxiliary: tt.fields.maintainersVerifyAuxiliary,
+				mapper:                tt.fields.mapper,
+				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
+				conformAuxiliary:      tt.fields.conformAuxiliary,
+				authorizeAuxiliary:    tt.fields.authorizeAuxiliary,
 			}
 			if got := transactionKeeper.Transact(sdkTypes.WrapSDKContext(tt.args.context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Transact() = %v, want %v", got, tt.want)

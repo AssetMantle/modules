@@ -19,7 +19,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/x/orders/module"
+	"github.com/AssetMantle/modules/x/orders/constants"
 )
 
 type fields struct {
@@ -165,7 +165,7 @@ func Test_message_Route(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testOrderID}, module.Name},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testOrderID}, constants.ModuleName},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

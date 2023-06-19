@@ -78,13 +78,13 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
 
 	viper.Set(constants.ImmutableMetaProperties.GetName(), immutableMetaPropertiesString)
 	viper.Set(constants.ImmutableProperties.GetName(), immutablePropertiesString)
 	viper.Set(constants.MutableMetaProperties.GetName(), mutableMetaPropertiesString)
 	viper.Set(constants.MutableProperties.GetName(), mutablePropertiesString)
-	viper.Set(constants.FromID.GetName(), fromID.AsString())
+	viper.Set(constants.FromIdentityID.GetName(), fromID.AsString())
 	type fields struct {
 		BaseReq                 rest.BaseReq
 		FromID                  string

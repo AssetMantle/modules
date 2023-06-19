@@ -4,22 +4,25 @@
 package simulator
 
 import (
+	"math/rand"
+
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
 	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
 	"github.com/AssetMantle/modules/x/splits/transactions/send"
 	"github.com/AssetMantle/modules/x/splits/transactions/unwrap"
 	"github.com/AssetMantle/modules/x/splits/transactions/wrap"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"math/rand"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
 )
 
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
@@ -41,7 +44,6 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 			simulateWrapAndUnwrapMsg(module),
 		),
 	}
-	return nil
 }
 
 func simulateSendMsg(module helpers.Module) simulationTypes.Operation {

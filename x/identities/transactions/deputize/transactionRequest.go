@@ -25,9 +25,8 @@ type transactionRequest struct {
 	ToID                 string       `json:"toID" valid:"required~required field toID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field toID"`
 	ClassificationID     string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^[A-Za-z0-9-_=.]+$)~invalid field classificationID"`
 	MaintainedProperties string       `json:"maintainedProperties" valid:"required~required field maintainedProperties missing, matches(^.*$)~invalid field maintainedProperties"`
-	CanMintAsset         bool         `json:"canMintAsset"`
-	CanBurnAsset         bool         `json:"canBurnAsset"`
-	CanRenumerateAsset   bool         `json:"canRenumerateAsset"`
+	CanIssueIdentity     bool         `json:"canIssueIdentity"`
+	CanQuashIdentity     bool         `json:"canQuashIdentity"`
 	CanAddMaintainer     bool         `json:"canAddMaintainer"`
 	CanRemoveMaintainer  bool         `json:"canRemoveMaintainer"`
 	CanMutateMaintainer  bool         `json:"canMutateMaintainer"`
@@ -56,13 +55,12 @@ func (transactionRequest transactionRequest) Validate() error {
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(context),
-		cliCommand.ReadString(constants.FromID),
-		cliCommand.ReadString(constants.ToID),
+		cliCommand.ReadString(constants.FromIdentityID),
+		cliCommand.ReadString(constants.ToIdentityID),
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.MaintainedProperties),
-		cliCommand.ReadBool(constants.CanMintAsset),
-		cliCommand.ReadBool(constants.CanBurnAsset),
-		cliCommand.ReadBool(constants.CanRenumerateAsset),
+		cliCommand.ReadBool(constants.CanIssueIdentity),
+		cliCommand.ReadBool(constants.CanQuashIdentity),
 		cliCommand.ReadBool(constants.CanAddMaintainer),
 		cliCommand.ReadBool(constants.CanRemoveMaintainer),
 		cliCommand.ReadBool(constants.CanMutateMaintainer),
@@ -110,9 +108,8 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		toID,
 		classificationID,
 		maintainedProperties,
-		transactionRequest.CanMintAsset,
-		transactionRequest.CanBurnAsset,
-		transactionRequest.CanRenumerateAsset,
+		transactionRequest.CanIssueIdentity,
+		transactionRequest.CanQuashIdentity,
 		transactionRequest.CanAddMaintainer,
 		transactionRequest.CanRemoveMaintainer,
 		transactionRequest.CanMutateMaintainer,
@@ -124,16 +121,15 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainedProperties string, canMintAsset bool, canBurnAsset bool, canRenumerateAsset bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, maintainedProperties string, canIssueIdentity bool, canQuashIdentity bool, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:              baseReq,
 		FromID:               fromID,
 		ToID:                 toID,
 		ClassificationID:     classificationID,
 		MaintainedProperties: maintainedProperties,
-		CanMintAsset:         canMintAsset,
-		CanBurnAsset:         canBurnAsset,
-		CanRenumerateAsset:   canRenumerateAsset,
+		CanIssueIdentity:     canIssueIdentity,
+		CanQuashIdentity:     canQuashIdentity,
 		CanAddMaintainer:     canAddMaintainer,
 		CanRemoveMaintainer:  canRemoveMaintainer,
 		CanMutateMaintainer:  canMutateMaintainer,

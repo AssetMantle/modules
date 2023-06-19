@@ -36,9 +36,9 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/splits/constants"
 	"github.com/AssetMantle/modules/x/splits/key"
 	"github.com/AssetMantle/modules/x/splits/mappable"
-	"github.com/AssetMantle/modules/x/splits/module"
 	"github.com/AssetMantle/modules/x/splits/parameters"
 )
 
@@ -103,7 +103,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	notBondedPool := authTypes.NewEmptyModuleAccount(stakingTypes.NotBondedPoolName, authTypes.Burner, authTypes.Staking)
 	bondPool := authTypes.NewEmptyModuleAccount(stakingTypes.BondedPoolName, authTypes.Burner, authTypes.Staking)
 	distrAcc := authTypes.NewEmptyModuleAccount(types.ModuleName)
-	splitAcc := authTypes.NewEmptyModuleAccount(module.Name)
+	splitAcc := authTypes.NewEmptyModuleAccount(constants.ModuleName)
 
 	blacklistedAddrs := make(map[string]bool)
 	blacklistedAddrs[feeCollectorAcc.GetAddress().String()] = true
@@ -118,7 +118,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	maccPerms := map[string][]string{
 		authTypes.FeeCollectorName:     nil,
 		types.ModuleName:               nil,
-		module.Name:                    nil,
+		constants.ModuleName:           nil,
 		stakingTypes.NotBondedPoolName: {authTypes.Burner, authTypes.Staking},
 		stakingTypes.BondedPoolName:    {authTypes.Burner, authTypes.Staking},
 	}

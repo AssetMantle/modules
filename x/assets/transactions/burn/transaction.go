@@ -6,16 +6,20 @@ package burn
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/utilities/name"
 )
 
+type dummy struct{}
+
 var Transaction = baseHelpers.NewTransaction(
-	"burn",
+	name.GetPackageName(dummy{}),
 	"",
 	"",
 
@@ -30,6 +34,6 @@ var Transaction = baseHelpers.NewTransaction(
 		return RegisterServiceHandlerClient(context.Background(), mux, NewServiceClient(clientCtx))
 	},
 
-	constants.FromID,
+	constants.FromIdentityID,
 	constants.AssetID,
 )

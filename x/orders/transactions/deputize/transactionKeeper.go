@@ -6,10 +6,12 @@ package deputize
 import (
 	"context"
 
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/deputize"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/AssetMantle/modules/x/orders/utilities"
 )
 
 type transactionKeeper struct {
@@ -36,7 +38,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.deputizeAuxiliary.GetKeeper().Help(context, deputize.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID, message.MaintainedProperties, message.CanMintAsset, message.CanBurnAsset, message.CanRenumerateAsset, message.CanAddMaintainer, message.CanRemoveMaintainer, message.CanMutateMaintainer)); err != nil {
+	if _, err := transactionKeeper.deputizeAuxiliary.GetKeeper().Help(context, deputize.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID, message.MaintainedProperties, message.CanAddMaintainer, message.CanRemoveMaintainer, message.CanMutateMaintainer, utilities.SetModulePermissions(message.CanMakeOrder, message.CanCancelOrder)...)); err != nil {
 		return nil, err
 	}
 

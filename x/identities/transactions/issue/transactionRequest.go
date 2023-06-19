@@ -54,7 +54,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(context),
 		cliCommand.ReadString(constants.To),
-		cliCommand.ReadString(constants.FromID),
+		cliCommand.ReadString(constants.FromIdentityID),
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.ImmutableMetaProperties),
 		cliCommand.ReadString(constants.ImmutableProperties),

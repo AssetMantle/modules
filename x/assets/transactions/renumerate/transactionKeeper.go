@@ -6,29 +6,29 @@ package renumerate
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/go/data"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/properties"
+	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
-	"github.com/AssetMantle/schema/go/data"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/properties"
-	"github.com/AssetMantle/schema/go/properties/constants"
-	"github.com/AssetMantle/schema/go/qualified/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
 	parameterManager      helpers.ParameterManager
-	maintainAuxiliary     helpers.Auxiliary
+	authenticateAuxiliary helpers.Auxiliary
+	authorizeAuxiliary    helpers.Auxiliary
 	renumerateAuxiliary   helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
-	authenticateAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -38,7 +38,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	if !transactionKeeper.parameterManager.Fetch(context).GetParameter(constants.RenumerateEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+	if !transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.RenumerateEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
 		return nil, errorConstants.NotAuthorized.Wrapf("renumerate is not enabled")
 	}
 
@@ -59,7 +59,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	asset := mappable.GetAsset(Mappable)
 
-	if _, err := transactionKeeper.maintainAuxiliary.GetKeeper().Help(context, maintain.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, base.NewMutables(baseLists.NewPropertyList(constants.SupplyProperty)))); err != nil {
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, constants.CanRenumerateAssetPermission)); err != nil {
 		return nil, err
 	}
 
@@ -69,13 +69,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	metaProperties := supplement.GetMetaPropertiesFromResponse(auxiliaryResponse)
 
-	if supplyMetaProperty := metaProperties.GetProperty(constants.SupplyProperty.GetID()); supplyMetaProperty != nil && supplyMetaProperty.IsMeta() {
-		value := supplyMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
-		if _, err := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, value)); err != nil {
+	if supplyMetaProperty := metaProperties.GetProperty(propertyConstants.SupplyProperty.GetID()); supplyMetaProperty != nil && supplyMetaProperty.IsMeta() {
+		supply := supplyMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
+		if _, err := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, supply)); err != nil {
 			return nil, err
 		}
 	} else {
-		return nil, errorConstants.MetaDataError.Wrapf("meta property %s not found", constants.SupplyProperty.GetID().AsString())
+		return nil, errorConstants.MetaDataError.Wrapf("meta property %s not found", propertyConstants.SupplyProperty.GetID().AsString())
 	}
 
 	return newTransactionResponse(), nil
@@ -89,14 +89,14 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case maintain.Auxiliary.GetName():
-				transactionKeeper.maintainAuxiliary = value
+			case authenticate.Auxiliary.GetName():
+				transactionKeeper.authenticateAuxiliary = value
+			case authorize.Auxiliary.GetName():
+				transactionKeeper.authorizeAuxiliary = value
 			case renumerate.Auxiliary.GetName():
 				transactionKeeper.renumerateAuxiliary = value
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
-			case authenticate.Auxiliary.GetName():
-				transactionKeeper.authenticateAuxiliary = value
 			}
 		}
 	}

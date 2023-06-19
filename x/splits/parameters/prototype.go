@@ -6,10 +6,10 @@ package parameters
 import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/splits/module"
+	"github.com/AssetMantle/modules/x/splits/constants"
 	"github.com/AssetMantle/modules/x/splits/parameters/wrapAllowedCoins"
 )
 
 func Prototype() helpers.ParameterManager {
-	return baseHelpers.NewParameterManager(module.Name, wrapAllowedCoins.ValidatableParameter)
+	return baseHelpers.NewParameterManager(constants.ModuleName, wrapAllowedCoins.ValidatableParameter)
 }

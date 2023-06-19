@@ -9,9 +9,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/utilities"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
@@ -22,6 +19,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var (
@@ -91,9 +92,9 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromID, constants.OrderID, constants.TakerOwnableSplit, constants.MakerOwnableSplit, constants.ExpiresIn, constants.MutableMetaProperties, constants.MutableProperties})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.OrderID, constants.TakerOwnableSplit, constants.MakerOwnableSplit, constants.ExpiresIn, constants.MutableMetaProperties, constants.MutableProperties})
 
-	viper.Set(constants.FromID.GetName(), testFromID.AsString())
+	viper.Set(constants.FromIdentityID.GetName(), testFromID.AsString())
 	viper.Set(constants.OrderID.GetName(), testOrderID.AsString())
 	viper.Set(constants.TakerOwnableSplit.GetName(), takerOwnableSplit.String())
 	viper.Set(constants.MakerOwnableSplit.GetName(), makerOwnableSplit.String())
@@ -250,7 +251,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerOwnableSplit.String(), makerOwnableSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, testFromID, testOrderID, takerOwnableSplit, makerOwnableSplit, base.NewHeight(60), mutableMetaProperties, mutableProperties), false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerOwnableSplit.String(), makerOwnableSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, NewMessage(fromAccAddress, testFromID, testOrderID, takerOwnableSplit, makerOwnableSplit, base.NewHeight(60), mutableMetaProperties, mutableProperties), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

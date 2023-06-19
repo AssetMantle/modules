@@ -6,14 +6,6 @@ package block
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/burn"
-	"github.com/AssetMantle/modules/x/metas/auxiliaries/scrub"
-	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/x/orders/key"
-	"github.com/AssetMantle/modules/x/orders/mappable"
-	"github.com/AssetMantle/modules/x/orders/module"
-	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents"
 	"github.com/AssetMantle/schema/go/documents/base"
@@ -21,10 +13,19 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/constants"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/burn"
+	"github.com/AssetMantle/modules/x/metas/auxiliaries/scrub"
+	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/x/orders/constants"
+	"github.com/AssetMantle/modules/x/orders/key"
+	"github.com/AssetMantle/modules/x/orders/mappable"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 )
 
 type block struct {
@@ -53,7 +54,7 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 			order := mappable.GetOrder(Mappable)
 			if order.GetExpiryHeight().Compare(baseTypes.CurrentHeight(context)) <= 0 {
 				// TODO ***** check security of sending and receiving from module and module account security
-				if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, order.GetMakerID(), order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); err != nil {
+				if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, order.GetMakerID(), order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); err != nil {
 					panic(err)
 				}
 				if _, err := block.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(order.GetClassificationID())); err != nil {
@@ -116,14 +117,14 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 						if leftOrderExchangeRate.MulTruncate(rightOrderExchangeRate).MulTruncate(sdkTypes.SmallestDec()).MulTruncate(sdkTypes.SmallestDec()).LTE(sdkTypes.OneDec()) {
 							switch {
 							case leftOrderMakerOwnableSplit.GT(rightOrderTakerOwnableSplitDemanded):
-								if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerOwnableID(), rightOrderMakerOwnableSplit)); err != nil {
+								if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerOwnableID(), rightOrderMakerOwnableSplit)); err != nil {
 									panic(err)
 								}
-								if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerOwnableID(), rightOrderTakerOwnableSplitDemanded)); err != nil {
+								if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerOwnableID(), rightOrderTakerOwnableSplitDemanded)); err != nil {
 									panic(err)
 								}
 
-								mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))
+								mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))
 
 								orders.Mutate(mappable.NewMappable(base.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...).GetMutables())))
 								orders.Remove(mappable.NewMappable(rightOrder))
@@ -133,14 +134,14 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 								}
 							case leftOrderMakerOwnableSplit.LT(rightOrderTakerOwnableSplitDemanded):
 								sendToLeftOrder := leftOrderMakerOwnableSplit.ToDec().QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(rightOrderExchangeRate)
-								if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerOwnableID(), sendToLeftOrder.TruncateInt())); err != nil {
+								if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerOwnableID(), sendToLeftOrder.TruncateInt())); err != nil {
 									panic(err)
 								}
-								if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerOwnableID(), leftOrderMakerOwnableSplit)); err != nil {
+								if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerOwnableID(), leftOrderMakerOwnableSplit)); err != nil {
 									panic(err)
 								}
 
-								auxiliaryResponse, err := block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder.TruncateInt()))))))
+								auxiliaryResponse, err := block.scrubAuxiliary.GetKeeper().Help(context, scrub.NewAuxiliaryRequest(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(rightOrderMakerOwnableSplit.Sub(sendToLeftOrder.TruncateInt()))))))
 								if err != nil {
 									panic(err)
 								}
@@ -154,10 +155,10 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 								}
 							default:
 								// case leftOrderMakerOwnableSplit.Equal(rightOrderTakerOwnableSplitDemanded):
-								if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerOwnableID(), rightOrderMakerOwnableSplit)); err != nil {
+								if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerOwnableID(), rightOrderMakerOwnableSplit)); err != nil {
 									panic(err)
 								}
-								if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(module.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerOwnableID(), leftOrderMakerOwnableSplit)); err != nil {
+								if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerOwnableID(), leftOrderMakerOwnableSplit)); err != nil {
 									panic(err)
 								}
 

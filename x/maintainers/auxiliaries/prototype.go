@@ -6,11 +6,11 @@ package auxiliaries
 import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/deputize"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/revoke"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/super"
-	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/verify"
 )
 
 func Prototype() helpers.Auxiliaries {
@@ -19,6 +19,6 @@ func Prototype() helpers.Auxiliaries {
 		maintain.Auxiliary,
 		revoke.Auxiliary,
 		super.Auxiliary,
-		verify.Auxiliary,
+		authorize.Auxiliary,
 	)
 }

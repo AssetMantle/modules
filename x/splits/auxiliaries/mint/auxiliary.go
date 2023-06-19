@@ -5,9 +5,13 @@ package mint
 
 import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/utilities/name"
 )
 
+type dummy struct{}
+
 var Auxiliary = baseHelpers.NewAuxiliary(
-	"mint",
+	name.GetPackageName(dummy{}),
+
 	keeperPrototype,
 )

@@ -6,20 +6,24 @@ package classifications
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/x/classifications/module"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	helperConstants "github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/utilities/name"
+	"github.com/AssetMantle/modules/x/classifications/constants"
 )
 
+type dummy struct{}
+
 var Query = baseHelpers.NewQuery(
-	"classifications",
+	name.GetPackageName(dummy{}),
 	"",
 	"",
-	module.Name,
+	constants.ModuleName,
 
 	requestPrototype,
 	responsePrototype,
@@ -32,7 +36,7 @@ var Query = baseHelpers.NewQuery(
 		return RegisterServiceHandlerClient(context.Background(), serveMux, NewServiceClient(clientContext))
 	},
 
-	constants.ClassificationID,
-	constants.Offset,
-	constants.Limit,
+	helperConstants.ClassificationID,
+	helperConstants.Offset,
+	helperConstants.Limit,
 )

@@ -6,17 +6,18 @@ package wrap
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/splits/module"
-	"github.com/AssetMantle/modules/x/splits/utilities"
 	"github.com/AssetMantle/schema/go/data/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/properties/constants"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/splits/constants"
+	"github.com/AssetMantle/modules/x/splits/utilities"
 )
 
 type transactionKeeper struct {
@@ -44,12 +45,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	if err := transactionKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), fromAddress, module.Name, message.Coins); err != nil {
+	if err := transactionKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), fromAddress, constants.ModuleName, message.Coins); err != nil {
 		return nil, err
 	}
 
 	for _, coin := range message.Coins {
-		if _, found := transactionKeeper.parameterManager.Fetch(context).GetParameter(constants.WrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData).Search(base.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom)))); !found {
+		if _, found := transactionKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.WrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData).Search(base.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom)))); !found {
 			return nil, errorConstants.NotAuthorized.Wrapf("coin %s is not allowed to be wrapped", coin.Denom)
 		}
 		coinID = baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom))

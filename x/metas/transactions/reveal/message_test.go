@@ -11,7 +11,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/x/metas/module"
+	"github.com/AssetMantle/modules/x/metas/constants"
 )
 
 func Test_Reveal_Message(t *testing.T) {
@@ -25,7 +25,7 @@ func Test_Reveal_Message(t *testing.T) {
 
 	testMessage := newMessage(fromAccAddress, newData).(*Message)
 	require.Equal(t, &Message{From: fromAccAddress.String(), Data: newData.ToAnyData().(*baseData.AnyData)}, testMessage)
-	require.Equal(t, module.Name, testMessage.Route())
+	require.Equal(t, constants.ModuleName, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())
 	require.NotNil(t, (&Message{}).ValidateBasic())

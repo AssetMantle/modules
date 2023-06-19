@@ -77,10 +77,10 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.ToID, constants.FromID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMintAsset, constants.CanBurnAsset, constants.CanRenumerateAsset, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.ToIdentityID, constants.FromIdentityID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMintAsset, constants.CanBurnAsset, constants.CanRenumerateAsset, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
 
-	viper.Set(constants.ToID.GetName(), fromID.AsString())
-	viper.Set(constants.FromID.GetName(), fromID.AsString())
+	viper.Set(constants.ToIdentityID.GetName(), fromID.AsString())
+	viper.Set(constants.FromIdentityID.GetName(), fromID.AsString())
 	viper.Set(constants.ClassificationID.GetName(), classificationID.AsString())
 	viper.Set(constants.MaintainedProperties.GetName(), mutableMetaPropertiesString)
 	viper.Set(constants.CanMintAsset.GetName(), true)

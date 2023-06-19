@@ -4,14 +4,16 @@
 package simulation
 
 import (
-	"github.com/AssetMantle/modules/helpers"
-	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
+	"math/rand"
+
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/qualified"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"math/rand"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
+	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -51,12 +53,12 @@ func GetGenesisProperties(r *rand.Rand) (qualified.Immutables, qualified.Mutable
 
 func CalculateBondAmount(immutables qualified.Immutables, mutables qualified.Mutables) data.NumberData {
 	totalWeight := sdkTypes.ZeroInt()
-	for _, property := range append(immutables.GetImmutablePropertyList().GetList(), mutables.GetMutablePropertyList().GetList()...) {
+	for _, property := range append(immutables.GetImmutablePropertyList().Get(), mutables.GetMutablePropertyList().Get()...) {
 		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
 	}
 	return baseData.NewNumberData(bondRate.Parameter.MetaProperty.Data.Get().(data.NumberData).Get().Mul(totalWeight))
 }
 
 func ExecuteMessage(context sdkTypes.Context, module helpers.Module, message helpers.Message) (*sdkTypes.Result, error) {
-	return module.GetTransactions().Get(message.Type()).HandleMessage(sdkTypes.WrapSDKContext(context), message)
+	return module.GetTransactions().GetTransaction(message.Type()).HandleMessage(sdkTypes.WrapSDKContext(context), message)
 }

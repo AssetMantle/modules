@@ -4,6 +4,16 @@
 package simulator
 
 import (
+	"math/rand"
+
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	"github.com/cosmos/cosmos-sdk/baseapp"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/AssetMantle/modules/helpers/base"
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
@@ -13,25 +23,17 @@ import (
 	"github.com/AssetMantle/modules/x/identities/transactions/define"
 	"github.com/AssetMantle/modules/x/identities/transactions/deputize"
 	"github.com/AssetMantle/modules/x/identities/transactions/issue"
-	"github.com/AssetMantle/modules/x/identities/transactions/mutate"
 	"github.com/AssetMantle/modules/x/identities/transactions/nub"
 	"github.com/AssetMantle/modules/x/identities/transactions/provision"
 	"github.com/AssetMantle/modules/x/identities/transactions/quash"
 	"github.com/AssetMantle/modules/x/identities/transactions/unprovision"
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/utilities"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"github.com/cosmos/cosmos-sdk/baseapp"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"math/rand"
+	"github.com/AssetMantle/modules/x/identities/transactions/update"
 
-	"github.com/AssetMantle/modules/helpers"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
@@ -188,7 +190,7 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		toID, _ := baseIDs.ReadIdentityID(identityIDString)
 		mappable := &mappable.Mappable{}
 		base.CodecPrototype().Unmarshal(identities.GetMappableBytes(classificationIDString), mappable)
-		deputizeMessage := deputize.NewMessage(from.Address, fromID, toID, classificationID, mappable.Identity.Mutables.PropertyList, true, true, true, true, true, true)
+		deputizeMessage := deputize.NewMessage(from.Address, fromID, toID, classificationID, mappable.Identity.Mutables.PropertyList, true, true, true, true, true)
 		result, err = simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(deputizeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
@@ -216,7 +218,7 @@ func simulateQuashMsg(module helpers.Module) simulationTypes.Operation {
 		if err != nil {
 			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
-		id := baseIDs.NewIdentityID(message.(*issue.Message).ClassificationID, baseQualified.NewImmutables(message.(*issue.Message).ImmutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(message.(*issue.Message).ImmutableProperties.GetList()...)...)))
+		id := baseIDs.NewIdentityID(message.(*issue.Message).ClassificationID, baseQualified.NewImmutables(message.(*issue.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.(*issue.Message).ImmutableProperties.Get()...)...)))
 		quashMessage := quash.NewMessage(from.Address, message.(*issue.Message).FromID, id)
 
 		result, err = simulationModules.ExecuteMessage(context, module, quashMessage.(helpers.Message))
@@ -251,14 +253,14 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 		if mappable.Identity == nil {
 			return simulationTypes.NewOperationMsg(&issue.Message{}, false, "invalid identity", base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
-		for _, i := range mappable.GetIdentity().Get().GetImmutables().GetImmutablePropertyList().GetList() {
+		for _, i := range mappable.GetIdentity().Get().GetImmutables().GetImmutablePropertyList().Get() {
 			if i.IsMeta() {
 				immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
 			} else {
 				immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
 			}
 		}
-		for _, i := range mappable.GetIdentity().Get().GetMutables().GetMutablePropertyList().GetList() {
+		for _, i := range mappable.GetIdentity().Get().GetMutables().GetMutablePropertyList().Get() {
 			if i.IsMeta() {
 				mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
 				updatedProperties = mutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
@@ -273,8 +275,8 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 		if err != nil {
 			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
-		issuedID := baseIDs.NewIdentityID(classificationID, baseQualified.NewImmutables(immutableMetaProperties.Add(utilities.AnyPropertyListToPropertyList(immutableProperties.GetList()...)...)))
-		mutateMessage := mutate.NewMessage(from.Address, fromID, issuedID, updatedProperties, mutableProperties)
+		issuedID := baseIDs.NewIdentityID(classificationID, baseQualified.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(immutableProperties.Get()...)...)))
+		mutateMessage := update.NewMessage(from.Address, fromID, issuedID, updatedProperties, mutableProperties)
 
 		result, err = simulationModules.ExecuteMessage(context, module, mutateMessage.(helpers.Message))
 		if err != nil {
@@ -310,14 +312,14 @@ func GetIssueMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes
 	if mappable.Identity == nil {
 		return nil
 	}
-	for _, i := range mappable.GetIdentity().Get().GetImmutables().GetImmutablePropertyList().GetList() {
+	for _, i := range mappable.GetIdentity().Get().GetImmutables().GetImmutablePropertyList().Get() {
 		if i.IsMeta() {
 			immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
 		} else {
 			immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
 		}
 	}
-	for _, i := range mappable.GetIdentity().Get().GetMutables().GetMutablePropertyList().GetList() {
+	for _, i := range mappable.GetIdentity().Get().GetMutables().GetMutablePropertyList().Get() {
 		if i.IsMeta() {
 			mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
 		} else {

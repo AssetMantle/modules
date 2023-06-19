@@ -9,7 +9,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/maintainers/module"
+	"github.com/AssetMantle/modules/x/maintainers/constants"
 	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
 )
 
@@ -18,7 +18,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.ParameterManager
 	}{
-		{"+ve", baseHelpers.NewParameterManager(module.Name, deputizeAllowed.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterManager(constants.ModuleName, deputizeAllowed.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

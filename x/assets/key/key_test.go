@@ -7,8 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/assets/module"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -16,6 +14,9 @@ import (
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/assets/constants"
 )
 
 var (
@@ -134,7 +135,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{testAssetID}, module.StoreKeyPrefix.GenerateStoreKey((&Key{testAssetID}).GenerateStoreKeyBytes())},
+		{"+ve", fields{testAssetID}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{testAssetID}).GenerateStoreKeyBytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

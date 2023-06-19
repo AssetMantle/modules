@@ -6,12 +6,13 @@ package burn
 import (
 	"context"
 
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/key"
 	"github.com/AssetMantle/modules/x/splits/mappable"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/AssetMantle/modules/x/splits/utilities"
 )
 
 type auxiliaryKeeper struct {
@@ -22,23 +23,25 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	splitID := baseIDs.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
-	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(splitID))
+	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
-	Mappable := splits.GetMappable(key.NewKey(splitID))
+	circulatingSupply := utilities.GetOwnableTotalSplitsValue(splits, auxiliaryRequest.OwnableID)
+	if !circulatingSupply.Equal(auxiliaryRequest.Supply) {
+		return nil, errorConstants.InvalidRequest.Wrapf("circulating supply %d doesn't match asset's supply %d", circulatingSupply, auxiliaryRequest.Supply)
+	}
+
+	splitID := baseIDs.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
+	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("split with ID %s not found", splitID.AsString())
 	}
 	split := mappable.GetSplit(Mappable)
 
-	switch split = split.Send(auxiliaryRequest.Value); {
-	case split.GetValue().LT(sdkTypes.ZeroInt()):
-		return nil, errorConstants.InvalidRequest.Wrapf("split value cannot be negative")
-	case split.GetValue().Equal(sdkTypes.ZeroInt()):
-		splits.Remove(mappable.NewMappable(split))
-	default:
-		splits.Mutate(mappable.NewMappable(split))
+	if !split.GetValue().Equal(auxiliaryRequest.Supply) {
+		return nil, errorConstants.InvalidRequest.Wrapf("owned value %d doesn't match asset's circulating supply %d", split.GetValue(), auxiliaryRequest.Supply)
 	}
+
+	splits.Remove(mappable.NewMappable(split))
 
 	return newAuxiliaryResponse(), nil
 }

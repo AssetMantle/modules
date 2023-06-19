@@ -6,21 +6,25 @@ package asset
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/x/assets/module"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	helperConstants "github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/utilities/name"
+	"github.com/AssetMantle/modules/x/assets/constants"
 )
 
+type dummy struct{}
+
 var Query = baseHelpers.NewQuery(
-	"asset",
+	name.GetPackageName(dummy{}),
 	"",
 	"",
 
-	module.Name,
+	constants.ModuleName,
 
 	requestPrototype,
 	responsePrototype,
@@ -33,5 +37,5 @@ var Query = baseHelpers.NewQuery(
 		return RegisterServiceHandlerClient(context.Background(), serveMux, NewServiceClient(clientContext))
 	},
 
-	constants.AssetID,
+	helperConstants.AssetID,
 )

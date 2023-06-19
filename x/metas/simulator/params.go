@@ -12,13 +12,13 @@ import (
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/utilities/random"
-	"github.com/AssetMantle/modules/x/metas/module"
+	"github.com/AssetMantle/modules/x/metas/constants"
 	"github.com/AssetMantle/modules/x/metas/parameters/revealEnabled"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
-		simulation.NewSimParamChange(module.Name,
+		simulation.NewSimParamChange(constants.ModuleName,
 			string(revealEnabled.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))
