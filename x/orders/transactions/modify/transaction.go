@@ -13,10 +13,13 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/utilities/name"
 )
 
+type dummy struct{}
+
 var Transaction = baseHelpers.NewTransaction(
-	"modify",
+	name.GetPackageName(dummy{}),
 	"",
 	"",
 

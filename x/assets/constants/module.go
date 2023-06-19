@@ -5,9 +5,13 @@ package constants
 
 import (
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/utilities/name"
 )
 
-const ModuleName = "assets"
+type dummy struct{}
+
+var ModuleName = name.GetSuperPackageName(dummy{})
+
 const ModuleConsensusVersion = 1
 
 var ModuleStoreKeyPrefix = constants.AssetsStoreKeyPrefix

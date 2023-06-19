@@ -12,9 +12,13 @@ import (
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/utilities/name"
 )
 
-const ModuleName = "orders"
+type dummy struct{}
+
+var ModuleName = name.GetSuperPackageName(dummy{})
+
 const ModuleConsensusVersion = 1
 
 var ModuleStoreKeyPrefix = constants.OrdersStoreKeyPrefix

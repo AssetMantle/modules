@@ -13,11 +13,14 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	helperConstants "github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/utilities/name"
 	"github.com/AssetMantle/modules/x/orders/constants"
 )
 
+type dummy struct{}
+
 var Query = baseHelpers.NewQuery(
-	"orders",
+	name.GetPackageName(dummy{}),
 	"",
 	"",
 	constants.ModuleName,
