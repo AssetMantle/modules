@@ -5,9 +5,13 @@ package maintain
 
 import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/utilities/name"
 )
 
+type dummy struct{}
+
 var Auxiliary = baseHelpers.NewAuxiliary(
-	"maintain",
+	name.GetPackageName(dummy{}),
+
 	keeperPrototype,
 )

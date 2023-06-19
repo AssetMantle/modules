@@ -5,9 +5,13 @@ package super
 
 import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/utilities/name"
 )
 
+type dummy struct{}
+
 var Auxiliary = baseHelpers.NewAuxiliary(
-	"super",
+	name.GetPackageName(dummy{}),
+
 	keeperPrototype,
 )
