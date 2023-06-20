@@ -20,11 +20,11 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
+	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/genesis"
 	"github.com/AssetMantle/modules/x/assets/mappable"
-	"github.com/AssetMantle/modules/x/assets/parameters/mintEnabled"
+	"github.com/AssetMantle/modules/x/assets/parameters/mint_enabled"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -32,7 +32,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		mintEnabled.ID.AsString(),
+		mint_enabled.ID.AsString(),
 		&Data,
 		simulationState.Rand,
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
@@ -56,7 +56,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		assets.AddMappableBytes(classificationID.AsString(), baseHelpers.CodecPrototype().MustMarshal(mappable.NewMappable(asset)))
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, base.NewParameterList(mintEnabled.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, base.NewParameterList(mint_enabled.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

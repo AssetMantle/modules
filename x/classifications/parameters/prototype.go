@@ -7,10 +7,10 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/constants"
-	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
-	"github.com/AssetMantle/modules/x/classifications/parameters/maxPropertyCount"
+	"github.com/AssetMantle/modules/x/classifications/parameters/bond_rate"
+	"github.com/AssetMantle/modules/x/classifications/parameters/max_property_count"
 )
 
 func Prototype() helpers.ParameterManager {
-	return baseHelpers.NewParameterManager(constants.ModuleName, bondRate.ValidatableParameter, maxPropertyCount.ValidatableParameter)
+	return baseHelpers.NewParameterManager(constants.ModuleName, bond_rate.ValidatableParameter, max_property_count.ValidatableParameter)
 }

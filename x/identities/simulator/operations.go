@@ -17,7 +17,7 @@ import (
 	"github.com/AssetMantle/modules/helpers/base"
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
 	"github.com/AssetMantle/modules/x/assets/transactions/revoke"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/transactions/define"

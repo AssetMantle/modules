@@ -19,7 +19,7 @@ import (
 	"github.com/AssetMantle/modules/x/metas/constants"
 	"github.com/AssetMantle/modules/x/metas/genesis"
 	"github.com/AssetMantle/modules/x/metas/mappable"
-	"github.com/AssetMantle/modules/x/metas/parameters/revealEnabled"
+	"github.com/AssetMantle/modules/x/metas/parameters/reveal_enabled"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -27,7 +27,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		revealEnabled.ID.AsString(),
+		reveal_enabled.ID.AsString(),
 		&Data,
 		simulationState.Rand,
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
@@ -39,7 +39,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		mappableList[i] = mappable.NewMappable(baseSimulation.GenerateRandomData(simulationState.Rand, int(math.Abs(float64(simulationState.Rand.Int())))))
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, base.NewParameterList(revealEnabled.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, base.NewParameterList(reveal_enabled.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

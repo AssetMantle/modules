@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/tx"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/utilities/rest/idGetters/docs"
+	"github.com/AssetMantle/modules/utilities/rest/id_getters/docs"
 )
 
 type codec struct {

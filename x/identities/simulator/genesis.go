@@ -10,8 +10,8 @@ import (
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
+	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
 
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
@@ -26,7 +26,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/constants"
 	"github.com/AssetMantle/modules/x/identities/genesis"
 	mappableIdentities "github.com/AssetMantle/modules/x/identities/mappable"
-	"github.com/AssetMantle/modules/x/identities/parameters/maxProvisionAddressCount"
+	"github.com/AssetMantle/modules/x/identities/parameters/max_provision_address_count"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -34,7 +34,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		maxProvisionAddressCount.ID.AsString(),
+		max_provision_address_count.ID.AsString(),
 		&Data,
 		simulationState.Rand,
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
@@ -68,7 +68,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		index++
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(maxProvisionAddressCount.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(max_provision_address_count.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

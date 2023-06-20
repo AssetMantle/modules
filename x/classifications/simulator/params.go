@@ -12,14 +12,14 @@ import (
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/constants"
-	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
-	"github.com/AssetMantle/modules/x/classifications/parameters/maxPropertyCount"
+	"github.com/AssetMantle/modules/x/classifications/parameters/bond_rate"
+	"github.com/AssetMantle/modules/x/classifications/parameters/max_property_count"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(constants.ModuleName,
-			string(bondRate.Parameter.GetMetaProperty().GetID().Bytes()),
+			string(bond_rate.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(math.MaxInt))
 				if err != nil {
@@ -29,7 +29,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 			},
 		),
 		simulation.NewSimParamChange(constants.ModuleName,
-			string(maxPropertyCount.Parameter.GetMetaProperty().GetID().Bytes()),
+			string(max_property_count.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(1000) + 22)
 				if err != nil {

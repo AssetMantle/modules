@@ -19,8 +19,8 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	simulatorAssets "github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
-	simulatorIdentities "github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	simulatorAssets "github.com/AssetMantle/modules/simulation/simulated_database/assets"
+	simulatorIdentities "github.com/AssetMantle/modules/simulation/simulated_database/identities"
 	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	assetUtilities "github.com/AssetMantle/modules/x/assets/utilities"
 	mappableIdentities "github.com/AssetMantle/modules/x/identities/mappable"
@@ -28,7 +28,7 @@ import (
 	"github.com/AssetMantle/modules/x/maintainers/constants"
 	"github.com/AssetMantle/modules/x/maintainers/genesis"
 	mappableMaintainers "github.com/AssetMantle/modules/x/maintainers/mappable"
-	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
+	"github.com/AssetMantle/modules/x/maintainers/parameters/deputize_allowed"
 	"github.com/AssetMantle/modules/x/maintainers/utilities"
 	orderUtilities "github.com/AssetMantle/modules/x/orders/utilities"
 )
@@ -38,7 +38,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		deputizeAllowed.ID.AsString(),
+		deputize_allowed.ID.AsString(),
 		&Data,
 		simulationState.Rand,
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
@@ -95,7 +95,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		index += 3
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(deputizeAllowed.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(deputize_allowed.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

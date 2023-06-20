@@ -10,8 +10,8 @@ import (
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/orders"
+	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
+	"github.com/AssetMantle/modules/simulation/simulated_database/orders"
 	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	mappableOrders "github.com/AssetMantle/modules/x/orders/mappable"
 
@@ -26,7 +26,7 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/genesis"
-	"github.com/AssetMantle/modules/x/orders/parameters/maxOrderLife"
+	"github.com/AssetMantle/modules/x/orders/parameters/max_order_life"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -34,7 +34,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		maxOrderLife.ID.AsString(),
+		max_order_life.ID.AsString(),
 		&Data,
 		simulationState.Rand,
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
@@ -74,7 +74,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		index++
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(maxOrderLife.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(max_order_life.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

@@ -7,7 +7,7 @@ import (
 	"math/rand"
 	"strconv"
 
-	"github.com/AssetMantle/modules/x/maintainers/parameters/deputizeAllowed"
+	"github.com/AssetMantle/modules/x/maintainers/parameters/deputize_allowed"
 
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
@@ -20,7 +20,7 @@ import (
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(constants.ModuleName,
-			string(deputizeAllowed.Parameter.GetMetaProperty().GetID().Bytes()),
+			string(deputize_allowed.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, _ := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))
 				return string(bytes)

@@ -12,13 +12,13 @@ import (
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/constants"
-	"github.com/AssetMantle/modules/x/orders/parameters/maxOrderLife"
+	"github.com/AssetMantle/modules/x/orders/parameters/max_order_life"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(constants.ModuleName,
-			string(maxOrderLife.Parameter.GetMetaProperty().GetID().Bytes()),
+			string(max_order_life.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(math.MaxInt))
 				if err != nil {

@@ -9,8 +9,8 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 
 	simulationModules "github.com/AssetMantle/modules/simulation"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
+	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
+	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
 	"github.com/AssetMantle/modules/x/splits/transactions/send"
 	"github.com/AssetMantle/modules/x/splits/transactions/unwrap"
 	"github.com/AssetMantle/modules/x/splits/transactions/wrap"

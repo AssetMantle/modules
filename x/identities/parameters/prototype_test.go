@@ -10,7 +10,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/identities/constants"
-	"github.com/AssetMantle/modules/x/identities/parameters/maxProvisionAddressCount"
+	"github.com/AssetMantle/modules/x/identities/parameters/max_provision_address_count"
 )
 
 func TestPrototype(t *testing.T) {
@@ -19,7 +19,7 @@ func TestPrototype(t *testing.T) {
 		want helpers.ParameterManager
 	}{
 
-		{"+ve", baseHelpers.NewParameterManager(constants.ModuleName, maxProvisionAddressCount.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterManager(constants.ModuleName, max_provision_address_count.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

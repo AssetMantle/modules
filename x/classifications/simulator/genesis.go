@@ -11,9 +11,9 @@ import (
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
+	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
 	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
-	"github.com/AssetMantle/modules/x/classifications/parameters/maxPropertyCount"
+	"github.com/AssetMantle/modules/x/classifications/parameters/max_property_count"
 
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
@@ -25,14 +25,14 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/constants"
 	"github.com/AssetMantle/modules/x/classifications/genesis"
 	mappableClassifications "github.com/AssetMantle/modules/x/classifications/mappable"
-	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
+	"github.com/AssetMantle/modules/x/classifications/parameters/bond_rate"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
 	var bondRateData data.Data
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		bondRate.ID.AsString(),
+		bond_rate.ID.AsString(),
 		&bondRateData,
 		simulationState.Rand,
 		func(rand *rand.Rand) {
@@ -43,7 +43,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	var maxPropertyCountData data.Data
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		maxPropertyCount.ID.AsString(),
+		max_property_count.ID.AsString(),
 		&maxPropertyCountData,
 		simulationState.Rand,
 		func(rand *rand.Rand) {
@@ -82,7 +82,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		accountPosition++
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(bondRate.Parameter.Mutate(bondRateData), maxPropertyCount.Parameter.Mutate(maxPropertyCountData)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(bond_rate.Parameter.Mutate(bondRateData), max_property_count.Parameter.Mutate(maxPropertyCountData)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

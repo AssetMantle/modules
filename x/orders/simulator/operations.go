@@ -15,9 +15,9 @@ import (
 
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/orders"
+	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
+	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
+	"github.com/AssetMantle/modules/simulation/simulated_database/orders"
 	"github.com/AssetMantle/modules/x/orders/mappable"
 	"github.com/AssetMantle/modules/x/orders/transactions/cancel"
 	"github.com/AssetMantle/modules/x/orders/transactions/define"

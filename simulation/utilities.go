@@ -13,7 +13,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
+	"github.com/AssetMantle/modules/x/classifications/parameters/bond_rate"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -56,7 +56,7 @@ func CalculateBondAmount(immutables qualified.Immutables, mutables qualified.Mut
 	for _, property := range append(immutables.GetImmutablePropertyList().Get(), mutables.GetMutablePropertyList().Get()...) {
 		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
 	}
-	return baseData.NewNumberData(bondRate.Parameter.MetaProperty.Data.Get().(data.NumberData).Get().Mul(totalWeight))
+	return baseData.NewNumberData(bond_rate.Parameter.MetaProperty.Data.Get().(data.NumberData).Get().Mul(totalWeight))
 }
 
 func ExecuteMessage(context sdkTypes.Context, module helpers.Module, message helpers.Message) (*sdkTypes.Result, error) {

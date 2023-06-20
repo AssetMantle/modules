@@ -7,11 +7,11 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/assets/constants"
-	"github.com/AssetMantle/modules/x/assets/parameters/burnEnabled"
-	"github.com/AssetMantle/modules/x/assets/parameters/mintEnabled"
-	"github.com/AssetMantle/modules/x/assets/parameters/renumerateEnabled"
+	"github.com/AssetMantle/modules/x/assets/parameters/burn_enabled"
+	"github.com/AssetMantle/modules/x/assets/parameters/mint_enabled"
+	"github.com/AssetMantle/modules/x/assets/parameters/renumerate_enabled"
 )
 
 func Prototype() helpers.ParameterManager {
-	return baseHelpers.NewParameterManager(constants.ModuleName, burnEnabled.ValidatableParameter, mintEnabled.ValidatableParameter, renumerateEnabled.ValidatableParameter)
+	return baseHelpers.NewParameterManager(constants.ModuleName, burn_enabled.ValidatableParameter, mint_enabled.ValidatableParameter, renumerate_enabled.ValidatableParameter)
 }

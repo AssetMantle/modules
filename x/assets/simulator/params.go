@@ -13,15 +13,15 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/assets/constants"
-	"github.com/AssetMantle/modules/x/assets/parameters/burnEnabled"
-	"github.com/AssetMantle/modules/x/assets/parameters/mintEnabled"
-	"github.com/AssetMantle/modules/x/assets/parameters/renumerateEnabled"
+	"github.com/AssetMantle/modules/x/assets/parameters/burn_enabled"
+	"github.com/AssetMantle/modules/x/assets/parameters/mint_enabled"
+	"github.com/AssetMantle/modules/x/assets/parameters/renumerate_enabled"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 	return []simulationTypes.ParamChange{
 		simulation.NewSimParamChange(constants.ModuleName,
-			string(mintEnabled.Parameter.GetMetaProperty().GetID().Bytes()),
+			string(mint_enabled.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))
 				if err != nil {
@@ -30,7 +30,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 				return string(bytes)
 			}),
 		simulation.NewSimParamChange(constants.ModuleName,
-			string(burnEnabled.Parameter.GetMetaProperty().GetID().Bytes()),
+			string(burn_enabled.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))
 				if err != nil {
@@ -39,7 +39,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 				return string(bytes)
 			}),
 		simulation.NewSimParamChange(constants.ModuleName,
-			string(renumerateEnabled.Parameter.GetMetaProperty().GetID().Bytes()),
+			string(renumerate_enabled.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))
 				if err != nil {
