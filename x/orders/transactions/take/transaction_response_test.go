@@ -7,8 +7,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func Test_newTransactionResponse(t *testing.T) {

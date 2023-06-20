@@ -6,6 +6,8 @@ package transactions
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/identities/transactions/define"
 	"github.com/AssetMantle/modules/x/identities/transactions/deputize"
@@ -14,7 +16,6 @@ import (
 	"github.com/AssetMantle/modules/x/identities/transactions/provision"
 	"github.com/AssetMantle/modules/x/identities/transactions/revoke"
 	"github.com/AssetMantle/modules/x/identities/transactions/unprovision"
-	"github.com/stretchr/testify/require"
 )
 
 func TestPrototype(t *testing.T) {

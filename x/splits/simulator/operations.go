@@ -7,14 +7,6 @@ import (
 	"math/rand"
 
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-
-	simulationModules "github.com/AssetMantle/modules/simulation"
-	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
-	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
-	"github.com/AssetMantle/modules/x/splits/transactions/send"
-	"github.com/AssetMantle/modules/x/splits/transactions/unwrap"
-	"github.com/AssetMantle/modules/x/splits/transactions/wrap"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -23,6 +15,12 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
+	simulationModules "github.com/AssetMantle/modules/simulation"
+	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
+	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
+	"github.com/AssetMantle/modules/x/splits/transactions/send"
+	"github.com/AssetMantle/modules/x/splits/transactions/unwrap"
+	"github.com/AssetMantle/modules/x/splits/transactions/wrap"
 )
 
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {

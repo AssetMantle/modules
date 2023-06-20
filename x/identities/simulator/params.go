@@ -8,7 +8,6 @@ import (
 	"math/rand"
 
 	"github.com/AssetMantle/schema/go/data"
-
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 

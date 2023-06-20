@@ -6,9 +6,10 @@ package classifications
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/go/ids/base"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/key"
-	"github.com/AssetMantle/schema/go/ids/base"
 )
 
 type queryKeeper struct {

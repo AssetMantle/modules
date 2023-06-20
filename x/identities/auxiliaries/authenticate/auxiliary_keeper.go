@@ -6,11 +6,12 @@ package authenticate
 import (
 	"context"
 
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 )
 
 type auxiliaryKeeper struct {

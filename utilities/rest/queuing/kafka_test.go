@@ -6,14 +6,13 @@ package queuing
 import (
 	"testing"
 
+	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/std"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/stretchr/testify/require"
-
-	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 
 	"github.com/AssetMantle/modules/utilities/random"
 )

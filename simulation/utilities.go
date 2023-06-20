@@ -10,13 +10,12 @@ import (
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/qualified"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/classifications/parameters/bond_rate"
-
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )
 
 var (

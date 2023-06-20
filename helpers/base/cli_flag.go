@@ -6,9 +6,10 @@ package base
 import (
 	"fmt"
 
-	"github.com/AssetMantle/modules/helpers"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type cliFlag struct {

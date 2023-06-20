@@ -6,8 +6,9 @@ package block
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type block struct {

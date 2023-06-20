@@ -4,10 +4,11 @@
 package unbond
 
 import (
-	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {

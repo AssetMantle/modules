@@ -6,8 +6,9 @@ package base
 import (
 	"context"
 
-	"github.com/AssetMantle/modules/helpers"
 	sdkTypesQuery "github.com/cosmos/cosmos-sdk/types/query"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type collection struct {

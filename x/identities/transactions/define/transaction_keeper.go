@@ -6,9 +6,8 @@ package define
 import (
 	"context"
 
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/properties/constants"
 	"github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/types"

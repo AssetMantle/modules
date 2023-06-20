@@ -6,10 +6,9 @@ package update
 import (
 	"context"
 
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-
 	"github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 

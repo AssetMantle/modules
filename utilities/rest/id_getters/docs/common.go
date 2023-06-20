@@ -3,13 +3,12 @@ package docs
 import (
 	"net/http"
 
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/lists/utilities"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	"github.com/AssetMantle/schema/go/properties/constants"

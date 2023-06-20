@@ -7,9 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/qualified"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func TestNewAuxiliaryRequest(t *testing.T) {

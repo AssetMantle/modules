@@ -6,26 +6,24 @@ package simulator
 import (
 	"math/rand"
 
-	"github.com/AssetMantle/schema/go/documents/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
-
-	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
-	"github.com/AssetMantle/modules/simulation/simulated_database/orders"
-	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
-	mappableOrders "github.com/AssetMantle/modules/x/orders/mappable"
-
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
+	"github.com/AssetMantle/modules/simulation/simulated_database/orders"
+	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/genesis"
+	mappableOrders "github.com/AssetMantle/modules/x/orders/mappable"
 	"github.com/AssetMantle/modules/x/orders/parameters/max_order_life"
 )
 

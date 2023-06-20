@@ -7,7 +7,6 @@ import (
 	"context"
 
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
-
 	"github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 

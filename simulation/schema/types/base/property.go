@@ -4,7 +4,6 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/utilities/random"
 	"math"
 	"math/rand"
 
@@ -12,6 +11,8 @@ import (
 	"github.com/AssetMantle/schema/go/properties"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
+	"github.com/AssetMantle/modules/utilities/random"
 )
 
 func GenerateRandomMesaProperty(r *rand.Rand) properties.Property {

@@ -4,9 +4,10 @@
 package scrub
 
 import (
-	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/lists"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryResponse struct {

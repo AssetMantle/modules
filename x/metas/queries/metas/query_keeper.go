@@ -6,9 +6,10 @@ package metas
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/go/ids/base"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/metas/key"
-	"github.com/AssetMantle/schema/go/ids/base"
 )
 
 type queryKeeper struct {

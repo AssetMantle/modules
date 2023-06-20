@@ -7,8 +7,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func TestMapper(t *testing.T) {

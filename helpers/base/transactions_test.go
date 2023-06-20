@@ -6,8 +6,9 @@ package base
 import (
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 func TestNewTransactions(t *testing.T) {

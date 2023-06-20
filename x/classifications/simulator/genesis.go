@@ -6,26 +6,24 @@ package simulator
 import (
 	"math/rand"
 
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
-	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
-	"github.com/AssetMantle/modules/x/classifications/parameters/max_property_count"
-
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/documents/base"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
+	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/classifications/constants"
 	"github.com/AssetMantle/modules/x/classifications/genesis"
 	mappableClassifications "github.com/AssetMantle/modules/x/classifications/mappable"
 	"github.com/AssetMantle/modules/x/classifications/parameters/bond_rate"
+	"github.com/AssetMantle/modules/x/classifications/parameters/max_property_count"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
