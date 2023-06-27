@@ -25,16 +25,8 @@ func (queryResponse *QueryResponse) Decode(bytes []byte) (helpers.QueryResponse,
 func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
-func newQueryResponse(value sdkTypes.Int, error error) *QueryResponse {
-	if error != nil {
-		return &QueryResponse{
-
-			Value: value.String(),
-		}
-	}
-
+func newQueryResponse(value sdkTypes.Int) *QueryResponse {
 	return &QueryResponse{
-		Error: "",
-		Value: value.String(),
+		Supply: value.String(),
 	}
 }
