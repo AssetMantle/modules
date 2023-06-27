@@ -22,7 +22,7 @@ func Test_Super_Response(t *testing.T) {
 	property := baseProperties.NewMesaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
 	propertyList := base.NewPropertyList([]properties.Property{property}...)
 
-	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.ScrubData(), nil)
+	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.ScrubData())
 	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, PropertyList: metaPropertyList.ScrubData()}, testAuxiliaryResponse)
 	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
 	require.Equal(t, nil, testAuxiliaryResponse.GetError())

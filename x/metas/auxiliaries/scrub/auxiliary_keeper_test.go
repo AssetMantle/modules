@@ -12,9 +12,7 @@ import (
 	"github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/properties"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
@@ -35,10 +33,7 @@ type TestKeepers struct {
 }
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
-	var legacyAmino = codec.NewLegacyAmino()
-	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
-	std.RegisterLegacyAminoCodec(legacyAmino)
-	legacyAmino.Seal()
+	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
@@ -81,7 +76,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	metaPropertyList := base.NewPropertyList([]properties.Property{metaProperty}...)
 
 	t.Run("PositiveCase - ", func(t *testing.T) {
-		want := newAuxiliaryResponse(metaPropertyList.ScrubData(), nil)
+		want := newAuxiliaryResponse(metaPropertyList.ScrubData())
 		if got := keepers.MetasKeeper.Help(sdkTypes.WrapSDKContext(context), NewAuxiliaryRequest(metaPropertyList)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

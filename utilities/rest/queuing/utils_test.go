@@ -7,8 +7,6 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/stretchr/testify/require"
 )
@@ -26,10 +24,7 @@ func Test_Rest_Utils(t *testing.T) {
 	require.Equal(t, 0.3, value3)
 	require.Equal(t, nil, error3)
 
-	var legacyAmino = codec.NewLegacyAmino()
-	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
-	std.RegisterLegacyAminoCodec(legacyAmino)
-	legacyAmino.Seal()
+	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
 	gas := uint64(123)
 	response, err := simulationResponse(legacyAmino, gas)

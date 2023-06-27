@@ -14,8 +14,6 @@ import (
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
@@ -39,10 +37,7 @@ func createTestInput() (*baseIDs.IdentityID, *baseIDs.IdentityID) {
 }
 
 func Test_newQueryRequest(t *testing.T) {
-	var legacyAmino = codec.NewLegacyAmino()
-	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
-	std.RegisterLegacyAminoCodec(legacyAmino)
-	legacyAmino.Seal()
+	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
 	testIdentity, emptyTestIdentity := createTestInput()
 

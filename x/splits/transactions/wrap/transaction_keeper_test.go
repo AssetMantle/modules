@@ -12,7 +12,6 @@ import (
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
@@ -58,10 +57,7 @@ type TestKeepers struct {
 }
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager, bankKeeper.Keeper) {
-	var legacyAmino = codec.NewLegacyAmino()
-	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
-	std.RegisterLegacyAminoCodec(legacyAmino)
-	legacyAmino.Seal()
+	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
 	codec := baseHelpers.CodecPrototype()
 
@@ -201,10 +197,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		staking.NotBondedPoolName:  {authTypes.Burner, authTypes.Staking},
 		staking.BondedPoolName:     {authTypes.Burner, authTypes.Staking},
 	}
-	var legacyAmino = codec.NewLegacyAmino()
-	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
-	std.RegisterLegacyAminoCodec(legacyAmino)
-	legacyAmino.Seal()
+	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 	supplyKeeper := NewKeeper(legacyAmino, sdkTypes.NewKVStoreKey(authTypes.StoreKey), accountKeeper, bankKeeper, maccPerms)
 	type fields struct {
 		mapper                helpers.Mapper
