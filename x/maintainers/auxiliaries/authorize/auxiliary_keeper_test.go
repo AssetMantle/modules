@@ -53,7 +53,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	identityID := baseIDs.NewIdentityID(classificationID, immutables)
-	permissions := utilities.SetModulePermissions(true, true, true, true, true, true)
+	permissions := utilities.SetModulePermissions(true, true, true)
 
 	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
@@ -74,7 +74,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		want   helpers.AuxiliaryResponse
 	}{
 		// TODO: Test dependency on issue #95: https://github.com/AssetMantle/modules/issues/95
-		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, identityID)}, newAuxiliaryResponse(nil)},
+		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, identityID)}, newAuxiliaryResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

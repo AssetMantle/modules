@@ -167,7 +167,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{Mapper, authenticateAuxiliary, maintainAuxiliary, memberAuxiliary}, args{context, newMessage(fromAccAddress, testFromID, testFromID, mutableProperties, toMutateMetaProperties).(*Message)}, newTransactionResponse(nil)},
+		{"+ve", fields{Mapper, authenticateAuxiliary, maintainAuxiliary, memberAuxiliary}, args{context, NewMessage(fromAccAddress, testFromID, testFromID, mutableProperties, toMutateMetaProperties).(*Message)}, newTransactionResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

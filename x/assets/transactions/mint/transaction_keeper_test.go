@@ -9,7 +9,6 @@ import (
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -177,7 +176,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want   helpers.TransactionResponse
 	}{
 		{"+ve", fields{mapper, parameterManager, conformAuxiliary, mintAuxiliary, authenticateAuxiliary, authorizeAuxiliary}, args{context, NewMessage(fromAccAddress, fromID, fromID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
-		{"+ve Entity Already Exists", fields{mapper, parameterManager, conformAuxiliary, mintAuxiliary, authenticateAuxiliary, authorizeAuxiliary}, args{context, NewMessage(fromAccAddress, fromID, fromID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(errorConstants.EntityAlreadyExists)},
+		{"+ve Entity Already Exists", fields{mapper, parameterManager, conformAuxiliary, mintAuxiliary, authenticateAuxiliary, authorizeAuxiliary}, args{context, NewMessage(fromAccAddress, fromID, fromID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

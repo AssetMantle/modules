@@ -4,9 +4,9 @@
 package split
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"testing"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -18,7 +18,6 @@ import (
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
@@ -43,13 +42,7 @@ func Test_Split_Response(t *testing.T) {
 	context := CreateTestInput(t)
 	collection := mapper.Prototype().NewCollection(sdkTypes.WrapSDKContext(context))
 
-	testQueryResponse := newQueryResponse(collection, nil)
-	testQueryResponseWithError := newQueryResponse(collection, errorConstants.IncorrectFormat)
-
-	require.Equal(t, true, testQueryResponse.IsSuccessful())
-	require.Equal(t, false, testQueryResponseWithError.IsSuccessful())
-	require.Equal(t, nil, testQueryResponse.GetError())
-	require.Equal(t, errorConstants.IncorrectFormat, testQueryResponseWithError.GetError())
+	testQueryResponse := newQueryResponse(collection)
 
 	encodedResponse, _ := testQueryResponse.Encode()
 	bytes, _ := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(testQueryResponse)

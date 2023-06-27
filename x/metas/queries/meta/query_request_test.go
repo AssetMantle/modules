@@ -172,43 +172,6 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	}
 }
 
-func Test_queryRequest_FromMap(t *testing.T) {
-	vars := make(map[string]string)
-	vars[Query.GetName()] = testDataID.AsString()
-	vars1 := make(map[string]string)
-	vars1[Query.GetName()] = testDataID.AsString()
-	type fields struct {
-		DataID *baseIDs.DataID
-	}
-	type args struct {
-		vars map[string]string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.QueryRequest
-		wantErr bool
-	}{
-		{"+ve", fields{testDataID}, args{vars}, newQueryRequest(testDataID), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			qu := &QueryRequest{
-				DataID: tt.fields.DataID,
-			}
-			got, err := qu.FromMap(tt.args.vars)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromMap() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromMap() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
 		DataID *baseIDs.DataID

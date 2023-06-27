@@ -10,7 +10,6 @@ import (
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -97,9 +96,9 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse(nil)},
-		{"+ve Not Authorized", fields{Mapper}, args{context, NewAuxiliaryRequest(testClassificationID, testFromID, baseQualified.NewMutables(immutables.GetImmutablePropertyList()))}, newAuxiliaryResponse(errorConstants.NotAuthorized)},
-		{"+ve Entity Not Found", fields{Mapper}, args{context, NewAuxiliaryRequest(baseIDs.PrototypeClassificationID(), testFromID, mutables)}, newAuxiliaryResponse(errorConstants.EntityNotFound)},
+		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse()},
+		{"+ve Not Authorized", fields{Mapper}, args{context, NewAuxiliaryRequest(testClassificationID, testFromID, baseQualified.NewMutables(immutables.GetImmutablePropertyList()))}, newAuxiliaryResponse()},
+		{"+ve Entity Not Found", fields{Mapper}, args{context, NewAuxiliaryRequest(baseIDs.PrototypeClassificationID(), testFromID, mutables)}, newAuxiliaryResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

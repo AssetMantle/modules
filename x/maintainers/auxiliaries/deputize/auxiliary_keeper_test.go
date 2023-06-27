@@ -45,7 +45,7 @@ var (
 	testFromID              = baseIDs.NewIdentityID(testClassificationID, immutables)
 	maintainedProperty      = "maintainedProperty:S|maintainedProperty"
 	maintainedProperties, _ = utilities.ReadMetaPropertyList(maintainedProperty)
-	permissions             = maintainerUtilities.SetModulePermissions(true, true, true, true, true, true)
+	permissions             = maintainerUtilities.SetModulePermissions(true, true, true)
 )
 
 func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
@@ -102,7 +102,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve", fields{Mapper, memberAuxiliary}, args{context, NewAuxiliaryRequest(testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true, true, true, true)}, newAuxiliaryResponse(nil)},
+		{"+ve", fields{Mapper, memberAuxiliary}, args{context, NewAuxiliaryRequest(testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true)}, newAuxiliaryResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -134,7 +134,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{mapper, memberAuxiliary}, args{mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{mapper, memberAuxiliary}},
+		{"+ve", fields{mapper, memberAuxiliary}, args{mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{mapper, parameterManager, memberAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

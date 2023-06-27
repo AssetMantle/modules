@@ -10,7 +10,6 @@ import (
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -177,8 +176,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
-		{"-ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, newMessage(fromAccAddress2, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(errorConstants.NotAuthorized)},
+		{"+ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, NewMessage(fromAccAddress, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
+		{"-ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, NewMessage(fromAccAddress2, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

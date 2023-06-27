@@ -8,8 +8,6 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
@@ -19,11 +17,6 @@ import (
 )
 
 func initialize() (helpers.CLICommand, []helpers.CLIFlag) {
-	var legacyAmino = sdkCodec.NewLegacyAmino()
-	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
-	std.RegisterLegacyAminoCodec(legacyAmino)
-	legacyAmino.Seal()
-
 	testCliFlag := NewCLIFlag("name", "value", ",usage")
 	testCliFlag2 := NewCLIFlag("name2", int64(-1), ",usage")
 	testCliFlag3 := NewCLIFlag("name3", 123, ",usage")

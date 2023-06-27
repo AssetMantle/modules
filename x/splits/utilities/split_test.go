@@ -28,8 +28,6 @@ import (
 )
 
 func createTestInput1(t *testing.T) (sdkTypes.Context, helpers.Mapper) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
-
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
@@ -65,7 +63,7 @@ func TestAddSplits(t *testing.T) {
 		splits    helpers.Collection
 		ownerID   ids.IdentityID
 		ownableID ids.OwnableID
-		value     sdkTypes.Dec
+		value     sdkTypes.Int
 	}
 	tests := []struct {
 		name    string
@@ -73,8 +71,8 @@ func TestAddSplits(t *testing.T) {
 		want    helpers.Collection
 		wantErr bool
 	}{
-		{"+ve", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.NewDec(100)}, testSplits.Mutate(mappable.NewMappable(split.Receive(sdkTypes.NewDec(100)))), false},
-		{"+ve Not authorized", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.ZeroDec()}, nil, true},
+		{"+ve", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.NewInt(100)}, testSplits.Mutate(mappable.NewMappable(split.Receive(sdkTypes.NewInt(100)))), false},
+		{"+ve Not authorized", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.ZeroInt()}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -96,7 +94,7 @@ func TestSubtractSplits(t *testing.T) {
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
 	testOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
-	testRate := sdkTypes.NewDec(10)
+	testRate := sdkTypes.NewInt(10)
 	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
 	context, testMapper := createTestInput1(t)
 	testSplits := testMapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
@@ -104,7 +102,7 @@ func TestSubtractSplits(t *testing.T) {
 		splits    helpers.Collection
 		ownerID   ids.IdentityID
 		ownableID ids.OwnableID
-		value     sdkTypes.Dec
+		value     sdkTypes.Int
 	}
 	tests := []struct {
 		name    string
@@ -112,9 +110,9 @@ func TestSubtractSplits(t *testing.T) {
 		want    helpers.Collection
 		wantErr bool
 	}{
-		{"+ve", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.NewDec(9)}, testSplits.Mutate(mappable.NewMappable(split)), false},
-		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.NewDec(100)}, nil, true},
-		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.ZeroDec()}, nil, true},
+		{"+ve", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.NewInt(9)}, testSplits.Mutate(mappable.NewMappable(split)), false},
+		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.NewInt(100)}, nil, true},
+		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.ZeroInt()}, nil, true},
 		{"+ve Entity Not found", args{testSplits, baseIDs.PrototypeIdentityID(), testOwnableID, testRate}, nil, true},
 	}
 	for _, tt := range tests {

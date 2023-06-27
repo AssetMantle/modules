@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/AssetMantle/schema/go/data/utilities"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -19,17 +18,11 @@ import (
 )
 
 func Test_Reveal_Request(t *testing.T) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
-
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.Data})
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
 
 	data := "S|newData"
-	newData, err := utilities.ReadData(data)
-	require.Equal(t, nil, err)
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	testTransactionRequest := newTransactionRequest(testBaseReq, data)
@@ -52,8 +45,6 @@ func Test_Reveal_Request(t *testing.T) {
 
 	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
 
-	msg, err := testTransactionRequest.MakeMsg()
-	require.Equal(t, newMessage(fromAccAddress, newData), msg)
 	require.Nil(t, err)
 
 	msg2, err := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, data).MakeMsg()

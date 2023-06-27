@@ -10,7 +10,6 @@ import (
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -123,14 +122,13 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{mapper, renumerateAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{mapper, parameterManager, []interface{}{}}, transactionKeeper{mapper, renumerateAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary, nil, nil}},
+		{"+ve", fields{mapper, renumerateAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{mapper, parameterManager, []interface{}{}}, transactionKeeper{mapper, parameterManager, authenticateAuxiliary, maintainAuxiliary, supplementAuxiliary, nil, nil}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
 				burnAuxiliary:         tt.fields.renumerateAuxiliary,
-				maintainAuxiliary:     tt.fields.maintainAuxiliary,
 				supplementAuxiliary:   tt.fields.supplementAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
@@ -170,15 +168,14 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{Mapper, renumerateAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, fromID, testAssetID).(*Message)}, newTransactionResponse(nil)},
-		{"+ve", fields{Mapper, renumerateAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{context, newMessage(fromAccAddress, fromID, baseIDs.PrototypeAssetID()).(*Message)}, newTransactionResponse(errorConstants.EntityNotFound)},
+		{"+ve", fields{Mapper, renumerateAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, fromID, testAssetID).(*Message)}, newTransactionResponse()},
+		{"+ve", fields{Mapper, renumerateAuxiliary, maintainAuxiliary, supplementAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, fromID, baseIDs.PrototypeAssetID()).(*Message)}, newTransactionResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
 				burnAuxiliary:         tt.fields.renumerateAuxiliary,
-				maintainAuxiliary:     tt.fields.maintainAuxiliary,
 				supplementAuxiliary:   tt.fields.supplementAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}

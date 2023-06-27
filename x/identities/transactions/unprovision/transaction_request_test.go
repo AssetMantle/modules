@@ -40,7 +40,7 @@ func createInputForMessage(t *testing.T) (*baseIDs.IdentityID, string, types.Acc
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 
-	testMessage := newMessage(fromAccAddress, toAccAddress, testIdentityID)
+	testMessage := NewMessage(fromAccAddress, toAccAddress, testIdentityID)
 
 	return testIdentityID.(*baseIDs.IdentityID), toAddress, toAccAddress, testMessage, testBaseReq
 }
@@ -86,8 +86,6 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
-
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.To, constants.IdentityID})
 
 	testIdentityID, toAddress, _, _, testBaseReq := createInputForMessage(t)
@@ -145,7 +143,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c").String(), toAccAddress.String(), testIdentityID}))}, transactionRequest{testBaseReq, toAddress, testIdentityID.AsString()}, false},
+		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, args{types.MustSortJSON(baseHelpers.CodecPrototype().MustMarshalJSON(&Message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c").String(), toAccAddress.String(), testIdentityID}))}, transactionRequest{testBaseReq, toAddress, testIdentityID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

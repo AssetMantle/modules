@@ -71,9 +71,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedQuery, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testAssetID))
+	encodedQuery, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testAssetID))
 	require.NoError(t, err)
-	encodedQuery1, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID)))
+	encodedQuery1, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID)))
 	require.NoError(t, err)
 	type fields struct {
 		AssetID *baseIDs.AssetID
@@ -109,9 +109,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testAssetID))
+	encodedQuery, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testAssetID))
 	require.NoError(t, err)
-	encodedQuery1, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID)))
+	encodedQuery1, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID)))
 	require.NoError(t, err)
 	type fields struct {
 		AssetID *baseIDs.AssetID
@@ -174,41 +174,6 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_queryRequest_FromMap(t *testing.T) {
-	vars := make(map[string]string)
-	vars[Query.GetName()] = testAssetID.AsString()
-	type fields struct {
-		AssetID *baseIDs.AssetID
-	}
-	type args struct {
-		vars map[string]string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.QueryRequest
-		wantErr bool
-	}{
-		{"+ve", fields{testAssetID}, args{vars}, newQueryRequest(testAssetID), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			qu := &QueryRequest{
-				AssetID: tt.fields.AssetID,
-			}
-			got, err := qu.FromMap(tt.args.vars)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromMap() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromMap() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -37,8 +37,6 @@ func createTestInput() (*baseIDs.IdentityID, *baseIDs.IdentityID) {
 }
 
 func Test_newQueryRequest(t *testing.T) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
-
 	testIdentity, emptyTestIdentity := createTestInput()
 
 	type args struct {
@@ -127,8 +125,8 @@ func Test_queryRequest_Decode(t *testing.T) {
 
 func Test_queryRequest_Encode(t *testing.T) {
 	testIdentity, emptyTestIdentity := createTestInput()
-	byteArr, _ := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testIdentity))
-	byteArr2, _ := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(emptyTestIdentity))
+	byteArr, _ := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testIdentity))
+	byteArr2, _ := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(emptyTestIdentity))
 
 	type fields struct {
 		IdentityID *baseIDs.IdentityID
@@ -194,51 +192,6 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 				if !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
 				}
-			}
-		})
-	}
-}
-
-func Test_queryRequest_FromMap(t *testing.T) {
-	vars := make(map[string]string)
-	vars["identities"] = "9UNIA3_tulK2vRE0nSmsHKNzhDxoCBHI4z8XXfLO1FM="
-	vars2 := make(map[string]string)
-	vars2["identities"] = "qlFr8g0R-Qe6CxKcU5Ncdj7kAnSEp8Wq6sckkmznGiI="
-	testIdentity, err := baseIDs.ReadIdentityID(vars["identities"])
-	require.NoError(t, err)
-	emptyTestIdentity, err := baseIDs.ReadIdentityID(vars2["identities"])
-	require.NoError(t, err)
-	type fields struct {
-		IdentityID *baseIDs.IdentityID
-	}
-	type args struct {
-		vars map[string]string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.QueryRequest
-		wantErr bool
-	}{
-
-		{"+ve", fields{testIdentity.(*baseIDs.IdentityID)}, args{vars: vars}, newQueryRequest(testIdentity), false},
-		{"+ve with empty IdentityID", fields{emptyTestIdentity.(*baseIDs.IdentityID)}, args{vars: vars2}, newQueryRequest(emptyTestIdentity), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := &QueryRequest{
-				IdentityID: tt.fields.IdentityID,
-			}
-			if got, err := queryRequest.FromMap(tt.args.vars); !reflect.DeepEqual(got, tt.want) {
-				if (err != nil) != tt.wantErr {
-					t.Errorf("FromMap() error = %v, wantErr %v", err, tt.wantErr)
-					return
-				}
-				if !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("FromMap() got = %v, want %v", got, tt.want)
-				}
-
 			}
 		})
 	}

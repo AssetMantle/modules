@@ -28,7 +28,7 @@ var (
 	testOwnerIdentityID = baseIDs.NewIdentityID(classificationID, immutables)
 	testOwnableID       = baseIDs.NewCoinID(baseIDs.NewStringID("ownerid"))
 	splitID             = baseIDs.NewSplitID(testOwnerIdentityID, testOwnableID)
-	testRate            = sdkTypes.NewDec(1)
+	testRate            = sdkTypes.NewInt(1)
 	split               = baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate).(*baseTypes.Split)
 )
 

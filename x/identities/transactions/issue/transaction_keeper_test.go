@@ -10,7 +10,6 @@ import (
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -120,7 +119,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{Mapper, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}},
+		{"+ve", fields{Mapper, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary, authorizeAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -174,8 +173,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want   helpers.TransactionResponse
 	}{
 		// NOTE: When test individually run 2nd test will fail
-		{"+ve", fields{mapper, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{context, newMessage(fromAccAddress, toAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
-		{"+ve Entity Already Exists", fields{mapper, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{context, newMessage(fromAccAddress, toAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(errorConstants.EntityAlreadyExists)},
+		{"+ve", fields{mapper, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{context, NewMessage(fromAccAddress, toAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
+		{"+ve Entity Already Exists", fields{mapper, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{context, NewMessage(fromAccAddress, toAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

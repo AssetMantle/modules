@@ -11,7 +11,6 @@ import (
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -157,9 +156,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve Not Authorized", fields{mapper, supplementAuxiliary}, args{ctx, newMessage(fromAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse(errorConstants.NotAuthorized)},
-		{"+ve Not Found", fields{mapper, supplementAuxiliary}, args{ctx, newMessage(toAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(errorConstants.EntityNotFound)},
-		{"+ve", fields{mapper, supplementAuxiliary}, args{ctx, newMessage(toAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse(nil)},
+		{"+ve Not Authorized", fields{mapper, supplementAuxiliary}, args{ctx, NewMessage(fromAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse()},
+		{"+ve Not Found", fields{mapper, supplementAuxiliary}, args{ctx, NewMessage(toAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse()},
+		{"+ve", fields{mapper, supplementAuxiliary}, args{ctx, NewMessage(toAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

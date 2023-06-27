@@ -86,7 +86,7 @@ func Test_Auxiliary_Keeper_Help(t *testing.T) {
 	keepers.ClassificationsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewClassification(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))))
 
 	t.Run("PositiveCase", func(t *testing.T) {
-		want := newAuxiliaryResponse(classificationID, nil)
+		want := newAuxiliaryResponse(classificationID)
 		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(immutableProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}

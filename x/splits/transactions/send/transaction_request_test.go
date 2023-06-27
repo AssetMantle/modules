@@ -35,7 +35,7 @@ var (
 	classificationID  = baseIDs.NewClassificationID(immutables, mutables)
 	fromID            = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
 	ownableID         = baseIDs.NewCoinID(baseIDs.NewStringID("ownableid")).ToAnyOwnableID().(*baseIDs.AnyOwnableID)
-	testRate          = types.NewDec(1)
+	testRate          = types.OneInt()
 )
 
 func Test_newTransactionRequest(t *testing.T) {

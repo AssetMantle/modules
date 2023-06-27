@@ -15,11 +15,10 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/orders/constants"
 )
 
 var (
-	testMessage = newMessage(fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+	testMessage = NewMessage(fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 )
 
 type fields struct {
@@ -62,32 +61,6 @@ func Test_messagePrototype(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := messagePrototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("messagePrototype() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_GetSignBytes(t *testing.T) {
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   []byte
-	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(testMessage))},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
-			}
-			if got := message.GetSignBytes(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetSignBytes() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -146,32 +119,6 @@ func Test_message_RegisterCodec(t *testing.T) {
 	}
 }
 
-func Test_message_Route(t *testing.T) {
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, constants.ModuleName},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
-			}
-			if got := message.Route(); got != tt.want {
-				t.Errorf("Route() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_message_Type(t *testing.T) {
 
 	tests := []struct {
@@ -225,7 +172,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 	}
 }
 
-func Test_newMessage(t *testing.T) {
+func Test_NewMessage(t *testing.T) {
 	type args struct {
 		from                    sdkTypes.AccAddress
 		fromID                  ids.IdentityID
@@ -243,8 +190,8 @@ func Test_newMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newMessage(tt.args.from, tt.args.fromID, tt.args.immutableMetaProperties, tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newMessage() = %v, want %v", got, tt.want)
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.immutableMetaProperties, tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/properties"
@@ -23,24 +22,17 @@ func Test_Super_Response(t *testing.T) {
 	propertyList := base.NewPropertyList([]properties.Property{property}...)
 
 	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList.ScrubData())
-	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, PropertyList: metaPropertyList.ScrubData()}, testAuxiliaryResponse)
-	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
-	require.Equal(t, nil, testAuxiliaryResponse.GetError())
+	require.Equal(t, auxiliaryResponse{PropertyList: metaPropertyList.ScrubData()}, testAuxiliaryResponse)
 
-	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList.ScrubData(), errorConstants.IncorrectFormat)
-	require.Equal(t, auxiliaryResponse{Error: errorConstants.IncorrectFormat, PropertyList: nil}, testAuxiliaryResponse2)
-	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
-	require.Equal(t, errorConstants.IncorrectFormat, testAuxiliaryResponse2.GetError())
+	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList.ScrubData())
+	require.Equal(t, auxiliaryResponse{PropertyList: nil}, testAuxiliaryResponse2)
 
-	propertiesFromResponse, err := GetPropertiesFromResponse(testAuxiliaryResponse)
+	propertiesFromResponse := GetPropertiesFromResponse(testAuxiliaryResponse)
 	require.Equal(t, propertyList, propertiesFromResponse)
-	require.Equal(t, nil, err)
 
-	propertiesFromResponse2, err := GetPropertiesFromResponse(testAuxiliaryResponse2)
+	propertiesFromResponse2 := GetPropertiesFromResponse(testAuxiliaryResponse2)
 	require.Equal(t, nil, propertiesFromResponse2)
-	require.Equal(t, errorConstants.IncorrectFormat, err)
 
-	propertiesFromResponse3, err := GetPropertiesFromResponse(nil)
+	propertiesFromResponse3 := GetPropertiesFromResponse(nil)
 	require.Equal(t, nil, propertiesFromResponse3)
-	require.Equal(t, errorConstants.NotAuthorized, err)
 }

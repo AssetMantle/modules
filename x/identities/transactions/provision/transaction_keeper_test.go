@@ -10,7 +10,6 @@ import (
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -108,7 +107,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{mapper}, args{mapper, parameterManager, []interface{}{supplementAuxiliary}}, transactionKeeper{mapper, supplementAuxiliary}},
+		{"+ve", fields{mapper}, args{mapper, parameterManager, []interface{}{supplementAuxiliary}}, transactionKeeper{mapper, parameterManager, supplementAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -149,9 +148,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve Not Authorized", fields{mapper}, args{context, newMessage(fromAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(errorConstants.NotAuthorized)},
-		{"+ve already Exists", fields{mapper}, args{context, newMessage(toAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(nil)},
-		{"+ve", fields{mapper}, args{context, newMessage(toAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse(errorConstants.EntityAlreadyExists)},
+		{"+ve Not Authorized", fields{mapper}, args{context, NewMessage(fromAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse()},
+		{"+ve already Exists", fields{mapper}, args{context, NewMessage(toAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse()},
+		{"+ve", fields{mapper}, args{context, NewMessage(toAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

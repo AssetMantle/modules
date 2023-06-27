@@ -4,21 +4,17 @@
 package queuing
 
 import (
+	"github.com/AssetMantle/modules/helpers/base"
 	"testing"
 
 	"github.com/Shopify/sarama"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/stretchr/testify/require"
 )
 
 func TestKafkaProducerDeliverMessage(t *testing.T) {
 	testProducer := []string{"testProducer"}
-	var legacyAmino = codec.NewLegacyAmino()
+	var legacyAmino = base.CodecPrototype().GetLegacyAmino()
 	require.Panics(t, func() {
-		schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
-		std.RegisterLegacyAminoCodec(legacyAmino)
-
 		testKafkaMessage := kafkaMsg{Msg: nil}
 
 		producer, _ := sarama.NewSyncProducer(testProducer, nil)

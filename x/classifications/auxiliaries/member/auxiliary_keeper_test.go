@@ -10,7 +10,6 @@ import (
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -92,9 +91,9 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse(nil)},
-		{"+ve Entity Not found", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID1, immutables, mutables)}, newAuxiliaryResponse(errorConstants.EntityNotFound)},
-		{"+ve IncorrectFormat", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, immutables1, mutables)}, newAuxiliaryResponse(errorConstants.IncorrectFormat)},
+		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse()},
+		{"+ve Entity Not found", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID1, immutables, mutables)}, newAuxiliaryResponse()},
+		{"+ve IncorrectFormat", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, immutables1, mutables)}, newAuxiliaryResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

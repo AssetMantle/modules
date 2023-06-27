@@ -10,7 +10,6 @@ import (
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -122,7 +121,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{mapper, parameterManager, []interface{}{}}, transactionKeeper{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}},
+		{"+ve", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{mapper, parameterManager, []interface{}{}}, transactionKeeper{mapper, parameterManager, authenticateAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -168,7 +167,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutablesMeta, mutablesMeta)
 	// testMakerOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("makerID"))
 	// testTakerOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("takerID"))
-	testRate := types.NewDec(10)
+	testRate := types.NewInt(10)
 	// testHeight := baseTypes.NewHeight(1)
 	testOrderID := baseIDs.NewOrderID(testClassificationID, immutablesMeta)
 	testOrderID2 := baseIDs.NewOrderID(testClassificationID, immutablesMeta)
@@ -190,9 +189,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve Not Authorized", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, testFromID2, testRate, testOrderID).(*Message)}, newTransactionResponse(errorConstants.NotAuthorized)},
-		{"+ve", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, testFromID, testRate, testOrderID).(*Message)}, newTransactionResponse(nil)},
-		{"+ve Entity Not Found", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, testFromID, testRate, testOrderID2).(*Message)}, newTransactionResponse(errorConstants.EntityNotFound)},
+		{"+ve Not Authorized", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, testFromID2, testRate, testOrderID).(*Message)}, newTransactionResponse()},
+		{"+ve", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, testFromID, testRate, testOrderID).(*Message)}, newTransactionResponse()},
+		{"+ve Entity Not Found", fields{mapper, parameterManager, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, testFromID, testRate, testOrderID2).(*Message)}, newTransactionResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

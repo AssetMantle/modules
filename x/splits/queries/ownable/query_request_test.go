@@ -63,9 +63,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedReq, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testOwnableID))
+	encodedReq, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testOwnableID))
 	require.NoError(t, err)
-	encodedReq1, err1 := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeOwnableID()))
+	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeOwnableID()))
 	require.NoError(t, err1)
 	type fields struct {
 		OwnableID *baseIDs.AnyOwnableID
@@ -101,9 +101,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedReq, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testOwnableID))
+	encodedReq, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testOwnableID))
 	require.NoError(t, err)
-	encodedReq1, err1 := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeOwnableID()))
+	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeOwnableID()))
 	require.NoError(t, err1)
 	type fields struct {
 		OwnableID *baseIDs.AnyOwnableID
@@ -166,41 +166,6 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_queryRequest_FromMap(t *testing.T) {
-	vars := make(map[string]string)
-	vars[Query.GetName()] = testOwnableID.AsString()
-	type fields struct {
-		OwnableID *baseIDs.AnyOwnableID
-	}
-	type args struct {
-		vars map[string]string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.QueryRequest
-		wantErr bool
-	}{
-		{"+ve", fields{testOwnableID}, args{vars}, newQueryRequest(testOwnableID), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			qu := &QueryRequest{
-				OwnableID: tt.fields.OwnableID,
-			}
-			got, err := qu.FromMap(tt.args.vars)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromMap() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromMap() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

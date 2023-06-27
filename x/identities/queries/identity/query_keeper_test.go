@@ -109,7 +109,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 		args   args
 		want   helpers.QueryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, newQueryRequest(testFromID)}, newQueryResponse(keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Fetch(key.NewKey(testFromID)), nil)},
+		{"+ve", fields{Mapper}, args{context, newQueryRequest(testFromID)}, newQueryResponse(keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Fetch(key.NewKey(testFromID)))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

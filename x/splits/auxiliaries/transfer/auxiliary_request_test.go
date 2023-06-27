@@ -18,13 +18,13 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 )
 
-func createTestInput1() (ids.IdentityID, ids.OwnableID, types.Dec) {
+func createTestInput1() (ids.IdentityID, ids.OwnableID, types.Int) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerID := baseIDs.NewIdentityID(classificationID, immutables)
 	testOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
-	testValue := types.NewDec(1)
+	testValue := types.OneInt()
 	return testOwnerID, testOwnableID, testValue
 }
 
@@ -34,7 +34,7 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 		fromID    ids.IdentityID
 		toID      ids.IdentityID
 		ownableID ids.OwnableID
-		value     types.Dec
+		value     types.Int
 	}
 	tests := []struct {
 		name string
@@ -80,7 +80,7 @@ func Test_auxiliaryRequest_Validate(t *testing.T) {
 		FromID    ids.IdentityID
 		ToID      ids.IdentityID
 		OwnableID ids.OwnableID
-		Value     types.Dec
+		Value     types.Int
 	}
 	tests := []struct {
 		name    string

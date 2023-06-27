@@ -87,7 +87,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(baseLists.AnyPropertiesToProperties(propertiesList.Get()...)...)}, newAuxiliaryResponse(propertiesList, nil)},
+		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(baseLists.AnyPropertiesToProperties(propertiesList.Get()...)...)}, newAuxiliaryResponse(propertiesList)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

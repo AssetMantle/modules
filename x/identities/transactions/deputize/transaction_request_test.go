@@ -253,7 +253,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), "maintainedProperty:S|maintainedProperty", false, false, false, false, false, false}, newMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false), false}, // TODO: issue==> getting MetaDataError that is not expected
+		{"+ve", fields{testBaseReq, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), "maintainedProperty:S|maintainedProperty", false, false, false, false, false, false}, NewMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false), false}, // TODO: issue==> getting MetaDataError that is not expected
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

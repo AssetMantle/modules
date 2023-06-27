@@ -177,7 +177,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	// testOrderID := mappable.NewMappable(testOrder).GetKey()
 	testMakerOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("makerID"))
 	testTakerOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("takerID"))
-	testRate := types.NewDec(10)
+	testRate := types.NewInt(10)
 	testHeight := baseTypes.NewHeight(1)
 	// testOrderID := baseIDs.NewOrderID(testClassificationID, testMakerOwnableID, testTakerOwnableID, testRate, testHeight, testFromID, immutablesMeta)
 	// testOrderID2 := baseIDs.NewOrderID(testClassificationID, testTakerOwnableID, testTakerOwnableID, testRate, testHeight, testFromID, immutablesMeta)
@@ -200,7 +200,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{mapper, parameterManager, conformAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, testFromID, testClassificationID, testTakerID, testMakerOwnableID, testTakerOwnableID, testHeight, testRate, testRate, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
+		{"+ve", fields{mapper, parameterManager, conformAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, testFromID, testClassificationID, testTakerID, testMakerOwnableID.ToAnyOwnableID(), testTakerOwnableID.ToAnyOwnableID(), testHeight, testRate, testRate, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

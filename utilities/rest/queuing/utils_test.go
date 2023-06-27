@@ -4,6 +4,7 @@
 package queuing
 
 import (
+	"github.com/AssetMantle/modules/helpers/base"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -24,12 +25,10 @@ func Test_Rest_Utils(t *testing.T) {
 	require.Equal(t, 0.3, value3)
 	require.Equal(t, nil, error3)
 
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
-
 	gas := uint64(123)
-	response, err := simulationResponse(legacyAmino, gas)
+	response, err := simulationResponse(base.CodecPrototype().GetLegacyAmino(), gas)
 	gasEst := rest.GasEstimateResponse{GasEstimate: gas}
-	resp, _ := legacyAmino.MarshalJSON(gasEst)
+	resp, _ := base.CodecPrototype().GetLegacyAmino().MarshalJSON(gasEst)
 	require.Equal(t, resp, response)
 	require.Equal(t, nil, err)
 

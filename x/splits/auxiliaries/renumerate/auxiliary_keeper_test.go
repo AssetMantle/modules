@@ -93,7 +93,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(testOwnerIdentityID, testOwnableID, testRate)}, newAuxiliaryResponse(nil)},
+		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(testOwnerIdentityID, testOwnableID, testRate)}, newAuxiliaryResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

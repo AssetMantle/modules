@@ -4,6 +4,7 @@
 package max_provision_address_count
 
 import (
+	"github.com/cosmos/cosmos-sdk/types"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
@@ -24,13 +25,13 @@ func Test_validator(t *testing.T) {
 		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, true},
 		{"+ve", args{Parameter}, false},
 		{"-ve InvalidParameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
-		{"+ve with zero NumberData", args{baseData.NewNumberData(0)}, true},
-		{"+ve with positive NumberData", args{baseData.NewNumberData(1)}, false},
-		{"+ve with negative NumberData", args{baseData.NewNumberData(-1)}, true},
+		{"+ve with zero NumberData", args{baseData.NewNumberData(types.ZeroInt())}, true},
+		{"+ve with positive NumberData", args{baseData.NewNumberData(types.OneInt())}, false},
+		{"+ve with negative NumberData", args{baseData.NewNumberData(types.NewInt(-1))}, true},
 		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
-		{"+ve with positive NumberDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(1)))}, false},
-		{"+ve with negative NumberDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(-1)))}, true},
-		{"+ve with zero NumberDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(0)))}, true},
+		{"+ve with positive NumberDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(types.ZeroInt())))}, false},
+		{"+ve with negative NumberDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(types.NewInt(-1))))}, true},
+		{"+ve with zero NumberDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxProvisionAddressCount"), baseData.NewNumberData(types.ZeroInt())))}, true},
 		{"+ve with incorrect ID", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewBooleanData(false)))}, true},
 		{"-ve nil", args{}, true},
 	}

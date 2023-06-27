@@ -10,7 +10,6 @@ import (
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -168,8 +167,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{Mapper, authenticateAuxiliary, maintainAuxiliary, conformAuxiliary}, args{context, newMessage(fromAccAddress, fromID, testAssetID, mutableMetaproperties, mutableproperties).(*Message)}, newTransactionResponse(nil)},
-		{"+ve Entity Not Found", fields{Mapper, authenticateAuxiliary, maintainAuxiliary, conformAuxiliary}, args{context, newMessage(fromAccAddress, fromID, baseIDs.PrototypeAssetID(), mutableMetaproperties, mutableproperties).(*Message)}, newTransactionResponse(errorConstants.EntityNotFound)},
+		{"+ve", fields{Mapper, authenticateAuxiliary, maintainAuxiliary, conformAuxiliary}, args{context, NewMessage(fromAccAddress, fromID, testAssetID, mutableMetaproperties, mutableproperties).(*Message)}, newTransactionResponse()},
+		{"+ve Entity Not Found", fields{Mapper, authenticateAuxiliary, maintainAuxiliary, conformAuxiliary}, args{context, NewMessage(fromAccAddress, fromID, baseIDs.PrototypeAssetID(), mutableMetaproperties, mutableproperties).(*Message)}, newTransactionResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

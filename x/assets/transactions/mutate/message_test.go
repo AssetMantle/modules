@@ -18,7 +18,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/assets/constants"
 )
 
 var (
@@ -51,7 +50,7 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want helpers.Message
 	}{
-		{"+ve", args{newMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties)}, newMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties).(*Message)},
+		{"+ve", args{NewMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties)}, NewMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties).(*Message)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -73,31 +72,6 @@ func Test_messagePrototype(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := messagePrototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("messagePrototype() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_GetSignBytes(t *testing.T) {
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   []byte
-	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(newMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties)))},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                  tt.fields.From,
-				FromID:                tt.fields.FromID,
-				AssetID:               tt.fields.AssetID,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
-			}
-			if got := message.GetSignBytes(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetSignBytes() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -154,31 +128,6 @@ func Test_message_RegisterCodec(t *testing.T) {
 	}
 }
 
-func Test_message_Route(t *testing.T) {
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, testAssetID, mutableMetaProperties, mutableProperties}, constants.ModuleName},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                  tt.fields.From,
-				FromID:                tt.fields.FromID,
-				AssetID:               tt.fields.AssetID,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
-			}
-			if got := message.Route(); got != tt.want {
-				t.Errorf("Route() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_message_Type(t *testing.T) {
 
 	tests := []struct {
@@ -230,7 +179,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 	}
 }
 
-func Test_newMessage(t *testing.T) {
+func Test_NewMessage(t *testing.T) {
 	type args struct {
 		from                  sdkTypes.AccAddress
 		fromID                ids.IdentityID
@@ -244,12 +193,12 @@ func Test_newMessage(t *testing.T) {
 		want sdkTypes.Msg
 	}{
 		{"+ve with nil", args{}, &Message{}},
-		{"+ve", args{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}, newMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties)},
+		{"+ve", args{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}, NewMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newMessage(tt.args.from, tt.args.fromID, tt.args.assetID, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newMessage() = %v, want %v", got, tt.want)
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.assetID, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})
 	}

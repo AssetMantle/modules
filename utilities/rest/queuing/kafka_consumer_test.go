@@ -4,21 +4,15 @@
 package queuing
 
 import (
+	"github.com/AssetMantle/modules/helpers/base"
 	"testing"
 
 	"github.com/Shopify/sarama"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/stretchr/testify/require"
 )
 
 func TestKafkaTopicConsumer(t *testing.T) {
 	testConsumers := []string{"testConsumers"}
-
-	var legacyAmino = codec.NewLegacyAmino()
-
-	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
-	std.RegisterLegacyAminoCodec(legacyAmino)
 
 	require.Panics(t, func() {
 		testKafkaState := NewKafkaState(testConsumers)
@@ -31,12 +25,12 @@ func TestKafkaTopicConsumer(t *testing.T) {
 
 		kafkaMsg := <-partitionConsumer.Messages()
 
-		err := legacyAmino.UnmarshalJSON(kafkaMsg.Value, &kafkaStore)
+		err := base.CodecPrototype().GetLegacyAmino().UnmarshalJSON(kafkaMsg.Value, &kafkaStore)
 		if err != nil {
 			panic(err)
 		}
 
-		require.Equal(t, kafkaTopicConsumer("Topic", testKafkaState.Consumers, legacyAmino), kafkaStore)
+		require.Equal(t, kafkaTopicConsumer("Topic", testKafkaState.Consumers, base.CodecPrototype().GetLegacyAmino()), kafkaStore)
 	})
 }
 

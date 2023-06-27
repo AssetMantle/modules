@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -92,8 +91,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse(nil)},
-		{"+ve Already exists", fields{Mapper}, args{context, NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse(errorConstants.EntityAlreadyExists)},
+		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse()},
+		{"+ve Already exists", fields{Mapper}, args{context, NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

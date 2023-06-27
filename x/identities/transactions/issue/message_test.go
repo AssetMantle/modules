@@ -20,7 +20,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/identities/constants"
 )
 
 type fields struct {
@@ -79,7 +78,7 @@ func Test_messageFromInterface(t *testing.T) {
 		want *Message
 	}{
 
-		{"+ve", args{newMessage(fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)}, &Message{fromAccAddress.String(), testFromID, toAccAddress.String(), testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}},
+		{"+ve", args{NewMessage(fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)}, &Message{fromAccAddress.String(), testFromID, toAccAddress.String(), testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}},
 		{"+ve with nil", args{}, &Message{}},
 	}
 	for _, tt := range tests {
@@ -103,36 +102,6 @@ func Test_messagePrototype(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := messagePrototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("messagePrototype() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_GetSignBytes(t *testing.T) {
-	testFromID, testClassificationID, _, fromAccAddress, _, toAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties := createTestInput(t)
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   []byte
-	}{
-
-		{"+ve", fields{fromAccAddress.String(), toAccAddress.String(), testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), testFromID, toAccAddress.String(), testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}))},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                    tt.fields.From,
-				To:                      tt.fields.To,
-				FromID:                  tt.fields.FromID,
-				ClassificationID:        tt.fields.ClassificationID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
-			}
-			if got := message.GetSignBytes(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetSignBytes() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -197,35 +166,6 @@ func Test_message_RegisterCodec(t *testing.T) {
 	}
 }
 
-func Test_message_Route(t *testing.T) {
-	testFromID, testClassificationID, _, fromAccAddress, _, toAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties := createTestInput(t)
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve", fields{fromAccAddress.String(), toAccAddress.String(), testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, constants.ModuleName},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                    tt.fields.From,
-				To:                      tt.fields.To,
-				FromID:                  tt.fields.FromID,
-				ClassificationID:        tt.fields.ClassificationID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
-			}
-			if got := message.Route(); got != tt.want {
-				t.Errorf("Route() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_message_Type(t *testing.T) {
 	testFromID, testClassificationID, _, fromAccAddress, _, toAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties := createTestInput(t)
 
@@ -285,7 +225,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 	}
 }
 
-func Test_newMessage(t *testing.T) {
+func Test_NewMessage(t *testing.T) {
 	testFromID, testClassificationID, _, fromAccAddress, _, toAccAddress, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties := createTestInput(t)
 	type args struct {
 		from                    sdkTypes.AccAddress
@@ -302,13 +242,13 @@ func Test_newMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve", args{fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, newMessage(fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)},
+		{"+ve", args{fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, NewMessage(fromAccAddress, toAccAddress, testFromID, testClassificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)},
 		{"-ve with nil", args{}, &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newMessage(tt.args.from, tt.args.to, tt.args.fromID, tt.args.classificationID, tt.args.immutableMetaProperties, tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newMessage() = %v, want %v", got, tt.want)
+			if got := NewMessage(tt.args.from, tt.args.to, tt.args.fromID, tt.args.classificationID, tt.args.immutableMetaProperties, tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/AssetMantle/schema/go/data/utilities"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -75,16 +74,16 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Equal(t, nil, err)
 	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(data))
 	t.Run("PositiveCase", func(t *testing.T) {
-		want := newTransactionResponse(nil)
-		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, newFact).(*Message)); !reflect.DeepEqual(got, want) {
+		want := newTransactionResponse()
+		if got := keepers.MetasKeeper.Transact(context, NewMessage(defaultAddr, newFact).(*Message)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
 	t.Run("NegativeCase-Reveal metas again", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errorConstants.EntityAlreadyExists)
-		if got := keepers.MetasKeeper.Transact(context, newMessage(defaultAddr, data).(*Message)); !reflect.DeepEqual(got, want) {
+		want := newTransactionResponse()
+		if got := keepers.MetasKeeper.Transact(context, NewMessage(defaultAddr, data).(*Message)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

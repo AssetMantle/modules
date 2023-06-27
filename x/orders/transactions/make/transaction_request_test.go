@@ -44,8 +44,8 @@ var (
 	takerOwnableID                = baseIDs.NewCoinID(baseIDs.NewStringID("takerownableid")).ToAnyOwnableID().(*baseIDs.AnyOwnableID)
 	testBaseRequest               = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	expiresIn                     = int64(60)
-	makerOwnableSplit             = sdkTypes.NewDec(60)
-	takerOwnableSplit             = sdkTypes.NewDec(60)
+	makerOwnableSplit             = sdkTypes.NewInt(60)
+	takerOwnableSplit             = sdkTypes.NewInt(60)
 )
 
 func Test_newTransactionRequest(t *testing.T) {

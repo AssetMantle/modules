@@ -233,7 +233,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, newMessage(fromAccAddress, testFromID, immutableMetaProperties, immutableProperties.ScrubData(), mutableMetaProperties, mutableProperties.ScrubData()), false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, NewMessage(fromAccAddress, testFromID, immutableMetaProperties, immutableProperties.ScrubData(), mutableMetaProperties, mutableProperties.ScrubData()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

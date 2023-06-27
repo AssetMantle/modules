@@ -120,7 +120,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), testAssetID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), fromID, testAssetID}))}, newTransactionRequest(testBaseRequest, fromID.AsString(), testAssetID.AsString()), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), testAssetID.AsString()}, args{types.MustSortJSON(base.CodecPrototype().MustMarshalJSON(&Message{fromAccAddress.String(), fromID, testAssetID}))}, newTransactionRequest(testBaseRequest, fromID.AsString(), testAssetID.AsString()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -180,7 +180,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), testAssetID.AsString()}, newMessage(fromAccAddress, fromID, testAssetID), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), testAssetID.AsString()}, NewMessage(fromAccAddress, fromID, testAssetID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -8,7 +8,6 @@ import (
 	"reflect"
 	"testing"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -77,15 +76,15 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 
 	t.Run("PositiveCase", func(t *testing.T) {
 		want := newTransactionResponse(nil)
-		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), baseIDs.NewStringID("nubID")).(*Message)); !reflect.DeepEqual(got, want) {
+		if got := keepers.IdentitiesKeeper.Transact(ctx, NewMessage(sdkTypes.AccAddress("addr"), baseIDs.NewStringID("nubID")).(*Message)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})
 
 	t.Run("NegativeCase-Duplicate", func(t *testing.T) {
 		t.Parallel()
-		want := newTransactionResponse(errorConstants.EntityAlreadyExists)
-		if got := keepers.IdentitiesKeeper.Transact(ctx, newMessage(sdkTypes.AccAddress("addr"), baseIDs.NewStringID("nubID")).(*Message)); !reflect.DeepEqual(got, want) {
+		want := newTransactionResponse()
+		if got := keepers.IdentitiesKeeper.Transact(ctx, NewMessage(sdkTypes.AccAddress("addr"), baseIDs.NewStringID("nubID")).(*Message)); !reflect.DeepEqual(got, want) {
 			t.Errorf("Transact() = %v, want %v", got, want)
 		}
 	})

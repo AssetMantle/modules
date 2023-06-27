@@ -44,8 +44,8 @@ var (
 	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
 	testBaseRequest      = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 	expiresIn            = int64(60)
-	makerOwnableSplit    = types.NewDec(60)
-	takerOwnableSplit    = types.NewDec(60)
+	makerOwnableSplit    = types.NewInt(60)
+	takerOwnableSplit    = types.NewInt(60)
 )
 
 func Test_newTransactionRequest(t *testing.T) {

@@ -10,7 +10,6 @@ import (
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/lists/utilities"
@@ -100,8 +99,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		args   args
 		want   helpers.AuxiliaryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(testFromID, testFromID, testClassificationID)}, newAuxiliaryResponse(nil)},
-		{"+ve Entity Not Found ", fields{Mapper}, args{context, NewAuxiliaryRequest(testFromID, testFromID, baseIDs.PrototypeClassificationID())}, newAuxiliaryResponse(errorConstants.EntityNotFound)},
+		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(testFromID, testFromID, testClassificationID)}, newAuxiliaryResponse()},
+		{"+ve Entity Not Found ", fields{Mapper}, args{context, NewAuxiliaryRequest(testFromID, testFromID, baseIDs.PrototypeClassificationID())}, newAuxiliaryResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/properties"
@@ -20,21 +19,15 @@ func Test_Super_Response(t *testing.T) {
 	metaProperty := baseProperties.NewMetaProperty(baseIDs.NewStringID("id"), baseData.NewStringData("Data"))
 	metaPropertyList := base.NewPropertyList([]properties.Property{metaProperty}...)
 
-	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList, nil)
-	require.Equal(t, auxiliaryResponse{Success: true, Error: nil, PropertyList: metaPropertyList}, testAuxiliaryResponse)
-	require.Equal(t, true, testAuxiliaryResponse.IsSuccessful())
-	require.Equal(t, nil, testAuxiliaryResponse.GetError())
+	testAuxiliaryResponse := newAuxiliaryResponse(metaPropertyList)
+	require.Equal(t, auxiliaryResponse{PropertyList: metaPropertyList}, testAuxiliaryResponse)
 
-	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList, errorConstants.IncorrectFormat)
-	require.Equal(t, auxiliaryResponse{Error: errorConstants.IncorrectFormat, PropertyList: nil}, testAuxiliaryResponse2)
-	require.Equal(t, false, testAuxiliaryResponse2.IsSuccessful())
-	require.Equal(t, errorConstants.IncorrectFormat, testAuxiliaryResponse2.GetError())
+	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList)
+	require.Equal(t, auxiliaryResponse{PropertyList: nil}, testAuxiliaryResponse2)
 
-	Properties, err := GetMetaPropertiesFromResponse(testAuxiliaryResponse)
+	Properties := GetMetaPropertiesFromResponse(testAuxiliaryResponse)
 	require.Equal(t, metaPropertyList, Properties)
-	require.Equal(t, nil, err)
 
-	properties2, err := GetMetaPropertiesFromResponse(testAuxiliaryResponse2)
+	properties2 := GetMetaPropertiesFromResponse(testAuxiliaryResponse2)
 	require.Equal(t, nil, properties2)
-	require.Equal(t, errorConstants.IncorrectFormat, err)
 }

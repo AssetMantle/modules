@@ -76,8 +76,6 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
-
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.IdentityID})
 
 	testBaseReq, _, testFromID := createTestInput(t)
@@ -135,7 +133,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testToAddress, testFromID.AsString()}, args{types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c").String(), testFromID, testFromID}))}, transactionRequest{testBaseReq, testToAddress, testFromID.AsString()}, false},
+		{"+ve", fields{testBaseReq, testToAddress, testFromID.AsString()}, args{types.MustSortJSON(baseHelpers.CodecPrototype().MustMarshalJSON(&Message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c").String(), testFromID, testFromID}))}, transactionRequest{testBaseReq, testToAddress, testFromID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

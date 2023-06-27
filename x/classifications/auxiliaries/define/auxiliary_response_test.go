@@ -18,7 +18,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 )
 
-func createTestInput() ids.ClassificationID {
+func createTestInput1() ids.ClassificationID {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -27,7 +27,7 @@ func createTestInput() ids.ClassificationID {
 }
 
 func TestGetClassificationIDFromResponse(t *testing.T) {
-	classificationID := createTestInput()
+	classificationID := createTestInput1()
 	type args struct {
 		response helpers.AuxiliaryResponse
 	}
@@ -37,16 +37,12 @@ func TestGetClassificationIDFromResponse(t *testing.T) {
 		want    ids.ClassificationID
 		wantErr bool
 	}{
-		{"+ve", args{newAuxiliaryResponse(classificationID, nil)}, classificationID, false},
-		{"+ve", args{newAuxiliaryResponse(nil, nil)}, nil, false},
+		{"+ve", args{newAuxiliaryResponse(classificationID)}, classificationID, false},
+		{"+ve", args{newAuxiliaryResponse(nil)}, nil, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetClassificationIDFromResponse(tt.args.response)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetClassificationIDFromResponse() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got := GetClassificationIDFromResponse(tt.args.response)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetClassificationIDFromResponse() got = %v, want %v", got, tt.want)
 			}
@@ -54,64 +50,8 @@ func TestGetClassificationIDFromResponse(t *testing.T) {
 	}
 }
 
-func Test_auxiliaryResponse_GetError(t *testing.T) {
-	classificationID := createTestInput()
-	type fields struct {
-		Success          bool
-		Error            error
-		ClassificationID ids.ClassificationID
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		wantErr bool
-	}{
-		{"+ve", fields{true, nil, classificationID}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			auxiliaryResponse := auxiliaryResponse{
-				Success:          tt.fields.Success,
-				Error:            tt.fields.Error,
-				ClassificationID: tt.fields.ClassificationID,
-			}
-			if err := auxiliaryResponse.GetError(); (err != nil) != tt.wantErr {
-				t.Errorf("GetError() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func Test_auxiliaryResponse_IsSuccessful(t *testing.T) {
-	classificationID := createTestInput()
-	type fields struct {
-		Success          bool
-		Error            error
-		ClassificationID ids.ClassificationID
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   bool
-	}{
-		{"+ve", fields{true, nil, classificationID}, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			auxiliaryResponse := auxiliaryResponse{
-				Success:          tt.fields.Success,
-				Error:            tt.fields.Error,
-				ClassificationID: tt.fields.ClassificationID,
-			}
-			if got := auxiliaryResponse.IsSuccessful(); got != tt.want {
-				t.Errorf("IsSuccessful() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_newAuxiliaryResponse(t *testing.T) {
-	classificationID := createTestInput()
+	classificationID := createTestInput1()
 	type args struct {
 		classificationID ids.ClassificationID
 		error            error
@@ -121,12 +61,12 @@ func Test_newAuxiliaryResponse(t *testing.T) {
 		args args
 		want helpers.AuxiliaryResponse
 	}{
-		{"+ve", args{classificationID, nil}, auxiliaryResponse{true, nil, classificationID}},
-		{"-ve", args{classificationID, errorConstants.EntityNotFound}, auxiliaryResponse{false, errorConstants.EntityNotFound, classificationID}},
+		{"+ve", args{classificationID, nil}, auxiliaryResponse{classificationID}},
+		{"-ve", args{classificationID, errorConstants.EntityNotFound}, auxiliaryResponse{classificationID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newAuxiliaryResponse(tt.args.classificationID, tt.args.error); !reflect.DeepEqual(got, tt.want) {
+			if got := newAuxiliaryResponse(tt.args.classificationID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newAuxiliaryResponse() = %v, want %v", got, tt.want)
 			}
 		})
