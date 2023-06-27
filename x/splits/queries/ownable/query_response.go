@@ -4,9 +4,10 @@
 package ownable
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var _ helpers.QueryResponse = (*QueryResponse)(nil)
@@ -24,16 +25,8 @@ func (queryResponse *QueryResponse) Decode(bytes []byte) (helpers.QueryResponse,
 func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
-func newQueryResponse(value sdkTypes.Int, error error) *QueryResponse {
-	if error != nil {
-		return &QueryResponse{
-
-			Value: value.String(),
-		}
-	}
-
+func newQueryResponse(value sdkTypes.Int) *QueryResponse {
 	return &QueryResponse{
-		Error: "",
-		Value: value.String(),
+		Supply: value.String(),
 	}
 }

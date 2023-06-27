@@ -7,9 +7,9 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/metas/constants"
-	"github.com/AssetMantle/modules/x/metas/parameters/revealEnabled"
+	"github.com/AssetMantle/modules/x/metas/parameters/reveal_enabled"
 )
 
 func Prototype() helpers.ParameterManager {
-	return baseHelpers.NewParameterManager(constants.ModuleName, revealEnabled.ValidatableParameter)
+	return baseHelpers.NewParameterManager(constants.ModuleName, reveal_enabled.ValidatableParameter)
 }

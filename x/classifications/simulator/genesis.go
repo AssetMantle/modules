@@ -6,33 +6,31 @@ package simulator
 import (
 	"math/rand"
 
+	"github.com/AssetMantle/schema/go/data"
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
-	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
-	"github.com/AssetMantle/modules/x/classifications/parameters/maxPropertyCount"
-
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/documents/base"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
+	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/classifications/constants"
 	"github.com/AssetMantle/modules/x/classifications/genesis"
 	mappableClassifications "github.com/AssetMantle/modules/x/classifications/mappable"
-	"github.com/AssetMantle/modules/x/classifications/parameters/bondRate"
+	"github.com/AssetMantle/modules/x/classifications/parameters/bond_rate"
+	"github.com/AssetMantle/modules/x/classifications/parameters/max_property_count"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
 	var bondRateData data.Data
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		bondRate.ID.AsString(),
+		bond_rate.ID.AsString(),
 		&bondRateData,
 		simulationState.Rand,
 		func(rand *rand.Rand) {
@@ -43,7 +41,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	var maxPropertyCountData data.Data
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		maxPropertyCount.ID.AsString(),
+		max_property_count.ID.AsString(),
 		&maxPropertyCountData,
 		simulationState.Rand,
 		func(rand *rand.Rand) {
@@ -82,7 +80,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		accountPosition++
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(bondRate.Parameter.Mutate(bondRateData), maxPropertyCount.Parameter.Mutate(maxPropertyCountData)))
+	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(bond_rate.Parameter.Mutate(bondRateData), max_property_count.Parameter.Mutate(maxPropertyCountData)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

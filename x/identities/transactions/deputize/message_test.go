@@ -7,8 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -21,7 +19,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/x/identities/constants"
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type fields struct {
@@ -92,39 +90,6 @@ func Test_messagePrototype(t *testing.T) {
 	}
 }
 
-func Test_message_GetSignBytes(t *testing.T) {
-	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   []byte
-	}{
-
-		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}))},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                 tt.fields.From,
-				FromID:               tt.fields.FromID,
-				ToID:                 tt.fields.ToID,
-				ClassificationID:     tt.fields.ClassificationID,
-				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMintAsset:         tt.fields.CanMintAsset,
-				CanBurnAsset:         tt.fields.CanBurnAsset,
-				CanRenumerateAsset:   tt.fields.CanRenumerateAsset,
-				CanAddMaintainer:     tt.fields.CanAddMaintainer,
-				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
-				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
-			}
-			if got := message.GetSignBytes(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetSignBytes() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_message_GetSigners(t *testing.T) {
 	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
 
@@ -144,9 +109,6 @@ func Test_message_GetSigners(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMintAsset:         tt.fields.CanMintAsset,
-				CanBurnAsset:         tt.fields.CanBurnAsset,
-				CanRenumerateAsset:   tt.fields.CanRenumerateAsset,
 				CanAddMaintainer:     tt.fields.CanAddMaintainer,
 				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
 				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
@@ -180,47 +142,11 @@ func Test_message_RegisterCodec(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMintAsset:         tt.fields.CanMintAsset,
-				CanBurnAsset:         tt.fields.CanBurnAsset,
-				CanRenumerateAsset:   tt.fields.CanRenumerateAsset,
 				CanAddMaintainer:     tt.fields.CanAddMaintainer,
 				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
 				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
 			}
 			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
-func Test_message_Route(t *testing.T) {
-	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-
-		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, constants.ModuleName},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                 tt.fields.From,
-				FromID:               tt.fields.FromID,
-				ToID:                 tt.fields.ToID,
-				ClassificationID:     tt.fields.ClassificationID,
-				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMintAsset:         tt.fields.CanMintAsset,
-				CanBurnAsset:         tt.fields.CanBurnAsset,
-				CanRenumerateAsset:   tt.fields.CanRenumerateAsset,
-				CanAddMaintainer:     tt.fields.CanAddMaintainer,
-				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
-				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
-			}
-			if got := message.Route(); got != tt.want {
-				t.Errorf("Route() = %v, want %v", got, tt.want)
-			}
 		})
 	}
 }
@@ -291,7 +217,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 	}
 }
 
-func Test_newMessage(t *testing.T) {
+func Test_NewMessage(t *testing.T) {
 	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
 	type args struct {
 		from                 sdkTypes.AccAddress
@@ -315,8 +241,8 @@ func Test_newMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newMessage(tt.args.from, tt.args.fromID, tt.args.toID, tt.args.classificationID, tt.args.maintainedProperties, tt.args.CanMintAsset, tt.args.CanBurnAsset, tt.args.CanRenumerateAsset, tt.args.CanAddMaintainer, tt.args.CanRemoveMaintainer, tt.args.CanMutateMaintainer); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newMessage() = %v, want %v", got, tt.want)
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.toID, tt.args.classificationID, tt.args.maintainedProperties, tt.args.CanMintAsset, tt.args.CanBurnAsset, tt.args.CanRenumerateAsset, tt.args.CanAddMaintainer, tt.args.CanRemoveMaintainer, tt.args.CanMutateMaintainer); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -12,18 +12,6 @@ import (
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	baseTypesGo "github.com/AssetMantle/schema/go/types/base"
-
-	simulationModules "github.com/AssetMantle/modules/simulation"
-	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/assets"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/identities"
-	"github.com/AssetMantle/modules/simulation/simulatedDatabase/orders"
-	"github.com/AssetMantle/modules/x/orders/mappable"
-	"github.com/AssetMantle/modules/x/orders/transactions/cancel"
-	"github.com/AssetMantle/modules/x/orders/transactions/define"
-	"github.com/AssetMantle/modules/x/orders/transactions/make"
-	"github.com/AssetMantle/modules/x/orders/transactions/take"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -32,6 +20,16 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
+	simulationModules "github.com/AssetMantle/modules/simulation"
+	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
+	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
+	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
+	"github.com/AssetMantle/modules/simulation/simulated_database/orders"
+	"github.com/AssetMantle/modules/x/orders/mappable"
+	"github.com/AssetMantle/modules/x/orders/transactions/cancel"
+	"github.com/AssetMantle/modules/x/orders/transactions/define"
+	"github.com/AssetMantle/modules/x/orders/transactions/make"
+	"github.com/AssetMantle/modules/x/orders/transactions/take"
 )
 
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {

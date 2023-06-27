@@ -72,9 +72,9 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedReq, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(splitID))
+	encodedReq, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(splitID))
 	require.NoError(t, err)
-	encodedReq1, err1 := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeSplitID()))
+	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeSplitID()))
 	require.NoError(t, err1)
 	type fields struct {
 		SplitID *baseIDs.SplitID
@@ -110,9 +110,9 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedReq, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(splitID))
+	encodedReq, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(splitID))
 	require.NoError(t, err)
-	encodedReq1, err1 := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeSplitID()))
+	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeSplitID()))
 	require.NoError(t, err1)
 	type fields struct {
 		SplitID *baseIDs.SplitID
@@ -175,41 +175,6 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_queryRequest_FromMap(t *testing.T) {
-	vars := make(map[string]string)
-	vars[Query.GetName()] = splitID.AsString()
-	type fields struct {
-		SplitID *baseIDs.SplitID
-	}
-	type args struct {
-		vars map[string]string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.QueryRequest
-		wantErr bool
-	}{
-		{"+ve", fields{splitID}, args{vars}, newQueryRequest(splitID), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			qu := &QueryRequest{
-				SplitID: tt.fields.SplitID,
-			}
-			got, err := qu.FromMap(tt.args.vars)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromMap() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromMap() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

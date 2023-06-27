@@ -4,6 +4,7 @@
 package reveal
 
 import (
+	"github.com/AssetMantle/modules/helpers/base"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
@@ -23,13 +24,13 @@ func Test_Reveal_Message(t *testing.T) {
 	newData, err := utilities.ReadData(data)
 	require.Equal(t, nil, err)
 
-	testMessage := newMessage(fromAccAddress, newData).(*Message)
+	testMessage := NewMessage(fromAccAddress, newData).(*Message)
 	require.Equal(t, &Message{From: fromAccAddress.String(), Data: newData.ToAnyData().(*baseData.AnyData)}, testMessage)
 	require.Equal(t, constants.ModuleName, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())
 	require.NotNil(t, (&Message{}).ValidateBasic())
-	require.Equal(t, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(testMessage)), testMessage.GetSignBytes())
+	require.Equal(t, sdkTypes.MustSortJSON(base.CodecPrototype().MustMarshalJSON(testMessage)), testMessage.GetSignBytes())
 	require.Equal(t, []sdkTypes.AccAddress{fromAccAddress}, testMessage.GetSigners())
 	require.Equal(t, testMessage, messageFromInterface(testMessage))
 	require.Equal(t, &Message{}, messageFromInterface(nil))

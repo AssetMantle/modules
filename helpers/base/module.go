@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
@@ -21,6 +20,8 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type module struct {

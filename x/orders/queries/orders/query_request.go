@@ -7,12 +7,13 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/query"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)

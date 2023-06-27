@@ -5,12 +5,11 @@ package identity
 
 import (
 	"context"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"reflect"
 	"testing"
 
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -24,11 +23,6 @@ import (
 )
 
 func CreateTestInputContext(t *testing.T) context.Context {
-	var legacyAmino = codec.NewLegacyAmino()
-	schemaCodec.RegisterLegacyAminoCodec(legacyAmino)
-	std.RegisterLegacyAminoCodec(legacyAmino)
-	legacyAmino.Seal()
-
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
@@ -61,12 +55,12 @@ func Test_newQueryResponse(t *testing.T) {
 		want helpers.QueryResponse
 	}{
 
-		{"+ve", args{collection: collection, error: nil}, &QueryResponse{Success: true, Error: ""}},
-		{"-ve with error", args{collection: collection, error: errorConstants.IncorrectFormat}, &QueryResponse{Error: errorConstants.IncorrectFormat.Error()}},
+		{"+ve", args{collection: collection, error: nil}, &QueryResponse{}},
+		{"-ve with error", args{collection: collection, error: errorConstants.IncorrectFormat}, &QueryResponse{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newQueryResponse(tt.args.collection, tt.args.error); !reflect.DeepEqual(got, tt.want) {
+			if got := newQueryResponse(tt.args.collection); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newQueryResponse() = %v, want %v", got, tt.want)
 			}
 		})
@@ -76,7 +70,7 @@ func Test_newQueryResponse(t *testing.T) {
 func Test_queryResponse_Decode(t *testing.T) {
 	context := CreateTestInputContext(t)
 	collection := mapper.Prototype().NewCollection(context)
-	testQueryResponse := newQueryResponse(collection, nil)
+	testQueryResponse := newQueryResponse(collection)
 	encodedResponse, _ := testQueryResponse.Encode()
 	type fields struct {
 		Success bool
@@ -99,9 +93,7 @@ func Test_queryResponse_Decode(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryResponse := &QueryResponse{
-				Success: tt.fields.Success,
-				Error:   tt.fields.Error,
-				List:    mappable.MappablesFromInterface(tt.fields.List),
+				List: mappable.MappablesFromInterface(tt.fields.List),
 			}
 			got, err := queryResponse.Decode(tt.args.bytes)
 			if (err != nil) != tt.wantErr {
@@ -118,8 +110,8 @@ func Test_queryResponse_Decode(t *testing.T) {
 func Test_queryResponse_Encode(t *testing.T) {
 	context := CreateTestInputContext(t)
 	collection := mapper.Prototype().NewCollection(context)
-	encodedByte, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryResponse{Success: true, Error: "", List: mappable.MappablesFromInterface(collection.Get())})
-	encodedByteWithError, _err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryResponse{Error: errorConstants.IncorrectFormat.Error(), List: mappable.MappablesFromInterface(collection.Get())})
+	encodedByte, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryResponse{List: mappable.MappablesFromInterface(collection.Get())})
+	encodedByteWithError, _err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryResponse{List: mappable.MappablesFromInterface(collection.Get())})
 	require.Nil(t, err)
 	type fields struct {
 		Success bool
@@ -139,9 +131,7 @@ func Test_queryResponse_Encode(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryResponse := &QueryResponse{
-				Success: tt.fields.Success,
-				Error:   tt.fields.Error.Error(),
-				List:    mappable.MappablesFromInterface(tt.fields.List),
+				List: mappable.MappablesFromInterface(tt.fields.List),
 			}
 			got, err := queryResponse.Encode()
 			if (err != nil) != tt.wantErr {
@@ -150,64 +140,6 @@ func Test_queryResponse_Encode(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Encode() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_queryResponse_GetError(t *testing.T) {
-	type fields struct {
-		Success bool
-		Error   error
-		List    []helpers.Mappable
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		wantErr bool
-	}{
-
-		{"+ve", fields{Success: true, Error: nil}, false},
-		{"-ve", fields{Success: true, Error: errorConstants.IncorrectFormat}, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			queryResponse := &QueryResponse{
-				Success: tt.fields.Success,
-				Error:   tt.fields.Error.Error(),
-				List:    mappable.MappablesFromInterface(tt.fields.List),
-			}
-			if err := queryResponse.GetError(); (err != nil) != tt.wantErr {
-				t.Errorf("GetError() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func Test_queryResponse_IsSuccessful(t *testing.T) {
-	type fields struct {
-		Success bool
-		Error   error
-		List    []helpers.Mappable
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   bool
-	}{
-
-		{"+ve", fields{Success: true, Error: nil}, true},
-		{"+ve", fields{Error: nil}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			queryResponse := &QueryResponse{
-				Success: tt.fields.Success,
-				Error:   tt.fields.Error.Error(),
-				List:    mappable.MappablesFromInterface(tt.fields.List),
-			}
-			if got := queryResponse.IsSuccessful(); got != tt.want {
-				t.Errorf("IsSuccessful() = %v, want %v", got, tt.want)
 			}
 		})
 	}

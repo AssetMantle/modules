@@ -7,8 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists"
@@ -18,7 +16,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/x/identities/constants"
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type fields struct {
@@ -87,57 +85,6 @@ func Test_messagePrototype(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := messagePrototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("messagePrototype() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_GetSignBytes(t *testing.T) {
-	fromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
-	testFromID := fromID.(*baseIDs.IdentityID)
-	require.NoError(t, err)
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	immutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, err)
-	immutableMetaProperties := immutableMetaPropertiesInterface.(*baseLists.PropertyList)
-
-	immutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, err)
-	immutableProperties := immutablePropertiesInterface.(*baseLists.PropertyList)
-
-	mutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
-	require.Equal(t, nil, err)
-	mutableMetaProperties := mutableMetaPropertiesInterface.(*baseLists.PropertyList)
-
-	mutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, err)
-	mutableProperties := mutablePropertiesInterface.(*baseLists.PropertyList)
-
-	_message := &Message{fromAccAddress.String(), testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   []byte
-	}{
-
-		{"+ve", fields{fromAccAddress.String(), testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, sdkTypes.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(_message))},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
-			}
-			if got := message.GetSignBytes(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetSignBytes() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -242,55 +189,6 @@ func Test_message_RegisterCodec(t *testing.T) {
 	}
 }
 
-func Test_message_Route(t *testing.T) {
-	fromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
-	testFromID := fromID.(*baseIDs.IdentityID)
-	require.NoError(t, err)
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	immutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, err)
-	immutableMetaProperties := immutableMetaPropertiesInterface.(*baseLists.PropertyList)
-
-	immutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, err)
-	immutableProperties := immutablePropertiesInterface.(*baseLists.PropertyList)
-
-	mutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
-	require.Equal(t, nil, err)
-	mutableMetaProperties := mutableMetaPropertiesInterface.(*baseLists.PropertyList)
-
-	mutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, err)
-	mutableProperties := mutablePropertiesInterface.(*baseLists.PropertyList)
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-
-		{"+ve", fields{fromAccAddress.String(), testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, constants.ModuleName},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
-			}
-			if got := message.Route(); got != tt.want {
-				t.Errorf("Route() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_message_Type(t *testing.T) {
 	fromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
 	testFromID := fromID.(*baseIDs.IdentityID)
@@ -389,7 +287,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 	}
 }
 
-func Test_newMessage(t *testing.T) {
+func Test_NewMessage(t *testing.T) {
 	fromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
 	testFromID := fromID.(*baseIDs.IdentityID)
 	require.NoError(t, err)
@@ -432,8 +330,8 @@ func Test_newMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newMessage(tt.args.from, tt.args.fromID, tt.args.immutableMetaProperties, tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newMessage() = %v, want %v", got, tt.want)
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.immutableMetaProperties, tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})
 	}

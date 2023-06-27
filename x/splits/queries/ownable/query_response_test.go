@@ -4,23 +4,16 @@
 package ownable
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"testing"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
 
 func Test_Split_Response(t *testing.T) {
-	split := sdkTypes.SmallestDec()
 
-	testQueryResponse := newQueryResponse(split, nil)
-	testQueryResponseWithError := newQueryResponse(split, errorConstants.IncorrectFormat)
-
-	require.Equal(t, true, testQueryResponse.IsSuccessful())
-	require.Equal(t, false, testQueryResponseWithError.IsSuccessful())
-	require.Equal(t, nil, testQueryResponse.GetError())
-	require.Equal(t, errorConstants.IncorrectFormat, testQueryResponseWithError.GetError())
+	testQueryResponse := newQueryResponse(sdkTypes.OneInt())
 
 	encodedResponse, _ := testQueryResponse.Encode()
 	bytes, _ := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(testQueryResponse)

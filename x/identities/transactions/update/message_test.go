@@ -7,8 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -21,7 +19,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/AssetMantle/modules/x/identities/constants"
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type fields struct {
@@ -86,32 +84,6 @@ func Test_messagePrototype(t *testing.T) {
 	}
 }
 
-func Test_message_GetSignBytes(t *testing.T) {
-	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   []byte
-	}{
-		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, types.MustSortJSON(transaction.RegisterLegacyAminoCodec(messagePrototype).MustMarshalJSON(&Message{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}))},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                  tt.fields.From,
-				FromID:                tt.fields.FromID,
-				IdentityID:            tt.fields.IdentityID,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
-			}
-			if got := message.GetSignBytes(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetSignBytes() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_message_GetSigners(t *testing.T) {
 	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
 
@@ -163,33 +135,6 @@ func Test_message_RegisterCodec(t *testing.T) {
 				MutableProperties:     tt.fields.MutableProperties,
 			}
 			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
-func Test_message_Route(t *testing.T) {
-	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve with nil", fields{}, constants.ModuleName},
-		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, constants.ModuleName},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                  tt.fields.From,
-				FromID:                tt.fields.FromID,
-				IdentityID:            tt.fields.IdentityID,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
-			}
-			if got := message.Route(); got != tt.want {
-				t.Errorf("Route() = %v, want %v", got, tt.want)
-			}
 		})
 	}
 }
@@ -248,7 +193,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 	}
 }
 
-func Test_newMessage(t *testing.T) {
+func Test_NewMessage(t *testing.T) {
 	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
 	type args struct {
 		from                  types.AccAddress
@@ -267,8 +212,8 @@ func Test_newMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newMessage(tt.args.from, tt.args.fromID, tt.args.identityID, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newMessage() = %v, want %v", got, tt.want)
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.identityID, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})
 	}

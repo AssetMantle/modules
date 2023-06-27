@@ -8,10 +8,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AssetMantle/modules/helpers"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	sdkTypesQuery "github.com/cosmos/cosmos-sdk/types/query"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type mapper struct {

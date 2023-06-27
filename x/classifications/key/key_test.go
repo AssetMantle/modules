@@ -103,7 +103,7 @@ func Test_key_Equals(t *testing.T) {
 		want   bool
 	}{
 		{"+ve", fields{createTestInput()}, args{&Key{createTestInput()}}, true},
-		{"+ve", fields{createTestInput()}, args{baseHelpers.KeyPrototype()}, false},
+		{"+ve", fields{createTestInput()}, args{KeyPrototype()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

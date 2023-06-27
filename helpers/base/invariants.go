@@ -1,8 +1,9 @@
 package base
 
 import (
-	"github.com/AssetMantle/modules/helpers"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
 )
 
 type invariants struct {

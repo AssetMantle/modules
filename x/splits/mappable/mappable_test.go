@@ -7,8 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/key"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -18,6 +16,9 @@ import (
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/splits/key"
 )
 
 var (
@@ -27,7 +28,7 @@ var (
 	testOwnerIdentityID = baseIDs.NewIdentityID(classificationID, immutables)
 	testOwnableID       = baseIDs.NewCoinID(baseIDs.NewStringID("ownerid"))
 	splitID             = baseIDs.NewSplitID(testOwnerIdentityID, testOwnableID)
-	testRate            = sdkTypes.NewDec(1)
+	testRate            = sdkTypes.NewInt(1)
 	split               = baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate).(*baseTypes.Split)
 )
 

@@ -4,9 +4,6 @@
 package base
 
 import (
-	"github.com/AssetMantle/schema/go/ids"
-	"github.com/AssetMantle/schema/go/ids/constants"
-
 	"math"
 	"math/rand"
 	"time"
@@ -14,7 +11,9 @@ import (
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	constantsData "github.com/AssetMantle/schema/go/data/constants"
+	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/schema/go/ids/constants"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
