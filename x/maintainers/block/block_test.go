@@ -21,8 +21,6 @@ import (
 )
 
 func CreateTestInput(t *testing.T) context.Context {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
-
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
