@@ -24,7 +24,7 @@ var _ helpers.Collection = (*collection)(nil)
 func (collection collection) GetKey() helpers.Key { return collection.Key }
 func (collection collection) GetMappable(key helpers.Key) helpers.Mappable {
 	for _, mappable := range collection.List {
-		if mappable.GetKey().Equals(key) {
+		if mappable.GenerateKey().Equals(key) {
 			return mappable
 		}
 	}
@@ -78,10 +78,10 @@ func (collection collection) Add(mappable helpers.Mappable) helpers.Collection {
 	return collection
 }
 func (collection collection) Remove(mappable helpers.Mappable) helpers.Collection {
-	collection.mapper.Delete(collection.context, mappable.GetKey())
+	collection.mapper.Delete(collection.context, mappable.GenerateKey())
 
 	for i, oldMappable := range collection.List {
-		if oldMappable.GetKey().Equals(mappable.GetKey()) {
+		if oldMappable.GenerateKey().Equals(mappable.GenerateKey()) {
 			collection.List = append(collection.List[:i], collection.List[i+1:]...)
 			break
 		}
@@ -93,7 +93,7 @@ func (collection collection) Mutate(mappable helpers.Mappable) helpers.Collectio
 	collection.mapper.Update(collection.context, mappable)
 
 	for i, oldMappable := range collection.List {
-		if oldMappable.GetKey().Equals(mappable.GetKey()) {
+		if oldMappable.GenerateKey().Equals(mappable.GenerateKey()) {
 			collection.List[i] = mappable
 			break
 		}

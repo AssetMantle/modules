@@ -84,8 +84,8 @@ func Test_mappable_GetKey(t *testing.T) {
 			mappable := &Mappable{
 				Split: tt.fields.Split,
 			}
-			if got := mappable.GetKey(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetKey() = %v, want %v", got, tt.want)
+			if got := mappable.GenerateKey(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GenerateKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

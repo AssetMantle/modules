@@ -32,7 +32,7 @@ func (mapper mapper) GetKVStoreKey() *sdkTypes.KVStoreKey {
 func (mapper mapper) Create(context context.Context, mappable helpers.Mappable) {
 	Bytes := CodecPrototype().MustMarshal(mappable)
 	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
-	kvStore.Set(mappable.GetKey().GenerateStoreKeyBytes(), Bytes)
+	kvStore.Set(mappable.GenerateKey().GenerateStoreKeyBytes(), Bytes)
 }
 func (mapper mapper) Read(context context.Context, key helpers.Key) helpers.Mappable {
 	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
@@ -49,7 +49,7 @@ func (mapper mapper) Read(context context.Context, key helpers.Key) helpers.Mapp
 }
 func (mapper mapper) Update(context context.Context, mappable helpers.Mappable) {
 	Bytes := CodecPrototype().MustMarshal(mappable)
-	key := mappable.GetKey()
+	key := mappable.GenerateKey()
 	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
 	kvStore.Set(key.GenerateStoreKeyBytes(), Bytes)
 }

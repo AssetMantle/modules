@@ -41,7 +41,7 @@ func TestCollection(t *testing.T) {
 	require.Equal(t, nil, Collection.GetMappable(base.NewKey("test1")))
 	require.Equal(t, base.NewMappable("test1", "value1"), Collection.Fetch(base.NewKey("test1")).GetMappable(base.NewKey("test1")))
 
-	// GetKey
+	// GenerateKey
 	require.Equal(t, nil, Collection.GetKey())
 	require.Equal(t, base.NewKey("test1"), Collection.Fetch(base.NewKey("test1")).GetKey())
 	require.Equal(t, base.NewKey("test4"), Collection.Fetch(base.NewKey("test4")).GetKey())

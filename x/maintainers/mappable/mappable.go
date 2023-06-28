@@ -25,7 +25,7 @@ var _ helpers.Mappable = (*Mappable)(nil)
 func (mappable *Mappable) ValidateBasic() error {
 	return mappable.Maintainer.ValidateBasic()
 }
-func (mappable *Mappable) GetKey() helpers.Key {
+func (mappable *Mappable) GenerateKey() helpers.Key {
 	return key.NewKey(baseIDs.NewMaintainerID(constants.MaintainerClassificationID,
 		baseQualified.NewImmutables(baseLists.NewPropertyList(
 			baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(baseDocuments.NewMaintainerFromDocument(mappable.Maintainer).GetMaintainedClassificationID())),

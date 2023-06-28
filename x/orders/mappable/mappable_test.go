@@ -85,10 +85,10 @@ func Test_mappable_GetKey(t *testing.T) {
 			}
 			if tt.wantPanic {
 				require.Panics(t, func() {
-					mappable.GetKey()
+					mappable.GenerateKey()
 				})
-			} else if got := mappable.GetKey(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetKey() = %v, want %v", got, tt.want)
+			} else if got := mappable.GenerateKey(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GenerateKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

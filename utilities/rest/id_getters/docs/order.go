@@ -45,7 +45,7 @@ func orderIDHandler(context client.Context) http.HandlerFunc {
 
 		// Mutables := base.NewMutables(baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(append(mutableMetaProperties.Get(), mutableProperties.Get()...)...)...))
 
-		// Immutables := base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewDecData(GetTotalWeight(immutables, Mutables).Mul(sdkTypes.NewDec(1))))))
+		// Immutables := base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GenerateKey(), baseData.NewDecData(GetTotalWeight(immutables, Mutables).Mul(sdkTypes.NewDec(1))))))
 		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewOrderID(classificationID, Immutables).AsString(), "", nil))
 	}
 }
