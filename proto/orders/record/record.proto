@@ -1,0 +1,13 @@
+syntax = "proto3";
+package assetmantle.modules.orders.mappable;
+
+import "orders/key/key.proto";
+import "orders/mappable/mappable.proto";
+import "gogoproto/gogo.proto";
+
+message Record {
+  option (gogoproto.goproto_getters) = false;
+
+  key.Key key = 1;
+  mappable.Mappable mappable = 2;
+}

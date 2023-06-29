@@ -1,0 +1,13 @@
+syntax = "proto3";
+package assetmantle.modules.splits.mappable;
+
+import "gogoproto/gogo.proto";
+import "splits/key/key.proto";
+import "splits/mappable/mappable.proto";
+
+message Record {
+  option (gogoproto.goproto_getters) = false;
+
+  key.Key key = 1;
+  mappable.Mappable mappable = 2;
+}
