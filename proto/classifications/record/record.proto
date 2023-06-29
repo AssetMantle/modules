@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assetmantle.modules.classifications.mappable;
+package assetmantle.modules.classifications.record;
 
 import "classifications/key/key.proto";
 import "classifications/mappable/mappable.proto";

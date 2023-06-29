@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assetmantle.modules.identities.mappable;
+package assetmantle.modules.identities.record;
 
 import "identities/key/key.proto";
 import "identities/mappable/mappable.proto";
