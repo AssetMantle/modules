@@ -2,9 +2,9 @@ syntax = "proto3";
 package assetmantle.modules.assets.queries.asset;
 
 import "gogoproto/gogo.proto";
-import "assets/mappable/mappable.proto";
+import "assets/record/record.proto";
 
 message QueryResponse {
   option (gogoproto.goproto_getters) = false;
-  repeated mappable.Mappable list = 1;
+  repeated mappable.Record list = 1;
 }
