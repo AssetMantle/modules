@@ -1,8 +1,8 @@
 syntax = "proto3";
 package assetmantle.modules.classifications.queries.classification;
 
-import "ids/base/classification_id.proto";
+import "classifications/key/key.proto";
 
 message QueryRequest {
-  assetmantle.schema.ids.base.ClassificationID classification_i_d = 1;
+  key.Key key = 1;
 }

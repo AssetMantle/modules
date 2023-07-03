@@ -5,19 +5,19 @@ package helpers
 
 import (
 	"context"
-
-	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 // Collection a list of mappable with create CRUD methods
 type Collection interface {
-	GetKey() Key
 	GetMappable(Key) Mappable
-	Get() []Mappable
+	Get() []Record
+	GetMappables() []Mappable
 
 	Iterate(Key, func(Mappable) bool)
+	IteratePaginated(Key, int32, func(Record) bool)
 	Fetch(Key) Collection
-	FetchPaginated(Key, *query.PageRequest) Collection
+	FetchAll() Collection
+	FetchPaginated(Key, int32) Collection
 	Add(Mappable) Collection
 	Remove(Mappable) Collection
 	Mutate(Mappable) Collection

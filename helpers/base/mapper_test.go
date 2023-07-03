@@ -30,10 +30,10 @@ func TestMapper(t *testing.T) {
 	require.Equal(t, testMapper.kvStoreKey.String(), testMapper.NewCollection(context).(collection).mapper.(mapper).kvStoreKey.String())
 	require.Equal(t, context, testMapper.NewCollection(context).(collection).context)
 
-	// Create
-	testMapper.Create(context, base.NewMappable("test1", "value1"))
-	testMapper.Create(context, base.NewMappable("test2", "value2"))
-	testMapper.Create(context, base.NewMappable("test3", "value3"))
+	// Upsert
+	testMapper.Upsert(context, base.NewMappable("test1", "value1"))
+	testMapper.Upsert(context, base.NewMappable("test2", "value2"))
+	testMapper.Upsert(context, base.NewMappable("test3", "value3"))
 
 	// Set
 	testMapper.Update(context, base.NewMappable("test2", "value3"))

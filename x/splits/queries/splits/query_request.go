@@ -4,6 +4,9 @@
 package splits
 
 import (
+	"github.com/AssetMantle/modules/x/splits/key"
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"net/http"
 	"strconv"
 
@@ -34,21 +37,27 @@ func (queryRequest *QueryRequest) Validate() error {
 }
 
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	offset := cliCommand.ReadInt(constants.Offset)
+	splitID, err := baseIDs.ReadSplitID(cliCommand.ReadString(constants.SplitID))
+	if err != nil {
+		return &QueryRequest{}, err
+	}
+
 	limit := cliCommand.ReadInt(constants.Limit)
 
-	return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
+	return newQueryRequest(splitID, int32(limit)), nil
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	var offset, limit int
-	var err error
-	if offset, err = strconv.Atoi(httpRequest.URL.Query().Get(constants.Offset.GetName())); err != nil {
-		offset = 0
+	splitID, err := baseIDs.ReadSplitID(httpRequest.URL.Query().Get(Query.GetName()))
+	if err != nil {
+		return &QueryRequest{}, err
 	}
-	if limit, err = strconv.Atoi(httpRequest.URL.Query().Get(constants.Limit.GetName())); err != nil {
+
+	limit, err := strconv.Atoi(httpRequest.URL.Query().Get(constants.Limit.GetName()))
+	if err != nil {
 		limit = query.DefaultLimit
 	}
-	return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
+
+	return newQueryRequest(splitID, int32(limit)), nil
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
 	return base.CodecPrototype().MarshalJSON(queryRequest)
@@ -71,6 +80,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 		return &QueryRequest{}
 	}
 }
-func newQueryRequest(pageRequest *query.PageRequest) helpers.QueryRequest {
-	return &QueryRequest{PageRequest: pageRequest}
+func newQueryRequest(splitID ids.SplitID, limit int32) helpers.QueryRequest {
+	return &QueryRequest{Key: key.NewKey(splitID).(*key.Key), Limit: limit}
 }

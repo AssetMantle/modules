@@ -4,6 +4,7 @@
 package asset
 
 import (
+	"github.com/AssetMantle/modules/x/assets/key"
 	"net/http"
 
 	"github.com/AssetMantle/schema/go/ids"
@@ -69,5 +70,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(assetID ids.AssetID) helpers.QueryRequest {
-	return &QueryRequest{AssetID: assetID.(*baseIDs.AssetID)}
+	return &QueryRequest{Key: key.NewKey(assetID).(*key.Key)}
 }

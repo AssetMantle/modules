@@ -4,6 +4,9 @@
 package classifications
 
 import (
+	"github.com/AssetMantle/modules/x/classifications/key"
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"net/http"
 	"strconv"
 
@@ -33,21 +36,27 @@ func (queryRequest *QueryRequest) Validate() error {
 	return err
 }
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	offset := cliCommand.ReadInt(constants.Offset)
+	classificationID, err := baseIDs.ReadClassificationID(cliCommand.ReadString(constants.ClassificationID))
+	if err != nil {
+		return &QueryRequest{}, err
+	}
+
 	limit := cliCommand.ReadInt(constants.Limit)
 
-	return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
+	return newQueryRequest(classificationID, int32(limit)), nil
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	var offset, limit int
-	var err error
-	if offset, err = strconv.Atoi(httpRequest.URL.Query().Get(constants.Offset.GetName())); err != nil {
-		offset = 0
+	classificationID, err := baseIDs.ReadClassificationID(httpRequest.URL.Query().Get(Query.GetName()))
+	if err != nil {
+		return &QueryRequest{}, err
 	}
-	if limit, err = strconv.Atoi(httpRequest.URL.Query().Get(constants.Limit.GetName())); err != nil {
+
+	limit, err := strconv.Atoi(httpRequest.URL.Query().Get(constants.Limit.GetName()))
+	if err != nil {
 		limit = query.DefaultLimit
 	}
-	return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
+
+	return newQueryRequest(classificationID, int32(limit)), nil
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
 	return base.CodecPrototype().MarshalJSON(queryRequest)
@@ -70,6 +79,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 		return &QueryRequest{}
 	}
 }
-func newQueryRequest(pageRequest *query.PageRequest) helpers.QueryRequest {
-	return &QueryRequest{pageRequest}
+func newQueryRequest(classificationID ids.ClassificationID, limit int32) helpers.QueryRequest {
+	return &QueryRequest{Key: key.NewKey(classificationID).(*key.Key), Limit: limit}
 }

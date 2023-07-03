@@ -4,6 +4,7 @@
 package identity
 
 import (
+	"github.com/AssetMantle/modules/x/identities/key"
 	"net/http"
 
 	"github.com/AssetMantle/schema/go/ids"
@@ -68,5 +69,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(identityID ids.IdentityID) helpers.QueryRequest {
-	return &QueryRequest{IdentityID: identityID.(*baseIDs.IdentityID)}
+	return &QueryRequest{Key: key.NewKey(identityID).(*key.Key)}
 }

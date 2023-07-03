@@ -4,6 +4,7 @@
 package meta
 
 import (
+	"github.com/AssetMantle/modules/x/metas/key"
 	"net/http"
 
 	"github.com/AssetMantle/schema/go/ids"
@@ -68,5 +69,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(dataID ids.DataID) helpers.QueryRequest {
-	return &QueryRequest{DataID: dataID.(*baseIDs.DataID)}
+	return &QueryRequest{Key: key.NewKey(dataID).(*key.Key)}
 }

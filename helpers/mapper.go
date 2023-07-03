@@ -8,21 +8,20 @@ import (
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
-	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 type Mapper interface {
 	NewCollection(context.Context) Collection
-	Create(context.Context, Mappable)
-	Read(context.Context, Key) Mappable
-	Update(context.Context, Mappable)
+	NewRecord(Mappable) Record
+
+	Upsert(context.Context, Record)
+	Read(context.Context, Key) Record
 	Delete(context.Context, Key)
-	IterateAll(context.Context, func(Mappable) bool)
-	Iterate(context.Context, Key, func(Mappable) bool)
-	IteratePaginated(context.Context, *query.PageRequest, func(Mappable) bool)
-	ReverseIterate(context.Context, Key, func(Mappable) bool)
+	FetchAll(context.Context) []Record
+	Iterate(context.Context, Key, func(Record) bool)
+	IterateAll(context.Context, func(Record) bool)
+	IteratePaginated(context.Context, Key, int32, func(Record) bool)
 
 	StoreDecoder(kv.Pair, kv.Pair) string
-
 	Initialize(*sdkTypes.KVStoreKey) Mapper
 }

@@ -6,10 +6,7 @@ package assets
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/go/ids/base"
-
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/assets/key"
 )
 
 type queryKeeper struct {
@@ -23,9 +20,8 @@ func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest hel
 	return queryResponse, err
 }
 func (queryKeeper queryKeeper) Handle(context context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
-	return newQueryResponse(queryKeeper.mapper.NewCollection(context).FetchPaginated(key.NewKey(base.PrototypeAssetID()), queryRequest.PageRequest)), nil
+	return newQueryResponse(queryKeeper.mapper.NewCollection(context).FetchPaginated(queryRequest.Key, queryRequest.Limit)), nil
 }
-
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {
 	queryKeeper.mapper = mapper
 	return queryKeeper

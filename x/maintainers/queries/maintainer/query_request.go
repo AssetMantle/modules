@@ -4,6 +4,7 @@
 package maintainer
 
 import (
+	"github.com/AssetMantle/modules/x/maintainers/key"
 	"net/http"
 
 	"github.com/AssetMantle/schema/go/ids"
@@ -74,5 +75,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 }
 
 func newQueryRequest(maintainerID ids.MaintainerID) helpers.QueryRequest {
-	return &QueryRequest{MaintainerID: maintainerID.(*baseIDs.MaintainerID)}
+	return &QueryRequest{Key: key.NewKey(maintainerID).(*key.Key)}
 }

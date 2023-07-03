@@ -4,6 +4,7 @@
 package split
 
 import (
+	"github.com/AssetMantle/modules/x/splits/key"
 	"net/http"
 
 	"github.com/AssetMantle/schema/go/ids"
@@ -69,5 +70,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(splitID ids.SplitID) helpers.QueryRequest {
-	return &QueryRequest{SplitID: splitID.(*baseIDs.SplitID)}
+	return &QueryRequest{Key: key.NewKey(splitID).(*key.Key)}
 }

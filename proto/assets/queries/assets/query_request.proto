@@ -1,8 +1,9 @@
 syntax = "proto3";
 package assetmantle.modules.assets.queries.assets;
 
-import "cosmos/base/query/v1beta1/pagination.proto";
+import "assets/key/key.proto";
 
 message QueryRequest {
-  cosmos.base.query.v1beta1.PageRequest page_request = 1;
+  key.Key key = 1;
+  int32 limit = 2;
 }

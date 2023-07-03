@@ -4,6 +4,7 @@
 package order
 
 import (
+	"github.com/AssetMantle/modules/x/orders/key"
 	"net/http"
 
 	"github.com/AssetMantle/schema/go/ids"
@@ -68,5 +69,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(orderID ids.OrderID) helpers.QueryRequest {
-	return &QueryRequest{OrderID: orderID.(*baseIDs.OrderID)}
+	return &QueryRequest{Key: key.NewKey(orderID).(*key.Key)}
 }

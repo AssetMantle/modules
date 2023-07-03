@@ -37,6 +37,5 @@ var Query = baseHelpers.NewQuery(
 	},
 
 	helperConstants.DataID,
-	helperConstants.Offset,
 	helperConstants.Limit,
 )

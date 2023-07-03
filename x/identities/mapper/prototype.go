@@ -6,10 +6,9 @@ package mapper
 import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/identities/key"
-	"github.com/AssetMantle/modules/x/identities/mappable"
+	"github.com/AssetMantle/modules/x/identities/record"
 )
 
 func Prototype() helpers.Mapper {
-	return baseHelpers.NewMapper(key.Prototype, mappable.Prototype)
+	return baseHelpers.NewMapper(record.Prototype)
 }

@@ -7,18 +7,14 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-
+	"github.com/AssetMantle/modules/helpers"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
-	sdkTypesQuery "github.com/cosmos/cosmos-sdk/types/query"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type mapper struct {
-	kvStoreKey        *sdkTypes.KVStoreKey
-	keyPrototype      func() helpers.Key
-	mappablePrototype func() helpers.Mappable
+	kvStoreKey      *sdkTypes.KVStoreKey
+	recordPrototype func() helpers.Record
 }
 
 var _ helpers.Mapper = (*mapper)(nil)
@@ -26,100 +22,75 @@ var _ helpers.Mapper = (*mapper)(nil)
 func (mapper mapper) NewCollection(context context.Context) helpers.Collection {
 	return collection{}.Initialize(context, mapper)
 }
+func (mapper mapper) NewRecord(mappable helpers.Mappable) helpers.Record {
+	return mapper.recordPrototype().WithKey(mappable.GenerateKey()).WithMappable(mappable)
+}
 func (mapper mapper) GetKVStoreKey() *sdkTypes.KVStoreKey {
 	return mapper.kvStoreKey
 }
-func (mapper mapper) Create(context context.Context, mappable helpers.Mappable) {
-	Bytes := CodecPrototype().MustMarshal(mappable)
-	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
-	kvStore.Set(mappable.GenerateKey().GenerateStoreKeyBytes(), Bytes)
+func (mapper mapper) Upsert(context context.Context, record helpers.Record) {
+	record.Write(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey))
 }
-func (mapper mapper) Read(context context.Context, key helpers.Key) helpers.Mappable {
-	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
-
-	Bytes := kvStore.Get(key.GenerateStoreKeyBytes())
-	if Bytes == nil {
-		return nil
-	}
-
-	mappable := mapper.mappablePrototype()
-	CodecPrototype().MustUnmarshal(Bytes, mappable)
-
-	return mappable
-}
-func (mapper mapper) Update(context context.Context, mappable helpers.Mappable) {
-	Bytes := CodecPrototype().MustMarshal(mappable)
-	key := mappable.GenerateKey()
-	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
-	kvStore.Set(key.GenerateStoreKeyBytes(), Bytes)
+func (mapper mapper) Read(context context.Context, key helpers.Key) helpers.Record {
+	return mapper.recordPrototype().WithKey(key).Read(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey))
 }
 func (mapper mapper) Delete(context context.Context, key helpers.Key) {
-	kvStore := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
-	kvStore.Delete(key.GenerateStoreKeyBytes())
+	mapper.recordPrototype().WithKey(key).Delete(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey))
 }
-func (mapper mapper) Iterate(context context.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
-	store := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
-	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(store, partialKey.GenerateStoreKeyBytes())
+func (mapper mapper) FetchAll(context context.Context) []helpers.Record {
+	var records []helpers.Record
+	mapper.IterateAll(context, func(record helpers.Record) bool {
+		records = append(records, record)
+		return false
+	})
+	return records
+}
+func (mapper mapper) Iterate(context context.Context, key helpers.Key, accumulator func(helpers.Record) bool) {
+	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey), key.GenerateStoreKeyBytes())
 
 	defer func(kvStorePrefixIterator sdkTypes.Iterator) {
-		err := kvStorePrefixIterator.Close()
-		if err != nil {
-			sdkTypes.UnwrapSDKContext(context).Logger().Debug(err.Error())
+		if err := kvStorePrefixIterator.Close(); err != nil {
+			sdkTypes.UnwrapSDKContext(context).Logger().Error(err.Error())
 		}
 	}(kvStorePrefixIterator)
 
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
-		mappable := mapper.mappablePrototype()
-		CodecPrototype().MustUnmarshal(kvStorePrefixIterator.Value(), mappable)
-		if accumulator(mappable) {
+		if accumulator(mapper.recordPrototype().ReadFromIterator(kvStorePrefixIterator)) {
+			if err := kvStorePrefixIterator.Close(); err != nil {
+				sdkTypes.UnwrapSDKContext(context).Logger().Debug(err.Error())
+			}
 			break
 		}
 	}
 }
-func (mapper mapper) IteratePaginated(context context.Context, pageRequest *sdkTypesQuery.PageRequest, accumulator func(helpers.Mappable) bool) {
-	store := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
+func (mapper mapper) IteratePaginated(context context.Context, key helpers.Key, limit int32, accumulator func(helpers.Record) bool) {
+	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey), key.GenerateStoreKeyBytes())
 
-	_, err := sdkTypesQuery.Paginate(store, pageRequest, func(_, value []byte) error {
-		mappable := mapper.mappablePrototype()
-		CodecPrototype().MustUnmarshal(value, mappable)
-		if accumulator(mappable) {
-			return nil
+	defer func(kvStorePrefixIterator sdkTypes.Iterator) {
+		if err := kvStorePrefixIterator.Close(); err != nil {
+			sdkTypes.UnwrapSDKContext(context).Logger().Error(err.Error())
 		}
-		return nil
-	})
-	if err != nil {
-		panic("paginated query failure: " + err.Error())
-	}
-}
-func (mapper mapper) IterateAll(context context.Context, accumulator func(helpers.Mappable) bool) {
-	mapper.Iterate(context, mapper.keyPrototype(), accumulator)
-}
-func (mapper mapper) ReverseIterate(context context.Context, partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
-	store := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
-	kvStoreReversePrefixIterator := sdkTypes.KVStoreReversePrefixIterator(store, partialKey.GenerateStoreKeyBytes())
+	}(kvStorePrefixIterator)
 
-	defer func(kvStoreReversePrefixIterator sdkTypes.Iterator) {
-		err := kvStoreReversePrefixIterator.Close()
-		if err != nil {
-			sdkTypes.UnwrapSDKContext(context).Logger().Debug(err.Error())
-		}
-	}(kvStoreReversePrefixIterator)
-
-	for ; kvStoreReversePrefixIterator.Valid(); kvStoreReversePrefixIterator.Next() {
-		mappable := mapper.mappablePrototype()
-		CodecPrototype().MustUnmarshal(kvStoreReversePrefixIterator.Value(), mappable)
-
-		if accumulator(mappable) {
+	for i := int32(0); kvStorePrefixIterator.Valid() && i < limit; kvStorePrefixIterator.Next() {
+		if accumulator(mapper.recordPrototype().ReadFromIterator(kvStorePrefixIterator)) {
+			if err := kvStorePrefixIterator.Close(); err != nil {
+				sdkTypes.UnwrapSDKContext(context).Logger().Debug(err.Error())
+			}
 			break
 		}
+		i++
 	}
+}
+func (mapper mapper) IterateAll(context context.Context, accumulator func(record helpers.Record) bool) {
+	mapper.Iterate(context, mapper.recordPrototype().GetKey(), accumulator)
 }
 func (mapper mapper) StoreDecoder(kvA kv.Pair, kvB kv.Pair) string {
-	if bytes.Equal(kvA.Key[:1], mapper.keyPrototype().GenerateStoreKeyBytes()) {
-		mappableA := mapper.mappablePrototype()
+	if bytes.Equal(kvA.Key[:1], mapper.recordPrototype().GetKey().GenerateStoreKeyBytes()) {
+		mappableA := mapper.recordPrototype().GetMappable()
 		CodecPrototype().MustUnmarshal(kvA.Value, mappableA)
 
-		mappableB := mapper.mappablePrototype()
+		mappableB := mapper.recordPrototype().GetMappable()
 		CodecPrototype().MustUnmarshal(kvB.Value, mappableB)
 
 		return fmt.Sprintf("%v\n%v", mappableA, mappableB)
@@ -131,9 +102,8 @@ func (mapper mapper) Initialize(kvStoreKey *sdkTypes.KVStoreKey) helpers.Mapper 
 	mapper.kvStoreKey = kvStoreKey
 	return mapper
 }
-func NewMapper(keyPrototype func() helpers.Key, mappablePrototype func() helpers.Mappable) helpers.Mapper {
+func NewMapper(recordPrototype func() helpers.Record) helpers.Mapper {
 	return mapper{
-		keyPrototype:      keyPrototype,
-		mappablePrototype: mappablePrototype,
+		recordPrototype: recordPrototype,
 	}
 }

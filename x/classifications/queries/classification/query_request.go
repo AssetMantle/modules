@@ -4,6 +4,7 @@
 package classification
 
 import (
+	"github.com/AssetMantle/modules/x/classifications/key"
 	"net/http"
 
 	"github.com/AssetMantle/schema/go/ids"
@@ -68,5 +69,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(classificationID ids.ClassificationID) helpers.QueryRequest {
-	return &QueryRequest{ClassificationID: classificationID.(*baseIDs.ClassificationID)}
+	return &QueryRequest{Key: key.NewKey(classificationID).(*key.Key)}
 }
