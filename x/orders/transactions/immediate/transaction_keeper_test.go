@@ -174,7 +174,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutablesMeta, mutablesMeta)
 	testIdentity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutablesMeta, mutablesMeta)
-	// testOrderID := mappable.NewMappable(testOrder).GetKey()
+	// testOrderID := mappable.NewMappable(testOrder).GenerateKey()
 	testMakerOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("makerID"))
 	testTakerOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("takerID"))
 	testRate := types.NewInt(10)

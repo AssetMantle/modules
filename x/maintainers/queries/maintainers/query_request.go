@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -14,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/x/maintainers/key"
 )
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
@@ -34,22 +37,28 @@ func (queryRequest *QueryRequest) Validate() error {
 }
 
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	offset := cliCommand.ReadInt(constants.Offset)
+	maintainerID, err := baseIDs.ReadMaintainerID(cliCommand.ReadString(constants.MaintainerID))
+	if err != nil {
+		return &QueryRequest{}, err
+	}
+
 	limit := cliCommand.ReadInt(constants.Limit)
 
-	return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
+	return newQueryRequest(maintainerID, int32(limit)), nil
 }
 
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	var offset, limit int
-	var err error
-	if offset, err = strconv.Atoi(httpRequest.URL.Query().Get(constants.Offset.GetName())); err != nil {
-		offset = 0
+	maintainerID, err := baseIDs.ReadMaintainerID(httpRequest.URL.Query().Get(Query.GetName()))
+	if err != nil {
+		return &QueryRequest{}, err
 	}
-	if limit, err = strconv.Atoi(httpRequest.URL.Query().Get(constants.Limit.GetName())); err != nil {
+
+	limit, err := strconv.Atoi(httpRequest.URL.Query().Get(constants.Limit.GetName()))
+	if err != nil {
 		limit = query.DefaultLimit
 	}
-	return newQueryRequest(&query.PageRequest{Offset: uint64(offset), Limit: uint64(limit)}), nil
+
+	return newQueryRequest(maintainerID, int32(limit)), nil
 }
 
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
@@ -76,6 +85,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 
-func newQueryRequest(pageRequest *query.PageRequest) helpers.QueryRequest {
-	return &QueryRequest{PageRequest: pageRequest}
+func newQueryRequest(maintainerID ids.MaintainerID, limit int32) helpers.QueryRequest {
+	return &QueryRequest{Key: key.NewKey(maintainerID).(*key.Key), Limit: limit}
 }

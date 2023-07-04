@@ -6,14 +6,11 @@ package base
 import (
 	"context"
 
-	sdkTypesQuery "github.com/cosmos/cosmos-sdk/types/query"
-
 	"github.com/AssetMantle/modules/helpers"
 )
 
 type collection struct {
-	Key  helpers.Key        `json:"key" valid:"required~required field key missing"`
-	List []helpers.Mappable `json:"list" valid:"required~required field list missing"`
+	records []helpers.Record
 
 	mapper  helpers.Mapper
 	context context.Context
@@ -21,83 +18,90 @@ type collection struct {
 
 var _ helpers.Collection = (*collection)(nil)
 
-func (collection collection) GetKey() helpers.Key { return collection.Key }
 func (collection collection) GetMappable(key helpers.Key) helpers.Mappable {
-	for _, mappable := range collection.List {
-		if mappable.GetKey().Equals(key) {
-			return mappable
+	for _, record := range collection.records {
+		if record.GetKey().Equals(key) {
+			return record.GetMappable()
 		}
 	}
 
 	return nil
 }
-func (collection collection) Get() []helpers.Mappable {
-	return collection.List
+func (collection collection) Get() []helpers.Record {
+	return collection.records
 }
-func (collection collection) Iterate(partialKey helpers.Key, accumulator func(helpers.Mappable) bool) {
-	collection.mapper.Iterate(collection.context, partialKey, accumulator)
+func (collection collection) GetMappables() []helpers.Mappable {
+	var mappables []helpers.Mappable
+	for _, record := range collection.records {
+		mappables = append(mappables, record.GetMappable())
+	}
+	return mappables
+}
+func (collection collection) Iterate(startKey helpers.Key, accumulator func(helpers.Mappable) bool) {
+	collection.mapper.Iterate(collection.context, startKey, func(record helpers.Record) bool {
+		return accumulator(record.GetMappable())
+	})
+}
+func (collection collection) FetchAll() helpers.Collection {
+	collection.records = collection.mapper.FetchAll(collection.context)
+	return collection
+}
+func (collection collection) IteratePaginated(startKey helpers.Key, limit int32, accumulator func(helpers.Record) bool) {
+	collection.mapper.IteratePaginated(collection.context, startKey, limit, accumulator)
 }
 func (collection collection) Fetch(key helpers.Key) helpers.Collection {
-	var mappableList []helpers.Mappable
+	var records []helpers.Record
 
 	if key.IsPartial() {
-		accumulator := func(mappable helpers.Mappable) bool {
-			mappableList = append(mappableList, mappable)
+		collection.mapper.Iterate(collection.context, key, func(record helpers.Record) bool {
+			records = append(records, record)
 			return false
-		}
-		collection.mapper.Iterate(collection.context, key, accumulator)
+		})
 	} else {
-		mappable := collection.mapper.Read(collection.context, key)
-		if mappable != nil {
-			mappableList = append(mappableList, mappable)
+		record := collection.mapper.Read(collection.context, key)
+		if record != nil {
+			records = append(records, record)
 		}
 	}
 
-	collection.Key, collection.List = key, mappableList
+	collection.records = records
 
 	return collection
 }
-func (collection collection) FetchPaginated(key helpers.Key, request *sdkTypesQuery.PageRequest) helpers.Collection {
-	var mappableList []helpers.Mappable
+func (collection collection) FetchPaginated(startKey helpers.Key, limit int32) helpers.Collection {
+	var records []helpers.Record
 
-	accumulator := func(mappable helpers.Mappable) bool {
-		mappableList = append(mappableList, mappable)
+	collection.mapper.IteratePaginated(collection.context, startKey, limit, func(record helpers.Record) bool {
+		records = append(records, record)
 		return false
-	}
-	collection.mapper.IteratePaginated(collection.context, request, accumulator)
+	})
 
-	collection.Key, collection.List = key, mappableList
+	collection.records = records
 
 	return collection
 }
 func (collection collection) Add(mappable helpers.Mappable) helpers.Collection {
-	collection.Key = nil
-	collection.mapper.Create(collection.context, mappable)
-	collection.List = append(collection.List, mappable)
+	collection.mapper.Upsert(collection.context, collection.mapper.NewRecord(mappable))
+
+	collection.records = []helpers.Record{collection.mapper.NewRecord(mappable)}
 
 	return collection
 }
 func (collection collection) Remove(mappable helpers.Mappable) helpers.Collection {
-	collection.mapper.Delete(collection.context, mappable.GetKey())
+	collection.mapper.Delete(collection.context, mappable.GenerateKey())
 
-	for i, oldMappable := range collection.List {
-		if oldMappable.GetKey().Equals(mappable.GetKey()) {
-			collection.List = append(collection.List[:i], collection.List[i+1:]...)
-			break
-		}
-	}
+	collection.records = []helpers.Record{}
 
 	return collection
 }
 func (collection collection) Mutate(mappable helpers.Mappable) helpers.Collection {
-	collection.mapper.Update(collection.context, mappable)
+	record := collection.mapper.Read(collection.context, mappable.GenerateKey())
 
-	for i, oldMappable := range collection.List {
-		if oldMappable.GetKey().Equals(mappable.GetKey()) {
-			collection.List[i] = mappable
-			break
-		}
+	if record != nil {
+		collection.mapper.Upsert(collection.context, collection.mapper.NewRecord(mappable))
 	}
+
+	collection.records = []helpers.Record{collection.mapper.NewRecord(mappable)}
 
 	return collection
 }

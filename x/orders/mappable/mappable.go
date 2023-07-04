@@ -19,7 +19,7 @@ var _ helpers.Mappable = (*Mappable)(nil)
 func (mappable *Mappable) ValidateBasic() error {
 	return mappable.Order.ValidateBasic()
 }
-func (mappable *Mappable) GetKey() helpers.Key {
+func (mappable *Mappable) GenerateKey() helpers.Key {
 	return key.NewKey(baseIDs.NewOrderID(mappable.Order.GetClassificationID(), mappable.Order.GetImmutables()))
 }
 func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {

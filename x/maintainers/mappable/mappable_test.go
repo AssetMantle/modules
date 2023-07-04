@@ -89,8 +89,8 @@ func Test_mappable_GetKey(t *testing.T) {
 			maintainer := &Mappable{
 				Maintainer: tt.fields.Maintainer.Get().(*base.Document),
 			}
-			if got := maintainer.GetKey(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetKey() = %v, want %v", got, tt.want)
+			if got := maintainer.GenerateKey(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GenerateKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

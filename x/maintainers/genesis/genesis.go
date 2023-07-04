@@ -52,21 +52,13 @@ func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager)
 }
 func (genesis *Genesis) Import(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) {
 	for _, Mappable := range genesis.Mappables {
-		mapper.Create(context, Mappable)
+		mapper.NewCollection(context).Add(Mappable)
 	}
 
 	parameterManager.Set(context, genesis.ParameterList)
 }
 func (genesis *Genesis) Export(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) helpers.Genesis {
-	var mappableList []helpers.Mappable
-
-	appendMappableList := func(mappable helpers.Mappable) bool {
-		mappableList = append(mappableList, mappable)
-		return false
-	}
-	mapper.IterateAll(context, appendMappableList)
-
-	return genesis.Initialize(mappableList, parameterManager.Fetch(context).Get())
+	return genesis.Initialize(mapper.NewCollection(context).FetchAll().GetMappables(), parameterManager.Fetch(context).Get())
 }
 func (genesis *Genesis) Encode(jsonCodec sdkCodec.JSONCodec) []byte {
 	bytes, err := jsonCodec.MarshalJSON(genesis)

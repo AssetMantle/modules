@@ -1,10 +1,12 @@
 syntax = "proto3";
 package assetmantle.modules.orders.queries.orders;
 
+import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
-import "orders/mappable/mappable.proto";
+import "orders/record/record.proto";
 
 message QueryResponse {
   option (gogoproto.goproto_getters) = false;
-  repeated mappable.Mappable list = 1;
+  repeated record.Record list = 1;
+  cosmos.base.query.v1beta1.PageResponse page_response = 2;
 }

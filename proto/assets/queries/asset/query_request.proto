@@ -1,8 +1,8 @@
 syntax = "proto3";
 package assetmantle.modules.assets.queries.asset;
 
-import "ids/base/asset_id.proto";
+import "assets/key/key.proto";
 
 message QueryRequest {
-  assetmantle.schema.ids.base.AssetID asset_i_d = 1;
+  key.Key key = 1;
 }

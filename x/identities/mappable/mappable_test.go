@@ -93,10 +93,10 @@ func Test_identity_GetKey(t *testing.T) {
 			}
 			if tt.wantPanic {
 				require.Panics(t, func() {
-					identity.GetKey()
+					identity.GenerateKey()
 				})
-			} else if got := identity.GetKey(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetKey() = %v, want %v", got, tt.want)
+			} else if got := identity.GenerateKey(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GenerateKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

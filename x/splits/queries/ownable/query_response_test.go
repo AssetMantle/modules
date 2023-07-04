@@ -4,11 +4,12 @@
 package ownable
 
 import (
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
+
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 func Test_Split_Response(t *testing.T) {

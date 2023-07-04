@@ -6,7 +6,7 @@ package maintainer
 import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/maintainers/mappable"
+	"github.com/AssetMantle/modules/x/maintainers/record"
 )
 
 var _ helpers.QueryResponse = (*QueryResponse)(nil)
@@ -25,7 +25,7 @@ func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
 func newQueryResponse(collection helpers.Collection) *QueryResponse {
-	list := mappable.MappablesFromInterface(collection.Get())
+	list := record.RecordsFromInterface(collection.Get())
 
 	return &QueryResponse{
 		List: list,

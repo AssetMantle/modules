@@ -14,6 +14,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/x/identities/key"
 )
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
@@ -68,5 +69,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(identityID ids.IdentityID) helpers.QueryRequest {
-	return &QueryRequest{IdentityID: identityID.(*baseIDs.IdentityID)}
+	return &QueryRequest{Key: key.NewKey(identityID).(*key.Key)}
 }

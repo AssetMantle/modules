@@ -4,7 +4,6 @@
 package classification
 
 import (
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/store"
@@ -14,6 +13,7 @@ import (
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
 
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/mapper"
 )
 

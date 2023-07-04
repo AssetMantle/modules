@@ -167,7 +167,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return false
 	}
 
-	orders.Iterate(mappable.NewMappable(order).GetKey(), accumulator)
+	orders.Iterate(mappable.NewMappable(order).GenerateKey(), accumulator)
 
 	if !orderLeftOverMakerOwnableSplit.Equal(sdkTypes.ZeroInt()) && orderMutated {
 		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(orderLeftOverMakerOwnableSplit)))

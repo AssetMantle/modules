@@ -14,6 +14,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/x/splits/key"
 )
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
@@ -69,5 +70,5 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 	}
 }
 func newQueryRequest(splitID ids.SplitID) helpers.QueryRequest {
-	return &QueryRequest{SplitID: splitID.(*baseIDs.SplitID)}
+	return &QueryRequest{Key: key.NewKey(splitID).(*key.Key)}
 }

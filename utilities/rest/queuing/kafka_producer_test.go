@@ -4,11 +4,12 @@
 package queuing
 
 import (
-	"github.com/AssetMantle/modules/helpers/base"
 	"testing"
 
 	"github.com/Shopify/sarama"
 	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers/base"
 )
 
 func TestKafkaProducerDeliverMessage(t *testing.T) {

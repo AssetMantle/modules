@@ -37,6 +37,5 @@ var Query = baseHelpers.NewQuery(
 	},
 
 	helperConstants.ClassificationID,
-	helperConstants.Offset,
 	helperConstants.Limit,
 )
