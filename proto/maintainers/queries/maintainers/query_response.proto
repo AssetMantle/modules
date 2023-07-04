@@ -8,5 +8,4 @@ import "maintainers/record/record.proto";
 message QueryResponse {
   option (gogoproto.goproto_getters) = false;
   repeated record.Record list = 1;
-  cosmos.base.query.v1beta1.PageResponse page_response = 2;
 }

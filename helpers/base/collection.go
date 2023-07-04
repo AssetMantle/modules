@@ -49,6 +49,11 @@ func (collection collection) FetchAll() helpers.Collection {
 func (collection collection) IteratePaginated(startKey helpers.Key, limit int32, accumulator func(helpers.Record) bool) {
 	collection.mapper.IteratePaginated(collection.context, startKey, limit, accumulator)
 }
+func (collection collection) FetchRecord(key helpers.Key) helpers.Record {
+	record := collection.mapper.Read(collection.context, key)
+	collection.records = []helpers.Record{record}
+	return record
+}
 func (collection collection) Fetch(key helpers.Key) helpers.Collection {
 	var records []helpers.Record
 

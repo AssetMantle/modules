@@ -6,5 +6,5 @@ import "metas/record/record.proto";
 
 message QueryResponse {
   option (gogoproto.goproto_getters) = false;
-  repeated record.Record list = 1;
+  record.Record record = 1;
 }

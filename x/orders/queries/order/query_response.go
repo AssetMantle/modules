@@ -24,10 +24,8 @@ func (queryResponse *QueryResponse) Decode(bytes []byte) (helpers.QueryResponse,
 func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
-func newQueryResponse(collection helpers.Collection) *QueryResponse {
-	list := record.RecordsFromInterface(collection.Get())
-
+func newQueryResponse(Record helpers.Record) *QueryResponse {
 	return &QueryResponse{
-		List: list,
+		Record: Record.(*record.Record),
 	}
 }
