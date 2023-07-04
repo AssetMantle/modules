@@ -4,13 +4,13 @@
 package queuing
 
 import (
-	"github.com/AssetMantle/modules/helpers/base"
 	"testing"
 
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/stretchr/testify/require"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/utilities/random"
 )
 

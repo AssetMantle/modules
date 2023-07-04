@@ -53,11 +53,10 @@ func (collection collection) Fetch(key helpers.Key) helpers.Collection {
 	var records []helpers.Record
 
 	if key.IsPartial() {
-		accumulator := func(record helpers.Record) bool {
+		collection.mapper.Iterate(collection.context, key, func(record helpers.Record) bool {
 			records = append(records, record)
 			return false
-		}
-		collection.mapper.Iterate(collection.context, key, accumulator)
+		})
 	} else {
 		record := collection.mapper.Read(collection.context, key)
 		if record != nil {
@@ -72,12 +71,10 @@ func (collection collection) Fetch(key helpers.Key) helpers.Collection {
 func (collection collection) FetchPaginated(startKey helpers.Key, limit int32) helpers.Collection {
 	var records []helpers.Record
 
-	accumulator := func(record helpers.Record) bool {
+	collection.mapper.IteratePaginated(collection.context, startKey, limit, func(record helpers.Record) bool {
 		records = append(records, record)
 		return false
-	}
-
-	collection.mapper.IteratePaginated(collection.context, startKey, limit, accumulator)
+	})
 
 	collection.records = records
 

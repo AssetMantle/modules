@@ -4,13 +4,14 @@
 package mappable
 
 import (
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/orders/key"
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	"github.com/AssetMantle/schema/go/documents"
 	"github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
+
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/orders/key"
 )
 
 var _ helpers.Mappable = (*Mappable)(nil)

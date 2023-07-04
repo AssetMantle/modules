@@ -4,7 +4,6 @@
 package classification
 
 import (
-	"github.com/AssetMantle/modules/x/classifications/key"
 	"net/http"
 
 	"github.com/AssetMantle/schema/go/ids"
@@ -15,6 +14,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/x/classifications/key"
 )
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)

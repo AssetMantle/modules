@@ -5,7 +5,6 @@ package identity
 
 import (
 	"context"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"reflect"
 	"testing"
 
@@ -18,6 +17,7 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/mapper"
 )

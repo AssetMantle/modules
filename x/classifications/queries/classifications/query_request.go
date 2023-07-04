@@ -4,12 +4,11 @@
 package classifications
 
 import (
-	"github.com/AssetMantle/modules/x/classifications/key"
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"net/http"
 	"strconv"
 
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -17,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/x/classifications/key"
 )
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)

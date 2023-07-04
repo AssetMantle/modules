@@ -4,13 +4,13 @@
 package max_provision_address_count
 
 import (
-	"github.com/cosmos/cosmos-sdk/types"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	"github.com/cosmos/cosmos-sdk/types"
 )
 
 func Test_validator(t *testing.T) {
