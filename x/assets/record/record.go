@@ -19,7 +19,7 @@ func (record *Record) GetMappable() helpers.Mappable {
 }
 func (record *Record) WithKey(Key helpers.Key) helpers.Record {
 	record.Key = Key.(*key.Key)
-	record.Mappable = nil
+	record.Mappable = mappable.Prototype().(*mappable.Mappable)
 	return record
 }
 func (record *Record) WithMappable(Mappable helpers.Mappable) helpers.Record {
@@ -36,7 +36,7 @@ func (record *Record) ReadFromIterator(iterator sdkTypes.Iterator) helpers.Recor
 func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
 	Bytes := kvStore.Get(record.GetKey().GenerateStoreKeyBytes())
 	if Bytes == nil {
-		return nil
+		return Prototype()
 	}
 	Mappable := record.GetMappable()
 	base.CodecPrototype().MustUnmarshal(Bytes, Mappable)
