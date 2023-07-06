@@ -7,8 +7,9 @@ import (
 	"encoding/json"
 
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
+	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
+	"github.com/AssetMantle/schema/go/lists/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -71,31 +72,31 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	mutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableMetaProperties)
+	mutableMetaProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
 
-	mutableProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableProperties)
+	mutableProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.MutableProperties)
 	if err != nil {
 		return nil, err
 	}
 	mutableProperties = mutableProperties.ScrubData()
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	fromID, err := baseIDs.PrototypeIdentityID().FromString(transactionRequest.FromID)
 	if err != nil {
 		return nil, err
 	}
 
-	assetID, err := baseIDs.ReadAssetID(transactionRequest.AssetID)
+	assetID, err := baseIDs.PrototypeAssetID().FromString(transactionRequest.AssetID)
 	if err != nil {
 		return nil, err
 	}
 
 	return NewMessage(
 		from,
-		fromID,
-		assetID,
+		fromID.(ids.IdentityID),
+		assetID.(ids.AssetID),
 		mutableMetaProperties,
 		mutableProperties,
 	), nil

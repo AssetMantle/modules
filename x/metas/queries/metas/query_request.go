@@ -36,17 +36,17 @@ func (queryRequest *QueryRequest) Validate() error {
 	return err
 }
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	dataID, err := baseIDs.ReadDataID(cliCommand.ReadString(constants.DataID))
+	dataID, err := baseIDs.PrototypeDataID().FromString(cliCommand.ReadString(constants.DataID))
 	if err != nil {
 		return &QueryRequest{}, err
 	}
 
 	limit := cliCommand.ReadInt(constants.Limit)
 
-	return newQueryRequest(dataID, int32(limit)), nil
+	return newQueryRequest(dataID.(ids.DataID), int32(limit)), nil
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	dataID, err := baseIDs.ReadDataID(httpRequest.URL.Query().Get(Query.GetName()))
+	dataID, err := baseIDs.PrototypeDataID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName()))
 	if err != nil {
 		return &QueryRequest{}, err
 	}
@@ -56,7 +56,7 @@ func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRe
 		limit = query.DefaultLimit
 	}
 
-	return newQueryRequest(dataID, int32(limit)), nil
+	return newQueryRequest(dataID.(ids.DataID), int32(limit)), nil
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
 	return base.CodecPrototype().MarshalJSON(queryRequest)

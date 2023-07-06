@@ -24,7 +24,7 @@ func splitIDHandler(context client.Context) http.HandlerFunc {
 
 		req := transactionRequest.(request)
 
-		fromID, _ := baseIDs.ReadIdentityID(req.FromID)
+		fromID, _ := baseIDs.PrototypeIdentityID().FromString(req.FromID)
 
 		coins, _ := sdkTypes.ParseCoinsNormalized(req.Coins)
 
@@ -33,6 +33,6 @@ func splitIDHandler(context client.Context) http.HandlerFunc {
 			coinID = baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom))
 		}
 
-		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewSplitID(fromID, coinID).AsString(), "", nil))
+		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewSplitID(fromID.(ids.IdentityID), coinID).AsString(), "", nil))
 	}
 }

@@ -7,8 +7,9 @@ import (
 	"encoding/json"
 
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
+	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
+	"github.com/AssetMantle/schema/go/lists/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -35,7 +36,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
-// @Param body body  transactionRequest true "Request body to update Identity"
+// @Param body  transactionRequest true "Request body to update Identity"
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/update [post]
@@ -71,31 +72,31 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	mutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableMetaProperties)
+	mutableMetaProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
 
-	mutableProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableProperties)
+	mutableProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.MutableProperties)
 	if err != nil {
 		return nil, err
 	}
 	mutableProperties = mutableProperties.ScrubData()
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	fromID, err := baseIDs.PrototypeIdentityID().FromString(transactionRequest.FromID)
 	if err != nil {
 		return nil, err
 	}
 
-	identityID, err := baseIDs.ReadIdentityID(transactionRequest.IdentityID)
+	identityID, err := baseIDs.PrototypeIdentityID().FromString(transactionRequest.IdentityID)
 	if err != nil {
 		return nil, err
 	}
 
 	return NewMessage(
 		from,
-		fromID,
-		identityID,
+		fromID.(ids.IdentityID),
+		identityID.(ids.IdentityID),
 		mutableMetaProperties,
 		mutableProperties,
 	), nil

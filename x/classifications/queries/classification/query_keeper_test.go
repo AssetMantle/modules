@@ -8,7 +8,7 @@ import (
 
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
+	"github.com/AssetMantle/schema/go/lists/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -63,9 +63,9 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 
 func Test_Query_Keeper_Classification(t *testing.T) {
 	context, keepers := CreateTestInput2(t)
-	immutableProperties, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableProperties, Error2 := utilities.ReadMetaPropertyList("burn:S|100")
+	mutableProperties, Error2 := base.PrototypePropertyList().FromMetaPropertiesString("burn:S|100")
 	require.Equal(t, nil, Error2)
 
 	classificationID := baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))

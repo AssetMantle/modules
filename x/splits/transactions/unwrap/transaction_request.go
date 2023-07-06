@@ -8,6 +8,7 @@ import (
 
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -71,20 +72,20 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, errorConstants.IncorrectFormat.Wrapf("unwrap value %s is not a valid integer", transactionRequest.Value)
 	}
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	fromID, err := baseIDs.PrototypeIdentityID().FromString(transactionRequest.FromID)
 	if err != nil {
 		return nil, err
 	}
 
-	ownableID, err := baseIDs.ReadOwnableID(transactionRequest.OwnableID)
+	ownableID, err := baseIDs.PrototypeOwnableID().FromString(transactionRequest.OwnableID)
 	if err != nil {
 		return nil, err
 	}
 
 	return NewMessage(
 		from,
-		fromID,
-		ownableID,
+		fromID.(ids.IdentityID),
+		ownableID.(ids.OwnableID),
 		value,
 	), nil
 }

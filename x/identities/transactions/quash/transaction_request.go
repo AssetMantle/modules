@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
+	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -63,20 +64,20 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	fromID, err := baseIDs.PrototypeIdentityID().FromString(transactionRequest.FromID)
 	if err != nil {
 		return nil, err
 	}
 
-	identityID, err := baseIDs.ReadIdentityID(transactionRequest.IdentityID)
+	identityID, err := baseIDs.PrototypeIdentityID().FromString(transactionRequest.IdentityID)
 	if err != nil {
 		return nil, err
 	}
 
 	return NewMessage(
 		from,
-		fromID,
-		identityID,
+		fromID.(ids.IdentityID),
+		identityID.(ids.IdentityID),
 	), nil
 }
 func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {

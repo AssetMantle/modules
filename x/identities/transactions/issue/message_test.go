@@ -12,7 +12,6 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -49,19 +48,19 @@ func createTestInput(t *testing.T) (*baseIDs.IdentityID, *baseIDs.Classification
 	require.Nil(t, err)
 
 	var immutableMetaProperties lists.PropertyList
-	immutableMetaProperties, err = utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err = base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 
 	var immutableProperties lists.PropertyList
-	immutableProperties, err = utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err = base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.PropertyList
-	mutableMetaProperties, err = utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err = base.PrototypePropertyList().FromMetaPropertiesString("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 
 	var mutableProperties lists.PropertyList
-	mutableProperties, err = utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err = base.PrototypePropertyList().FromMetaPropertiesString("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 
 	return testFromID.(*baseIDs.IdentityID), testClassificationID.(*baseIDs.ClassificationID), fromAddress, fromAccAddress, toAddress, toAccAddress, immutableMetaProperties.(*baseLists.PropertyList), immutableProperties.(*baseLists.PropertyList), mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)

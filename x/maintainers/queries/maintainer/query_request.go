@@ -35,18 +35,18 @@ func (queryRequest *QueryRequest) Validate() error {
 }
 
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	if maintainerID, err := baseIDs.ReadMaintainerID(cliCommand.ReadString(constants.MaintainerID)); err != nil {
+	if maintainerID, err := baseIDs.PrototypeMaintainerID().FromString(cliCommand.ReadString(constants.MaintainerID)); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(maintainerID), nil
+		return newQueryRequest(maintainerID.(ids.MaintainerID)), nil
 	}
 }
 
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	if maintainerID, err := baseIDs.ReadMaintainerID(httpRequest.URL.Query().Get(Query.GetName())); err != nil {
+	if maintainerID, err := baseIDs.PrototypeMaintainerID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(maintainerID), nil
+		return newQueryRequest(maintainerID.(ids.MaintainerID)), nil
 	}
 }
 

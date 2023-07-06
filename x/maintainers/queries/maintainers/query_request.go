@@ -37,18 +37,18 @@ func (queryRequest *QueryRequest) Validate() error {
 }
 
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	maintainerID, err := baseIDs.ReadMaintainerID(cliCommand.ReadString(constants.MaintainerID))
+	maintainerID, err := baseIDs.PrototypeMaintainerID().FromString(cliCommand.ReadString(constants.MaintainerID))
 	if err != nil {
 		return &QueryRequest{}, err
 	}
 
 	limit := cliCommand.ReadInt(constants.Limit)
 
-	return newQueryRequest(maintainerID, int32(limit)), nil
+	return newQueryRequest(maintainerID.(ids.MaintainerID), int32(limit)), nil
 }
 
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	maintainerID, err := baseIDs.ReadMaintainerID(httpRequest.URL.Query().Get(Query.GetName()))
+	maintainerID, err := baseIDs.PrototypeMaintainerID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName()))
 	if err != nil {
 		return &QueryRequest{}, err
 	}
@@ -58,7 +58,7 @@ func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRe
 		limit = query.DefaultLimit
 	}
 
-	return newQueryRequest(maintainerID, int32(limit)), nil
+	return newQueryRequest(maintainerID.(ids.MaintainerID), int32(limit)), nil
 }
 
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {

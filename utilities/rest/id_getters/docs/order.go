@@ -25,13 +25,13 @@ func orderIDHandler(context client.Context) http.HandlerFunc {
 
 		takerOwnableSplit, _ := sdkTypes.NewDecFromStr(req.TakerOwnableSplit)
 
-		fromID, _ := baseIDs.ReadIdentityID(req.FromID)
+		fromID, _ := baseIDs.PrototypeIdentityID().FromString(req.FromID)
 
-		takerID, _ := baseIDs.ReadIdentityID(req.TakerID)
+		takerID, _ := baseIDs.PrototypeIdentityID().FromString(req.TakerID)
 
-		makerOwnableID, _ := baseIDs.ReadOwnableID(req.MakerOwnableID)
+		makerOwnableID, _ := baseIDs.PrototypeOwnableID().FromString(req.MakerOwnableID)
 		height, _ := strconv.Atoi(req.Height)
-		takerOwnableID, _ := baseIDs.ReadOwnableID(req.TakerOwnableID)
+		takerOwnableID, _ := baseIDs.PrototypeOwnableID().FromString(req.TakerOwnableID)
 
 		immutableMetaProperties := ImmutableMetaProperties.
 			Add(baseProperties.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(takerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(makerOwnableSplit)))).

@@ -37,17 +37,17 @@ func (queryRequest *QueryRequest) Validate() error {
 }
 
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	splitID, err := baseIDs.ReadSplitID(cliCommand.ReadString(constants.SplitID))
+	splitID, err := baseIDs.PrototypeSplitID().FromString(cliCommand.ReadString(constants.SplitID))
 	if err != nil {
 		return &QueryRequest{}, err
 	}
 
 	limit := cliCommand.ReadInt(constants.Limit)
 
-	return newQueryRequest(splitID, int32(limit)), nil
+	return newQueryRequest(splitID.(ids.SplitID), int32(limit)), nil
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	splitID, err := baseIDs.ReadSplitID(httpRequest.URL.Query().Get(Query.GetName()))
+	splitID, err := baseIDs.PrototypeSplitID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName()))
 	if err != nil {
 		return &QueryRequest{}, err
 	}
@@ -57,7 +57,7 @@ func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRe
 		limit = query.DefaultLimit
 	}
 
-	return newQueryRequest(splitID, int32(limit)), nil
+	return newQueryRequest(splitID.(ids.SplitID), int32(limit)), nil
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
 	return base.CodecPrototype().MarshalJSON(queryRequest)

@@ -34,17 +34,17 @@ func (queryRequest *QueryRequest) Validate() error {
 	return err
 }
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	if assetID, err := baseIDs.ReadAssetID(cliCommand.ReadString(constants.AssetID)); err != nil {
+	if assetID, err := baseIDs.PrototypeAssetID().FromString(cliCommand.ReadString(constants.AssetID)); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(assetID), nil
+		return newQueryRequest(assetID.(ids.AssetID)), nil
 	}
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	if assetID, err := baseIDs.ReadAssetID(httpRequest.URL.Query().Get(Query.GetName())); err != nil {
+	if assetID, err := baseIDs.PrototypeAssetID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(assetID), nil
+		return newQueryRequest(assetID.(ids.AssetID)), nil
 	}
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {

@@ -46,8 +46,8 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	mappableList := make([]helpers.Mappable, 3*len(simulatorAssets.ClassificationIDMappableBytesMap))
 
-	var classificationID ids.ClassificationID
-	var identityID ids.IdentityID
+	var classificationID ids.ID
+	var identityID ids.ID
 	index := 0
 
 	for i := 0; i < len(simulatorAssets.ClassificationIDMappableBytesMap); i++ {
@@ -56,26 +56,26 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 			continue
 		}
 		for class, id := range identityMap {
-			classificationID, _ = baseIDs.ReadClassificationID(class)
-			identityID, _ = baseIDs.ReadIdentityID(id)
+			classificationID, _ = baseIDs.PrototypeClassificationID().FromString(class)
+			identityID, _ = baseIDs.PrototypeIdentityID().FromString(id)
 			break
 		}
 		identityMappable := &mappableIdentities.Mappable{}
 		baseHelpers.CodecPrototype().Unmarshal(simulatorIdentities.GetMappableBytes(classificationID.AsString()), identityMappable)
 		mutables := identityMappable.GetIdentity().Get().GetMutables()
-		mappableList[index] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(identityUtilities.SetModulePermissions(true, true))...)))
+		mappableList[index] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID.(ids.IdentityID), classificationID.(ids.ClassificationID), mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(identityUtilities.SetModulePermissions(true, true))...)))
 
 		assetMap := simulatorAssets.GetAssetData(simulationState.Accounts[i].Address.String())
 		if assetMap == nil {
 			continue
 		}
 		for class, _ := range assetMap {
-			classificationID, _ = baseIDs.ReadClassificationID(class)
+			classificationID, _ = baseIDs.PrototypeClassificationID().FromString(class)
 		}
 		assetMappable := &mappableAssets.Mappable{}
 		baseHelpers.CodecPrototype().Unmarshal(simulatorAssets.GetMappableBytes(classificationID.AsString()), assetMappable)
 		mutables = assetMappable.GetAsset().Get().GetMutables()
-		mappableList[index+1] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, classificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(assetUtilities.SetModulePermissions(true, true, true))...)))
+		mappableList[index+1] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID.(ids.IdentityID), classificationID.(ids.ClassificationID), mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(assetUtilities.SetModulePermissions(true, true, true))...)))
 
 		immutables := baseQualified.NewImmutables(assetMappable.Asset.Immutables.GetImmutablePropertyList().Add(baseLists.AnyPropertiesToProperties(constantProperties.ExchangeRateProperty.ToAnyProperty(),
 			constantProperties.CreationHeightProperty.ToAnyProperty(),
@@ -90,7 +90,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		)...))
 
 		orderClassificationID := baseIDs.NewClassificationID(immutables, mutables)
-		mappableList[index+2] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID, orderClassificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(orderUtilities.SetModulePermissions(true, true))...)))
+		mappableList[index+2] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID.(ids.IdentityID), orderClassificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(orderUtilities.SetModulePermissions(true, true))...)))
 
 		index += 3
 	}
