@@ -12,7 +12,6 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists"
 	"github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -52,7 +51,7 @@ func CreateTestInputForMessage(t *testing.T) (*baseIDs.IdentityID, *baseIDs.Iden
 	require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := utilities.ReadMetaPropertyList(maintainedProperty)
+	maintainedProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(maintainedProperty)
 	require.Equal(t, nil, err)
 
 	testMessage := NewMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, true, true, true, true, true)

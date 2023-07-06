@@ -75,8 +75,8 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 			identityIDString = id
 			break
 		}
-		fromID, _ := baseIDs.ReadIdentityID(identityIDString)
-		message := GenerateDefineMessage(from.Address, fromID, rand)
+		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+		message := GenerateDefineMessage(from.Address, fromID.(ids.IdentityID), rand)
 
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
@@ -170,7 +170,7 @@ func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 		identityIDString = id
 		break
 	}
-	fromID, _ := baseIDs.ReadIdentityID(identityIDString)
+	fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
 	toIDMap := identities.GetIDData(to.Address.String())
 	for _, id := range toIDMap {
@@ -178,7 +178,7 @@ func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 		break
 	}
 
-	toID, _ := baseIDs.ReadIdentityID(identityIDString)
+	toID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
 	orderMap := orders.GetOrderData(from.Address.String())
 	for class, _ := range orderMap {
@@ -186,7 +186,7 @@ func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 		break
 	}
 
-	classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
+	classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
 
 	assetMap := assets.GetAssetData(from.Address.String())
 
@@ -194,7 +194,7 @@ func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 		assetIDString = id
 	}
 
-	assetID, _ := baseIDs.ReadAssetID(assetIDString)
+	assetID, _ := baseIDs.PrototypeAssetID().FromString(assetIDString)
 
 	mappable := &mappable.Mappable{}
 	base.CodecPrototype().Unmarshal(orders.GetMappableBytes(classificationIDString), mappable)
@@ -220,7 +220,7 @@ func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 		}
 	}
 
-	return make.NewMessage(from.Address, fromID, classificationID, toID, assetID.ToAnyOwnableID(), baseIDs.NewCoinID(baseIDs.NewStringID("stake")).ToAnyOwnableID(), baseTypesGo.NewHeight(-1), sdkTypes.NewInt(1), sdkTypes.NewInt(1), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+	return make.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID.(ids.ClassificationID), toID.(ids.IdentityID), assetID.(ids.AssetID).ToAnyOwnableID(), baseIDs.NewCoinID(baseIDs.NewStringID("stake")).ToAnyOwnableID(), baseTypesGo.NewHeight(-1), sdkTypes.NewInt(1), sdkTypes.NewInt(1), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 }
 func GenerateDefineMessage(from sdkTypes.AccAddress, identityID ids.IdentityID, r *rand.Rand) helpers.Message {
 	return define.NewMessage(from, identityID, baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r), baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r)).(helpers.Message)

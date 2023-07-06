@@ -9,7 +9,6 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	"github.com/AssetMantle/schema/go/properties/constants"
 	"github.com/AssetMantle/schema/go/qualified"
@@ -54,20 +53,20 @@ func Read(context client.Context, responseWriter http.ResponseWriter, httpReques
 
 	req := transactionRequest.(request)
 
-	immutableMetaProperties, _ := utilities.ReadMetaPropertyList(req.ImmutableMetaProperties)
+	immutableMetaProperties, _ := baseLists.PrototypePropertyList().FromMetaPropertiesString(req.ImmutableMetaProperties)
 
-	immutableProperties, _ := utilities.ReadMetaPropertyList(req.ImmutableProperties)
+	immutableProperties, _ := baseLists.PrototypePropertyList().FromMetaPropertiesString(req.ImmutableProperties)
 
 	immutableProperties = immutableProperties.ScrubData()
 
-	mutableMetaProperties, _ := utilities.ReadMetaPropertyList(req.MutableMetaProperties)
+	mutableMetaProperties, _ := baseLists.PrototypePropertyList().FromMetaPropertiesString(req.MutableMetaProperties)
 
-	mutableProperties, _ := utilities.ReadMetaPropertyList(req.MutableProperties)
+	mutableProperties, _ := baseLists.PrototypePropertyList().FromMetaPropertiesString(req.MutableProperties)
 
 	mutableProperties = mutableProperties.ScrubData()
 
-	classificationID, _ := baseIDs.ReadClassificationID(req.ClassificationID)
-	return req, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties
+	classificationID, _ := baseIDs.PrototypeClassificationID().FromString(req.ClassificationID)
+	return req, classificationID.(ids.ClassificationID), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties
 }
 
 func Process(immutableMetaPropertyList, immutablePropertyList, mutableMetaPropertyList, mutablePropertyList lists.PropertyList, addAuth bool, addBond bool) (qualified.Immutables, qualified.Mutables) {

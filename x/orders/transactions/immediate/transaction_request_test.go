@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/AssetMantle/schema/go/types/base"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -32,10 +31,10 @@ var (
 	immutablePropertiesString     = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString   = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString       = "defaultMutable1:S|defaultMutable1"
-	immutableMetaProperties, _    = utilities.ReadMetaPropertyList(immutableMetaPropertiesString)
-	immutableProperties, _        = utilities.ReadMetaPropertyList(immutablePropertiesString)
-	mutableMetaProperties, _      = utilities.ReadMetaPropertyList(mutableMetaPropertiesString)
-	mutableProperties, _          = utilities.ReadMetaPropertyList(mutablePropertiesString)
+	immutableMetaProperties, _    = base.PrototypePropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
+	immutableProperties, _        = base.PrototypePropertyList().FromMetaPropertiesString(immutablePropertiesString)
+	mutableMetaProperties, _      = base.PrototypePropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
+	mutableProperties, _          = base.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	immutables                    = baseQualified.NewImmutables(immutableProperties)
 	mutables                      = baseQualified.NewMutables(mutableProperties)
 	testClassificationID          = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)

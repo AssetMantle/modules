@@ -11,7 +11,6 @@ import (
 
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
 	"github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -33,13 +32,13 @@ var (
 	immutablePropertiesString            = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString          = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString              = "defaultMutable1:S|defaultMutable1"
-	immutableMetaPropertiesInterfaces, _ = utilities.ReadMetaPropertyList(immutableMetaPropertiesString)
+	immutableMetaPropertiesInterfaces, _ = base.PrototypePropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
 	immutableMetaProperties              = immutableMetaPropertiesInterfaces.(*baseLists.PropertyList)
-	immutablePropertiesInterfaces, _     = utilities.ReadMetaPropertyList(immutablePropertiesString)
+	immutablePropertiesInterfaces, _     = base.PrototypePropertyList().FromMetaPropertiesString(immutablePropertiesString)
 	immutableProperties                  = immutablePropertiesInterfaces.(*baseLists.PropertyList)
-	mutableMetaPropertiesInterfaces, _   = utilities.ReadMetaPropertyList(mutableMetaPropertiesString)
+	mutableMetaPropertiesInterfaces, _   = base.PrototypePropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
 	mutableMetaProperties                = mutableMetaPropertiesInterfaces.(*baseLists.PropertyList)
-	mutablePropertiesInterfaces, _       = utilities.ReadMetaPropertyList(mutablePropertiesString)
+	mutablePropertiesInterfaces, _       = base.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	mutableProperties                    = mutablePropertiesInterfaces.(*baseLists.PropertyList)
 	immutables                           = base.NewImmutables(immutableProperties)
 	mutables                             = base.NewMutables(mutableProperties)

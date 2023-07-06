@@ -8,8 +8,9 @@ import (
 
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
+	"github.com/AssetMantle/schema/go/lists/base"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -87,31 +88,31 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, errorConstants.IncorrectFormat.Wrapf("taker ownable split %s is not a valid integer", transactionRequest.TakerOwnableSplit)
 	}
 
-	mutableMetaProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableMetaProperties)
+	mutableMetaProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
 
-	mutableProperties, err := utilities.ReadMetaPropertyList(transactionRequest.MutableProperties)
+	mutableProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.MutableProperties)
 	if err != nil {
 		return nil, err
 	}
 	mutableProperties = mutableProperties.ScrubData()
 
-	fromID, err := baseIDs.ReadIdentityID(transactionRequest.FromID)
+	fromID, err := baseIDs.PrototypeIdentityID().FromString(transactionRequest.FromID)
 	if err != nil {
 		return nil, err
 	}
 
-	orderID, err := baseIDs.ReadOrderID(transactionRequest.OrderID)
+	orderID, err := baseIDs.PrototypeOrderID().FromString(transactionRequest.OrderID)
 	if err != nil {
 		return nil, err
 	}
 
 	return NewMessage(
 		from,
-		fromID,
-		orderID,
+		fromID.(ids.IdentityID),
+		orderID.(ids.OrderID),
 		takerOwnableSplit,
 		makerOwnableSplit,
 		baseTypes.NewHeight(transactionRequest.ExpiresIn),

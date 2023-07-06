@@ -34,17 +34,17 @@ func (queryRequest *QueryRequest) Validate() error {
 	return err
 }
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	if classificationID, err := baseIDs.ReadClassificationID(cliCommand.ReadString(constants.ClassificationID)); err != nil {
+	if classificationID, err := baseIDs.PrototypeClassificationID().FromString(cliCommand.ReadString(constants.ClassificationID)); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(classificationID), nil
+		return newQueryRequest(classificationID.(ids.ClassificationID)), nil
 	}
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	if classificationID, err := baseIDs.ReadClassificationID(httpRequest.URL.Query().Get(Query.GetName())); err != nil {
+	if classificationID, err := baseIDs.PrototypeClassificationID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(classificationID), nil
+		return newQueryRequest(classificationID.(ids.ClassificationID)), nil
 	}
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {

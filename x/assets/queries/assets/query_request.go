@@ -36,17 +36,17 @@ func (queryRequest *QueryRequest) Validate() error {
 	return err
 }
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	assetID, err := baseIDs.ReadAssetID(cliCommand.ReadString(constants.AssetID))
+	assetID, err := baseIDs.PrototypeAssetID().FromString(cliCommand.ReadString(constants.AssetID))
 	if err != nil {
 		return &QueryRequest{}, err
 	}
 
 	limit := cliCommand.ReadInt(constants.Limit)
 
-	return newQueryRequest(assetID, int32(limit)), nil
+	return newQueryRequest(assetID.(ids.AssetID), int32(limit)), nil
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	assetID, err := baseIDs.ReadAssetID(httpRequest.URL.Query().Get(Query.GetName()))
+	assetID, err := baseIDs.PrototypeAssetID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName()))
 	if err != nil {
 		return &QueryRequest{}, err
 	}
@@ -56,7 +56,7 @@ func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRe
 		limit = query.DefaultLimit
 	}
 
-	return newQueryRequest(assetID, int32(limit)), nil
+	return newQueryRequest(assetID.(ids.AssetID), int32(limit)), nil
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
 	return base.CodecPrototype().MarshalJSON(queryRequest)

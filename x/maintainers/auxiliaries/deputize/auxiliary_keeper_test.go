@@ -12,7 +12,6 @@ import (
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -44,7 +43,7 @@ var (
 	testClassificationID    = baseIDs.NewClassificationID(immutables, mutables)
 	testFromID              = baseIDs.NewIdentityID(testClassificationID, immutables)
 	maintainedProperty      = "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, _ = utilities.ReadMetaPropertyList(maintainedProperty)
+	maintainedProperties, _ = base.PrototypePropertyList().FromMetaPropertiesString(maintainedProperty)
 	permissions             = maintainerUtilities.SetModulePermissions(true, true, true)
 )
 

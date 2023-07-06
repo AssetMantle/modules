@@ -11,7 +11,6 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -29,26 +28,26 @@ type fields struct {
 }
 
 func Test_messageFromInterface(t *testing.T) {
-	fromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	fromID, err := baseIDs.PrototypeIdentityID().FromString("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
 	testFromID := fromID.(*baseIDs.IdentityID)
 	require.NoError(t, err)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaPropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 	immutableMetaProperties := immutableMetaPropertiesInterface.(*baseLists.PropertyList)
 
-	immutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
+	immutablePropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 	immutableProperties := immutablePropertiesInterface.(*baseLists.PropertyList)
 
-	mutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaPropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 	mutableMetaProperties := mutableMetaPropertiesInterface.(*baseLists.PropertyList)
 
-	mutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
+	mutablePropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	mutableProperties := mutablePropertiesInterface.(*baseLists.PropertyList)
 
@@ -91,26 +90,26 @@ func Test_messagePrototype(t *testing.T) {
 }
 
 func Test_message_GetSigners(t *testing.T) {
-	fromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	fromID, err := baseIDs.PrototypeIdentityID().FromString("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
 	testFromID := fromID.(*baseIDs.IdentityID)
 	require.NoError(t, err)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaPropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 	immutableMetaProperties := immutableMetaPropertiesInterface.(*baseLists.PropertyList)
 
-	immutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
+	immutablePropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 	immutableProperties := immutablePropertiesInterface.(*baseLists.PropertyList)
 
-	mutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaPropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 	mutableMetaProperties := mutableMetaPropertiesInterface.(*baseLists.PropertyList)
 
-	mutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
+	mutablePropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	mutableProperties := mutablePropertiesInterface.(*baseLists.PropertyList)
 
@@ -140,26 +139,26 @@ func Test_message_GetSigners(t *testing.T) {
 }
 
 func Test_message_RegisterCodec(t *testing.T) {
-	fromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	fromID, err := baseIDs.PrototypeIdentityID().FromString("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
 	testFromID := fromID.(*baseIDs.IdentityID)
 	require.NoError(t, err)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaPropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 	immutableMetaProperties := immutableMetaPropertiesInterface.(*baseLists.PropertyList)
 
-	immutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
+	immutablePropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 	immutableProperties := immutablePropertiesInterface.(*baseLists.PropertyList)
 
-	mutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaPropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 	mutableMetaProperties := mutableMetaPropertiesInterface.(*baseLists.PropertyList)
 
-	mutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
+	mutablePropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	mutableProperties := mutablePropertiesInterface.(*baseLists.PropertyList)
 
@@ -190,26 +189,26 @@ func Test_message_RegisterCodec(t *testing.T) {
 }
 
 func Test_message_Type(t *testing.T) {
-	fromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	fromID, err := baseIDs.PrototypeIdentityID().FromString("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
 	testFromID := fromID.(*baseIDs.IdentityID)
 	require.NoError(t, err)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaPropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 	immutableMetaProperties := immutableMetaPropertiesInterface.(*baseLists.PropertyList)
 
-	immutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
+	immutablePropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 	immutableProperties := immutablePropertiesInterface.(*baseLists.PropertyList)
 
-	mutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaPropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 	mutableMetaProperties := mutableMetaPropertiesInterface.(*baseLists.PropertyList)
 
-	mutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
+	mutablePropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	mutableProperties := mutablePropertiesInterface.(*baseLists.PropertyList)
 
@@ -239,26 +238,26 @@ func Test_message_Type(t *testing.T) {
 }
 
 func Test_message_ValidateBasic(t *testing.T) {
-	fromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	fromID, err := baseIDs.PrototypeIdentityID().FromString("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
 	testFromID := fromID.(*baseIDs.IdentityID)
 	require.NoError(t, err)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaPropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 	immutableMetaProperties := immutableMetaPropertiesInterface.(*baseLists.PropertyList)
 
-	immutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
+	immutablePropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 	immutableProperties := immutablePropertiesInterface.(*baseLists.PropertyList)
 
-	mutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaPropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 	mutableMetaProperties := mutableMetaPropertiesInterface.(*baseLists.PropertyList)
 
-	mutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
+	mutablePropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	mutableProperties := mutablePropertiesInterface.(*baseLists.PropertyList)
 
@@ -288,26 +287,26 @@ func Test_message_ValidateBasic(t *testing.T) {
 }
 
 func Test_NewMessage(t *testing.T) {
-	fromID, err := baseIDs.ReadIdentityID("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
+	fromID, err := baseIDs.PrototypeIdentityID().FromString("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
 	testFromID := fromID.(*baseIDs.IdentityID)
 	require.NoError(t, err)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	immutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaPropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 	immutableMetaProperties := immutableMetaPropertiesInterface.(*baseLists.PropertyList)
 
-	immutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultImmutable1:S|defaultImmutable1")
+	immutablePropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 	immutableProperties := immutablePropertiesInterface.(*baseLists.PropertyList)
 
-	mutableMetaPropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaPropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 	mutableMetaProperties := mutableMetaPropertiesInterface.(*baseLists.PropertyList)
 
-	mutablePropertiesInterface, err := utilities.ReadMetaPropertyList("defaultMutable1:S|defaultMutable1")
+	mutablePropertiesInterface, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 	mutableProperties := mutablePropertiesInterface.(*baseLists.PropertyList)
 

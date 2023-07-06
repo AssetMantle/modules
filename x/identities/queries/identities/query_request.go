@@ -36,17 +36,17 @@ func (queryRequest *QueryRequest) Validate() error {
 	return err
 }
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	identityID, err := baseIDs.ReadIdentityID(cliCommand.ReadString(constants.IdentityID))
+	identityID, err := baseIDs.PrototypeIdentityID().FromString(cliCommand.ReadString(constants.IdentityID))
 	if err != nil {
 		return &QueryRequest{}, err
 	}
 
 	limit := cliCommand.ReadInt(constants.Limit)
 
-	return newQueryRequest(identityID, int32(limit)), nil
+	return newQueryRequest(identityID.(ids.IdentityID), int32(limit)), nil
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	identityID, err := baseIDs.ReadIdentityID(httpRequest.URL.Query().Get(Query.GetName()))
+	identityID, err := baseIDs.PrototypeIdentityID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName()))
 	if err != nil {
 		return &QueryRequest{}, err
 	}
@@ -55,7 +55,7 @@ func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRe
 	if err != nil {
 		limit = query.DefaultLimit
 	}
-	return newQueryRequest(identityID, int32(limit)), nil
+	return newQueryRequest(identityID.(ids.IdentityID), int32(limit)), nil
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
 	return base.CodecPrototype().MarshalJSON(queryRequest)

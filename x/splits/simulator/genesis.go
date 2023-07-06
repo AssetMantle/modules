@@ -8,6 +8,7 @@ import (
 
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
@@ -44,17 +45,17 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		for _, id := range assetMap {
 			assetIDString = id
 		}
-		assetID, _ := base.ReadAssetID(assetIDString)
+		assetID, _ := base.PrototypeAssetID().FromString(assetIDString)
 
 		identityMap := identities.GetIDData(simulationState.Accounts[i].Address.String())
 
 		for _, id := range identityMap {
 			identityIDString = id
 		}
-		identityID, _ := base.ReadIdentityID(identityIDString)
+		identityID, _ := base.PrototypeIdentityID().FromString(identityIDString)
 
-		mappableList[index] = mappable.NewMappable(baseTypes.NewSplit(identityID, assetID.ToAnyOwnableID().Get(), sdkTypes.NewInt(1)))
-		mappableList[index+1] = mappable.NewMappable(baseTypes.NewSplit(identityID, base.NewCoinID(base.NewStringID("stake")), sdkTypes.NewInt(1000)))
+		mappableList[index] = mappable.NewMappable(baseTypes.NewSplit(identityID.(ids.IdentityID), assetID.(ids.AssetID).ToAnyOwnableID().Get(), sdkTypes.NewInt(1)))
+		mappableList[index+1] = mappable.NewMappable(baseTypes.NewSplit(identityID.(ids.IdentityID), base.NewCoinID(base.NewStringID("stake")), sdkTypes.NewInt(1000)))
 		index += 2
 	}
 

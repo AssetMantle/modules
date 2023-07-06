@@ -12,7 +12,6 @@ import (
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -36,7 +35,7 @@ var (
 	testClassificationID     = baseIDs.NewClassificationID(immutables, mutables)
 	testFromID               = baseIDs.NewIdentityID(testClassificationID, immutables)
 	maintainedPropertyString = "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, _  = utilities.ReadMetaPropertyList(maintainedPropertyString)
+	maintainedProperties, _  = base.PrototypePropertyList().FromMetaPropertiesString(maintainedPropertyString)
 	testBaseRequest          = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 )
 

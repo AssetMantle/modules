@@ -31,6 +31,7 @@ var (
 	ImmutableMetaProperties = baseHelpers.NewCLIFlag("immutableMetaProperties", "", "immutableMetaProperties")
 	ImmutableProperties     = baseHelpers.NewCLIFlag("immutableProperties", "", "immutableProperties")
 	KafkaNodes              = baseHelpers.NewCLIFlag("kafkaNodes", "localhost:9092", "Space separated addresses in quotes of the kafka listening node: example: --kafkaPort \"addr1 addr2\" ")
+	Key                     = baseHelpers.NewCLIFlag("key", "", "Key")
 	Limit                   = baseHelpers.NewCLIFlag("limit", 100, "limit")
 	MaintainerID            = baseHelpers.NewCLIFlag("maintainerID", "", "MaintainerID")
 	MaintainedProperties    = baseHelpers.NewCLIFlag("maintainedProperties", "", "MaintainedProperties")

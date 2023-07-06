@@ -10,8 +10,7 @@ import (
 
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/lists/utilities"
-	propertiesUtilities "github.com/AssetMantle/schema/go/properties/utilities"
+	"github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -219,13 +218,13 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
-	immutableMetaProperties, err := propertiesUtilities.ReadMetaProperty(immutableMetaPropertiesString)
+	immutableMetaProperties, err := base.PrototypeMetaProperty().FromString(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	immutableProperties, err := utilities.ReadMetaPropertyList(immutablePropertiesString)
+	immutableProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(immutablePropertiesString)
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := propertiesUtilities.ReadMetaProperty(mutableMetaPropertiesString)
+	mutableMetaProperties, err := base.PrototypeMetaProperty().FromString(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	mutableProperties, err := utilities.ReadMetaPropertyList(mutablePropertiesString)
+	mutableProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

@@ -84,8 +84,8 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 			identityIDString = id
 			break
 		}
-		identityID, _ := baseIDs.ReadIdentityID(identityIDString)
-		message = GenerateDefineMessage(account.Address, identityID, rand).(*define.Message)
+		identityID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+		message = GenerateDefineMessage(account.Address, identityID.(ids.IdentityID), rand).(*define.Message)
 		result, err = simulationModules.ExecuteMessage(context, module, message)
 		if err != nil {
 			return simulationTypes.NewOperationMsg(message, false, "error executing define message", base.CodecPrototype().GetProtoCodec()), nil, nil
@@ -189,8 +189,8 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 
 		}
 
-		classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
-		fromID, _ := baseIDs.ReadIdentityID(identityIDString)
+		classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
+		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 		toIDMap := identities.GetIDData(to.Address.String())
 
 		if toIDMap == nil {
@@ -202,15 +202,15 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 			break
 		}
 
-		toID, _ := baseIDs.ReadIdentityID(identityIDString)
+		toID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 		mappable := &mappable.Mappable{}
 		base.CodecPrototype().Unmarshal(assets.GetMappableBytes(classificationIDString), mappable)
-		deputizeMessage := deputize.NewMessage(from.Address, fromID, toID, classificationID, mappable.Asset.Mutables.PropertyList, true, true, true, true, true, true)
+		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID), mappable.Asset.Mutables.PropertyList, true, true, true, true, true, true)
 		result, err = simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(deputizeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
-		revokeMessage := revoke.NewMessage(from.Address, fromID, toID, classificationID)
+		revokeMessage := revoke.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID))
 		result, err = simulationModules.ExecuteMessage(context, module, revokeMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(revokeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
@@ -230,21 +230,21 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 			identityIDString = id
 			break
 		}
-		fromID, _ := baseIDs.ReadIdentityID(identityIDString)
+		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
 		toIDMap := identities.GetIDData(to.Address.String())
 		for _, id := range toIDMap {
 			identityIDString = id
 			break
 		}
-		toID, _ := baseIDs.ReadIdentityID(identityIDString)
+		toID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
 		assetMap := assets.GetAssetData(from.Address.String())
 		for class, _ := range assetMap {
 			classificationIDString = class
 			break
 		}
-		classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
+		classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
 
 		mappable := &mappable.Mappable{}
 		base.CodecPrototype().Unmarshal(assets.GetMappableBytes(classificationIDString), mappable)
@@ -272,13 +272,13 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 			}
 		}
 
-		mintMessage := mint.NewMessage(from.Address, fromID, toID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+		mintMessage := mint.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 		result, err = simulationModules.ExecuteMessage(context, module, mintMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(mintMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
-		mintedAssetID := baseIDs.NewAssetID(classificationID, baseQualified.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(immutableProperties.Get()...)...)))
-		mutateMessage := mutate.NewMessage(from.Address, fromID, mintedAssetID, updatedProperties, mutableProperties)
+		mintedAssetID := baseIDs.NewAssetID(classificationID.(ids.ClassificationID), baseQualified.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(immutableProperties.Get()...)...)))
+		mutateMessage := mutate.NewMessage(from.Address, fromID.(ids.IdentityID), mintedAssetID, updatedProperties, mutableProperties)
 
 		result, err = simulationModules.ExecuteMessage(context, module, mutateMessage.(helpers.Message))
 		if err != nil {
@@ -299,21 +299,21 @@ func GetMintMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 		identityIDString = id
 		break
 	}
-	fromID, _ := baseIDs.ReadIdentityID(identityIDString)
+	fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
 	toIDMap := identities.GetIDData(to.Address.String())
 	for _, id := range toIDMap {
 		identityIDString = id
 		break
 	}
-	toID, _ := baseIDs.ReadIdentityID(identityIDString)
+	toID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
 	assetMap := assets.GetAssetData(from.Address.String())
 	for class, _ := range assetMap {
 		classificationIDString = class
 		break
 	}
-	classificationID, _ := baseIDs.ReadClassificationID(classificationIDString)
+	classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
 	mappable := &mappable.Mappable{}
 	base.CodecPrototype().Unmarshal(assets.GetMappableBytes(classificationIDString), mappable)
 	immutableMetaProperties := &baseLists.PropertyList{}
@@ -337,5 +337,5 @@ func GetMintMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 			mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
 		}
 	}
-	return mint.NewMessage(from.Address, fromID, toID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+	return mint.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 }

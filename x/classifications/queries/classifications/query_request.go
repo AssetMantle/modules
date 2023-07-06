@@ -36,17 +36,17 @@ func (queryRequest *QueryRequest) Validate() error {
 	return err
 }
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	classificationID, err := baseIDs.ReadClassificationID(cliCommand.ReadString(constants.ClassificationID))
+	classificationID, err := baseIDs.PrototypeClassificationID().FromString(cliCommand.ReadString(constants.ClassificationID))
 	if err != nil {
 		return &QueryRequest{}, err
 	}
 
 	limit := cliCommand.ReadInt(constants.Limit)
 
-	return newQueryRequest(classificationID, int32(limit)), nil
+	return newQueryRequest(classificationID.(ids.ClassificationID), int32(limit)), nil
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	classificationID, err := baseIDs.ReadClassificationID(httpRequest.URL.Query().Get(Query.GetName()))
+	classificationID, err := baseIDs.PrototypeClassificationID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName()))
 	if err != nil {
 		return &QueryRequest{}, err
 	}
@@ -56,7 +56,7 @@ func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRe
 		limit = query.DefaultLimit
 	}
 
-	return newQueryRequest(classificationID, int32(limit)), nil
+	return newQueryRequest(classificationID.(ids.ClassificationID), int32(limit)), nil
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
 	return base.CodecPrototype().MarshalJSON(queryRequest)

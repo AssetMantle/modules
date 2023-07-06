@@ -35,17 +35,17 @@ func (queryRequest *QueryRequest) Validate() error {
 }
 
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	if splitID, err := baseIDs.ReadSplitID(cliCommand.ReadString(constants.SplitID)); err != nil {
+	if splitID, err := baseIDs.PrototypeSplitID().FromString(cliCommand.ReadString(constants.SplitID)); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(splitID), nil
+		return newQueryRequest(splitID.(ids.SplitID)), nil
 	}
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	if splitID, err := baseIDs.ReadSplitID(httpRequest.URL.Query().Get(Query.GetName())); err != nil {
+	if splitID, err := baseIDs.PrototypeSplitID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(splitID), nil
+		return newQueryRequest(splitID.(ids.SplitID)), nil
 	}
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
