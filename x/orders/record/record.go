@@ -26,13 +26,21 @@ func (record *Record) WithMappable(Mappable helpers.Mappable) helpers.Record {
 	return record
 }
 func (record *Record) ReadFromIterator(iterator sdkTypes.Iterator) helpers.Record {
+	Bytes := iterator.Value()
+	if Bytes == nil {
+		return Prototype()
+	}
+
 	Mappable := record.GetMappable()
 	base.CodecPrototype().MustUnmarshal(iterator.Value(), Mappable)
 	record.WithMappable(Mappable)
 	return record
 }
 func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
-	Bytes := kvStore.Get(record.GetKey().GenerateStoreKeyBytes())
+	if record.GetKey() == nil || len(record.GetKey().GeneratePrefixedStoreKeyBytes()) == 0 {
+		return Prototype()
+	}
+	Bytes := kvStore.Get(record.GetKey().GeneratePrefixedStoreKeyBytes())
 	if Bytes == nil {
 		return Prototype()
 	}
@@ -43,11 +51,11 @@ func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
 }
 func (record *Record) Write(kvStore sdkTypes.KVStore) helpers.Record {
 	Bytes := base.CodecPrototype().MustMarshal(record.GetMappable())
-	kvStore.Set(record.GetKey().GenerateStoreKeyBytes(), Bytes)
+	kvStore.Set(record.GetKey().GeneratePrefixedStoreKeyBytes(), Bytes)
 	return record
 }
 func (record *Record) Delete(kvStore sdkTypes.KVStore) {
-	kvStore.Delete(record.GetKey().GenerateStoreKeyBytes())
+	kvStore.Delete(record.GetKey().GeneratePrefixedStoreKeyBytes())
 }
 
 func RecordsFromInterface(records []helpers.Record) []*Record {

@@ -4,23 +4,23 @@
 package key
 
 import (
-	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/maintainers/constants"
 )
 
 var _ helpers.Key = (*Key)(nil)
 
-func (key *Key) GenerateStoreKeyBytes() []byte {
-	return constants.ModuleStoreKeyPrefix.GenerateStoreKey(key.MaintainerID.Bytes())
+func (key *Key) GenerateStorePrefixBytes() []byte {
+	return []byte{}
 }
-func (*Key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, Key{})
+func (key *Key) GenerateStoreKeyBytes() []byte {
+	return key.MaintainerID.Bytes()
+}
+func (key *Key) GeneratePrefixedStoreKeyBytes() []byte {
+	return append(key.GenerateStorePrefixBytes(), key.GenerateStoreKeyBytes()...)
 }
 func (key *Key) IsPartial() bool {
 	return len(key.MaintainerID.Bytes()) == 0

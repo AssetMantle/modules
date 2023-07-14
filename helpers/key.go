@@ -3,14 +3,11 @@
 
 package helpers
 
-import "github.com/cosmos/cosmos-sdk/codec"
-
 // Key SHOULD be derivable from the object it is referencing and SHOULD not be totally arbitrary or sequential
 type Key interface {
-	String() string
+	GenerateStorePrefixBytes() []byte
 	GenerateStoreKeyBytes() []byte
-	// TODO Check is register legacyAmino is still required
-	RegisterLegacyAminoCodec(*codec.LegacyAmino)
+	GeneratePrefixedStoreKeyBytes() []byte
 	IsPartial() bool
 	// TODO ** check all key impls
 	Equals(Key) bool
