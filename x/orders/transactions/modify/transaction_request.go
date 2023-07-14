@@ -24,7 +24,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq               rest.BaseReq `json:"baseReq"`
-	FromID                string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
+	FromID                string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
 	OrderID               string       `json:"orderID" valid:"required~required field orderID missing, matches(^[A-Za-z0-9-_|=.*]+$)~invalid field orderID"`
 	TakerOwnableSplit     string       `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing, matches(^[0-9.]+$)~invalid field takerOwnableSplit"`
 	MakerOwnableSplit     string       `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing, matches(^[0-9.]+$)~invalid field makerOwnableSplit"`

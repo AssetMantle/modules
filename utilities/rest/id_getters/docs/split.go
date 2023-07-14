@@ -33,6 +33,6 @@ func splitIDHandler(context client.Context) http.HandlerFunc {
 			coinID = baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom))
 		}
 
-		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewSplitID(fromID.(ids.IdentityID), coinID).AsString(), "", nil))
+		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewSplitID(coinID, fromID.(ids.IdentityID)).AsString(), "", nil))
 	}
 }

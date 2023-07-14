@@ -54,8 +54,8 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		}
 		identityID, _ := base.PrototypeIdentityID().FromString(identityIDString)
 
-		mappableList[index] = mappable.NewMappable(baseTypes.NewSplit(identityID.(ids.IdentityID), assetID.(ids.AssetID).ToAnyOwnableID().Get(), sdkTypes.NewInt(1)))
-		mappableList[index+1] = mappable.NewMappable(baseTypes.NewSplit(identityID.(ids.IdentityID), base.NewCoinID(base.NewStringID("stake")), sdkTypes.NewInt(1000)))
+		mappableList[index] = mappable.NewMappable(baseTypes.NewSplit(assetID.(ids.AssetID).ToAnyOwnableID().Get(), identityID.(ids.IdentityID), sdkTypes.NewInt(1)))
+		mappableList[index+1] = mappable.NewMappable(baseTypes.NewSplit(base.NewCoinID(base.NewStringID("stake")), identityID.(ids.IdentityID), sdkTypes.NewInt(1000)))
 		index += 2
 	}
 

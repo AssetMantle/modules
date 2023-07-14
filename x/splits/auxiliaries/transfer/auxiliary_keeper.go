@@ -30,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
-	fromSplitID := baseIDs.NewSplitID(auxiliaryRequest.FromID, auxiliaryRequest.OwnableID)
+	fromSplitID := baseIDs.NewSplitID(auxiliaryRequest.OwnableID, auxiliaryRequest.FromID)
 	Mappable := splits.Fetch(key.NewKey(fromSplitID)).GetMappable(key.NewKey(fromSplitID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("split with ID %s not found", fromSplitID.AsString())
@@ -46,10 +46,10 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		splits.Mutate(mappable.NewMappable(fromSplit))
 	}
 
-	toSplitID := baseIDs.NewSplitID(auxiliaryRequest.ToID, auxiliaryRequest.OwnableID)
+	toSplitID := baseIDs.NewSplitID(auxiliaryRequest.OwnableID, auxiliaryRequest.ToID)
 
 	if Mappable := splits.Fetch(key.NewKey(toSplitID)).GetMappable(key.NewKey(toSplitID)); Mappable == nil {
-		splits.Add(mappable.NewMappable(base.NewSplit(auxiliaryRequest.ToID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value)))
+		splits.Add(mappable.NewMappable(base.NewSplit(auxiliaryRequest.OwnableID, auxiliaryRequest.ToID, auxiliaryRequest.Value)))
 	} else {
 		splits.Mutate(mappable.NewMappable(mappable.GetSplit(Mappable).Receive(auxiliaryRequest.Value)))
 	}

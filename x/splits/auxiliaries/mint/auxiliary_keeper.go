@@ -22,12 +22,12 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	splitID := baseIDs.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
+	splitID := baseIDs.NewSplitID(auxiliaryRequest.OwnableID, auxiliaryRequest.OwnerID)
 	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(splitID))
 
 	Mappable := splits.GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
-		splits.Add(mappable.NewMappable(base.NewSplit(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Value)))
+		splits.Add(mappable.NewMappable(base.NewSplit(auxiliaryRequest.OwnableID, auxiliaryRequest.OwnerID, auxiliaryRequest.Value)))
 	} else {
 		splits.Mutate(mappable.NewMappable(mappable.GetSplit(Mappable).Receive(auxiliaryRequest.Value)))
 	}

@@ -20,7 +20,7 @@ func (mappable *Mappable) ValidateBasic() error {
 	return mappable.Split.ValidateBasic()
 }
 func (mappable *Mappable) GenerateKey() helpers.Key {
-	return key.NewKey(baseIDs.NewSplitID(mappable.Split.GetOwnerID(), mappable.Split.GetOwnableID()))
+	return key.NewKey(baseIDs.NewSplitID(mappable.Split.GetOwnableID(), mappable.Split.GetOwnerID()))
 }
 func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, Mappable{})
