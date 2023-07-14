@@ -26,19 +26,19 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
 	circulatingSupply := utilities.GetOwnableTotalSplitsValue(splits, auxiliaryRequest.OwnableID)
-	if !circulatingSupply.Equal(auxiliaryRequest.Supply) {
-		return nil, errorConstants.InvalidRequest.Wrapf("circulating supply %d doesn't match asset's supply %d", circulatingSupply, auxiliaryRequest.Supply)
+	if !circulatingSupply.Equal(auxiliaryRequest.Value) {
+		return nil, errorConstants.InvalidRequest.Wrapf("circulating supply %d doesn't match asset's supply %d", circulatingSupply, auxiliaryRequest.Value)
 	}
 
-	splitID := baseIDs.NewSplitID(auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID)
+	splitID := baseIDs.NewSplitID(auxiliaryRequest.OwnableID, auxiliaryRequest.OwnerID)
 	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("split with ID %s not found", splitID.AsString())
 	}
 	split := mappable.GetSplit(Mappable)
 
-	if !split.GetValue().Equal(auxiliaryRequest.Supply) {
-		return nil, errorConstants.InvalidRequest.Wrapf("owned value %d doesn't match asset's circulating supply %d", split.GetValue(), auxiliaryRequest.Supply)
+	if !split.GetValue().Equal(auxiliaryRequest.Value) {
+		return nil, errorConstants.InvalidRequest.Wrapf("owned value %d doesn't match asset's circulating supply %d", split.GetValue(), auxiliaryRequest.Value)
 	}
 
 	splits.Remove(mappable.NewMappable(split))
