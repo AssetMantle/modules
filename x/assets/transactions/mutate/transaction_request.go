@@ -22,8 +22,8 @@ import (
 
 type transactionRequest struct {
 	BaseReq               rest.BaseReq `json:"baseReq"`
-	FromID                string       `json:"fromID" valid:"required~required field fromID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field fromID"`
-	AssetID               string       `json:"assetID" valid:"required~required field assetID missing, matches(^[A-Za-z0-9-_=.|]+$)~invalid field assetID"`
+	FromID                string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
+	AssetID               string       `json:"assetID" valid:"required~required field assetID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field assetID"`
 	MutableMetaProperties string       `json:"mutableMetaProperties" valid:"matches(^.*$)~invalid field mutableMetaProperties"`
 	MutableProperties     string       `json:"mutableProperties" valid:"matches(^.*$)~invalid field mutableProperties"`
 }
