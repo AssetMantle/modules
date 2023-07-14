@@ -4,26 +4,26 @@
 package key
 
 import (
-	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/identities/constants"
 )
 
 var _ helpers.Key = (*Key)(nil)
 
-func (key *Key) GenerateStoreKeyBytes() []byte {
-	return constants.ModuleStoreKeyPrefix.GenerateStoreKey(key.IdentityID.Bytes())
+func (key *Key) GenerateStorePrefixBytes() []byte {
+	return []byte{}
 }
-func (*Key) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, Key{})
+func (key *Key) GenerateStoreKeyBytes() []byte {
+	return key.IdentityID.Bytes()
+}
+func (key *Key) GeneratePrefixedStoreKeyBytes() []byte {
+	return append(key.GenerateStorePrefixBytes(), key.GenerateStoreKeyBytes()...)
 }
 func (key *Key) IsPartial() bool {
-	return len(key.IdentityID.GetHashID().Bytes()) == 0
+	return len(key.IdentityID.Bytes()) == 0
 }
 func (key *Key) Equals(compareKey helpers.Key) bool {
 	if CompareKey, err := keyFromInterface(compareKey); err != nil {

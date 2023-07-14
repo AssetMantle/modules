@@ -122,15 +122,15 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{testDataID}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{testDataID}).GenerateStoreKeyBytes())},
-		{"+ve with nil", fields{testDataID1}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{testDataID1}).GenerateStoreKeyBytes())},
+		{"+ve", fields{testDataID}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{testDataID}).GeneratePrefixedStoreKeyBytes())},
+		{"+ve with nil", fields{testDataID1}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{testDataID1}).GeneratePrefixedStoreKeyBytes())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			key := &Key{
 				DataID: tt.fields.DataID,
 			}
-			if got := key.GenerateStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
+			if got := key.GeneratePrefixedStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GenerateStoreKeyGenerateStoreKeyBytes() = %v, want %v", got, tt.want)
 			}
 		})

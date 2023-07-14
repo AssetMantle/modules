@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	prefixStore "github.com/cosmos/cosmos-sdk/store/prefix"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
@@ -48,13 +49,7 @@ func (mapper mapper) FetchAll(context context.Context) []helpers.Record {
 	return records
 }
 func (mapper mapper) Iterate(context context.Context, key helpers.Key, accumulator func(helpers.Record) bool) {
-	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey), key.GenerateStoreKeyBytes())
-
-	defer func(kvStorePrefixIterator sdkTypes.Iterator) {
-		if err := kvStorePrefixIterator.Close(); err != nil {
-			sdkTypes.UnwrapSDKContext(context).Logger().Error(err.Error())
-		}
-	}(kvStorePrefixIterator)
+	kvStorePrefixIterator := prefixStore.NewStore(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey), key.GenerateStorePrefixBytes()).Iterator(key.GenerateStoreKeyBytes(), nil)
 
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
 		if accumulator(mapper.recordPrototype().ReadFromIterator(kvStorePrefixIterator)) {
@@ -66,29 +61,19 @@ func (mapper mapper) Iterate(context context.Context, key helpers.Key, accumulat
 	}
 }
 func (mapper mapper) IteratePaginated(context context.Context, key helpers.Key, limit int32, accumulator func(helpers.Record) bool) {
-	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey), key.GenerateStoreKeyBytes())
-
-	defer func(kvStorePrefixIterator sdkTypes.Iterator) {
-		if err := kvStorePrefixIterator.Close(); err != nil {
-			sdkTypes.UnwrapSDKContext(context).Logger().Error(err.Error())
+	mapper.Iterate(context, key, func(record helpers.Record) bool {
+		if limit > 0 {
+			limit--
+			return accumulator(record)
 		}
-	}(kvStorePrefixIterator)
-
-	for i := int32(0); kvStorePrefixIterator.Valid() && i < limit; kvStorePrefixIterator.Next() {
-		if accumulator(mapper.recordPrototype().ReadFromIterator(kvStorePrefixIterator)) {
-			if err := kvStorePrefixIterator.Close(); err != nil {
-				sdkTypes.UnwrapSDKContext(context).Logger().Debug(err.Error())
-			}
-			break
-		}
-		i++
-	}
+		return true
+	})
 }
 func (mapper mapper) IterateAll(context context.Context, accumulator func(record helpers.Record) bool) {
 	mapper.Iterate(context, mapper.recordPrototype().GetKey(), accumulator)
 }
 func (mapper mapper) StoreDecoder(kvA kv.Pair, kvB kv.Pair) string {
-	if bytes.Equal(kvA.Key[:1], mapper.recordPrototype().GetKey().GenerateStoreKeyBytes()) {
+	if bytes.Equal(kvA.Key[:1], mapper.recordPrototype().GetKey().GeneratePrefixedStoreKeyBytes()) {
 		mappableA := mapper.recordPrototype().GetMappable()
 		CodecPrototype().MustUnmarshal(kvA.Value, mappableA)
 
