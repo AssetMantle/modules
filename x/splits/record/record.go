@@ -26,12 +26,20 @@ func (record *Record) WithMappable(Mappable helpers.Mappable) helpers.Record {
 	return record
 }
 func (record *Record) ReadFromIterator(iterator sdkTypes.Iterator) helpers.Record {
+	Bytes := iterator.Value()
+	if Bytes == nil {
+		return Prototype()
+	}
+
 	Mappable := record.GetMappable()
 	base.CodecPrototype().MustUnmarshal(iterator.Value(), Mappable)
 	record.WithMappable(Mappable)
 	return record
 }
 func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
+	if record.GetKey() == nil || len(record.GetKey().GenerateStoreKeyBytes()) == 0 {
+		return Prototype()
+	}
 	Bytes := kvStore.Get(record.GetKey().GenerateStoreKeyBytes())
 	if Bytes == nil {
 		return Prototype()
