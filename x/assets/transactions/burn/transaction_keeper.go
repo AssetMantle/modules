@@ -86,7 +86,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if supplyMetaProperty := metaProperties.GetProperty(propertyConstants.SupplyProperty.GetID()); supplyMetaProperty != nil && supplyMetaProperty.IsMeta() {
 		supply := supplyMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
 
-		if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, supply)); err != nil {
+		if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.AssetID, message.FromID, supply)); err != nil {
 			return nil, err
 		}
 

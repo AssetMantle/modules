@@ -20,11 +20,11 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.
 		return nil, errorConstants.InvalidRequest.Wrapf("value must be greater than zero")
 	}
 
-	splitID := baseIDs.NewSplitID(ownerID, ownableID)
+	splitID := baseIDs.NewSplitID(ownableID, ownerID)
 
 	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
-		splits.Add(mappable.NewMappable(base.NewSplit(ownerID, ownableID, value)))
+		splits.Add(mappable.NewMappable(base.NewSplit(ownableID, ownerID, value)))
 	} else {
 		splits.Mutate(mappable.NewMappable(mappable.GetSplit(Mappable).Receive(value)))
 	}
@@ -37,7 +37,7 @@ func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID
 		return nil, errorConstants.InvalidRequest.Wrapf("value must be greater than zero")
 	}
 
-	splitID := baseIDs.NewSplitID(ownerID, ownableID)
+	splitID := baseIDs.NewSplitID(ownableID, ownerID)
 
 	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {

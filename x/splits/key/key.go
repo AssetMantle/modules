@@ -14,16 +14,16 @@ import (
 var _ helpers.Key = (*Key)(nil)
 
 func (key *Key) GenerateStorePrefixBytes() []byte {
-	return key.SplitID.OwnerID.Bytes()
+	return key.SplitID.GetOwnableID().Bytes()
 }
 func (key *Key) GenerateStoreKeyBytes() []byte {
-	return key.SplitID.GetOwnableID().Bytes()
+	return key.SplitID.GetOwnerID().Bytes()
 }
 func (key *Key) GeneratePrefixedStoreKeyBytes() []byte {
 	return append(key.GenerateStorePrefixBytes(), key.GenerateStoreKeyBytes()...)
 }
 func (key *Key) IsPartial() bool {
-	return len(key.SplitID.GetOwnableID().Bytes()) == 0
+	return len(key.SplitID.GetOwnerID().Bytes()) == 0
 }
 func (key *Key) Equals(compareKey helpers.Key) bool {
 	if compareKey, err := keyFromInterface(compareKey); err != nil {
