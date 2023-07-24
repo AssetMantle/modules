@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/splits/queries/ownable"
+	"github.com/AssetMantle/modules/x/splits/queries/balances"
 	"github.com/AssetMantle/modules/x/splits/queries/split"
 )
 
@@ -17,11 +17,11 @@ func TestPrototype(t *testing.T) {
 	require.Panics(t, func() {
 		require.Equal(t, Prototype().GetQuery("splits").GetName(), baseHelpers.NewQueries(
 			split.Query,
-			ownable.Query,
+			balances.Query,
 		).GetQuery("splits").GetName())
-		require.Equal(t, Prototype().GetQuery("ownable").GetName(), baseHelpers.NewQueries(
+		require.Equal(t, Prototype().GetQuery("balances").GetName(), baseHelpers.NewQueries(
 			split.Query,
-			ownable.Query,
-		).GetQuery("ownable").GetName())
+			balances.Query,
+		).GetQuery("balances").GetName())
 	})
 }

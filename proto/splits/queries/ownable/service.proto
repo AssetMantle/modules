@@ -7,6 +7,6 @@ import "splits/queries/ownable/query_response.proto";
 
 service Service{
   rpc Handle(QueryRequest) returns(QueryResponse){
-    option (google.api.http).get = "/mantle/splits/v1beta1/ownable";
+    option (google.api.http).get = "/mantle/splits/v1beta1/balances";
   }
 }

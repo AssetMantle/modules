@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package ownable
+package balances
 
 import (
 	"net/http"
@@ -24,10 +24,10 @@ var _ helpers.QueryRequest = (*QueryRequest)(nil)
 // @Accept json
 // @Produce json
 // @Tags Splits
-// @Param ownableID path string true "ownable ID"
+// @Param ownableID path string true "identity ID"
 // @Success 200 {object} queryRequest "Message for a successful query response"
 // @Failure default  {object}  queryRequest "Message for an unexpected error response."
-// @Router /ownable/{ownableID} [get]
+// @Router /balances/{identityID} [get]
 func (queryRequest *QueryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
