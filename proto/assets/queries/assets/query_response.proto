@@ -2,7 +2,6 @@ syntax = "proto3";
 package assetmantle.modules.assets.queries.assets;
 
 import "assets/record/record.proto";
-import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 
 message QueryResponse {

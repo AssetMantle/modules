@@ -1,7 +1,6 @@
 syntax = "proto3";
 package assetmantle.modules.maintainers.queries.maintainers;
 
-import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "maintainers/record/record.proto";
 

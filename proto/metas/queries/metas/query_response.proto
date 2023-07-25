@@ -1,7 +1,6 @@
 syntax = "proto3";
 package assetmantle.modules.metas.queries.metas;
 
-import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "metas/record/record.proto";
 

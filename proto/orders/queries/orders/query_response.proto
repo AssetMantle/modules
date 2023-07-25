@@ -1,7 +1,6 @@
 syntax = "proto3";
 package assetmantle.modules.orders.queries.orders;
 
-import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "orders/record/record.proto";
 
