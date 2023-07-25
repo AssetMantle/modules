@@ -34,17 +34,17 @@ func (queryRequest *QueryRequest) Validate() error {
 }
 
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	if ownableID, err := baseIDs.PrototypeOwnableID().FromString(cliCommand.ReadString(constants.OwnableID)); err != nil {
+	if identityID, err := baseIDs.PrototypeIdentityID().FromString(cliCommand.ReadString(constants.IdentityID)); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(ownableID.(ids.OwnableID)), nil
+		return newQueryRequest(identityID.(ids.IdentityID)), nil
 	}
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	if ownableID, err := baseIDs.PrototypeOwnableID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName())); err != nil {
+	if identityID, err := baseIDs.PrototypeIdentityID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(ownableID.(ids.OwnableID)), nil
+		return newQueryRequest(identityID.(ids.IdentityID)), nil
 	}
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
@@ -68,6 +68,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 		return &QueryRequest{}
 	}
 }
-func newQueryRequest(ownableID ids.OwnableID) helpers.QueryRequest {
-	return &QueryRequest{OwnableID: ownableID.ToAnyOwnableID().(*baseIDs.AnyOwnableID)}
+func newQueryRequest(identityID ids.IdentityID) helpers.QueryRequest {
+	return &QueryRequest{IdentityID: identityID.(*baseIDs.IdentityID)}
 }

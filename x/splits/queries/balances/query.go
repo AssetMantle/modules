@@ -37,5 +37,5 @@ var Query = baseHelpers.NewQuery(
 		return RegisterServiceHandlerClient(context.Background(), serveMux, NewServiceClient(clientContext))
 	},
 
-	helperConstants.OwnableID,
+	helperConstants.IdentityID,
 )

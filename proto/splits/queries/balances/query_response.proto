@@ -2,8 +2,9 @@ syntax = "proto3";
 package assetmantle.modules.splits.queries.ownable;
 
 import "gogoproto/gogo.proto";
+import "splits/record/record.proto";
 
 message QueryResponse {
   option (gogoproto.goproto_getters) = false;
-  string supply = 1;
+  repeated record.Record list = 1;
 }
