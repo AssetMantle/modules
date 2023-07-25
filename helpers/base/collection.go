@@ -37,6 +37,20 @@ func (collection collection) GetMappables() []helpers.Mappable {
 	}
 	return mappables
 }
+func (collection collection) IterateAll(accumulator func(mappable helpers.Mappable) bool) helpers.Collection {
+	var records []helpers.Record
+
+	collection.mapper.IterateAll(collection.context, func(record helpers.Record) bool {
+		if accumulator(record.GetMappable()) == true {
+			records = append(records, record)
+		}
+		return false
+	})
+
+	collection.records = records
+
+	return collection
+}
 func (collection collection) Iterate(startKey helpers.Key, accumulator func(helpers.Mappable) bool) {
 	collection.mapper.Iterate(collection.context, startKey, func(record helpers.Record) bool {
 		return accumulator(record.GetMappable())
