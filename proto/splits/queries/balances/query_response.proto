@@ -1,5 +1,5 @@
 syntax = "proto3";
-package assetmantle.modules.splits.queries.ownable;
+package assetmantle.modules.splits.queries.balances;
 
 import "gogoproto/gogo.proto";
 import "splits/record/record.proto";
