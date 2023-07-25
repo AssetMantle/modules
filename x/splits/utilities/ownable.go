@@ -13,7 +13,7 @@ import (
 	"github.com/AssetMantle/modules/x/splits/mappable"
 )
 
-func GetOwnableTotalSplitsValue(collection helpers.Collection, ownableID ids.OwnableID) sdkTypes.Int {
+func GetTotalSupply(collection helpers.Collection, ownableID ids.OwnableID) sdkTypes.Int {
 	value := sdkTypes.ZeroInt()
 	accumulator := func(Mappable helpers.Mappable) bool {
 		if mappable.GetSplit(Mappable).GetOwnableID().Compare(ownableID) == 0 {

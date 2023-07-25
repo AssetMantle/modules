@@ -25,7 +25,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
-	circulatingSupply := utilities.GetOwnableTotalSplitsValue(splits, auxiliaryRequest.OwnableID)
+	circulatingSupply := utilities.GetTotalSupply(splits, auxiliaryRequest.OwnableID)
 	if !circulatingSupply.Equal(auxiliaryRequest.Value) {
 		return nil, errorConstants.InvalidRequest.Wrapf("circulating supply %d doesn't match asset's supply %d", circulatingSupply, auxiliaryRequest.Value)
 	}
