@@ -77,7 +77,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	ownableID, err := baseIDs.PrototypeOwnableID().FromString(transactionRequest.OwnableID)
+	ownableID, err := baseIDs.PrototypeAnyOwnableID().FromString(transactionRequest.OwnableID)
 	if err != nil {
 		return nil, err
 	}

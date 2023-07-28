@@ -41,7 +41,8 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 		want helpers.AuxiliaryRequest
 	}{
 		{"+ve", args{testOwnerID, testOwnableID, testValue}, NewAuxiliaryRequest(testOwnerID, testOwnableID, testValue)},
-		{"+ve with nil", args{baseIDs.PrototypeIdentityID(), baseIDs.PrototypeOwnableID(), testValue}, NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseIDs.PrototypeOwnableID(), testValue)},
+
+		{"+ve with nil", args{baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAnyOwnableID(), testValue}, NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAnyOwnableID(), testValue)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
