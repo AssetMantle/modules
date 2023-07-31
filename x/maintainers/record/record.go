@@ -1,6 +1,15 @@
 package record
 
 import (
+	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
+	"github.com/AssetMantle/schema/go/documents/constants"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -20,11 +29,6 @@ func (record *Record) WithKey(Key helpers.Key) helpers.Record {
 	record.Mappable = mappable.Prototype().(*mappable.Mappable)
 	return record
 }
-func (record *Record) WithMappable(Mappable helpers.Mappable) helpers.Record {
-	record.Key = Mappable.GenerateKey().(*key.Key)
-	record.Mappable = Mappable.(*mappable.Mappable)
-	return record
-}
 func (record *Record) ReadFromIterator(iterator sdkTypes.Iterator) helpers.Record {
 	Bytes := iterator.Value()
 	if Bytes == nil {
@@ -33,7 +37,7 @@ func (record *Record) ReadFromIterator(iterator sdkTypes.Iterator) helpers.Recor
 
 	Mappable := record.GetMappable()
 	base.CodecPrototype().MustUnmarshal(iterator.Value(), Mappable)
-	record.WithMappable(Mappable)
+	record.Mappable = Mappable.(*mappable.Mappable)
 	return record
 }
 func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
@@ -46,7 +50,7 @@ func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
 	}
 	Mappable := record.GetMappable()
 	base.CodecPrototype().MustUnmarshal(Bytes, Mappable)
-	record.WithMappable(Mappable)
+	record.Mappable = Mappable.(*mappable.Mappable)
 	return record
 }
 func (record *Record) Write(kvStore sdkTypes.KVStore) helpers.Record {
@@ -70,5 +74,16 @@ func Prototype() helpers.Record {
 	return &Record{
 		Key:      key.Prototype().(*key.Key),
 		Mappable: mappable.Prototype().(*mappable.Mappable),
+	}
+}
+
+func NewRecord(Maintainer documents.Maintainer) helpers.Record {
+	return &Record{
+		Key: key.NewKey(baseIDs.NewMaintainerID(constants.MaintainerClassificationID,
+			baseQualified.NewImmutables(baseLists.NewPropertyList(
+				baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(baseDocuments.NewMaintainerFromDocument(Maintainer).GetMaintainedClassificationID())),
+				baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(baseDocuments.NewMaintainerFromDocument(Maintainer).GetIdentityID())),
+			)))).(*key.Key),
+		Mappable: mappable.NewMappable(Maintainer).(*mappable.Mappable),
 	}
 }

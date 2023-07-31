@@ -1,6 +1,8 @@
 package record
 
 import (
+	"github.com/AssetMantle/schema/go/ids"
+	"github.com/AssetMantle/schema/go/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -20,11 +22,6 @@ func (record *Record) WithKey(Key helpers.Key) helpers.Record {
 	record.Mappable = mappable.Prototype().(*mappable.Mappable)
 	return record
 }
-func (record *Record) WithMappable(Mappable helpers.Mappable) helpers.Record {
-	record.Key = Mappable.GenerateKey().(*key.Key)
-	record.Mappable = Mappable.(*mappable.Mappable)
-	return record
-}
 func (record *Record) ReadFromIterator(iterator sdkTypes.Iterator) helpers.Record {
 	Bytes := iterator.Value()
 	if Bytes == nil {
@@ -33,7 +30,7 @@ func (record *Record) ReadFromIterator(iterator sdkTypes.Iterator) helpers.Recor
 
 	Mappable := record.GetMappable()
 	base.CodecPrototype().MustUnmarshal(iterator.Value(), Mappable)
-	record.WithMappable(Mappable)
+	record.Mappable = Mappable.(*mappable.Mappable)
 	return record
 }
 func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
@@ -46,7 +43,7 @@ func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
 	}
 	Mappable := record.GetMappable()
 	base.CodecPrototype().MustUnmarshal(Bytes, Mappable)
-	record.WithMappable(Mappable)
+	record.Mappable = Mappable.(*mappable.Mappable)
 	return record
 }
 func (record *Record) Write(kvStore sdkTypes.KVStore) helpers.Record {
@@ -70,5 +67,12 @@ func Prototype() helpers.Record {
 	return &Record{
 		Key:      key.Prototype().(*key.Key),
 		Mappable: mappable.Prototype().(*mappable.Mappable),
+	}
+}
+
+func NewRecord(splitID ids.SplitID, split types.Split) helpers.Record {
+	return &Record{
+		Key:      key.NewKey(splitID).(*key.Key),
+		Mappable: mappable.NewMappable(split).(*mappable.Mappable),
 	}
 }
