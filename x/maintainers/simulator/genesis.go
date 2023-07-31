@@ -27,8 +27,8 @@ import (
 	identityUtilities "github.com/AssetMantle/modules/x/identities/utilities"
 	"github.com/AssetMantle/modules/x/maintainers/constants"
 	"github.com/AssetMantle/modules/x/maintainers/genesis"
-	mappableMaintainers "github.com/AssetMantle/modules/x/maintainers/mappable"
 	"github.com/AssetMantle/modules/x/maintainers/parameters/deputize_allowed"
+	"github.com/AssetMantle/modules/x/maintainers/record"
 	"github.com/AssetMantle/modules/x/maintainers/utilities"
 	orderUtilities "github.com/AssetMantle/modules/x/orders/utilities"
 )
@@ -44,7 +44,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, 3*len(simulatorAssets.ClassificationIDMappableBytesMap))
+	records := make([]helpers.Record, 3*len(simulatorAssets.ClassificationIDMappableBytesMap))
 
 	var classificationID ids.ID
 	var identityID ids.ID
@@ -63,7 +63,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		identityMappable := &mappableIdentities.Mappable{}
 		baseHelpers.CodecPrototype().Unmarshal(simulatorIdentities.GetMappableBytes(classificationID.AsString()), identityMappable)
 		mutables := identityMappable.GetIdentity().Get().GetMutables()
-		mappableList[index] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID.(ids.IdentityID), classificationID.(ids.ClassificationID), mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(identityUtilities.SetModulePermissions(true, true))...)))
+		records[index] = record.NewRecord(base.NewMaintainer(identityID.(ids.IdentityID), classificationID.(ids.ClassificationID), mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(identityUtilities.SetModulePermissions(true, true))...)))
 
 		assetMap := simulatorAssets.GetAssetData(simulationState.Accounts[i].Address.String())
 		if assetMap == nil {
@@ -75,7 +75,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		assetMappable := &mappableAssets.Mappable{}
 		baseHelpers.CodecPrototype().Unmarshal(simulatorAssets.GetMappableBytes(classificationID.AsString()), assetMappable)
 		mutables = assetMappable.GetAsset().Get().GetMutables()
-		mappableList[index+1] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID.(ids.IdentityID), classificationID.(ids.ClassificationID), mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(assetUtilities.SetModulePermissions(true, true, true))...)))
+		records[index+1] = record.NewRecord(base.NewMaintainer(identityID.(ids.IdentityID), classificationID.(ids.ClassificationID), mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(assetUtilities.SetModulePermissions(true, true, true))...)))
 
 		immutables := baseQualified.NewImmutables(assetMappable.Asset.Immutables.GetImmutablePropertyList().Add(baseLists.AnyPropertiesToProperties(constantProperties.ExchangeRateProperty.ToAnyProperty(),
 			constantProperties.CreationHeightProperty.ToAnyProperty(),
@@ -90,12 +90,12 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		)...))
 
 		orderClassificationID := baseIDs.NewClassificationID(immutables, mutables)
-		mappableList[index+2] = mappableMaintainers.NewMappable(base.NewMaintainer(identityID.(ids.IdentityID), orderClassificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(orderUtilities.SetModulePermissions(true, true))...)))
+		records[index+2] = record.NewRecord(base.NewMaintainer(identityID.(ids.IdentityID), orderClassificationID, mutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(orderUtilities.SetModulePermissions(true, true))...)))
 
 		index += 3
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(deputize_allowed.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(deputize_allowed.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

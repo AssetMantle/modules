@@ -18,8 +18,8 @@ import (
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/metas/constants"
 	"github.com/AssetMantle/modules/x/metas/genesis"
-	"github.com/AssetMantle/modules/x/metas/mappable"
 	"github.com/AssetMantle/modules/x/metas/parameters/reveal_enabled"
+	"github.com/AssetMantle/modules/x/metas/record"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -33,13 +33,13 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, simulationState.Rand.Intn(99))
+	records := make([]helpers.Record, simulationState.Rand.Intn(99))
 
-	for i := range mappableList {
-		mappableList[i] = mappable.NewMappable(baseSimulation.GenerateRandomData(simulationState.Rand, int(math.Abs(float64(simulationState.Rand.Int())))))
+	for i := range records {
+		records[i] = record.NewRecord(baseSimulation.GenerateRandomData(simulationState.Rand, int(math.Abs(float64(simulationState.Rand.Int())))))
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, base.NewParameterList(reveal_enabled.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, base.NewParameterList(reveal_enabled.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

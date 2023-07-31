@@ -21,8 +21,8 @@ import (
 	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
 	"github.com/AssetMantle/modules/x/splits/constants"
 	"github.com/AssetMantle/modules/x/splits/genesis"
-	"github.com/AssetMantle/modules/x/splits/mappable"
 	"github.com/AssetMantle/modules/x/splits/parameters/wrap_allowed_coins"
+	"github.com/AssetMantle/modules/x/splits/record"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -36,7 +36,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, 2*len(assets.ClassificationIDMappableBytesMap))
+	records := make([]helpers.Record, 2*len(assets.ClassificationIDMappableBytesMap))
 
 	var assetIDString, identityIDString string
 	index := 0
@@ -54,12 +54,12 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		}
 		identityID, _ := base.PrototypeIdentityID().FromString(identityIDString)
 
-		mappableList[index] = mappable.NewMappable(baseTypes.NewSplit(assetID.(ids.AssetID).ToAnyOwnableID().Get(), identityID.(ids.IdentityID), sdkTypes.NewInt(1)))
-		mappableList[index+1] = mappable.NewMappable(baseTypes.NewSplit(base.NewCoinID(base.NewStringID("stake")), identityID.(ids.IdentityID), sdkTypes.NewInt(1000)))
+		records[index] = record.NewRecord(base.NewSplitID(assetID.(ids.AssetID).ToAnyOwnableID().Get(), identityID.(ids.IdentityID)), baseTypes.NewSplit(assetID.(ids.AssetID).ToAnyOwnableID().Get(), identityID.(ids.IdentityID), sdkTypes.NewInt(1)))
+		records[index+1] = record.NewRecord(base.NewSplitID(base.NewCoinID(base.NewStringID("stake")), identityID.(ids.IdentityID)), baseTypes.NewSplit(base.NewCoinID(base.NewStringID("stake")), identityID.(ids.IdentityID), sdkTypes.NewInt(1000)))
 		index += 2
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(wrap_allowed_coins.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(wrap_allowed_coins.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }
