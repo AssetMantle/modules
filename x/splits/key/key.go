@@ -50,3 +50,11 @@ func NewKey(splitID ids.SplitID) helpers.Key {
 func Prototype() helpers.Key {
 	return &Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}
 }
+
+func GetSplitIDFromKey(key helpers.Key) ids.SplitID {
+	if key, err := keyFromInterface(key); err != nil {
+		return baseIDs.PrototypeSplitID().(*baseIDs.SplitID)
+	} else {
+		return key.SplitID
+	}
+}

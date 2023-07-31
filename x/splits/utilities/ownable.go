@@ -16,13 +16,10 @@ import (
 func GetTotalSupply(collection helpers.Collection, ownableID ids.OwnableID) sdkTypes.Int {
 	value := sdkTypes.ZeroInt()
 	accumulator := func(record helpers.Record) bool {
-		if mappable.GetSplit(record.GetMappable()).GetOwnableID().Compare(ownableID) == 0 {
-			value = value.Add(mappable.GetSplit(record.GetMappable()).GetValue())
-		}
-
+		value = value.Add(mappable.GetSplit(record.GetMappable()).GetValue())
 		return false
 	}
-	collection.Iterate(key.NewKey(baseIDs.PrototypeSplitID()), accumulator)
+	collection.Iterate(key.NewKey(baseIDs.NewSplitID(ownableID, baseIDs.PrototypeIdentityID())), accumulator)
 
 	return value
 }

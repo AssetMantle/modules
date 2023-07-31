@@ -38,7 +38,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	}
 	fromSplit := mappable.GetSplit(Mappable)
 
-	switch fromSplit = fromSplit.Send(auxiliaryRequest.Value); {
+	switch fromSplit = fromSplit.Subtract(auxiliaryRequest.Value); {
 	case fromSplit.GetValue().LT(sdkTypes.ZeroInt()):
 		return nil, errorConstants.InsufficientBalance.Wrapf("insufficient balance")
 	case fromSplit.GetValue().Equal(sdkTypes.ZeroInt()):
@@ -50,9 +50,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	toSplitID := baseIDs.NewSplitID(auxiliaryRequest.OwnableID, auxiliaryRequest.ToID)
 
 	if Mappable := splits.Fetch(key.NewKey(toSplitID)).GetMappable(key.NewKey(toSplitID)); Mappable == nil {
-		splits.Add(record.NewRecord(baseIDs.NewSplitID(auxiliaryRequest.OwnableID, auxiliaryRequest.ToID), base.NewSplit(auxiliaryRequest.OwnableID, auxiliaryRequest.ToID, auxiliaryRequest.Value)))
+		splits.Add(record.NewRecord(baseIDs.NewSplitID(auxiliaryRequest.OwnableID, auxiliaryRequest.ToID), base.NewSplit(auxiliaryRequest.Value)))
 	} else {
-		splits.Mutate(record.NewRecord(toSplitID, mappable.GetSplit(Mappable).Receive(auxiliaryRequest.Value)))
+		splits.Mutate(record.NewRecord(toSplitID, mappable.GetSplit(Mappable).Add(auxiliaryRequest.Value)))
 	}
 
 	return newAuxiliaryResponse(), nil

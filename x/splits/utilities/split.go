@@ -25,9 +25,9 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.
 
 	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
-		splits.Add(record.NewRecord(baseIDs.NewSplitID(ownableID, ownerID), base.NewSplit(ownableID, ownerID, value)))
+		splits.Add(record.NewRecord(baseIDs.NewSplitID(ownableID, ownerID), base.NewSplit(value)))
 	} else {
-		splits.Mutate(record.NewRecord(splitID, mappable.GetSplit(Mappable).Receive(value)))
+		splits.Mutate(record.NewRecord(splitID, mappable.GetSplit(Mappable).Add(value)))
 	}
 
 	return splits, nil
@@ -46,7 +46,7 @@ func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID
 	}
 	split := mappable.GetSplit(Mappable)
 
-	switch split = split.Send(value); {
+	switch split = split.Subtract(value); {
 	case split.GetValue().LT(sdkTypes.ZeroInt()):
 		return nil, errorConstants.InvalidRequest.Wrapf("split value cannot be negative")
 	case split.GetValue().Equal(sdkTypes.ZeroInt()):
