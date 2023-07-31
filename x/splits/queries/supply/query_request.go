@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package ownable
+package supply
 
 import (
 	"net/http"
@@ -24,27 +24,27 @@ var _ helpers.QueryRequest = (*QueryRequest)(nil)
 // @Accept json
 // @Produce json
 // @Tags Splits
-// @Param ownableID path string true "ownable ID"
+// @Param ownableID path string true "identity ID"
 // @Success 200 {object} queryRequest "Message for a successful query response"
 // @Failure default  {object}  queryRequest "Message for an unexpected error response."
-// @Router /ownable/{ownableID} [get]
+// @Router /balances/{identityID} [get]
 func (queryRequest *QueryRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(queryRequest)
 	return err
 }
 
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	if ownableID, err := baseIDs.PrototypeOwnableID().FromString(cliCommand.ReadString(constants.OwnableID)); err != nil {
+	if anyOwnableID, err := baseIDs.PrototypeAnyOwnableID().FromString(cliCommand.ReadString(constants.OwnableID)); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(ownableID.(ids.OwnableID)), nil
+		return newQueryRequest(anyOwnableID.(ids.AnyOwnableID)), nil
 	}
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	if ownableID, err := baseIDs.PrototypeOwnableID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName())); err != nil {
+	if anyOwnableID, err := baseIDs.PrototypeAnyOwnableID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(ownableID.(ids.OwnableID)), nil
+		return newQueryRequest(anyOwnableID.(ids.AnyOwnableID)), nil
 	}
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {

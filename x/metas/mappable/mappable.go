@@ -7,20 +7,15 @@ import (
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/metas/key"
 )
 
 var _ helpers.Mappable = (*Mappable)(nil)
 
 func (mappable *Mappable) ValidateBasic() error {
 	return mappable.Data.ValidateBasic()
-}
-func (mappable *Mappable) GenerateKey() helpers.Key {
-	return key.NewKey(baseIDs.GenerateDataID(mappable.Data))
 }
 func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, Mappable{})

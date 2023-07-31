@@ -21,5 +21,5 @@ type Genesis interface {
 	Encode(sdkCodec.JSONCodec) []byte
 	Decode(sdkCodec.JSONCodec, []byte) Genesis
 
-	Initialize([]Mappable, lists.ParameterList) Genesis
+	Initialize([]Record, lists.ParameterList) Genesis
 }

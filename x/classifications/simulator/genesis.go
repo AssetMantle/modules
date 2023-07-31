@@ -21,9 +21,9 @@ import (
 	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/classifications/constants"
 	"github.com/AssetMantle/modules/x/classifications/genesis"
-	mappableClassifications "github.com/AssetMantle/modules/x/classifications/mappable"
 	"github.com/AssetMantle/modules/x/classifications/parameters/bond_rate"
 	"github.com/AssetMantle/modules/x/classifications/parameters/max_property_count"
+	"github.com/AssetMantle/modules/x/classifications/record"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -49,7 +49,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		},
 	)
 
-	mappableList := make([]helpers.Mappable, 3*len(assets.ClassificationIDMappableBytesMap))
+	records := make([]helpers.Record, 3*len(assets.ClassificationIDMappableBytesMap))
 	index := 0
 	accountPosition := 0
 
@@ -72,15 +72,15 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 			constantProperties.MakerOwnableSplitProperty.ToAnyProperty(),
 		)...)))
 
-		mappableList[index] = mappableClassifications.NewMappable(assetClassification)
-		mappableList[index+1] = mappableClassifications.NewMappable(identityClassification)
-		mappableList[index+2] = mappableClassifications.NewMappable(orderClassification)
+		records[index] = record.NewRecord(assetClassification)
+		records[index+1] = record.NewRecord(identityClassification)
+		records[index+2] = record.NewRecord(orderClassification)
 
 		index += 3
 		accountPosition++
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(bond_rate.Parameter.Mutate(bondRateData), max_property_count.Parameter.Mutate(maxPropertyCountData)))
+	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(bond_rate.Parameter.Mutate(bondRateData), max_property_count.Parameter.Mutate(maxPropertyCountData)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

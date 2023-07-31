@@ -25,6 +25,7 @@ import (
 	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/key"
 	"github.com/AssetMantle/modules/x/orders/mappable"
+	"github.com/AssetMantle/modules/x/orders/record"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 )
 
@@ -98,14 +99,14 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	order := base.NewOrder(message.ClassificationID, immutables, mutables)
-	orders = orders.Add(mappable.NewMappable(order))
+	orders = orders.Add(record.NewRecord(order))
 
 	// Order execution
 	orderMutated := false
 	orderLeftOverMakerOwnableSplit := makerOwnableSplit
 
-	accumulator := func(mappableOrder helpers.Mappable) bool {
-		executableOrder := mappable.GetOrder(mappableOrder)
+	accumulator := func(Record helpers.Record) bool {
+		executableOrder := mappable.GetOrder(Record.GetMappable())
 
 		executableOrderTakerOwnableSplitDemanded := executableOrder.GetExchangeRate().MulTruncate(executableOrder.GetMakerOwnableSplit().ToDec()).MulTruncate(sdkTypes.SmallestDec()).TruncateInt()
 
@@ -123,7 +124,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 				orderLeftOverMakerOwnableSplit = orderLeftOverMakerOwnableSplit.Sub(executableOrderTakerOwnableSplitDemanded)
 
-				orders.Remove(mappable.NewMappable(executableOrder))
+				orders.Remove(record.NewRecord(executableOrder))
 			case orderLeftOverMakerOwnableSplit.LT(executableOrderTakerOwnableSplitDemanded):
 				// sending to buyer
 				sendToBuyer := orderLeftOverMakerOwnableSplit.Quo(sdkTypes.OneInt()).ToDec().QuoTruncate(executableOrder.GetExchangeRate()).TruncateInt()
@@ -137,7 +138,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 				mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(executableOrder.GetMakerOwnableSplit().Sub(sendToBuyer))))
 
-				orders.Mutate(mappable.NewMappable(base.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
+				orders.Mutate(record.NewRecord(base.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
 
 				orderLeftOverMakerOwnableSplit = sdkTypes.ZeroInt()
 			default:
@@ -151,7 +152,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 					panic(err)
 				}
 
-				orders.Remove(mappable.NewMappable(executableOrder))
+				orders.Remove(record.NewRecord(executableOrder))
 
 				orderLeftOverMakerOwnableSplit = sdkTypes.ZeroInt()
 			}
@@ -160,19 +161,19 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		}
 
 		if orderLeftOverMakerOwnableSplit.Equal(sdkTypes.ZeroInt()) {
-			orders.Remove(mappable.NewMappable(order))
+			orders.Remove(record.NewRecord(order))
 			return true
 		}
 
 		return false
 	}
 
-	orders.Iterate(mappable.NewMappable(order).GenerateKey(), accumulator)
+	orders.Iterate(record.NewRecord(order).GetKey(), accumulator)
 
 	if !orderLeftOverMakerOwnableSplit.Equal(sdkTypes.ZeroInt()) && orderMutated {
 		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(orderLeftOverMakerOwnableSplit)))
 
-		orders.Mutate(mappable.NewMappable(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
+		orders.Mutate(record.NewRecord(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
 	}
 
 	return newTransactionResponse(), nil

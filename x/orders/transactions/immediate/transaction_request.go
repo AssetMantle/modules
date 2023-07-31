@@ -103,12 +103,12 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	makerOwnableID, err := baseIDs.PrototypeOwnableID().FromString(transactionRequest.MakerOwnableID)
+	makerOwnableID, err := baseIDs.PrototypeAnyOwnableID().FromString(transactionRequest.MakerOwnableID)
 	if err != nil {
 		return nil, err
 	}
 
-	takerOwnableID, err := baseIDs.PrototypeOwnableID().FromString(transactionRequest.TakerOwnableID)
+	takerOwnableID, err := baseIDs.PrototypeAnyOwnableID().FromString(transactionRequest.TakerOwnableID)
 	if err != nil {
 		return nil, err
 	}

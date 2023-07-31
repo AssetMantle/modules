@@ -13,7 +13,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/metas/key"
-	"github.com/AssetMantle/modules/x/metas/mappable"
+	"github.com/AssetMantle/modules/x/metas/record"
 )
 
 type transactionKeeper struct {
@@ -40,7 +40,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	if message.Data.GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {
-		metas.Add(mappable.NewMappable(message.Data))
+		metas.Add(record.NewRecord(message.Data))
 	}
 
 	return newTransactionResponse(), nil

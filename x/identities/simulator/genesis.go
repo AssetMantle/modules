@@ -25,6 +25,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/genesis"
 	mappableIdentities "github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/parameters/max_provision_address_count"
+	"github.com/AssetMantle/modules/x/identities/record"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -38,7 +39,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, len(assets.ClassificationIDMappableBytesMap))
+	records := make([]helpers.Record, len(assets.ClassificationIDMappableBytesMap))
 
 	identities.ClearAll()
 	index := 0
@@ -60,13 +61,13 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		identityID := baseIDs.NewIdentityID(classificationID, immutables)
 		identity := base.NewIdentity(classificationID, immutables, mutables).ProvisionAddress(simulationState.Accounts[index].Address)
 
-		mappableList[index] = mappableIdentities.NewMappable(identity)
+		records[index] = record.NewRecord(identity)
 		identities.AddIDData(simulationState.Accounts[index].Address.String(), classificationID.AsString(), identityID.AsString())
 		identities.AddMappableBytes(classificationID.AsString(), baseHelpers.CodecPrototype().MustMarshal(mappableIdentities.NewMappable(identity)))
 		index++
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(max_provision_address_count.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(max_provision_address_count.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

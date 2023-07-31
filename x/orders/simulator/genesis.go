@@ -25,6 +25,7 @@ import (
 	"github.com/AssetMantle/modules/x/orders/genesis"
 	mappableOrders "github.com/AssetMantle/modules/x/orders/mappable"
 	"github.com/AssetMantle/modules/x/orders/parameters/max_order_life"
+	"github.com/AssetMantle/modules/x/orders/record"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -38,7 +39,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, len(assets.ClassificationIDMappableBytesMap))
+	records := make([]helpers.Record, len(assets.ClassificationIDMappableBytesMap))
 	index := 0
 	var classificationIDString string
 
@@ -66,13 +67,13 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		classificationID := baseIDs.NewClassificationID(immutables, mutables)
 		orderID := baseIDs.NewOrderID(classificationID, immutables)
 		order := base.NewOrder(classificationID, immutables, mutables)
-		mappableList[index] = mappableOrders.NewMappable(order)
+		records[index] = record.NewRecord(order)
 		orders.AddOrderData(simulationState.Accounts[index].Address.String(), classificationID.AsString(), orderID.AsString())
 		orders.AddMappableBytes(classificationID.AsString(), baseHelpers.CodecPrototype().MustMarshal(mappableOrders.NewMappable(order)))
 		index++
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, baseLists.NewParameterList(max_order_life.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(max_order_life.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

@@ -9,7 +9,6 @@ import (
 
 type Mappable interface {
 	codec.ProtoMarshaler
-	GenerateKey() Key
 	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 	ValidateBasic() error
 }

@@ -7,7 +7,6 @@ type Record interface {
 	GetMappable() Mappable
 
 	WithKey(Key) Record
-	WithMappable(Mappable) Record
 
 	ReadFromIterator(types.Iterator) Record
 	Read(types.KVStore) Record

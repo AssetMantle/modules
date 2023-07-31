@@ -42,7 +42,7 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 		want helpers.AuxiliaryRequest
 	}{
 		{"+ve", args{testOwnerID, testOwnerID, testOwnableID, testValue}, NewAuxiliaryRequest(testOwnerID, testOwnerID, testOwnableID, testValue)},
-		{"+ve with nil", args{testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeOwnableID(), testValue}, NewAuxiliaryRequest(testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeOwnableID(), testValue)},
+		{"+ve with nil", args{testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAnyOwnableID(), testValue}, NewAuxiliaryRequest(testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAnyOwnableID(), testValue)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

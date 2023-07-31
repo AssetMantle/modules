@@ -25,6 +25,7 @@ import (
 	"github.com/AssetMantle/modules/x/assets/genesis"
 	"github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/assets/parameters/mint_enabled"
+	"github.com/AssetMantle/modules/x/assets/record"
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
@@ -38,11 +39,11 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
-	mappableList := make([]helpers.Mappable, len(simulationState.Accounts))
+	records := make([]helpers.Record, len(simulationState.Accounts))
 
 	assets.ClearAll()
 
-	for i := range mappableList {
+	for i := range records {
 		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomMetaPropertyListWithoutData(simulationState.Rand))
 		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand).Add(baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100)))))
 		// for _, property := range immutables.GetImmutablePropertyList().GetList() {
@@ -51,12 +52,12 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		classificationID := baseIDs.NewClassificationID(immutables, mutables)
 		assetID := baseIDs.NewAssetID(classificationID, immutables)
 		asset := baseDocuments.NewAsset(classificationID, immutables, mutables)
-		mappableList[i] = mappable.NewMappable(asset)
+		records[i] = record.NewRecord(asset)
 		assets.AddAssetData(simulationState.Accounts[i].Address.String(), classificationID.AsString(), assetID.AsString())
 		assets.AddMappableBytes(classificationID.AsString(), baseHelpers.CodecPrototype().MustMarshal(mappable.NewMappable(asset)))
 	}
 
-	genesisState := genesis.Prototype().Initialize(mappableList, base.NewParameterList(mint_enabled.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, base.NewParameterList(mint_enabled.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

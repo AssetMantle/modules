@@ -43,8 +43,8 @@ func TestGetOwnableTotalSplitsValue(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetOwnableTotalSplitsValue(tt.args.collection, tt.args.ownableID); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetOwnableTotalSplitsValue() = %v, want %v", got, tt.want)
+			if got := GetTotalSupply(tt.args.collection, tt.args.ownableID); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetTotalSupply() = %v, want %v", got, tt.want)
 			}
 		})
 	}

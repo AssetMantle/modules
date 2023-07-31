@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package ownable
+package supply
 
 import (
 	"context"
@@ -21,7 +21,7 @@ func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest hel
 	return queryResponse, err
 }
 func (queryKeeper queryKeeper) Handle(context context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
-	return newQueryResponse(utilities.GetOwnableTotalSplitsValue(queryKeeper.mapper.NewCollection(context), queryRequest.OwnableID)), nil
+	return newQueryResponse(utilities.GetTotalSupply(queryKeeper.mapper.NewCollection(context), queryRequest.OwnableID)), nil
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {

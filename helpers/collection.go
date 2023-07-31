@@ -13,14 +13,17 @@ type Collection interface {
 	Get() []Record
 	GetMappables() []Mappable
 
-	Iterate(Key, func(Mappable) bool)
+	// TODO convert rest of the accumulators to below logic
+	// The accumulator function should return true if the iterated Mappable is to be included in the returned collection
+	IterateAll(func(Record) bool) Collection
+	Iterate(Key, func(Record) bool)
 	IteratePaginated(Key, int32, func(Record) bool)
 	Fetch(Key) Collection
 	FetchRecord(Key) Record
 	FetchAll() Collection
 	FetchPaginated(Key, int32) Collection
-	Add(Mappable) Collection
-	Remove(Mappable) Collection
-	Mutate(Mappable) Collection
+	Add(Record) Collection
+	Remove(Record) Collection
+	Mutate(Record) Collection
 	Initialize(context.Context, Mapper) Collection
 }

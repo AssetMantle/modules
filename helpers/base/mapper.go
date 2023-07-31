@@ -25,9 +25,6 @@ var _ helpers.Mapper = (*mapper)(nil)
 func (mapper mapper) NewCollection(context context.Context) helpers.Collection {
 	return collection{}.Initialize(context, mapper)
 }
-func (mapper mapper) NewRecord(mappable helpers.Mappable) helpers.Record {
-	return mapper.recordPrototype().WithKey(mappable.GenerateKey()).WithMappable(mappable)
-}
 func (mapper mapper) GetKVStoreKey() *sdkTypes.KVStoreKey {
 	return mapper.kvStoreKey
 }

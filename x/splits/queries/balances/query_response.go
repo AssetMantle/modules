@@ -1,13 +1,12 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package ownable
+package balances
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/splits/record"
 )
 
 var _ helpers.QueryResponse = (*QueryResponse)(nil)
@@ -25,8 +24,10 @@ func (queryResponse *QueryResponse) Decode(bytes []byte) (helpers.QueryResponse,
 func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
-func newQueryResponse(value sdkTypes.Int) *QueryResponse {
+func newQueryResponse(collection helpers.Collection) *QueryResponse {
+	list := record.RecordsFromInterface(collection.Get())
+
 	return &QueryResponse{
-		Supply: value.String(),
+		List: list,
 	}
 }

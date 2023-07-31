@@ -17,6 +17,7 @@ import (
 	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/key"
 	"github.com/AssetMantle/modules/x/orders/mappable"
+	"github.com/AssetMantle/modules/x/orders/record"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 )
 
@@ -72,7 +73,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	orders.Remove(mappable.NewMappable(order))
+	orders.Remove(record.NewRecord(order))
 
 	return newTransactionResponse(), nil
 }

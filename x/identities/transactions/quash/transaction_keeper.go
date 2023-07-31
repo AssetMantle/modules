@@ -16,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/constants"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
+	"github.com/AssetMantle/modules/x/identities/record"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 )
@@ -66,7 +67,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	identities.Remove(mappable.NewMappable(identity))
+	identities.Remove(record.NewRecord(identity))
 
 	return newTransactionResponse(), nil
 }

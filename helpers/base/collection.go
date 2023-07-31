@@ -37,10 +37,22 @@ func (collection collection) GetMappables() []helpers.Mappable {
 	}
 	return mappables
 }
-func (collection collection) Iterate(startKey helpers.Key, accumulator func(helpers.Mappable) bool) {
-	collection.mapper.Iterate(collection.context, startKey, func(record helpers.Record) bool {
-		return accumulator(record.GetMappable())
+func (collection collection) IterateAll(accumulator func(record helpers.Record) bool) helpers.Collection {
+	var records []helpers.Record
+
+	collection.mapper.IterateAll(collection.context, func(record helpers.Record) bool {
+		if accumulator(record) == true {
+			records = append(records, record)
+		}
+		return false
 	})
+
+	collection.records = records
+
+	return collection
+}
+func (collection collection) Iterate(startKey helpers.Key, accumulator func(helpers.Record) bool) {
+	collection.mapper.Iterate(collection.context, startKey, accumulator)
 }
 func (collection collection) FetchAll() helpers.Collection {
 	collection.records = collection.mapper.FetchAll(collection.context)
@@ -85,28 +97,27 @@ func (collection collection) FetchPaginated(startKey helpers.Key, limit int32) h
 
 	return collection
 }
-func (collection collection) Add(mappable helpers.Mappable) helpers.Collection {
-	collection.mapper.Upsert(collection.context, collection.mapper.NewRecord(mappable))
+func (collection collection) Add(record helpers.Record) helpers.Collection {
+	collection.mapper.Upsert(collection.context, record)
 
-	collection.records = []helpers.Record{collection.mapper.NewRecord(mappable)}
+	collection.records = []helpers.Record{record}
 
 	return collection
 }
-func (collection collection) Remove(mappable helpers.Mappable) helpers.Collection {
-	collection.mapper.Delete(collection.context, mappable.GenerateKey())
+func (collection collection) Remove(record helpers.Record) helpers.Collection {
+	collection.mapper.Delete(collection.context, record.GetKey())
 
 	collection.records = []helpers.Record{}
 
 	return collection
 }
-func (collection collection) Mutate(mappable helpers.Mappable) helpers.Collection {
-	record := collection.mapper.Read(collection.context, mappable.GenerateKey())
+func (collection collection) Mutate(record helpers.Record) helpers.Collection {
+	collection.records = []helpers.Record{}
 
-	if record != nil {
-		collection.mapper.Upsert(collection.context, collection.mapper.NewRecord(mappable))
+	if Record := collection.mapper.Read(collection.context, record.GetKey()); Record != nil {
+		collection.mapper.Upsert(collection.context, record)
+		collection.records = []helpers.Record{record}
 	}
-
-	collection.records = []helpers.Record{collection.mapper.NewRecord(mappable)}
 
 	return collection
 }

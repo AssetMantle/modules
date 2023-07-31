@@ -22,7 +22,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
-	switch totalSplitsValue := utilities.GetOwnableTotalSplitsValue(splits, auxiliaryRequest.OwnableID); {
+	switch totalSplitsValue := utilities.GetTotalSupply(splits, auxiliaryRequest.OwnableID); {
 	case totalSplitsValue.LT(auxiliaryRequest.Supply):
 		if _, err := utilities.AddSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Supply.Sub(totalSplitsValue)); err != nil {
 			return nil, err

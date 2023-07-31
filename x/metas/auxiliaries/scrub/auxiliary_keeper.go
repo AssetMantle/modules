@@ -11,7 +11,7 @@ import (
 	"github.com/AssetMantle/schema/go/properties"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/metas/mappable"
+	"github.com/AssetMantle/modules/x/metas/record"
 )
 
 type auxiliaryKeeper struct {
@@ -30,7 +30,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		if property.IsMeta() {
 			metaProperty := property.Get().(properties.MetaProperty)
 			if metaProperty.GetData().GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {
-				metas.Add(mappable.NewMappable(metaProperty.GetData()))
+				metas.Add(record.NewRecord(metaProperty.GetData()))
 			}
 			scrubbedPropertyList[i] = metaProperty.ScrubData()
 		} else {

@@ -22,7 +22,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/constants"
 	"github.com/AssetMantle/modules/x/classifications/key"
-	"github.com/AssetMantle/modules/x/classifications/mappable"
+	"github.com/AssetMantle/modules/x/classifications/record"
 )
 
 type auxiliaryKeeper struct {
@@ -62,7 +62,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		return nil, err
 	}
 
-	classifications.Add(mappable.NewMappable(base.NewClassification(immutables, auxiliaryRequest.Mutables)))
+	classifications.Add(record.NewRecord(base.NewClassification(immutables, auxiliaryRequest.Mutables)))
 
 	return newAuxiliaryResponse(classificationID), nil
 }

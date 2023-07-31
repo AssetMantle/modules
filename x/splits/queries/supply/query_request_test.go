@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package ownable
+package supply
 
 import (
 	"reflect"
@@ -65,7 +65,7 @@ func Test_queryRequestFromInterface(t *testing.T) {
 func Test_queryRequest_Decode(t *testing.T) {
 	encodedReq, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testOwnableID))
 	require.NoError(t, err)
-	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeOwnableID()))
+	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAnyOwnableID()))
 	require.NoError(t, err1)
 	type fields struct {
 		OwnableID *baseIDs.AnyOwnableID
@@ -81,7 +81,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testOwnableID}, args{encodedReq}, newQueryRequest(testOwnableID), false},
-		{"+ve", fields{baseIDs.PrototypeOwnableID().(*baseIDs.AnyOwnableID)}, args{encodedReq1}, newQueryRequest(baseIDs.PrototypeOwnableID()), false},
+		{"+ve", fields{baseIDs.PrototypeAnyOwnableID().(*baseIDs.AnyOwnableID)}, args{encodedReq1}, newQueryRequest(baseIDs.PrototypeAnyOwnableID()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -103,7 +103,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 func Test_queryRequest_Encode(t *testing.T) {
 	encodedReq, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testOwnableID))
 	require.NoError(t, err)
-	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeOwnableID()))
+	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAnyOwnableID()))
 	require.NoError(t, err1)
 	type fields struct {
 		OwnableID *baseIDs.AnyOwnableID
@@ -115,7 +115,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{testOwnableID}, encodedReq, false},
-		{"+ve", fields{baseIDs.PrototypeOwnableID().(*baseIDs.AnyOwnableID)}, encodedReq1, false},
+		{"+ve", fields{baseIDs.PrototypeAnyOwnableID().(*baseIDs.AnyOwnableID)}, encodedReq1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
