@@ -15,9 +15,9 @@ import (
 
 func GetTotalSupply(collection helpers.Collection, ownableID ids.OwnableID) sdkTypes.Int {
 	value := sdkTypes.ZeroInt()
-	accumulator := func(Mappable helpers.Mappable) bool {
-		if mappable.GetSplit(Mappable).GetOwnableID().Compare(ownableID) == 0 {
-			value = value.Add(mappable.GetSplit(Mappable).GetValue())
+	accumulator := func(record helpers.Record) bool {
+		if mappable.GetSplit(record.GetMappable()).GetOwnableID().Compare(ownableID) == 0 {
+			value = value.Add(mappable.GetSplit(record.GetMappable()).GetValue())
 		}
 
 		return false

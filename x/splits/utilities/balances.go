@@ -8,7 +8,7 @@ import (
 )
 
 func GetAllBalancesForIdentity(collection helpers.Collection, identityID ids.IdentityID) helpers.Collection {
-	return collection.IterateAll(func(Mappable helpers.Mappable) bool {
-		return mappable.GetSplit(Mappable).GetOwnerID().Compare(identityID) == 0
+	return collection.IterateAll(func(record helpers.Record) bool {
+		return mappable.GetSplit(record.GetMappable()).GetOwnerID().Compare(identityID) == 0
 	})
 }

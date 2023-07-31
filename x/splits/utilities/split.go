@@ -13,6 +13,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/key"
 	"github.com/AssetMantle/modules/x/splits/mappable"
+	"github.com/AssetMantle/modules/x/splits/record"
 )
 
 func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Int) (helpers.Collection, error) {
@@ -24,9 +25,9 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.
 
 	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
-		splits.Add(mappable.NewMappable(base.NewSplit(ownableID, ownerID, value)))
+		splits.Add(record.NewRecord(baseIDs.NewSplitID(ownableID, ownerID), base.NewSplit(ownableID, ownerID, value)))
 	} else {
-		splits.Mutate(mappable.NewMappable(mappable.GetSplit(Mappable).Receive(value)))
+		splits.Mutate(record.NewRecord(splitID, mappable.GetSplit(Mappable).Receive(value)))
 	}
 
 	return splits, nil
@@ -49,9 +50,9 @@ func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID
 	case split.GetValue().LT(sdkTypes.ZeroInt()):
 		return nil, errorConstants.InvalidRequest.Wrapf("split value cannot be negative")
 	case split.GetValue().Equal(sdkTypes.ZeroInt()):
-		splits.Remove(mappable.NewMappable(split))
+		splits.Remove(record.NewRecord(splitID, split))
 	default:
-		splits.Mutate(mappable.NewMappable(split))
+		splits.Mutate(record.NewRecord(splitID, split))
 	}
 
 	return splits, nil
