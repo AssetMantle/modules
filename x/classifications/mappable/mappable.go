@@ -10,16 +10,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/key"
 )
 
 var _ helpers.Mappable = (*Mappable)(nil)
 
 func (mappable *Mappable) ValidateBasic() error {
 	return mappable.Classification.ValidateBasic()
-}
-func (mappable *Mappable) GenerateKey() helpers.Key {
-	return key.NewKey(mappable.Classification.GetClassificationID())
 }
 func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, Mappable{})
