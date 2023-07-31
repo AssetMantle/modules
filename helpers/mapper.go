@@ -12,7 +12,6 @@ import (
 
 type Mapper interface {
 	NewCollection(context.Context) Collection
-	NewRecord(Mappable) Record
 
 	Upsert(context.Context, Record)
 	Read(context.Context, Key) Record
