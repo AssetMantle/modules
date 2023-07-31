@@ -25,6 +25,7 @@ import (
 	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/key"
 	"github.com/AssetMantle/modules/x/orders/mappable"
+	"github.com/AssetMantle/modules/x/orders/record"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 )
 
@@ -50,8 +51,8 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 	orders.Iterate(
 		// TODO ***** define a proper new key
 		key.NewKey(baseIDs.PrototypeOrderID()),
-		func(Mappable helpers.Mappable) bool {
-			order := mappable.GetOrder(Mappable)
+		func(Record helpers.Record) bool {
+			order := mappable.GetOrder(Record.GetMappable())
 			if order.GetExpiryHeight().Compare(baseTypes.CurrentHeight(context)) <= 0 {
 				// TODO ***** check security of sending and receiving from module and module account security
 				if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, order.GetMakerID(), order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); err != nil {
@@ -60,7 +61,7 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 				if _, err := block.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(order.GetClassificationID())); err != nil {
 					panic(err)
 				}
-				orders.Remove(mappable.NewMappable(order))
+				orders.Remove(record.NewRecord(order))
 			} else {
 				// TODO ***** figure out use case
 				// // TODO ***** test
@@ -79,12 +80,12 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 		nextPartialOrderID := false
 
 		orders.Iterate(key.NewKey(partialOrderID),
-			func(Mappable helpers.Mappable) bool {
-				order := mappable.GetOrder(Mappable)
+			func(Record helpers.Record) bool {
+				order := mappable.GetOrder(Record.GetMappable())
 				orders.Iterate(
 					key.NewKey(baseIDs.PrototypeOrderID()),
-					func(Mappable helpers.Mappable) bool {
-						executableOrder := mappable.GetOrder(Mappable)
+					func(Record helpers.Record) bool {
+						executableOrder := mappable.GetOrder(Record.GetMappable())
 						var leftOrder documents.Order
 						var rightOrder documents.Order
 
@@ -126,8 +127,8 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 
 								mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(leftOrderMakerOwnableSplit.Sub(rightOrderTakerOwnableSplitDemanded))))
 
-								orders.Mutate(mappable.NewMappable(base.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...).GetMutables())))
-								orders.Remove(mappable.NewMappable(rightOrder))
+								orders.Mutate(record.NewRecord(base.NewOrder(leftOrder.GetClassificationID(), leftOrder.GetImmutables(), leftOrder.Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...).GetMutables())))
+								orders.Remove(record.NewRecord(rightOrder))
 
 								if executableOrderHeight.Compare(orderHeight) > 0 {
 									return true
@@ -147,8 +148,8 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 								}
 								mutableProperties := scrub.GetPropertiesFromResponse(auxiliaryResponse)
 
-								orders.Mutate(mappable.NewMappable(base.NewOrder(rightOrder.GetClassificationID(), rightOrder.GetImmutables(), rightOrder.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
-								orders.Remove(mappable.NewMappable(leftOrder))
+								orders.Mutate(record.NewRecord(base.NewOrder(rightOrder.GetClassificationID(), rightOrder.GetImmutables(), rightOrder.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
+								orders.Remove(record.NewRecord(leftOrder))
 
 								if orderHeight.Compare(executableOrderHeight) >= 0 {
 									return true
@@ -162,8 +163,8 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 									panic(err)
 								}
 
-								orders.Remove(mappable.NewMappable(rightOrder))
-								orders.Remove(mappable.NewMappable(leftOrder))
+								orders.Remove(record.NewRecord(rightOrder))
+								orders.Remove(record.NewRecord(leftOrder))
 								return true
 							}
 						} else {
