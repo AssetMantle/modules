@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/key"
 	"github.com/AssetMantle/modules/x/splits/mappable"
+	"github.com/AssetMantle/modules/x/splits/record"
 	"github.com/AssetMantle/modules/x/splits/utilities"
 )
 
@@ -41,7 +42,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		return nil, errorConstants.InvalidRequest.Wrapf("owned value %d doesn't match asset's circulating supply %d", split.GetValue(), auxiliaryRequest.Value)
 	}
 
-	splits.Remove(mappable.NewMappable(split))
+	splits.Remove(record.NewRecord(splitID, split))
 
 	return newAuxiliaryResponse(), nil
 }

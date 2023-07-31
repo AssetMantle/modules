@@ -18,7 +18,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/maintainers/key"
-	"github.com/AssetMantle/modules/x/maintainers/mappable"
+	"github.com/AssetMantle/modules/x/maintainers/record"
 	"github.com/AssetMantle/modules/x/maintainers/utilities"
 )
 
@@ -41,7 +41,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("maintainer with ID %s already exists", maintainerID)
 	}
 
-	maintainers.Add(mappable.NewMappable(base.NewMaintainer(auxiliaryRequest.ToIdentityID, auxiliaryRequest.MaintainedClassificationID, auxiliaryRequest.MaintainedMutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(auxiliaryRequest.PermissionIDs)...))))
+	maintainers.Add(record.NewRecord(base.NewMaintainer(auxiliaryRequest.ToIdentityID, auxiliaryRequest.MaintainedClassificationID, auxiliaryRequest.MaintainedMutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(auxiliaryRequest.PermissionIDs)...))))
 
 	return newAuxiliaryResponse(), nil
 }

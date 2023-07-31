@@ -19,6 +19,7 @@ import (
 	"github.com/AssetMantle/modules/x/maintainers/constants"
 	"github.com/AssetMantle/modules/x/maintainers/key"
 	"github.com/AssetMantle/modules/x/maintainers/mappable"
+	"github.com/AssetMantle/modules/x/maintainers/record"
 )
 
 type auxiliaryKeeper struct {
@@ -52,7 +53,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	if Mappable := maintainers.Fetch(key.NewKey(toMaintainerID)).GetMappable(key.NewKey(toMaintainerID)); Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("maintainer with ID %s not found", toMaintainerID.AsString())
 	} else {
-		maintainers.Remove(Mappable)
+		maintainers.Remove(record.NewRecord(mappable.GetMaintainer(Mappable)))
 	}
 
 	return newAuxiliaryResponse(), nil

@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/key"
 	"github.com/AssetMantle/modules/x/splits/mappable"
+	"github.com/AssetMantle/modules/x/splits/record"
 )
 
 type auxiliaryKeeper struct {
@@ -27,9 +28,9 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	Mappable := splits.GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
-		splits.Add(mappable.NewMappable(base.NewSplit(auxiliaryRequest.OwnableID, auxiliaryRequest.OwnerID, auxiliaryRequest.Value)))
+		splits.Add(record.NewRecord(baseIDs.NewSplitID(auxiliaryRequest.OwnableID, auxiliaryRequest.OwnerID), base.NewSplit(auxiliaryRequest.OwnableID, auxiliaryRequest.OwnerID, auxiliaryRequest.Value)))
 	} else {
-		splits.Mutate(mappable.NewMappable(mappable.GetSplit(Mappable).Receive(auxiliaryRequest.Value)))
+		splits.Mutate(record.NewRecord(splitID, mappable.GetSplit(Mappable).Receive(auxiliaryRequest.Value)))
 	}
 
 	return newAuxiliaryResponse(), nil

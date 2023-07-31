@@ -14,6 +14,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/key"
 	"github.com/AssetMantle/modules/x/splits/mappable"
+	"github.com/AssetMantle/modules/x/splits/record"
 )
 
 type auxiliaryKeeper struct {
@@ -41,17 +42,17 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	case fromSplit.GetValue().LT(sdkTypes.ZeroInt()):
 		return nil, errorConstants.InsufficientBalance.Wrapf("insufficient balance")
 	case fromSplit.GetValue().Equal(sdkTypes.ZeroInt()):
-		splits.Remove(mappable.NewMappable(fromSplit))
+		splits.Remove(record.NewRecord(fromSplitID, fromSplit))
 	default:
-		splits.Mutate(mappable.NewMappable(fromSplit))
+		splits.Mutate(record.NewRecord(fromSplitID, fromSplit))
 	}
 
 	toSplitID := baseIDs.NewSplitID(auxiliaryRequest.OwnableID, auxiliaryRequest.ToID)
 
 	if Mappable := splits.Fetch(key.NewKey(toSplitID)).GetMappable(key.NewKey(toSplitID)); Mappable == nil {
-		splits.Add(mappable.NewMappable(base.NewSplit(auxiliaryRequest.OwnableID, auxiliaryRequest.ToID, auxiliaryRequest.Value)))
+		splits.Add(record.NewRecord(baseIDs.NewSplitID(auxiliaryRequest.OwnableID, auxiliaryRequest.ToID), base.NewSplit(auxiliaryRequest.OwnableID, auxiliaryRequest.ToID, auxiliaryRequest.Value)))
 	} else {
-		splits.Mutate(mappable.NewMappable(mappable.GetSplit(Mappable).Receive(auxiliaryRequest.Value)))
+		splits.Mutate(record.NewRecord(toSplitID, mappable.GetSplit(Mappable).Receive(auxiliaryRequest.Value)))
 	}
 
 	return newAuxiliaryResponse(), nil
