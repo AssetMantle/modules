@@ -17,6 +17,7 @@ import (
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mappable"
+	"github.com/AssetMantle/modules/x/assets/record"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/unbond"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
@@ -94,7 +95,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			return nil, err
 		}
 
-		assets.Remove(mappable.NewMappable(asset))
+		assets.Remove(record.NewRecord(asset))
 	} else {
 		return nil, errorConstants.MetaDataError.Wrapf("assets without supply cannot be burned")
 	}

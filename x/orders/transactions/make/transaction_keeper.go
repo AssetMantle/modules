@@ -26,7 +26,7 @@ import (
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/key"
-	"github.com/AssetMantle/modules/x/orders/mappable"
+	"github.com/AssetMantle/modules/x/orders/record"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 )
 
@@ -113,7 +113,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	orders.Add(mappable.NewMappable(base.NewOrder(message.ClassificationID, immutables, mutables)))
+	orders.Add(record.NewRecord(base.NewOrder(message.ClassificationID, immutables, mutables)))
 
 	return newTransactionResponse(orderID), nil
 }

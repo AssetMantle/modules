@@ -19,7 +19,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/key"
-	"github.com/AssetMantle/modules/x/assets/mappable"
+	"github.com/AssetMantle/modules/x/assets/record"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
@@ -91,7 +91,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	assets.Add(mappable.NewMappable(base.NewAsset(message.ClassificationID, immutables, mutables)))
+	assets.Add(record.NewRecord(base.NewAsset(message.ClassificationID, immutables, mutables)))
 
 	return newTransactionResponse(assetID), nil
 }

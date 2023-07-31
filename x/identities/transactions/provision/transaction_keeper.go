@@ -15,6 +15,7 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
+	"github.com/AssetMantle/modules/x/identities/record"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 )
 
@@ -61,7 +62,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("address %s is already provisioned", toAddress.String())
 	}
 
-	identities.Mutate(mappable.NewMappable(identity.ProvisionAddress(toAddress)))
+	identities.Mutate(record.NewRecord(identity.ProvisionAddress(toAddress)))
 
 	return newTransactionResponse(), nil
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
+	"github.com/AssetMantle/modules/x/identities/record"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 )
 
@@ -55,7 +56,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityNotFound.Wrapf("address %s is not provisioned", toAddress.String())
 	}
 
-	identities.Mutate(mappable.NewMappable(identity.UnprovisionAddress(toAddress)))
+	identities.Mutate(record.NewRecord(identity.UnprovisionAddress(toAddress)))
 	return newTransactionResponse(), nil
 }
 

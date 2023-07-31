@@ -22,6 +22,7 @@ import (
 	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/key"
 	"github.com/AssetMantle/modules/x/orders/mappable"
+	"github.com/AssetMantle/modules/x/orders/record"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 )
 
@@ -71,7 +72,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			return nil, errorConstants.InsufficientBalance.Wrapf("taker ownable split %s is less than the required amount %s for order execution", message.TakerOwnableSplit, makerReceiveTakerOwnableSplit.String())
 		}
 
-		orders.Remove(mappable.NewMappable(order))
+		orders.Remove(record.NewRecord(order))
 	case updatedMakerOwnableSplit.LT(sdkTypes.ZeroInt()):
 		if takerOwnableSplit.LT(makerReceiveTakerOwnableSplit) {
 			return nil, errorConstants.InsufficientBalance.Wrapf("taker ownable split %s is less than the required amount %s for order execution", message.TakerOwnableSplit, makerReceiveTakerOwnableSplit.String())
@@ -79,12 +80,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 		takerReceiveMakerOwnableSplit = order.GetMakerOwnableSplit().ToDec()
 
-		orders.Remove(mappable.NewMappable(order))
+		orders.Remove(record.NewRecord(order))
 	default:
 		makerReceiveTakerOwnableSplit = takerOwnableSplit
 		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(updatedMakerOwnableSplit)))
 
-		orders.Mutate(mappable.NewMappable(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
+		orders.Mutate(record.NewRecord(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
 	}
 
 	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), makerReceiveTakerOwnableSplit.TruncateInt())); err != nil {
