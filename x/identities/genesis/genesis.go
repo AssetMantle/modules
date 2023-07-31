@@ -9,8 +9,8 @@ import (
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
-	mappable2 "github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/parameters"
+	"github.com/AssetMantle/modules/x/identities/record"
 )
 
 var _ helpers.Genesis = (*Genesis)(nil)
@@ -42,8 +42,8 @@ func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager)
 		}
 	}
 
-	for _, mappable := range genesis.Mappables {
-		if err := mappable.ValidateBasic(); err != nil {
+	for _, record := range genesis.Records {
+		if err := record.GetMappable().ValidateBasic(); err != nil {
 			return err
 		}
 	}
@@ -51,14 +51,14 @@ func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager)
 	return nil
 }
 func (genesis *Genesis) Import(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) {
-	for _, Mappable := range genesis.Mappables {
-		mapper.NewCollection(context).Add(Mappable)
+	for _, record := range genesis.Records {
+		mapper.NewCollection(context).Add(record)
 	}
 
 	parameterManager.Set(context, genesis.ParameterList)
 }
 func (genesis *Genesis) Export(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) helpers.Genesis {
-	return genesis.Initialize(mapper.NewCollection(context).FetchAll().GetMappables(), parameterManager.Fetch(context).Get())
+	return genesis.Initialize(mapper.NewCollection(context).FetchAll().Get(), parameterManager.Fetch(context).Get())
 }
 func (genesis *Genesis) Encode(jsonCodec sdkCodec.JSONCodec) []byte {
 	bytes, err := jsonCodec.MarshalJSON(genesis)
@@ -75,11 +75,11 @@ func (genesis *Genesis) Decode(jsonCodec sdkCodec.JSONCodec, byte []byte) helper
 
 	return genesis
 }
-func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList lists.ParameterList) helpers.Genesis {
-	if len(mappables) == 0 {
-		genesis.Mappables = genesis.Default().(*Genesis).Mappables
+func (genesis *Genesis) Initialize(records []helpers.Record, parameterList lists.ParameterList) helpers.Genesis {
+	if len(records) == 0 {
+		genesis.Records = genesis.Default().(*Genesis).Records
 	} else {
-		genesis.Mappables = mappable2.MappablesFromInterface(mappables)
+		genesis.Records = record.RecordsFromInterface(records)
 	}
 
 	if len(parameterList.Get()) == 0 {
@@ -101,7 +101,7 @@ func (genesis *Genesis) Initialize(mappables []helpers.Mappable, parameterList l
 
 func Prototype() helpers.Genesis {
 	return &Genesis{
-		Mappables:     []*mappable2.Mappable{},
+		Records:       []*record.Record{},
 		ParameterList: parameters.Prototype().Get().(*base.ParameterList),
 	}
 }
