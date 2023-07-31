@@ -2,6 +2,7 @@ package record
 
 import (
 	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -30,8 +31,8 @@ func (record *Record) ReadFromIterator(iterator sdkTypes.Iterator) helpers.Recor
 
 	Mappable := record.GetMappable()
 	base.CodecPrototype().MustUnmarshal(iterator.Value(), Mappable)
-	record.Mappable = Mappable.(*mappable.Mappable)
-	return record
+
+	return NewRecord(baseIDs.PrototypeSplitID().MustGetFromPrefixedStoreKeyBytes(record.GetKey().GenerateStorePrefixBytes(), iterator.Key()), mappable.GetSplit(Mappable))
 }
 func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
 	if record.GetKey() == nil || len(record.GetKey().GeneratePrefixedStoreKeyBytes()) == 0 {

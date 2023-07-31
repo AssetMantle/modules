@@ -30,8 +30,8 @@ func (record *Record) ReadFromIterator(iterator sdkTypes.Iterator) helpers.Recor
 
 	Mappable := record.GetMappable()
 	base.CodecPrototype().MustUnmarshal(iterator.Value(), Mappable)
-	record.Mappable = Mappable.(*mappable.Mappable)
-	return record
+
+	return NewRecord(mappable.GetOrder(Mappable))
 }
 func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
 	if record.GetKey() == nil || len(record.GetKey().GeneratePrefixedStoreKeyBytes()) == 0 {
