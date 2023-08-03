@@ -1,0 +1,16 @@
+syntax = "proto3";
+package assetmantle.modules.orders.transactions.put;
+
+import "ids/base/any_ownable_id.proto";
+import "ids/base/identity_id.proto";
+import "types/base/height.proto";
+
+message Message {
+  string from = 1;
+  assetmantle.schema.ids.base.IdentityID from_i_d = 2;
+  assetmantle.schema.ids.base.AnyOwnableID maker_ownable_i_d = 3;
+  assetmantle.schema.ids.base.AnyOwnableID taker_ownable_i_d = 4;
+  string maker_ownable_split = 5;
+  string taker_ownable_split = 6;
+  assetmantle.schema.types.base.Height expires_on = 7;
+}
