@@ -7,9 +7,8 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/transactions/cancel"
-	"github.com/AssetMantle/modules/x/orders/transactions/define"
-	"github.com/AssetMantle/modules/x/orders/transactions/make"
-	"github.com/AssetMantle/modules/x/orders/transactions/take"
+	"github.com/AssetMantle/modules/x/orders/transactions/get"
+	"github.com/AssetMantle/modules/x/orders/transactions/put"
 )
 
 func Prototype() helpers.Transactions {
@@ -19,9 +18,11 @@ func Prototype() helpers.Transactions {
 		// immediate.Transaction,
 		// modify.Transaction,
 		// revoke.Transaction,
-		take.Transaction,
+		// define.Transaction,
+		// make.Transaction,
+		// take.Transaction,
 		cancel.Transaction,
-		define.Transaction,
-		make.Transaction,
+		get.Transaction,
+		put.Transaction,
 	)
 }
