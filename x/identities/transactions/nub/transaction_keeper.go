@@ -17,14 +17,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/record"
 )
 
 type transactionKeeper struct {
-	mapper          helpers.Mapper
-	defineAuxiliary helpers.Auxiliary
+	mapper helpers.Mapper
 }
 
 // TODO move to proper package
@@ -60,16 +58,6 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
-
-	for _, auxiliary := range auxiliaries {
-		switch value := auxiliary.(type) {
-		case helpers.Auxiliary:
-			switch value.GetName() {
-			case define.Auxiliary.GetName():
-				transactionKeeper.defineAuxiliary = value
-			}
-		}
-	}
 
 	return transactionKeeper
 }
