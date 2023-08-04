@@ -69,7 +69,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 			constantProperties.MakerIDProperty.ToAnyProperty(),
 			constantProperties.TakerIDProperty.ToAnyProperty())...)), baseQualified.NewMutables(mappable.Asset.Mutables.GetMutablePropertyList().Add(baseLists.AnyPropertiesToProperties(
 			constantProperties.ExpiryHeightProperty.ToAnyProperty(),
-			constantProperties.MakerOwnableSplitProperty.ToAnyProperty(),
+			constantProperties.MakerSplitProperty.ToAnyProperty(),
 		)...)))
 
 		records[index] = record.NewRecord(assetClassification)

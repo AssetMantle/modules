@@ -35,6 +35,6 @@ var Transaction = baseHelpers.NewTransaction(
 	},
 
 	constants.FromIdentityID,
-	constants.TakerOwnableSplit,
+	constants.TakerSplit,
 	constants.OrderID,
 )

@@ -71,7 +71,7 @@ func orderClassificationHandler(context client.Context) http.HandlerFunc {
 				baseLists.AnyPropertiesToProperties(
 					mutableProperties.Add(
 						constants.ExpiryHeightProperty.ToAnyProperty(),
-						constants.MakerOwnableSplitProperty.ToAnyProperty(),
+						constants.MakerSplitProperty.ToAnyProperty(),
 					).Get()...,
 				)...,
 			),

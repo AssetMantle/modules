@@ -62,7 +62,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 			constantProperties.TakerIDProperty.ToAnyProperty())...))
 		mutables := baseQualified.NewMutables(mappable.Asset.Mutables.GetMutablePropertyList().Add(baseLists.AnyPropertiesToProperties(
 			constantProperties.ExpiryHeightProperty.ToAnyProperty(),
-			constantProperties.MakerOwnableSplitProperty.ToAnyProperty(),
+			constantProperties.MakerSplitProperty.ToAnyProperty(),
 		)...))
 		classificationID := baseIDs.NewClassificationID(immutables, mutables)
 		orderID := baseIDs.NewOrderID(classificationID, immutables)

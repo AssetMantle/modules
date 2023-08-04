@@ -17,18 +17,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/record"
 )
 
 type transactionKeeper struct {
-	mapper          helpers.Mapper
-	defineAuxiliary helpers.Auxiliary
+	mapper helpers.Mapper
 }
 
 // TODO move to proper package
-var NubClassificationID = baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList(constants.NubIDProperty)), baseQualified.NewMutables(baseLists.NewPropertyList(constants.AuthenticationProperty)))
+var NubIdentityClassificationID = baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList(constants.NubIDProperty)), baseQualified.NewMutables(baseLists.NewPropertyList(constants.AuthenticationProperty)))
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
@@ -46,30 +44,20 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	// TODO ***** add nub classificationID to genesis
 
-	identityID := baseIDs.NewIdentityID(NubClassificationID, immutables)
+	identityID := baseIDs.NewIdentityID(NubIdentityClassificationID, immutables)
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 	if identities.GetMappable(key.NewKey(identityID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("identity with ID %s already exists", identityID.AsString())
 	}
 
-	identities.Add(record.NewRecord(base.NewIdentity(NubClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(address))))))))
+	identities.Add(record.NewRecord(base.NewIdentity(NubIdentityClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(address))))))))
 
 	return newTransactionResponse(identityID), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
-
-	for _, auxiliary := range auxiliaries {
-		switch value := auxiliary.(type) {
-		case helpers.Auxiliary:
-			switch value.GetName() {
-			case define.Auxiliary.GetName():
-				transactionKeeper.defineAuxiliary = value
-			}
-		}
-	}
 
 	return transactionKeeper
 }

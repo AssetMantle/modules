@@ -63,7 +63,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			baseLists.AnyPropertiesToProperties(
 				message.MutableProperties.Add(
 					constants.ExpiryHeightProperty.ToAnyProperty(),
-					constants.MakerOwnableSplitProperty.ToAnyProperty(),
+					constants.MakerSplitProperty.ToAnyProperty(),
 				).Get()...,
 			)...,
 		),

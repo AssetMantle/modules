@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package modify
+package get
 
 import (
 	"context"
@@ -36,11 +36,4 @@ var Transaction = baseHelpers.NewTransaction(
 
 	constants.FromIdentityID,
 	constants.OrderID,
-	constants.MakerSplit,
-	constants.TakerSplit,
-	constants.ExpiresIn,
-	constants.ImmutableMetaProperties,
-	constants.ImmutableProperties,
-	constants.MutableMetaProperties,
-	constants.MutableProperties,
 )
