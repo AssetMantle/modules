@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/asaskevich/govalidator"
@@ -21,10 +20,9 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq           rest.BaseReq `json:"baseReq"`
-	FromID            string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
-	TakerOwnableSplit string       `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing, matches(^[0-9.]+$)"`
-	OrderID           string       `json:"orderID" valid:"required~required field orderID missing, matches(^[A-Za-z0-9-_=.|*]+$)~invalid field orderID"`
+	BaseReq rest.BaseReq `json:"baseReq"`
+	FromID  string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
+	OrderID string       `json:"orderID" valid:"required~required field orderID missing, matches(^[A-Za-z0-9-_=.|*]+$)~invalid field orderID"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -47,7 +45,6 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(context),
 		cliCommand.ReadString(constants.FromIdentityID),
-		cliCommand.ReadString(constants.TakerOwnableSplit),
 		cliCommand.ReadString(constants.OrderID),
 	), nil
 }
@@ -67,11 +64,6 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	takerOwnableSplit, ok := sdkTypes.NewIntFromString(transactionRequest.TakerOwnableSplit)
-	if !ok {
-		return nil, errorConstants.IncorrectFormat.Wrapf("taker ownable split %s is not a valid integer", transactionRequest.TakerOwnableSplit)
-	}
-
 	fromID, err := baseIDs.PrototypeIdentityID().FromString(transactionRequest.FromID)
 	if err != nil {
 		return nil, err
@@ -85,7 +77,6 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	return NewMessage(
 		from,
 		fromID.(ids.IdentityID),
-		takerOwnableSplit,
 		orderID.(ids.OrderID),
 	), nil
 }
@@ -95,11 +86,10 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, takerOwnableSplit string, orderID string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, orderID string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:           baseReq,
-		FromID:            fromID,
-		TakerOwnableSplit: takerOwnableSplit,
-		OrderID:           orderID,
+		BaseReq: baseReq,
+		FromID:  fromID,
+		OrderID: orderID,
 	}
 }
