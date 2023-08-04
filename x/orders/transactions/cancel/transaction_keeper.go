@@ -56,17 +56,18 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	order := mappable.GetOrder(Mappable)
 
-	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(order.GetClassificationID(), message.FromID, constants.CanCancelOrderPermission)); err != nil {
-		// TODO enable after permissioning is implemented
-		// return nil, err
-	}
+	//if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(order.GetClassificationID(), message.FromID, constants.CanCancelOrderPermission)); err != nil {
+	//	 TODO enable after permissioning is implemented
+	//	 return nil, err
+	//}
+
+	//if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(order.GetClassificationID(), fromAddress)); err != nil {
+	//	 TODO enable after order bonding is implemented
+	//	return nil, err
+	//}
 
 	if message.FromID.Compare(order.GetMakerID()) != 0 {
 		return nil, errorConstants.NotAuthorized.Wrapf("order with ID %s not owned by %s", message.OrderID.AsString(), message.FromID.AsString())
-	}
-
-	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(order.GetClassificationID(), fromAddress)); err != nil {
-		return nil, err
 	}
 
 	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); err != nil {
