@@ -96,7 +96,7 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ClassificationID, constants.TakerID, constants.MakerOwnableID, constants.TakerOwnableID, constants.ExpiresIn, constants.MakerOwnableSplit, constants.TakerOwnableSplit, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ClassificationID, constants.TakerID, constants.MakerOwnableID, constants.TakerOwnableID, constants.ExpiresIn, constants.MakerSplit, constants.TakerSplit, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
 
 	viper.Set(constants.FromIdentityID.GetName(), testFromID.AsString())
 	viper.Set(constants.ClassificationID.GetName(), testClassificationID.AsString())
@@ -104,8 +104,8 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.MakerOwnableID.GetName(), makerOwnableID.AsString())
 	viper.Set(constants.TakerOwnableID.GetName(), takerOwnableID.AsString())
 	viper.Set(constants.ExpiresIn.GetName(), expiresIn)
-	viper.Set(constants.MakerOwnableSplit.GetName(), makerOwnableSplit.String())
-	viper.Set(constants.TakerOwnableSplit.GetName(), takerOwnableSplit.String())
+	viper.Set(constants.MakerSplit.GetName(), makerOwnableSplit.String())
+	viper.Set(constants.TakerSplit.GetName(), takerOwnableSplit.String())
 	viper.Set(constants.ImmutableMetaProperties.GetName(), immutableMetaPropertiesString)
 	viper.Set(constants.ImmutableProperties.GetName(), immutablePropertiesString)
 	viper.Set(constants.MutableMetaProperties.GetName(), mutableMetaPropertiesString)

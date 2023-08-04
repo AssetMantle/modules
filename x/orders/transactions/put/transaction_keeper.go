@@ -19,10 +19,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/key"
@@ -34,12 +31,12 @@ type transactionKeeper struct {
 	mapper                helpers.Mapper
 	parameterManager      helpers.ParameterManager
 	authenticateAuxiliary helpers.Auxiliary
-	authorizeAuxiliary    helpers.Auxiliary
-	bondAuxiliary         helpers.Auxiliary
-	conformAuxiliary      helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	transferAuxiliary     helpers.Auxiliary
 }
+
+// TODO move to proper package
+var PutOrderClassificationID = baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList(propertyConstants.MakerIDProperty, propertyConstants.MakerOwnableIDProperty, propertyConstants.TakerOwnableIDProperty, propertyConstants.MakerSplitProperty, propertyConstants.TakerSplitProperty, propertyConstants.ExpiryHeightProperty)), baseQualified.NewMutables(baseLists.NewPropertyList()))
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
@@ -48,16 +45,6 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-
-	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.ClassificationID, message.FromID)); err != nil {
-		return nil, err
-	}
-
-	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.GetClassificationID(), message.FromID, constants.CanMakeOrderPermission)); err != nil {
-		// TODO enable after permissioning is implemented
-		// return nil, err
-	}
-
 	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
 		panic("Could not get from address from Bech32 string")
@@ -66,54 +53,43 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err
 	}
-	makerOwnableSplit, ok := sdkTypes.NewIntFromString(message.MakerOwnableSplit)
+
+	makerSplit, ok := sdkTypes.NewIntFromString(message.MakerSplit)
 	if !ok {
-		return nil, errorConstants.IncorrectFormat.Wrapf("MakerOwnableSplit is not a valid integer")
+		return nil, errorConstants.IncorrectFormat.Wrapf("maker split is not a valid integer")
 	}
-	takerOwnableSplit, ok := sdkTypes.NewIntFromString(message.TakerOwnableSplit)
-	if !ok {
-		return nil, errorConstants.IncorrectFormat.Wrapf("TakerOwnableSplit is not a valid integer")
-	}
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, constants.ModuleIdentityID, message.MakerOwnableID, makerOwnableSplit)); err != nil {
+
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, constants.ModuleIdentityID, message.MakerAssetID, makerSplit)); err != nil {
 		return nil, err
 	}
 
-	immutableMetaProperties := message.ImmutableMetaProperties.
-		Add(baseProperties.NewMetaProperty(propertyConstants.ExchangeRateProperty.GetKey(), baseData.NewDecData(takerOwnableSplit.ToDec().QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(makerOwnableSplit.ToDec())))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.CreationHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.MakerOwnableID))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.TakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.TakerOwnableID))).
+	takerSplit, ok := sdkTypes.NewIntFromString(message.TakerSplit)
+	if !ok {
+		return nil, errorConstants.IncorrectFormat.Wrapf("taker split is not a valid integer")
+	}
+
+	if message.ExpiryHeight.Compare(baseTypes.CurrentHeight(context)) <= 0 {
+		return nil, errorConstants.InvalidRequest.Wrapf("order expiry is in the past")
+	} else if message.ExpiryHeight.Get()-baseTypes.CurrentHeight(context).Get() > transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get() {
+		return nil, errorConstants.InvalidRequest.Wrapf("order expiry exceeds maximum allowed %d", transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get())
+	}
+
+	immutables := baseQualified.NewImmutables(baseLists.PrototypePropertyList().
 		Add(baseProperties.NewMetaProperty(propertyConstants.MakerIDProperty.GetKey(), baseData.NewIDData(message.FromID))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.TakerIDProperty.GetKey(), baseData.NewIDData(message.TakerID)))
+		Add(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.MakerAssetID.ToAnyOwnableID()))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.TakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.TakerCoinID.ToAnyOwnableID()))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(makerSplit))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.TakerSplitProperty.GetKey(), baseData.NewNumberData(takerSplit))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(message.ExpiryHeight))))
 
-	immutables := baseQualified.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.ImmutableProperties.Get()...)...))
-
-	orderID := baseIDs.NewOrderID(message.ClassificationID, immutables)
+	orderID := baseIDs.NewOrderID(PutOrderClassificationID, immutables)
 
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(orderID))
 	if orders.GetMappable(key.NewKey(orderID)) != nil {
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("order with ID %s already exists", orderID.AsString())
 	}
 
-	if message.ExpiresIn.Get() > transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get() {
-		return nil, errorConstants.InvalidRequest.Wrapf("order expiry exceeds maximum allowed %d", transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get())
-	}
-
-	mutableMetaProperties := message.MutableMetaProperties.
-		Add(baseProperties.NewMetaProperty(propertyConstants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(makerOwnableSplit)))
-
-	mutables := baseQualified.NewMutables(mutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
-
-	if _, err := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); err != nil {
-		return nil, err
-	}
-
-	if _, err := transactionKeeper.bondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(message.ClassificationID, fromAddress)); err != nil {
-		return nil, err
-	}
-
-	orders.Add(record.NewRecord(base.NewOrder(message.ClassificationID, immutables, mutables)))
+	orders.Add(record.NewRecord(base.NewOrder(PutOrderClassificationID, immutables, baseQualified.NewMutables(baseLists.PrototypePropertyList()))))
 
 	return newTransactionResponse(orderID), nil
 }
@@ -127,12 +103,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			switch value.GetName() {
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
-			case authorize.Auxiliary.GetName():
-				transactionKeeper.authorizeAuxiliary = value
-			case bond.Auxiliary.GetName():
-				transactionKeeper.bondAuxiliary = value
-			case conform.Auxiliary.GetName():
-				transactionKeeper.conformAuxiliary = value
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			case transfer.Auxiliary.GetName():

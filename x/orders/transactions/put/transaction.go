@@ -34,16 +34,10 @@ var Transaction = baseHelpers.NewTransaction(
 		return RegisterServiceHandlerClient(context.Background(), mux, NewServiceClient(clientCtx))
 	},
 
-	constants.ClassificationID,
-	constants.ExpiresIn,
 	constants.FromIdentityID,
-	constants.MakerOwnableID,
-	constants.MakerOwnableSplit,
-	constants.MutableMetaProperties,
-	constants.MutableProperties,
-	constants.TakerID,
-	constants.TakerOwnableSplit,
-	constants.TakerOwnableID,
-	constants.ImmutableMetaProperties,
-	constants.ImmutableProperties,
+	constants.MakerAssetID,
+	constants.TakerCoinID,
+	constants.MakerSplit,
+	constants.TakerSplit,
+	constants.ExpiryHeight,
 )
