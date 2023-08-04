@@ -89,9 +89,9 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 						var leftOrder documents.Order
 						var rightOrder documents.Order
 
-						orderHeight := order.GetCreationHeight()
+						orderHeight := order.GetExecutionHeight()
 
-						executableOrderHeight := executableOrder.GetCreationHeight()
+						executableOrderHeight := executableOrder.GetExecutionHeight()
 
 						switch {
 						case orderHeight.Compare(executableOrderHeight) > 0:
