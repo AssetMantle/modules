@@ -91,12 +91,12 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.OrderID, constants.TakerOwnableSplit, constants.MakerOwnableSplit, constants.ExpiresIn, constants.MutableMetaProperties, constants.MutableProperties})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.OrderID, constants.TakerSplit, constants.MakerSplit, constants.ExpiresIn, constants.MutableMetaProperties, constants.MutableProperties})
 
 	viper.Set(constants.FromIdentityID.GetName(), testFromID.AsString())
 	viper.Set(constants.OrderID.GetName(), testOrderID.AsString())
-	viper.Set(constants.TakerOwnableSplit.GetName(), takerOwnableSplit.String())
-	viper.Set(constants.MakerOwnableSplit.GetName(), makerOwnableSplit.String())
+	viper.Set(constants.TakerSplit.GetName(), takerOwnableSplit.String())
+	viper.Set(constants.MakerSplit.GetName(), makerOwnableSplit.String())
 	viper.Set(constants.ExpiresIn.GetName(), expiresIn)
 	viper.Set(constants.MutableMetaProperties.GetName(), mutableMetaPropertiesString)
 	viper.Set(constants.MutableProperties.GetName(), mutablePropertiesString)

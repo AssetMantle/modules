@@ -36,8 +36,8 @@ var Transaction = baseHelpers.NewTransaction(
 
 	constants.FromIdentityID,
 	constants.OrderID,
-	constants.MakerOwnableSplit,
-	constants.TakerOwnableSplit,
+	constants.MakerSplit,
+	constants.TakerSplit,
 	constants.ExpiresIn,
 	constants.ImmutableMetaProperties,
 	constants.ImmutableProperties,

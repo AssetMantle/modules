@@ -101,7 +101,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	mutableMetaProperties := message.MutableMetaProperties.
 		Add(baseProperties.NewMetaProperty(propertyConstants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(makerOwnableSplit)))
+		Add(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(makerOwnableSplit)))
 
 	mutables := baseQualified.NewMutables(mutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
 

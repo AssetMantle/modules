@@ -83,7 +83,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		orders.Remove(record.NewRecord(order))
 	default:
 		makerReceiveTakerOwnableSplit = takerOwnableSplit
-		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(updatedMakerOwnableSplit)))
+		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(updatedMakerOwnableSplit)))
 
 		orders.Mutate(record.NewRecord(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
 	}

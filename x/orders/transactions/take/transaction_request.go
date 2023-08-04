@@ -47,7 +47,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(context),
 		cliCommand.ReadString(constants.FromIdentityID),
-		cliCommand.ReadString(constants.TakerOwnableSplit),
+		cliCommand.ReadString(constants.TakerSplit),
 		cliCommand.ReadString(constants.OrderID),
 	), nil
 }

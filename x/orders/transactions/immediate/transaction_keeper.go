@@ -90,7 +90,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	mutableMetaProperties := message.MutableMetaProperties.
 		Add(baseProperties.NewMetaProperty(propertyConstants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(makerOwnableSplit)))
+		Add(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(makerOwnableSplit)))
 
 	mutables := baseQualified.NewMutables(mutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
 
@@ -136,7 +136,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 					panic(err)
 				}
 
-				mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(executableOrder.GetMakerOwnableSplit().Sub(sendToBuyer))))
+				mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(executableOrder.GetMakerOwnableSplit().Sub(sendToBuyer))))
 
 				orders.Mutate(record.NewRecord(base.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
 
@@ -171,7 +171,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	orders.Iterate(record.NewRecord(order).GetKey(), accumulator)
 
 	if !orderLeftOverMakerOwnableSplit.Equal(sdkTypes.ZeroInt()) && orderMutated {
-		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableSplitProperty.GetKey(), baseData.NewNumberData(orderLeftOverMakerOwnableSplit)))
+		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(orderLeftOverMakerOwnableSplit)))
 
 		orders.Mutate(record.NewRecord(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
 	}
