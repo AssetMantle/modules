@@ -78,27 +78,31 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		}
 	}
 
-	auxiliaryResponse, err = transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetSupply()))
-	if err != nil {
+	var supply sdkTypes.Int
+	if asset.GetSupply().IsMeta() {
+		supply = asset.GetSupply().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
+	} else {
+		auxiliaryResponse, err = transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetSupply()))
+		if err != nil {
+			return nil, err
+		}
+
+		if supplyMetaProperty := supplement.GetMetaPropertiesFromResponse(auxiliaryResponse).GetProperty(propertyConstants.SupplyProperty.GetID()); supplyMetaProperty != nil && supplyMetaProperty.IsMeta() {
+			supply = supplyMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
+		} else {
+			return nil, errorConstants.MetaDataError.Wrapf("assets without revealed supply cannot be burned")
+		}
+	}
+
+	if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.AssetID, message.FromID, supply)); err != nil {
 		return nil, err
 	}
-	metaProperties = supplement.GetMetaPropertiesFromResponse(auxiliaryResponse)
 
-	if supplyMetaProperty := metaProperties.GetProperty(propertyConstants.SupplyProperty.GetID()); supplyMetaProperty != nil && supplyMetaProperty.IsMeta() {
-		supply := supplyMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
-
-		if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.AssetID, message.FromID, supply)); err != nil {
-			return nil, err
-		}
-
-		if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress)); err != nil {
-			return nil, err
-		}
-
-		assets.Remove(record.NewRecord(asset))
-	} else {
-		return nil, errorConstants.MetaDataError.Wrapf("assets without supply cannot be burned")
+	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress)); err != nil {
+		return nil, err
 	}
+
+	assets.Remove(record.NewRecord(asset))
 
 	return newTransactionResponse(), nil
 }
