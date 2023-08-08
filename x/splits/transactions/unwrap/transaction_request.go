@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/asaskevich/govalidator"
@@ -23,8 +22,7 @@ import (
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
 	FromID  string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
-	AssetID string       `json:"assetID" valid:"required~required field assetID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field assetID"`
-	Value   string       `json:"value" valid:"required~required field value missing, matches(^[0-9]+$)~invalid field value"`
+	Coins   string       `json:"coins" valid:"required~required field coins missing, matches(^.*$)~invalid field coins"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -47,8 +45,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(context),
 		cliCommand.ReadString(constants.FromIdentityID),
-		cliCommand.ReadString(constants.AssetID),
-		cliCommand.ReadString(constants.Value),
+		cliCommand.ReadString(constants.Coins),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
@@ -67,9 +64,9 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	value, ok := sdkTypes.NewIntFromString(transactionRequest.Value)
-	if !ok {
-		return nil, errorConstants.IncorrectFormat.Wrapf("unwrap value %s is not a valid integer", transactionRequest.Value)
+	coins, err := sdkTypes.ParseCoinsNormalized(transactionRequest.Coins)
+	if err != nil {
+		return nil, err
 	}
 
 	fromID, err := baseIDs.PrototypeIdentityID().FromString(transactionRequest.FromID)
@@ -77,16 +74,10 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	assetID, err := baseIDs.PrototypeAssetID().FromString(transactionRequest.AssetID)
-	if err != nil {
-		return nil, err
-	}
-
 	return NewMessage(
 		from,
 		fromID.(ids.IdentityID),
-		assetID.(ids.AssetID),
-		value,
+		coins,
 	), nil
 }
 func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
@@ -95,11 +86,10 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, assetID string, value string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, coins string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq: baseReq,
 		FromID:  fromID,
-		AssetID: assetID,
-		Value:   value,
+		Coins:   coins,
 	}
 }
