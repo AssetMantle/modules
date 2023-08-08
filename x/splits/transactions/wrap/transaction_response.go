@@ -4,8 +4,6 @@
 package wrap
 
 import (
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -13,11 +11,10 @@ import (
 
 var _ helpers.TransactionResponse = (*TransactionResponse)(nil)
 
-func (transactionResponse *TransactionResponse) GetResult() *sdkTypes.Result {
-	return &sdkTypes.Result{
-		Data: []byte(transactionResponse.AssetID.AsString()),
-	}
+func (*TransactionResponse) GetResult() *sdkTypes.Result {
+	return &sdkTypes.Result{}
 }
-func newTransactionResponse(assetID ids.AssetID) *TransactionResponse {
-	return &TransactionResponse{assetID.(*baseIDs.AssetID)}
+
+func newTransactionResponse() *TransactionResponse {
+	return &TransactionResponse{}
 }
