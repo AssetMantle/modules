@@ -25,7 +25,7 @@ type transactionRequest struct {
 	BaseReq      rest.BaseReq `json:"baseReq"`
 	FromID       string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
 	MakerAssetID string       `json:"makerAssetID" valid:"required~required field makerAssetID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field makerAssetID"`
-	TakerCoinID  string       `json:"takerCoinID" valid:"required~required field takerCoinID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field takerCoinID"`
+	TakerAssetID string       `json:"takerAssetID" valid:"required~required field takerAssetID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field takerAssetID"`
 	MakerSplit   string       `json:"makerSplit" valid:"required~required field makerSplit missing, matches(^[0-9.]+$)~invalid field makerSplit"`
 	TakerSplit   string       `json:"takerSplit" valid:"required~required field takerSplit missing, matches(^[0-9.]+$)~invalid field takerSplit"`
 	ExpiryHeight int64        `json:"expiryHeight" valid:"required~required field expiryHeight missing, matches(^[0-9]+$)~invalid field expiryHeight"`
@@ -52,7 +52,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadBaseReq(context),
 		cliCommand.ReadString(constants.FromIdentityID),
 		cliCommand.ReadString(constants.MakerAssetID),
-		cliCommand.ReadString(constants.TakerCoinID),
+		cliCommand.ReadString(constants.TakerAssetID),
 		cliCommand.ReadString(constants.MakerSplit),
 		cliCommand.ReadString(constants.TakerSplit),
 		cliCommand.ReadInt64(constants.ExpiryHeight),
@@ -85,7 +85,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	takerCoinID, err := baseIDs.PrototypeCoinID().FromString(transactionRequest.TakerCoinID)
+	takerAssetID, err := baseIDs.PrototypeAssetID().FromString(transactionRequest.TakerAssetID)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		from,
 		fromID.(ids.IdentityID),
 		makerAssetID.(ids.AssetID),
-		takerCoinID.(ids.CoinID),
+		takerAssetID.(ids.AssetID),
 		makerSplit,
 		takerSplit,
 		baseTypes.NewHeight(transactionRequest.ExpiryHeight),
@@ -117,12 +117,12 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, makerAssetID string, takerCoinID string, makerSplit, takerSplit string, expiryHeight int64) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, makerAssetID string, takerAssetID string, makerSplit, takerSplit string, expiryHeight int64) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:      baseReq,
 		FromID:       fromID,
 		MakerAssetID: makerAssetID,
-		TakerCoinID:  takerCoinID,
+		TakerAssetID: takerAssetID,
 		MakerSplit:   makerSplit,
 		TakerSplit:   takerSplit,
 		ExpiryHeight: expiryHeight,

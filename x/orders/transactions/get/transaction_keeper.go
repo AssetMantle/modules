@@ -51,11 +51,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	order := mappable.GetOrder(Mappable)
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerOwnableID(), order.GetTakerOwnableSplit())); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerAssetID(), order.GetTakerSplit())); err != nil {
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), order.GetMakerOwnableSplit())); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, message.FromID, order.GetMakerAssetID(), order.GetMakerSplit())); err != nil {
 		return nil, err
 	}
 

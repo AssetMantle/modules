@@ -35,10 +35,10 @@ func (message *Message) ValidateBasic() error {
 	if err := message.TakerID.ValidateBasic(); err != nil {
 		return err
 	}
-	if err := message.MakerOwnableID.ValidateBasic(); err != nil {
+	if err := message.MakerAssetID.ValidateBasic(); err != nil {
 		return err
 	}
-	if err := message.TakerOwnableID.ValidateBasic(); err != nil {
+	if err := message.TakerAssetID.ValidateBasic(); err != nil {
 		return err
 	}
 	if err := message.ExpiresIn.ValidateBasic(); err != nil {
@@ -56,10 +56,10 @@ func (message *Message) ValidateBasic() error {
 	if err := message.MutableProperties.ValidateBasic(); err != nil {
 		return err
 	}
-	if _, ok := sdkTypes.NewIntFromString(message.MakerOwnableSplit); !ok {
-		return constants.IncorrectFormat.Wrapf("maker ownable split %s is not a valid integer", message.MakerOwnableSplit)
-	} else if _, ok := sdkTypes.NewIntFromString(message.TakerOwnableSplit); !ok {
-		return constants.IncorrectFormat.Wrapf("taker ownable split %s is not a valid integer", message.TakerOwnableSplit)
+	if _, ok := sdkTypes.NewIntFromString(message.MakerSplit); !ok {
+		return constants.IncorrectFormat.Wrapf("maker split %s is not a valid integer", message.MakerSplit)
+	} else if _, ok := sdkTypes.NewIntFromString(message.TakerSplit); !ok {
+		return constants.IncorrectFormat.Wrapf("taker split %s is not a valid integer", message.TakerSplit)
 	}
 	return nil
 }
@@ -88,18 +88,18 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, takerID ids.IdentityID, makerOwnableID ids.AnyOwnableID, takerOwnableID ids.AnyOwnableID, expiresIn typesSchema.Height, makerOwnableSplit sdkTypes.Int, takerOwnableSplit sdkTypes.Int, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, takerID ids.IdentityID, makerAssetID ids.AssetID, takerAssetID ids.AssetID, expiresIn typesSchema.Height, makerSplit sdkTypes.Int, takerSplit sdkTypes.Int, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 
 	return &Message{
 		From:                    from.String(),
 		FromID:                  fromID.(*baseIDs.IdentityID),
 		ClassificationID:        classificationID.(*baseIDs.ClassificationID),
 		TakerID:                 takerID.(*baseIDs.IdentityID),
-		MakerOwnableID:          makerOwnableID.(*baseIDs.AnyOwnableID),
-		TakerOwnableID:          takerOwnableID.(*baseIDs.AnyOwnableID),
+		MakerAssetID:            makerAssetID.(*baseIDs.AssetID),
+		TakerAssetID:            takerAssetID.(*baseIDs.AssetID),
 		ExpiresIn:               expiresIn.(*baseTypes.Height),
-		MakerOwnableSplit:       makerOwnableSplit.String(),
-		TakerOwnableSplit:       takerOwnableSplit.String(),
+		MakerSplit:              makerSplit.String(),
+		TakerSplit:              takerSplit.String(),
 		ImmutableMetaProperties: immutableMetaProperties.(*baseLists.PropertyList),
 		ImmutableProperties:     immutableProperties.(*baseLists.PropertyList),
 		MutableMetaProperties:   mutableMetaProperties.(*baseLists.PropertyList),

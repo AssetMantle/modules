@@ -26,7 +26,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 type Message struct {
 	From              string           `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
 	FromID            *base.IdentityID `protobuf:"bytes,2,opt,name=from_i_d,json=fromID,proto3" json:"from_i_d,omitempty"`
-	TakerOwnableSplit string           `protobuf:"bytes,3,opt,name=taker_ownable_split,json=takerOwnableSplit,proto3" json:"taker_ownable_split,omitempty"`
+	TakerSplit string           `protobuf:"bytes,3,opt,name=taker_split,json=takerSplit,proto3" json:"taker_split,omitempty"`
 	OrderID           *base.OrderID    `protobuf:"bytes,4,opt,name=order_i_d,json=orderID,proto3" json:"order_i_d,omitempty"`
 }
 
@@ -77,9 +77,9 @@ func (m *Message) GetFromID() *base.IdentityID {
 	return nil
 }
 
-func (m *Message) GetTakerOwnableSplit() string {
+func (m *Message) GetTakerSplit() string {
 	if m != nil {
-		return m.TakerOwnableSplit
+		return m.TakerSplit
 	}
 	return ""
 }
@@ -161,10 +161,10 @@ func (m *Message) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x22
 	}
-	if len(m.TakerOwnableSplit) > 0 {
-		i -= len(m.TakerOwnableSplit)
-		copy(dAtA[i:], m.TakerOwnableSplit)
-		i = encodeVarintMessage(dAtA, i, uint64(len(m.TakerOwnableSplit)))
+	if len(m.TakerSplit) > 0 {
+		i -= len(m.TakerSplit)
+		copy(dAtA[i:], m.TakerSplit)
+		i = encodeVarintMessage(dAtA, i, uint64(len(m.TakerSplit)))
 		i--
 		dAtA[i] = 0x1a
 	}
@@ -215,7 +215,7 @@ func (m *Message) Size() (n int) {
 		l = m.FromID.Size()
 		n += 1 + l + sovMessage(uint64(l))
 	}
-	l = len(m.TakerOwnableSplit)
+	l = len(m.TakerSplit)
 	if l > 0 {
 		n += 1 + l + sovMessage(uint64(l))
 	}
@@ -331,7 +331,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TakerOwnableSplit", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field TakerSplit", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -359,7 +359,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.TakerOwnableSplit = string(dAtA[iNdEx:postIndex])
+			m.TakerSplit = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {

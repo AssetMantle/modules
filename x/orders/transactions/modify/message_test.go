@@ -21,15 +21,15 @@ import (
 
 var (
 	expiresInHeight = base.NewHeight(60).(*base.Height)
-	testMessage     = NewMessage(fromAccAddress, testFromID, testOrderID, takerOwnableSplit, makerOwnableSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties)
+	testMessage     = NewMessage(fromAccAddress, testFromID, testOrderID, takerSplit, makerSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties)
 )
 
 type fields struct {
 	From                  string
 	FromID                *baseIDs.IdentityID
 	OrderID               *baseIDs.OrderID
-	MakerOwnableSplit     sdkTypes.Dec
-	TakerOwnableSplit     sdkTypes.Dec
+	MakerSplit            sdkTypes.Dec
+	TakerSplit            sdkTypes.Dec
 	ExpiresIn             *base.Height
 	MutableMetaProperties *baseLists.PropertyList
 	MutableProperties     *baseLists.PropertyList
@@ -44,7 +44,7 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want *Message
 	}{
-		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), testFromID, testOrderID, takerOwnableSplit, makerOwnableSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}},
+		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), testFromID, testOrderID, takerSplit, makerSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -78,7 +78,7 @@ func Test_message_GetSigners(t *testing.T) {
 		fields fields
 		want   []sdkTypes.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testOrderID, takerOwnableSplit, makerOwnableSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, []sdkTypes.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testOrderID, takerSplit, makerSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, []sdkTypes.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -86,8 +86,8 @@ func Test_message_GetSigners(t *testing.T) {
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				OrderID:               tt.fields.OrderID,
-				MakerOwnableSplit:     tt.fields.MakerOwnableSplit,
-				TakerOwnableSplit:     tt.fields.TakerOwnableSplit,
+				MakerSplit:            tt.fields.MakerSplit,
+				TakerSplit:            tt.fields.TakerSplit,
 				ExpiresIn:             tt.fields.ExpiresIn,
 				MutableMetaProperties: tt.fields.MutableMetaProperties,
 				MutableProperties:     tt.fields.MutableProperties,
@@ -109,7 +109,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testOrderID, takerOwnableSplit, makerOwnableSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testOrderID, takerSplit, makerSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -117,8 +117,8 @@ func Test_message_RegisterCodec(t *testing.T) {
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				OrderID:               tt.fields.OrderID,
-				MakerOwnableSplit:     tt.fields.MakerOwnableSplit,
-				TakerOwnableSplit:     tt.fields.TakerOwnableSplit,
+				MakerSplit:            tt.fields.MakerSplit,
+				TakerSplit:            tt.fields.TakerSplit,
 				ExpiresIn:             tt.fields.ExpiresIn,
 				MutableMetaProperties: tt.fields.MutableMetaProperties,
 				MutableProperties:     tt.fields.MutableProperties,
@@ -135,7 +135,7 @@ func Test_message_Type(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testOrderID, takerOwnableSplit, makerOwnableSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testOrderID, takerSplit, makerSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -143,8 +143,8 @@ func Test_message_Type(t *testing.T) {
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				OrderID:               tt.fields.OrderID,
-				MakerOwnableSplit:     tt.fields.MakerOwnableSplit,
-				TakerOwnableSplit:     tt.fields.TakerOwnableSplit,
+				MakerSplit:            tt.fields.MakerSplit,
+				TakerSplit:            tt.fields.TakerSplit,
 				ExpiresIn:             tt.fields.ExpiresIn,
 				MutableMetaProperties: tt.fields.MutableMetaProperties,
 				MutableProperties:     tt.fields.MutableProperties,
@@ -164,7 +164,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 		wantErr bool
 	}{
 		{"-ve for nil", fields{}, true},
-		{"+ve", fields{fromAccAddress.String(), testFromID, testOrderID, takerOwnableSplit, makerOwnableSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, false},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testOrderID, takerSplit, makerSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -172,8 +172,8 @@ func Test_message_ValidateBasic(t *testing.T) {
 				From:                  tt.fields.From,
 				FromID:                tt.fields.FromID,
 				OrderID:               tt.fields.OrderID,
-				MakerOwnableSplit:     tt.fields.MakerOwnableSplit,
-				TakerOwnableSplit:     tt.fields.TakerOwnableSplit,
+				MakerSplit:            tt.fields.MakerSplit,
+				TakerSplit:            tt.fields.TakerSplit,
 				ExpiresIn:             tt.fields.ExpiresIn,
 				MutableMetaProperties: tt.fields.MutableMetaProperties,
 				MutableProperties:     tt.fields.MutableProperties,
@@ -190,8 +190,8 @@ func Test_NewMessage(t *testing.T) {
 		from                  sdkTypes.AccAddress
 		fromID                ids.IdentityID
 		orderID               ids.OrderID
-		takerOwnableSplit     sdkTypes.Dec
-		makerOwnableSplit     sdkTypes.Dec
+		takerSplit            sdkTypes.Dec
+		makerSplit            sdkTypes.Dec
 		expiresIn             types.Height
 		mutableMetaProperties lists.PropertyList
 		mutableProperties     lists.PropertyList
@@ -201,11 +201,11 @@ func Test_NewMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve", args{fromAccAddress, testFromID, testOrderID, takerOwnableSplit, makerOwnableSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, &Message{fromAccAddress.String(), testFromID, testOrderID, takerOwnableSplit, makerOwnableSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}},
+		{"+ve", args{fromAccAddress, testFromID, testOrderID, takerSplit, makerSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, &Message{fromAccAddress.String(), testFromID, testOrderID, takerSplit, makerSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.orderID, tt.args.takerOwnableSplit, tt.args.makerOwnableSplit, tt.args.expiresIn, tt.args.mutableMetaProperties.(*baseLists.PropertyList), tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.orderID, tt.args.takerSplit, tt.args.makerSplit, tt.args.expiresIn, tt.args.mutableMetaProperties.(*baseLists.PropertyList), tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})

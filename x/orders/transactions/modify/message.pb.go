@@ -29,8 +29,8 @@ type Message struct {
 	From                  string              `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
 	FromID                *base.IdentityID    `protobuf:"bytes,2,opt,name=from_i_d,json=fromID,proto3" json:"from_i_d,omitempty"`
 	OrderID               *base.OrderID       `protobuf:"bytes,3,opt,name=order_i_d,json=orderID,proto3" json:"order_i_d,omitempty"`
-	MakerOwnableSplit     string              `protobuf:"bytes,4,opt,name=maker_ownable_split,json=makerOwnableSplit,proto3" json:"maker_ownable_split,omitempty"`
-	TakerOwnableSplit     string              `protobuf:"bytes,5,opt,name=taker_ownable_split,json=takerOwnableSplit,proto3" json:"taker_ownable_split,omitempty"`
+	MakerSplit     string              `protobuf:"bytes,4,opt,name=maker_split,json=makerSplit,proto3" json:"maker_split,omitempty"`
+	TakerSplit     string              `protobuf:"bytes,5,opt,name=taker_split,json=takerSplit,proto3" json:"taker_split,omitempty"`
 	ExpiresIn             *base1.Height       `protobuf:"bytes,6,opt,name=expires_in,json=expiresIn,proto3" json:"expires_in,omitempty"`
 	MutableMetaProperties *base2.PropertyList `protobuf:"bytes,7,opt,name=mutable_meta_properties,json=mutableMetaProperties,proto3" json:"mutable_meta_properties,omitempty"`
 	MutableProperties     *base2.PropertyList `protobuf:"bytes,8,opt,name=mutable_properties,json=mutableProperties,proto3" json:"mutable_properties,omitempty"`
@@ -90,16 +90,16 @@ func (m *Message) GetOrderID() *base.OrderID {
 	return nil
 }
 
-func (m *Message) GetMakerOwnableSplit() string {
+func (m *Message) GetMakerSplit() string {
 	if m != nil {
-		return m.MakerOwnableSplit
+		return m.MakerSplit
 	}
 	return ""
 }
 
-func (m *Message) GetTakerOwnableSplit() string {
+func (m *Message) GetTakerSplit() string {
 	if m != nil {
-		return m.TakerOwnableSplit
+		return m.TakerSplit
 	}
 	return ""
 }
@@ -226,17 +226,17 @@ func (m *Message) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x32
 	}
-	if len(m.TakerOwnableSplit) > 0 {
-		i -= len(m.TakerOwnableSplit)
-		copy(dAtA[i:], m.TakerOwnableSplit)
-		i = encodeVarintMessage(dAtA, i, uint64(len(m.TakerOwnableSplit)))
+	if len(m.TakerSplit) > 0 {
+		i -= len(m.TakerSplit)
+		copy(dAtA[i:], m.TakerSplit)
+		i = encodeVarintMessage(dAtA, i, uint64(len(m.TakerSplit)))
 		i--
 		dAtA[i] = 0x2a
 	}
-	if len(m.MakerOwnableSplit) > 0 {
-		i -= len(m.MakerOwnableSplit)
-		copy(dAtA[i:], m.MakerOwnableSplit)
-		i = encodeVarintMessage(dAtA, i, uint64(len(m.MakerOwnableSplit)))
+	if len(m.MakerSplit) > 0 {
+		i -= len(m.MakerSplit)
+		copy(dAtA[i:], m.MakerSplit)
+		i = encodeVarintMessage(dAtA, i, uint64(len(m.MakerSplit)))
 		i--
 		dAtA[i] = 0x22
 	}
@@ -303,11 +303,11 @@ func (m *Message) Size() (n int) {
 		l = m.OrderID.Size()
 		n += 1 + l + sovMessage(uint64(l))
 	}
-	l = len(m.MakerOwnableSplit)
+	l = len(m.MakerSplit)
 	if l > 0 {
 		n += 1 + l + sovMessage(uint64(l))
 	}
-	l = len(m.TakerOwnableSplit)
+	l = len(m.TakerSplit)
 	if l > 0 {
 		n += 1 + l + sovMessage(uint64(l))
 	}
@@ -467,7 +467,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MakerOwnableSplit", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MakerSplit", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -495,11 +495,11 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.MakerOwnableSplit = string(dAtA[iNdEx:postIndex])
+			m.MakerSplit = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TakerOwnableSplit", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field TakerSplit", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -527,7 +527,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.TakerOwnableSplit = string(dAtA[iNdEx:postIndex])
+			m.TakerSplit = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {

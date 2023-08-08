@@ -36,7 +36,7 @@ type transactionKeeper struct {
 }
 
 // TODO move to proper package
-var PutOrderClassificationID = baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList(propertyConstants.MakerIDProperty, propertyConstants.MakerOwnableIDProperty, propertyConstants.TakerOwnableIDProperty, propertyConstants.MakerSplitProperty, propertyConstants.TakerSplitProperty, propertyConstants.ExpiryHeightProperty)), baseQualified.NewMutables(baseLists.NewPropertyList()))
+var PutOrderClassificationID = baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList(propertyConstants.MakerIDProperty, propertyConstants.MakerAssetIDProperty, propertyConstants.TakerAssetIDProperty, propertyConstants.MakerSplitProperty, propertyConstants.TakerSplitProperty, propertyConstants.ExpiryHeightProperty)), baseQualified.NewMutables(baseLists.NewPropertyList()))
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
@@ -76,8 +76,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	immutables := baseQualified.NewImmutables(baseLists.PrototypePropertyList().
 		Add(baseProperties.NewMetaProperty(propertyConstants.MakerIDProperty.GetKey(), baseData.NewIDData(message.FromID))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.MakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.MakerAssetID.ToAnyOwnableID()))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.TakerOwnableIDProperty.GetKey(), baseData.NewIDData(message.TakerCoinID.ToAnyOwnableID()))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.MakerAssetIDProperty.GetKey(), baseData.NewIDData(message.MakerAssetID))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.TakerAssetIDProperty.GetKey(), baseData.NewIDData(message.TakerAssetID))).
 		Add(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(makerSplit))).
 		Add(baseProperties.NewMetaProperty(propertyConstants.TakerSplitProperty.GetKey(), baseData.NewNumberData(takerSplit))).
 		Add(baseProperties.NewMetaProperty(propertyConstants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(message.ExpiryHeight))))

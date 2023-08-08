@@ -33,16 +33,16 @@ func (message *Message) ValidateBasic() error {
 		return err
 	}
 
-	if err := message.TakerCoinID.ValidateBasic(); err != nil {
+	if err := message.TakerAssetID.ValidateBasic(); err != nil {
 		return err
 	}
 
 	if _, ok := sdkTypes.NewIntFromString(message.MakerSplit); !ok {
-		return constants.IncorrectFormat.Wrapf("maker ownable split %s is not a valid integer", message.MakerSplit)
+		return constants.IncorrectFormat.Wrapf("maker split %s is not a valid integer", message.MakerSplit)
 	}
 
 	if _, ok := sdkTypes.NewIntFromString(message.TakerSplit); !ok {
-		return constants.IncorrectFormat.Wrapf("taker ownable split %s is not a valid integer", message.TakerSplit)
+		return constants.IncorrectFormat.Wrapf("taker split %s is not a valid integer", message.TakerSplit)
 	}
 
 	if err := message.ExpiryHeight.ValidateBasic(); err != nil {
@@ -76,12 +76,12 @@ func messagePrototype() helpers.Message {
 	return &Message{}
 }
 
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, makerAssetID ids.AssetID, takerCoinID ids.CoinID, makerSplit sdkTypes.Int, takerSplit sdkTypes.Int, expiryHeight typesSchema.Height) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, makerAssetID ids.AssetID, takerAssetID ids.AssetID, makerSplit sdkTypes.Int, takerSplit sdkTypes.Int, expiryHeight typesSchema.Height) sdkTypes.Msg {
 	return &Message{
 		From:         from.String(),
 		FromID:       fromID.(*baseIDs.IdentityID),
 		MakerAssetID: makerAssetID.(*baseIDs.AssetID),
-		TakerCoinID:  takerCoinID.(*baseIDs.CoinID),
+		TakerAssetID: takerAssetID.(*baseIDs.AssetID),
 		MakerSplit:   makerSplit.String(),
 		TakerSplit:   takerSplit.String(),
 		ExpiryHeight: expiryHeight.(*baseTypes.Height),

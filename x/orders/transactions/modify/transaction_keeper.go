@@ -59,24 +59,24 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityNotFound.Wrapf("order with ID %s not found", message.OrderID.AsString())
 	}
 	order := mappable.GetOrder(Mappable)
-	makerOwnableSplit, ok := sdkTypes.NewIntFromString(message.MakerOwnableSplit)
+	makerSplit, ok := sdkTypes.NewIntFromString(message.MakerSplit)
 	if !ok {
-		return nil, errorConstants.IncorrectFormat.Wrapf("invalid maker ownable split %s", message.MakerOwnableSplit)
+		return nil, errorConstants.IncorrectFormat.Wrapf("invalid maker split %s", message.MakerSplit)
 	}
-	transferMakerOwnableSplit := makerOwnableSplit.Sub(order.GetMakerOwnableSplit())
+	transferMakerSplit := makerSplit.Sub(order.GetMakerSplit())
 
-	if transferMakerOwnableSplit.LT(sdkTypes.ZeroInt()) {
-		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, message.FromID, order.GetMakerOwnableID(), transferMakerOwnableSplit.Abs())); err != nil {
+	if transferMakerSplit.LT(sdkTypes.ZeroInt()) {
+		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, message.FromID, order.GetMakerAssetID(), transferMakerSplit.Abs())); err != nil {
 			return nil, err
 		}
-	} else if transferMakerOwnableSplit.GT(sdkTypes.ZeroInt()) {
-		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, constants.ModuleIdentityID, order.GetMakerOwnableID(), transferMakerOwnableSplit)); err != nil {
+	} else if transferMakerSplit.GT(sdkTypes.ZeroInt()) {
+		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, constants.ModuleIdentityID, order.GetMakerAssetID(), transferMakerSplit)); err != nil {
 			return nil, err
 		}
 	}
 
 	mutableMetaProperties := message.MutableMetaProperties.
-		Add(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(makerOwnableSplit))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(makerSplit))).
 		Add(baseProperties.NewMetaProperty(propertyConstants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(message.ExpiresIn.Get()+sdkTypes.UnwrapSDKContext(context).BlockHeight()))))
 
 	updatedMutables := order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(append(mutableMetaProperties.Get(), message.MutableProperties.Get()...)...)...)

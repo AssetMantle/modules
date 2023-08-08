@@ -49,8 +49,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 				message.ImmutableProperties.Add(
 					constants.ExchangeRateProperty.ToAnyProperty(),
 					constants.CreationHeightProperty.ToAnyProperty(),
-					constants.MakerOwnableIDProperty.ToAnyProperty(),
-					constants.TakerOwnableIDProperty.ToAnyProperty(),
+					constants.MakerAssetIDProperty.ToAnyProperty(),
+					constants.TakerAssetIDProperty.ToAnyProperty(),
 					constants.MakerIDProperty.ToAnyProperty(),
 					constants.TakerIDProperty.ToAnyProperty(),
 				).Get()...,

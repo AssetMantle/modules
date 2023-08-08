@@ -21,10 +21,10 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq           rest.BaseReq `json:"baseReq"`
-	FromID            string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
-	TakerOwnableSplit string       `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing, matches(^[0-9.]+$)"`
-	OrderID           string       `json:"orderID" valid:"required~required field orderID missing, matches(^[A-Za-z0-9-_=.|*]+$)~invalid field orderID"`
+	BaseReq    rest.BaseReq `json:"baseReq"`
+	FromID     string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
+	TakerSplit string       `json:"takerSplit" valid:"required~required field takerSplit missing, matches(^[0-9.]+$)"`
+	OrderID    string       `json:"orderID" valid:"required~required field orderID missing, matches(^[A-Za-z0-9-_=.|*]+$)~invalid field orderID"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -67,9 +67,9 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	takerOwnableSplit, ok := sdkTypes.NewIntFromString(transactionRequest.TakerOwnableSplit)
+	takerSplit, ok := sdkTypes.NewIntFromString(transactionRequest.TakerSplit)
 	if !ok {
-		return nil, errorConstants.IncorrectFormat.Wrapf("taker ownable split %s is not a valid integer", transactionRequest.TakerOwnableSplit)
+		return nil, errorConstants.IncorrectFormat.Wrapf("taker split %s is not a valid integer", transactionRequest.TakerSplit)
 	}
 
 	fromID, err := baseIDs.PrototypeIdentityID().FromString(transactionRequest.FromID)
@@ -85,7 +85,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	return NewMessage(
 		from,
 		fromID.(ids.IdentityID),
-		takerOwnableSplit,
+		takerSplit,
 		orderID.(ids.OrderID),
 	), nil
 }
@@ -95,11 +95,11 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, takerOwnableSplit string, orderID string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, takerSplit string, orderID string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:           baseReq,
-		FromID:            fromID,
-		TakerOwnableSplit: takerOwnableSplit,
-		OrderID:           orderID,
+		BaseReq:    baseReq,
+		FromID:     fromID,
+		TakerSplit: takerSplit,
+		OrderID:    orderID,
 	}
 }

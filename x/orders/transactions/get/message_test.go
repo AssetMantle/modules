@@ -16,14 +16,14 @@ import (
 )
 
 var (
-	testMessage = NewMessage(fromAccAddress, testFromID, takerOwnableSplit, testOrderID)
+	testMessage = NewMessage(fromAccAddress, testFromID, takerSplit, testOrderID)
 )
 
 type fields struct {
-	From              string
-	FromID            *baseIDs.IdentityID
-	TakerOwnableSplit types.Dec
-	OrderID           *baseIDs.OrderID
+	From       string
+	FromID     *baseIDs.IdentityID
+	TakerSplit types.Dec
+	OrderID    *baseIDs.OrderID
 }
 
 func Test_messageFromInterface(t *testing.T) {
@@ -35,7 +35,7 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want *Message
 	}{
-		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}},
+		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), testFromID, takerSplit, testOrderID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -69,15 +69,15 @@ func Test_message_GetSigners(t *testing.T) {
 		fields fields
 		want   []types.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}, []types.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), testFromID, takerSplit, testOrderID}, []types.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:              tt.fields.From,
-				FromID:            tt.fields.FromID,
-				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
-				OrderID:           tt.fields.OrderID,
+				From:       tt.fields.From,
+				FromID:     tt.fields.FromID,
+				TakerSplit: tt.fields.TakerSplit,
+				OrderID:    tt.fields.OrderID,
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
@@ -96,15 +96,15 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), testFromID, takerSplit, testOrderID}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			me := &Message{
-				From:              tt.fields.From,
-				FromID:            tt.fields.FromID,
-				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
-				OrderID:           tt.fields.OrderID,
+				From:       tt.fields.From,
+				FromID:     tt.fields.FromID,
+				TakerSplit: tt.fields.TakerSplit,
+				OrderID:    tt.fields.OrderID,
 			}
 			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -118,15 +118,15 @@ func Test_message_Type(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), testFromID, takerSplit, testOrderID}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:              tt.fields.From,
-				FromID:            tt.fields.FromID,
-				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
-				OrderID:           tt.fields.OrderID,
+				From:       tt.fields.From,
+				FromID:     tt.fields.FromID,
+				TakerSplit: tt.fields.TakerSplit,
+				OrderID:    tt.fields.OrderID,
 			}
 			if got := message.Type(); got != tt.want {
 				t.Errorf("Type() = %v, want %v", got, tt.want)
@@ -143,15 +143,15 @@ func Test_message_ValidateBasic(t *testing.T) {
 		wantErr bool
 	}{
 		{"-ve with nil", fields{}, true},
-		{"+ve", fields{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}, false},
+		{"+ve", fields{fromAccAddress.String(), testFromID, takerSplit, testOrderID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:              tt.fields.From,
-				FromID:            tt.fields.FromID,
-				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
-				OrderID:           tt.fields.OrderID,
+				From:       tt.fields.From,
+				FromID:     tt.fields.FromID,
+				TakerSplit: tt.fields.TakerSplit,
+				OrderID:    tt.fields.OrderID,
 			}
 			defer func() {
 				r := recover()
@@ -169,21 +169,21 @@ func Test_message_ValidateBasic(t *testing.T) {
 
 func Test_NewMessage(t *testing.T) {
 	type args struct {
-		from              types.AccAddress
-		fromID            ids.IdentityID
-		takerOwnableSplit types.Dec
-		orderID           ids.OrderID
+		from       types.AccAddress
+		fromID     ids.IdentityID
+		takerSplit types.Dec
+		orderID    ids.OrderID
 	}
 	tests := []struct {
 		name string
 		args args
 		want types.Msg
 	}{
-		{"+ve", args{fromAccAddress, testFromID, takerOwnableSplit, testOrderID}, &Message{fromAccAddress.String(), testFromID, takerOwnableSplit, testOrderID}},
+		{"+ve", args{fromAccAddress, testFromID, takerSplit, testOrderID}, &Message{fromAccAddress.String(), testFromID, takerSplit, testOrderID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.takerOwnableSplit, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.takerSplit, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})
