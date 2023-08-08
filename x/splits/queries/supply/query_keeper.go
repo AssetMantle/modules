@@ -21,7 +21,7 @@ func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest hel
 	return queryResponse, err
 }
 func (queryKeeper queryKeeper) Handle(context context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
-	return newQueryResponse(utilities.GetTotalSupply(queryKeeper.mapper.NewCollection(context), queryRequest.OwnableID)), nil
+	return newQueryResponse(utilities.GetTotalSupply(queryKeeper.mapper.NewCollection(context), queryRequest.AssetID)), nil
 }
 
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {

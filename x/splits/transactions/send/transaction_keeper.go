@@ -43,11 +43,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, constants.IncorrectFormat.Wrapf("Value %s is not a valid integer", message.Value)
 	}
 
-	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, value); err != nil {
+	if _, err := utilities.SubtractSplits(splits, message.FromID, message.AssetID, value); err != nil {
 		return nil, err
 	}
 
-	if _, err := utilities.AddSplits(splits, message.ToID, message.OwnableID, value); err != nil {
+	if _, err := utilities.AddSplits(splits, message.ToID, message.AssetID, value); err != nil {
 		return nil, err
 	}
 

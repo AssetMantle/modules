@@ -54,16 +54,16 @@ func TestAddSplits(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
 	testRate := sdkTypes.OneInt()
-	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
+	split := baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate)
 	context, testMapper := createTestInput1(t)
 	testSplits := testMapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
 	type args struct {
-		splits    helpers.Collection
-		ownerID   ids.IdentityID
-		ownableID ids.OwnableID
-		value     sdkTypes.Int
+		splits  helpers.Collection
+		ownerID ids.IdentityID
+		assetID ids.AssetID
+		value   sdkTypes.Int
 	}
 	tests := []struct {
 		name    string
@@ -71,12 +71,12 @@ func TestAddSplits(t *testing.T) {
 		want    helpers.Collection
 		wantErr bool
 	}{
-		{"+ve", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.NewInt(100)}, testSplits.Mutate(mappable.NewMappable(split.Receive(sdkTypes.NewInt(100)))), false},
-		{"+ve Not authorized", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.ZeroInt()}, nil, true},
+		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.NewInt(100)}, testSplits.Mutate(mappable.NewMappable(split.Receive(sdkTypes.NewInt(100)))), false},
+		{"+ve Not authorized", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.ZeroInt()}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := AddSplits(tt.args.splits, tt.args.ownerID, tt.args.ownableID, tt.args.value)
+			got, err := AddSplits(tt.args.splits, tt.args.ownerID, tt.args.assetID, tt.args.value)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AddSplits() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -93,16 +93,16 @@ func TestSubtractSplits(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
 	testRate := sdkTypes.NewInt(10)
-	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
+	split := baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate)
 	context, testMapper := createTestInput1(t)
 	testSplits := testMapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
 	type args struct {
-		splits    helpers.Collection
-		ownerID   ids.IdentityID
-		ownableID ids.OwnableID
-		value     sdkTypes.Int
+		splits  helpers.Collection
+		ownerID ids.IdentityID
+		assetID ids.AssetID
+		value   sdkTypes.Int
 	}
 	tests := []struct {
 		name    string
@@ -110,14 +110,14 @@ func TestSubtractSplits(t *testing.T) {
 		want    helpers.Collection
 		wantErr bool
 	}{
-		{"+ve", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.NewInt(9)}, testSplits.Mutate(mappable.NewMappable(split)), false},
-		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.NewInt(100)}, nil, true},
-		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testOwnableID, sdkTypes.ZeroInt()}, nil, true},
-		{"+ve Entity Not found", args{testSplits, baseIDs.PrototypeIdentityID(), testOwnableID, testRate}, nil, true},
+		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.NewInt(9)}, testSplits.Mutate(mappable.NewMappable(split)), false},
+		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.NewInt(100)}, nil, true},
+		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.ZeroInt()}, nil, true},
+		{"+ve Entity Not found", args{testSplits, baseIDs.PrototypeIdentityID(), testAssetID, testRate}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := SubtractSplits(tt.args.splits, tt.args.ownerID, tt.args.ownableID, tt.args.value)
+			got, err := SubtractSplits(tt.args.splits, tt.args.ownerID, tt.args.assetID, tt.args.value)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("SubtractSplits() error = %v, wantErr %v", err, tt.wantErr)
 				return

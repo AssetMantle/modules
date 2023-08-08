@@ -18,35 +18,35 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 )
 
-func createTestInput1() (ids.IdentityID, ids.OwnableID, types.Int) {
+func createTestInput1() (ids.IdentityID, ids.AssetID, types.Int) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerID := baseIDs.NewIdentityID(classificationID, immutables)
-	testOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
 	testValue := types.OneInt()
-	return testOwnerID, testOwnableID, testValue
+	return testOwnerID, testAssetID, testValue
 }
 
 func TestNewAuxiliaryRequest(t *testing.T) {
-	testOwnerID, testOwnableID, testValue := createTestInput1()
+	testOwnerID, testAssetID, testValue := createTestInput1()
 	type args struct {
-		fromID    ids.IdentityID
-		toID      ids.IdentityID
-		ownableID ids.OwnableID
-		value     types.Int
+		fromID  ids.IdentityID
+		toID    ids.IdentityID
+		assetID ids.AssetID
+		value   types.Int
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.AuxiliaryRequest
 	}{
-		{"+ve", args{testOwnerID, testOwnerID, testOwnableID, testValue}, NewAuxiliaryRequest(testOwnerID, testOwnerID, testOwnableID, testValue)},
-		{"+ve with nil", args{testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAnyOwnableID(), testValue}, NewAuxiliaryRequest(testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAnyOwnableID(), testValue)},
+		{"+ve", args{testOwnerID, testOwnerID, testAssetID, testValue}, NewAuxiliaryRequest(testOwnerID, testOwnerID, testAssetID, testValue)},
+		{"+ve with nil", args{testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAssetID(), testValue}, NewAuxiliaryRequest(testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAssetID(), testValue)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewAuxiliaryRequest(tt.args.fromID, tt.args.toID, tt.args.ownableID, tt.args.value); !reflect.DeepEqual(got, tt.want) {
+			if got := NewAuxiliaryRequest(tt.args.fromID, tt.args.toID, tt.args.assetID, tt.args.value); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewAuxiliaryRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -54,7 +54,7 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 }
 
 func Test_auxiliaryRequestFromInterface(t *testing.T) {
-	testOwnerID, testOwnableID, testValue := createTestInput1()
+	testOwnerID, testAssetID, testValue := createTestInput1()
 	type args struct {
 		request helpers.AuxiliaryRequest
 	}
@@ -63,7 +63,7 @@ func Test_auxiliaryRequestFromInterface(t *testing.T) {
 		args args
 		want auxiliaryRequest
 	}{
-		{"+ve", args{NewAuxiliaryRequest(testOwnerID, testOwnerID, testOwnableID, testValue)}, auxiliaryRequest{testOwnerID, testOwnerID, testOwnableID, testValue}},
+		{"+ve", args{NewAuxiliaryRequest(testOwnerID, testOwnerID, testAssetID, testValue)}, auxiliaryRequest{testOwnerID, testOwnerID, testAssetID, testValue}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -75,27 +75,27 @@ func Test_auxiliaryRequestFromInterface(t *testing.T) {
 }
 
 func Test_auxiliaryRequest_Validate(t *testing.T) {
-	testOwnerID, testOwnableID, testValue := createTestInput1()
+	testOwnerID, testAssetID, testValue := createTestInput1()
 	type fields struct {
-		FromID    ids.IdentityID
-		ToID      ids.IdentityID
-		OwnableID ids.OwnableID
-		Value     types.Int
+		FromID  ids.IdentityID
+		ToID    ids.IdentityID
+		AssetID ids.AssetID
+		Value   types.Int
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testOwnerID, testOwnerID, testOwnableID, testValue}, false},
+		{"+ve", fields{testOwnerID, testOwnerID, testAssetID, testValue}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			auxiliaryRequest := auxiliaryRequest{
-				FromID:    tt.fields.FromID,
-				ToID:      tt.fields.ToID,
-				OwnableID: tt.fields.OwnableID,
-				Value:     tt.fields.Value,
+				FromID:  tt.fields.FromID,
+				ToID:    tt.fields.ToID,
+				AssetID: tt.fields.AssetID,
+				Value:   tt.fields.Value,
 			}
 			if err := auxiliaryRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

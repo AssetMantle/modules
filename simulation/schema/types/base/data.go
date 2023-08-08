@@ -92,10 +92,10 @@ func GenerateRandomPrototypeData(r *rand.Rand, randomPositiveInt int) data.Data 
 
 func GenerateRandomCoinListString(listCount int) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	list := baseData.NewListData(baseData.NewIDData(base.NewCoinID(base.NewStringID("stake")).ToAnyID()))
+	list := baseData.NewListData(baseData.NewIDData(base.NewStringID("stake").ToAnyID()))
 
 	for i := 0; i < listCount; i++ {
-		list.Add(baseData.NewIDData(base.NewCoinID(base.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(127)))).ToAnyID()))
+		list.Add(baseData.NewIDData(base.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(127)))))
 	}
 	return list.AsString()
 }

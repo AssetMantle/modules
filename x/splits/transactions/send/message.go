@@ -28,7 +28,7 @@ func (message *Message) ValidateBasic() error {
 	if err := message.ToID.ValidateBasic(); err != nil {
 		return err
 	}
-	if err := message.OwnableID.ValidateBasic(); err != nil {
+	if err := message.AssetID.ValidateBasic(); err != nil {
 		return err
 	}
 	if _, ok := sdkTypes.NewIntFromString(message.Value); !ok {
@@ -61,12 +61,12 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Int) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) sdkTypes.Msg {
 	return &Message{
-		From:      from.String(),
-		FromID:    fromID.(*baseIDs.IdentityID),
-		ToID:      toID.(*baseIDs.IdentityID),
-		OwnableID: ownableID.ToAnyOwnableID().(*baseIDs.AnyOwnableID),
-		Value:     value.String(),
+		From:    from.String(),
+		FromID:  fromID.(*baseIDs.IdentityID),
+		ToID:    toID.(*baseIDs.IdentityID),
+		AssetID: assetID.(*baseIDs.AssetID),
+		Value:   value.String(),
 	}
 }

@@ -64,8 +64,8 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		identityClassification := base.NewClassification(immutables, baseQualified.NewMutables(mutables.GetMutablePropertyList().Add(constantProperties.AuthenticationProperty)))
 		orderClassification := base.NewClassification(baseQualified.NewImmutables(immutables.GetImmutablePropertyList().Add(baseLists.AnyPropertiesToProperties(constantProperties.ExchangeRateProperty.ToAnyProperty(),
 			constantProperties.CreationHeightProperty.ToAnyProperty(),
-			constantProperties.MakerOwnableIDProperty.ToAnyProperty(),
-			constantProperties.TakerOwnableIDProperty.ToAnyProperty(),
+			constantProperties.MakerAssetIDProperty.ToAnyProperty(),
+			constantProperties.TakerAssetIDProperty.ToAnyProperty(),
 			constantProperties.MakerIDProperty.ToAnyProperty(),
 			constantProperties.TakerIDProperty.ToAnyProperty())...)), baseQualified.NewMutables(mappable.Asset.Mutables.GetMutablePropertyList().Add(baseLists.AnyPropertiesToProperties(
 			constantProperties.ExpiryHeightProperty.ToAnyProperty(),

@@ -36,26 +36,26 @@ var (
 	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
 	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
 	testBaseRequest      = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
-	takerOwnableSplit    = types.NewInt(60)
+	takerSplit           = types.NewInt(60)
 )
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		baseReq           rest.BaseReq
-		fromID            string
-		takerOwnableSplit string
-		orderID           string
+		baseReq    rest.BaseReq
+		fromID     string
+		takerSplit string
+		orderID    string
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}, transactionRequest{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}},
+		{"+ve", args{testBaseRequest, testFromID.AsString(), takerSplit.String(), testOrderID.AsString()}, transactionRequest{testBaseRequest, testFromID.AsString(), takerSplit.String(), testOrderID.AsString()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.takerOwnableSplit, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.takerSplit, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -82,13 +82,13 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.TakerSplit, constants.OrderID})
 
 	viper.Set(constants.FromIdentityID.GetName(), testFromID.AsString())
-	viper.Set(constants.TakerSplit.GetName(), takerOwnableSplit.String())
+	viper.Set(constants.TakerSplit.GetName(), takerSplit.String())
 	viper.Set(constants.OrderID.GetName(), testOrderID.AsString())
 	type fields struct {
-		BaseReq           rest.BaseReq
-		FromID            string
-		TakerOwnableSplit string
-		OrderID           string
+		BaseReq    rest.BaseReq
+		FromID     string
+		TakerSplit string
+		OrderID    string
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -101,15 +101,15 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}, args{cliCommand, baseHelpers.TestClientContext}, transactionRequest{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}, false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerSplit.String(), testOrderID.AsString()}, args{cliCommand, baseHelpers.TestClientContext}, transactionRequest{testBaseRequest, testFromID.AsString(), takerSplit.String(), testOrderID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:           tt.fields.BaseReq,
-				FromID:            tt.fields.FromID,
-				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
-				OrderID:           tt.fields.OrderID,
+				BaseReq:    tt.fields.BaseReq,
+				FromID:     tt.fields.FromID,
+				TakerSplit: tt.fields.TakerSplit,
+				OrderID:    tt.fields.OrderID,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -124,13 +124,13 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()))
+	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.AsString(), takerSplit.String(), testOrderID.AsString()))
 	require.NoError(t, err)
 	type fields struct {
-		BaseReq           rest.BaseReq
-		FromID            string
-		TakerOwnableSplit string
-		OrderID           string
+		BaseReq    rest.BaseReq
+		FromID     string
+		TakerSplit string
+		OrderID    string
 	}
 	type args struct {
 		rawMessage json.RawMessage
@@ -142,15 +142,15 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()), false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerSplit.String(), testOrderID.AsString()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, testFromID.AsString(), takerSplit.String(), testOrderID.AsString()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:           tt.fields.BaseReq,
-				FromID:            tt.fields.FromID,
-				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
-				OrderID:           tt.fields.OrderID,
+				BaseReq:    tt.fields.BaseReq,
+				FromID:     tt.fields.FromID,
+				TakerSplit: tt.fields.TakerSplit,
+				OrderID:    tt.fields.OrderID,
 			}
 			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
 			if (err != nil) != tt.wantErr {
@@ -166,25 +166,25 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		BaseReq           rest.BaseReq
-		FromID            string
-		TakerOwnableSplit string
-		OrderID           string
+		BaseReq    rest.BaseReq
+		FromID     string
+		TakerSplit string
+		OrderID    string
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   rest.BaseReq
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}, testBaseRequest},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerSplit.String(), testOrderID.AsString()}, testBaseRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:           tt.fields.BaseReq,
-				FromID:            tt.fields.FromID,
-				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
-				OrderID:           tt.fields.OrderID,
+				BaseReq:    tt.fields.BaseReq,
+				FromID:     tt.fields.FromID,
+				TakerSplit: tt.fields.TakerSplit,
+				OrderID:    tt.fields.OrderID,
 			}
 			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
@@ -195,10 +195,10 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		BaseReq           rest.BaseReq
-		FromID            string
-		TakerOwnableSplit string
-		OrderID           string
+		BaseReq    rest.BaseReq
+		FromID     string
+		TakerSplit string
+		OrderID    string
 	}
 	tests := []struct {
 		name    string
@@ -206,15 +206,15 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}, NewMessage(fromAccAddress, testFromID, takerOwnableSplit, testOrderID), false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerSplit.String(), testOrderID.AsString()}, NewMessage(fromAccAddress, testFromID, takerSplit, testOrderID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:           tt.fields.BaseReq,
-				FromID:            tt.fields.FromID,
-				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
-				OrderID:           tt.fields.OrderID,
+				BaseReq:    tt.fields.BaseReq,
+				FromID:     tt.fields.FromID,
+				TakerSplit: tt.fields.TakerSplit,
+				OrderID:    tt.fields.OrderID,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -230,10 +230,10 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
-		BaseReq           rest.BaseReq
-		FromID            string
-		TakerOwnableSplit string
-		OrderID           string
+		BaseReq    rest.BaseReq
+		FromID     string
+		TakerSplit string
+		OrderID    string
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -243,15 +243,15 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerSplit.String(), testOrderID.AsString()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := transactionRequest{
-				BaseReq:           tt.fields.BaseReq,
-				FromID:            tt.fields.FromID,
-				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
-				OrderID:           tt.fields.OrderID,
+				BaseReq:    tt.fields.BaseReq,
+				FromID:     tt.fields.FromID,
+				TakerSplit: tt.fields.TakerSplit,
+				OrderID:    tt.fields.OrderID,
 			}
 			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -260,25 +260,25 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		BaseReq           rest.BaseReq
-		FromID            string
-		TakerOwnableSplit string
-		OrderID           string
+		BaseReq    rest.BaseReq
+		FromID     string
+		TakerSplit string
+		OrderID    string
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerOwnableSplit.String(), testOrderID.AsString()}, false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), takerSplit.String(), testOrderID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:           tt.fields.BaseReq,
-				FromID:            tt.fields.FromID,
-				TakerOwnableSplit: tt.fields.TakerOwnableSplit,
-				OrderID:           tt.fields.OrderID,
+				BaseReq:    tt.fields.BaseReq,
+				FromID:     tt.fields.FromID,
+				TakerSplit: tt.fields.TakerSplit,
+				OrderID:    tt.fields.OrderID,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

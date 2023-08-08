@@ -27,11 +27,11 @@ type transactionRequest struct {
 	FromID                  string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
 	ClassificationID        string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field classificationID"`
 	TakerID                 string       `json:"takerID" valid:"required~required field takerID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field takerID"`
-	MakerOwnableID          string       `json:"makerOwnableID" valid:"required~required field makerOwnableID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field makerOwnableID"`
-	TakerOwnableID          string       `json:"takerOwnableID" valid:"required~required field takerOwnableID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field takerOwnableID"`
+	MakerAssetID            string       `json:"makerAssetID" valid:"required~required field makerAssetID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field makerAssetID"`
+	TakerAssetID            string       `json:"takerAssetID" valid:"required~required field takerAssetID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field takerAssetID"`
 	ExpiresIn               int64        `json:"expiresIn" valid:"required~required field expiresIn missing, matches(^[0-9]+$)~invalid field expiresIn"`
-	MakerOwnableSplit       string       `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing, matches(^[0-9.]+$)~invalid field makerOwnableSplit"`
-	TakerOwnableSplit       string       `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing, matches(^[0-9.]+$)~invalid field takerOwnableSplit"`
+	MakerSplit              string       `json:"makerSplit" valid:"required~required field makerSplit missing, matches(^[0-9.]+$)~invalid field makerSplit"`
+	TakerSplit              string       `json:"takerSplit" valid:"required~required field takerSplit missing, matches(^[0-9.]+$)~invalid field takerSplit"`
 	ImmutableMetaProperties string       `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing, matches(^.*$)~invalid field immutableMetaProperties"`
 	ImmutableProperties     string       `json:"immutableProperties" valid:"required~required field immutableProperties missing, matches(^.*$)~invalid field immutableProperties"`
 	MutableMetaProperties   string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`
@@ -60,8 +60,8 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadString(constants.FromIdentityID),
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.TakerID),
-		cliCommand.ReadString(constants.MakerOwnableID),
-		cliCommand.ReadString(constants.TakerOwnableID),
+		cliCommand.ReadString(constants.MakerAssetID),
+		cliCommand.ReadString(constants.TakerAssetID),
 		cliCommand.ReadInt64(constants.ExpiresIn),
 		cliCommand.ReadString(constants.MakerSplit),
 		cliCommand.ReadString(constants.TakerSplit),
@@ -88,14 +88,14 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	makerOwnableSplit, ok := sdkTypes.NewIntFromString(transactionRequest.MakerOwnableSplit)
+	makerSplit, ok := sdkTypes.NewIntFromString(transactionRequest.MakerSplit)
 	if !ok {
-		return nil, errorConstants.IncorrectFormat.Wrapf("maker ownable split %s is not a valid integer", transactionRequest.MakerOwnableSplit)
+		return nil, errorConstants.IncorrectFormat.Wrapf("maker split %s is not a valid integer", transactionRequest.MakerSplit)
 	}
 
-	takerOwnableSplit, ok := sdkTypes.NewIntFromString(transactionRequest.TakerOwnableSplit)
+	takerSplit, ok := sdkTypes.NewIntFromString(transactionRequest.TakerSplit)
 	if !ok {
-		return nil, errorConstants.IncorrectFormat.Wrapf("taker ownable split %s is not a valid integer", transactionRequest.TakerOwnableSplit)
+		return nil, errorConstants.IncorrectFormat.Wrapf("taker split %s is not a valid integer", transactionRequest.TakerSplit)
 	}
 
 	immutableMetaProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.ImmutableMetaProperties)
@@ -135,12 +135,12 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	makerOwnableID, err := baseIDs.PrototypeAnyOwnableID().FromString(transactionRequest.MakerOwnableID)
+	makerAssetID, err := baseIDs.PrototypeAssetID().FromString(transactionRequest.MakerAssetID)
 	if err != nil {
 		return nil, err
 	}
 
-	takerOwnableID, err := baseIDs.PrototypeAnyOwnableID().FromString(transactionRequest.TakerOwnableID)
+	takerAssetID, err := baseIDs.PrototypeAssetID().FromString(transactionRequest.TakerAssetID)
 	if err != nil {
 		return nil, err
 	}
@@ -150,11 +150,11 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		fromID.(ids.IdentityID),
 		classificationID.(ids.ClassificationID),
 		takerID.(ids.IdentityID),
-		makerOwnableID.(ids.OwnableID).ToAnyOwnableID(),
-		takerOwnableID.(ids.OwnableID).ToAnyOwnableID(),
+		makerAssetID.(ids.AssetID),
+		takerAssetID.(ids.AssetID),
 		baseTypes.NewHeight(transactionRequest.ExpiresIn),
-		makerOwnableSplit,
-		takerOwnableSplit,
+		makerSplit,
+		takerSplit,
 		immutableMetaProperties,
 		immutableProperties,
 		mutableMetaProperties,
@@ -168,17 +168,17 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, classificationID string, takerID string, makerOwnableID string, takerOwnableID string, expiresIn int64, makerOwnableSplit, takerOwnableSplit string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, classificationID string, takerID string, makerAssetID string, takerAssetID string, expiresIn int64, makerSplit, takerSplit string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:                 baseReq,
 		FromID:                  fromID,
 		ClassificationID:        classificationID,
 		TakerID:                 takerID,
-		MakerOwnableID:          makerOwnableID,
-		TakerOwnableID:          takerOwnableID,
+		MakerAssetID:            makerAssetID,
+		TakerAssetID:            takerAssetID,
 		ExpiresIn:               expiresIn,
-		MakerOwnableSplit:       makerOwnableSplit,
-		TakerOwnableSplit:       takerOwnableSplit,
+		MakerSplit:              makerSplit,
+		TakerSplit:              takerSplit,
 		ImmutableMetaProperties: immutableMetaProperties,
 		ImmutableProperties:     immutableProperties,
 		MutableMetaProperties:   mutableMetaProperties,

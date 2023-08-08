@@ -41,10 +41,10 @@ func (message *Message) ValidateBasic() error {
 	if err := message.MutableProperties.ValidateBasic(); err != nil {
 		return err
 	}
-	if _, ok := sdkTypes.NewIntFromString(message.MakerOwnableSplit); !ok {
-		return constants.IncorrectFormat.Wrapf("maker ownable split %s is not a valid integer", message.MakerOwnableSplit)
-	} else if _, ok := sdkTypes.NewIntFromString(message.TakerOwnableSplit); !ok {
-		return constants.IncorrectFormat.Wrapf("taker ownable split %s is not a valid integer", message.TakerOwnableSplit)
+	if _, ok := sdkTypes.NewIntFromString(message.MakerSplit); !ok {
+		return constants.IncorrectFormat.Wrapf("maker split %s is not a valid integer", message.MakerSplit)
+	} else if _, ok := sdkTypes.NewIntFromString(message.TakerSplit); !ok {
+		return constants.IncorrectFormat.Wrapf("taker split %s is not a valid integer", message.TakerSplit)
 	}
 	return nil
 }
@@ -73,13 +73,13 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, orderID ids.OrderID, takerOwnableSplit sdkTypes.Int, makerOwnableSplit sdkTypes.Int, expiresIn typesSchema.Height, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, orderID ids.OrderID, takerSplit sdkTypes.Int, makerSplit sdkTypes.Int, expiresIn typesSchema.Height, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return &Message{
 		From:                  from.String(),
 		FromID:                fromID.(*baseIDs.IdentityID),
 		OrderID:               orderID.(*baseIDs.OrderID),
-		TakerOwnableSplit:     takerOwnableSplit.String(),
-		MakerOwnableSplit:     makerOwnableSplit.String(),
+		TakerSplit:            takerSplit.String(),
+		MakerSplit:            makerSplit.String(),
 		ExpiresIn:             expiresIn.(*baseTypes.Height),
 		MutableMetaProperties: mutableMetaProperties.(*baseLists.PropertyList),
 		MutableProperties:     mutableProperties.(*baseLists.PropertyList),

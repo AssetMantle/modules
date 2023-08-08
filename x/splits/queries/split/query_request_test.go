@@ -27,8 +27,8 @@ var (
 	mutables            = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID    = baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID = baseIDs.NewIdentityID(classificationID, immutables)
-	testOwnableID       = baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
-	splitID             = baseIDs.NewSplitID(testOwnerIdentityID, testOwnableID).(*baseIDs.SplitID)
+	testAssetID         = baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
+	splitID             = baseIDs.NewSplitID(testOwnerIdentityID, testAssetID).(*baseIDs.SplitID)
 )
 
 func Test_newQueryRequest(t *testing.T) {

@@ -79,8 +79,8 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 		immutables := baseQualified.NewImmutables(assetMappable.Asset.Immutables.GetImmutablePropertyList().Add(baseLists.AnyPropertiesToProperties(constantProperties.ExchangeRateProperty.ToAnyProperty(),
 			constantProperties.CreationHeightProperty.ToAnyProperty(),
-			constantProperties.MakerOwnableIDProperty.ToAnyProperty(),
-			constantProperties.TakerOwnableIDProperty.ToAnyProperty(),
+			constantProperties.MakerAssetIDProperty.ToAnyProperty(),
+			constantProperties.TakerAssetIDProperty.ToAnyProperty(),
 			constantProperties.MakerIDProperty.ToAnyProperty(),
 			constantProperties.TakerIDProperty.ToAnyProperty())...))
 

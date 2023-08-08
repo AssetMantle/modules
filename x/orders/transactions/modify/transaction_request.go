@@ -26,8 +26,8 @@ type transactionRequest struct {
 	BaseReq               rest.BaseReq `json:"baseReq"`
 	FromID                string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
 	OrderID               string       `json:"orderID" valid:"required~required field orderID missing, matches(^[A-Za-z0-9-_|=.*]+$)~invalid field orderID"`
-	TakerOwnableSplit     string       `json:"takerOwnableSplit" valid:"required~required field takerOwnableSplit missing, matches(^[0-9.]+$)~invalid field takerOwnableSplit"`
-	MakerOwnableSplit     string       `json:"makerOwnableSplit" valid:"required~required field makerOwnableSplit missing, matches(^[0-9.]+$)~invalid field makerOwnableSplit"`
+	TakerSplit            string       `json:"takerSplit" valid:"required~required field takerSplit missing, matches(^[0-9.]+$)~invalid field takerSplit"`
+	MakerSplit            string       `json:"makerSplit" valid:"required~required field makerSplit missing, matches(^[0-9.]+$)~invalid field makerSplit"`
 	ExpiresIn             int64        `json:"expiresIn" valid:"required~required field expiresIn missing, matches(^[0-9]+$)~invalid field expiresIn"`
 	MutableMetaProperties string       `json:"mutableMetaProperties" valid:"required~required field mutableMetaProperties missing, matches(^.*$)~invalid field mutableMetaProperties"`
 	MutableProperties     string       `json:"mutableProperties" valid:"required~required field mutableProperties missing, matches(^.*$)~invalid field mutableProperties"`
@@ -78,14 +78,14 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	makerOwnableSplit, ok := sdkTypes.NewIntFromString(transactionRequest.MakerOwnableSplit)
+	makerSplit, ok := sdkTypes.NewIntFromString(transactionRequest.MakerSplit)
 	if !ok {
-		return nil, errorConstants.IncorrectFormat.Wrapf("maker ownable split %s is not a valid integer", transactionRequest.MakerOwnableSplit)
+		return nil, errorConstants.IncorrectFormat.Wrapf("maker split %s is not a valid integer", transactionRequest.MakerSplit)
 	}
 
-	takerOwnableSplit, ok := sdkTypes.NewIntFromString(transactionRequest.TakerOwnableSplit)
+	takerSplit, ok := sdkTypes.NewIntFromString(transactionRequest.TakerSplit)
 	if !ok {
-		return nil, errorConstants.IncorrectFormat.Wrapf("taker ownable split %s is not a valid integer", transactionRequest.TakerOwnableSplit)
+		return nil, errorConstants.IncorrectFormat.Wrapf("taker split %s is not a valid integer", transactionRequest.TakerSplit)
 	}
 
 	mutableMetaProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.MutableMetaProperties)
@@ -113,8 +113,8 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		from,
 		fromID.(ids.IdentityID),
 		orderID.(ids.OrderID),
-		takerOwnableSplit,
-		makerOwnableSplit,
+		takerSplit,
+		makerSplit,
 		baseTypes.NewHeight(transactionRequest.ExpiresIn),
 		mutableMetaProperties,
 		mutableProperties,
@@ -127,13 +127,13 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, orderID string, takerOwnableSplit string, makerOwnableSplit string, expiresIn int64, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, orderID string, takerSplit string, makerSplit string, expiresIn int64, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:               baseReq,
 		FromID:                fromID,
 		OrderID:               orderID,
-		TakerOwnableSplit:     takerOwnableSplit,
-		MakerOwnableSplit:     makerOwnableSplit,
+		TakerSplit:            takerSplit,
+		MakerSplit:            makerSplit,
 		ExpiresIn:             expiresIn,
 		MutableMetaProperties: mutableMetaProperties,
 		MutableProperties:     mutableProperties,

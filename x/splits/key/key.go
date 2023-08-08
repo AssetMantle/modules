@@ -14,7 +14,7 @@ import (
 var _ helpers.Key = (*Key)(nil)
 
 func (key *Key) GenerateStorePrefixBytes() []byte {
-	return key.SplitID.GetOwnableID().Bytes()
+	return key.SplitID.GetAssetID().Bytes()
 }
 func (key *Key) GenerateStoreKeyBytes() []byte {
 	return key.SplitID.GetOwnerID().Bytes()

@@ -35,27 +35,27 @@ var (
 	mutables          = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
 	classificationID  = baseIDs.NewClassificationID(immutables, mutables)
 	fromID            = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
-	ownableID         = baseIDs.NewCoinID(baseIDs.NewStringID("ownableid")).ToAnyOwnableID().(*baseIDs.AnyOwnableID)
+	assetID           = baseIDs.NewCoinID(baseIDs.NewStringID("assetid")).(*baseIDs.AssetID)
 	testRate          = types.OneInt()
 )
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		baseReq   rest.BaseReq
-		fromID    string
-		ownableID string
-		value     string
+		baseReq rest.BaseReq
+		fromID  string
+		assetID string
+		value   string
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, transactionRequest{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}},
+		{"+ve", args{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, transactionRequest{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.ownableID, tt.args.value); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.assetID, tt.args.value); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -79,16 +79,16 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OwnableID, constants.FromIdentityID, constants.Value})
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID, constants.FromIdentityID, constants.Value})
 
 	viper.Set(constants.FromIdentityID.GetName(), fromID.AsString())
-	viper.Set(constants.OwnableID.GetName(), ownableID.AsString())
+	viper.Set(constants.AssetID.GetName(), assetID.AsString())
 	viper.Set(constants.Value.GetName(), testRate.String())
 	type fields struct {
-		BaseReq   rest.BaseReq
-		FromID    string
-		OwnableID string
-		Value     string
+		BaseReq rest.BaseReq
+		FromID  string
+		AssetID string
+		Value   string
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -101,15 +101,15 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, args{cliCommand, base.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, args{cliCommand, base.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:   tt.fields.BaseReq,
-				FromID:    tt.fields.FromID,
-				OwnableID: tt.fields.OwnableID,
-				Value:     tt.fields.Value,
+				BaseReq: tt.fields.BaseReq,
+				FromID:  tt.fields.FromID,
+				AssetID: tt.fields.AssetID,
+				Value:   tt.fields.Value,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -124,13 +124,13 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()))
+	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()))
 	require.NoError(t, err)
 	type fields struct {
-		BaseReq   rest.BaseReq
-		FromID    string
-		OwnableID string
-		Value     string
+		BaseReq rest.BaseReq
+		FromID  string
+		AssetID string
+		Value   string
 	}
 	type args struct {
 		rawMessage json.RawMessage
@@ -142,15 +142,15 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, fromID.AsString(), ownableID.AsString(), big.NewInt(1).String()), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, fromID.AsString(), assetID.AsString(), big.NewInt(1).String()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:   tt.fields.BaseReq,
-				FromID:    tt.fields.FromID,
-				OwnableID: tt.fields.OwnableID,
-				Value:     tt.fields.Value,
+				BaseReq: tt.fields.BaseReq,
+				FromID:  tt.fields.FromID,
+				AssetID: tt.fields.AssetID,
+				Value:   tt.fields.Value,
 			}
 			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
 			if (err != nil) != tt.wantErr {
@@ -166,25 +166,25 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		BaseReq   rest.BaseReq
-		FromID    string
-		OwnableID string
-		Value     string
+		BaseReq rest.BaseReq
+		FromID  string
+		AssetID string
+		Value   string
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   rest.BaseReq
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, testBaseRequest},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, testBaseRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:   tt.fields.BaseReq,
-				FromID:    tt.fields.FromID,
-				OwnableID: tt.fields.OwnableID,
-				Value:     tt.fields.Value,
+				BaseReq: tt.fields.BaseReq,
+				FromID:  tt.fields.FromID,
+				AssetID: tt.fields.AssetID,
+				Value:   tt.fields.Value,
 			}
 			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
@@ -195,10 +195,10 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		BaseReq   rest.BaseReq
-		FromID    string
-		OwnableID string
-		Value     string
+		BaseReq rest.BaseReq
+		FromID  string
+		AssetID string
+		Value   string
 	}
 	tests := []struct {
 		name    string
@@ -206,15 +206,15 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, NewMessage(fromAccAddress, fromID, ownableID, testRate), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, NewMessage(fromAccAddress, fromID, assetID, testRate), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:   tt.fields.BaseReq,
-				FromID:    tt.fields.FromID,
-				OwnableID: tt.fields.OwnableID,
-				Value:     tt.fields.Value,
+				BaseReq: tt.fields.BaseReq,
+				FromID:  tt.fields.FromID,
+				AssetID: tt.fields.AssetID,
+				Value:   tt.fields.Value,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -230,10 +230,10 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
-		BaseReq   rest.BaseReq
-		FromID    string
-		OwnableID string
-		Value     string
+		BaseReq rest.BaseReq
+		FromID  string
+		AssetID string
+		Value   string
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -243,15 +243,15 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := transactionRequest{
-				BaseReq:   tt.fields.BaseReq,
-				FromID:    tt.fields.FromID,
-				OwnableID: tt.fields.OwnableID,
-				Value:     tt.fields.Value,
+				BaseReq: tt.fields.BaseReq,
+				FromID:  tt.fields.FromID,
+				AssetID: tt.fields.AssetID,
+				Value:   tt.fields.Value,
 			}
 			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -260,25 +260,25 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		BaseReq   rest.BaseReq
-		FromID    string
-		OwnableID string
-		Value     string
+		BaseReq rest.BaseReq
+		FromID  string
+		AssetID string
+		Value   string
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), ownableID.AsString(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:   tt.fields.BaseReq,
-				FromID:    tt.fields.FromID,
-				OwnableID: tt.fields.OwnableID,
-				Value:     tt.fields.Value,
+				BaseReq: tt.fields.BaseReq,
+				FromID:  tt.fields.FromID,
+				AssetID: tt.fields.AssetID,
+				Value:   tt.fields.Value,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

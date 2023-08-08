@@ -28,8 +28,8 @@ func (message *Message) ValidateBasic() error {
 	if err := message.OrderID.ValidateBasic(); err != nil {
 		return err
 	}
-	if _, ok := sdkTypes.NewIntFromString(message.TakerOwnableSplit); !ok {
-		return constants.IncorrectFormat.Wrapf("taker ownable split %s is not a valid integer", message.TakerOwnableSplit)
+	if _, ok := sdkTypes.NewIntFromString(message.TakerSplit); !ok {
+		return constants.IncorrectFormat.Wrapf("taker split %s is not a valid integer", message.TakerSplit)
 	}
 	return nil
 }
@@ -58,11 +58,11 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, takerOwnableSplit sdkTypes.Int, orderID ids.OrderID) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, takerSplit sdkTypes.Int, orderID ids.OrderID) sdkTypes.Msg {
 	return &Message{
-		From:              from.String(),
-		FromID:            fromID.(*baseIDs.IdentityID),
-		TakerOwnableSplit: takerOwnableSplit.String(),
-		OrderID:           orderID.(*baseIDs.OrderID),
+		From:       from.String(),
+		FromID:     fromID.(*baseIDs.IdentityID),
+		TakerSplit: takerSplit.String(),
+		OrderID:    orderID.(*baseIDs.OrderID),
 	}
 }

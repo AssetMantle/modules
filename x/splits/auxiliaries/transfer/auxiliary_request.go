@@ -12,10 +12,10 @@ import (
 )
 
 type auxiliaryRequest struct {
-	FromID    ids.IdentityID `json:"fromID" valid:"required~required field fromID missing"`
-	ToID      ids.IdentityID `json:"toID" valid:"required~required field toID missing"`
-	OwnableID ids.OwnableID  `json:"ownableID" valid:"required~required field ownableID missing"`
-	Value     sdkTypes.Int   `json:"value" valid:"required~required field value missing"`
+	FromID  ids.IdentityID `json:"fromID" valid:"required~required field fromID missing"`
+	ToID    ids.IdentityID `json:"toID" valid:"required~required field toID missing"`
+	AssetID ids.AssetID    `json:"assetID" valid:"required~required field assetID missing"`
+	Value   sdkTypes.Int   `json:"value" valid:"required~required field value missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -34,11 +34,11 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(fromID ids.IdentityID, toID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Int) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(fromID ids.IdentityID, toID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		FromID:    fromID,
-		ToID:      toID,
-		OwnableID: ownableID,
-		Value:     value,
+		FromID:  fromID,
+		ToID:    toID,
+		AssetID: assetID,
+		Value:   value,
 	}
 }

@@ -36,7 +36,7 @@ var Transaction = baseHelpers.NewTransaction(
 
 	constants.FromIdentityID,
 	constants.MakerAssetID,
-	constants.TakerCoinID,
+	constants.TakerAssetID,
 	constants.MakerSplit,
 	constants.TakerSplit,
 	constants.ExpiryHeight,

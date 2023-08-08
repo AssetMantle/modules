@@ -12,9 +12,9 @@ import (
 )
 
 type auxiliaryRequest struct {
-	OwnableID ids.OwnableID  `json:"ownableID" valid:"required~required field ownableID missing"`
-	OwnerID   ids.IdentityID `json:"ownerID" valid:"required~required field ownerID missing"`
-	Value     sdkTypes.Int   `json:"value" valid:"required~required field value missing"`
+	OwnerID ids.IdentityID
+	ids.AssetID
+	Value sdkTypes.Int
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -33,10 +33,10 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(ownableID ids.OwnableID, ownerID ids.IdentityID, value sdkTypes.Int) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(ownerID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		OwnerID:   ownerID,
-		OwnableID: ownableID,
-		Value:     value,
+		OwnerID: ownerID,
+		AssetID: assetID,
+		Value:   value,
 	}
 }

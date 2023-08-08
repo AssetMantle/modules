@@ -133,12 +133,12 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	fromID := baseIDs.NewIdentityID(classificationID, immutables)
-	testOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
 	testRate := sdkTypes.OneInt()
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
-	split := baseTypes.NewSplit(fromID, testOwnableID, testRate)
+	split := baseTypes.NewSplit(fromID, testAssetID, testRate)
 	keepers.SendKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
 	// keepers.SendKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
 	type fields struct {
@@ -156,7 +156,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{mapper, parameters, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, fromID, fromID, testOwnableID, testRate).(*Message)}, newTransactionResponse()},
+		{"+ve", fields{mapper, parameters, authenticateAuxiliary}, args{context, NewMessage(fromAccAddress, fromID, fromID, testAssetID, testRate).(*Message)}, newTransactionResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

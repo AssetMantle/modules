@@ -24,7 +24,7 @@ var _ helpers.QueryRequest = (*QueryRequest)(nil)
 // @Accept json
 // @Produce json
 // @Tags Splits
-// @Param ownableID path string true "identity ID"
+// @Param assetID path string true "identity ID"
 // @Success 200 {object} queryRequest "Message for a successful query response"
 // @Failure default  {object}  queryRequest "Message for an unexpected error response."
 // @Router /balances/{identityID} [get]
@@ -34,17 +34,17 @@ func (queryRequest *QueryRequest) Validate() error {
 }
 
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
-	if anyOwnableID, err := baseIDs.PrototypeAnyOwnableID().FromString(cliCommand.ReadString(constants.OwnableID)); err != nil {
+	if assetID, err := baseIDs.PrototypeAssetID().FromString(cliCommand.ReadString(constants.AssetID)); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(anyOwnableID.(ids.AnyOwnableID)), nil
+		return newQueryRequest(assetID.(ids.AssetID)), nil
 	}
 }
 func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRequest, error) {
-	if anyOwnableID, err := baseIDs.PrototypeAnyOwnableID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName())); err != nil {
+	if assetID, err := baseIDs.PrototypeAssetID().FromString(httpRequest.URL.Query().Get(constants.Key.GetName())); err != nil {
 		return &QueryRequest{}, err
 	} else {
-		return newQueryRequest(anyOwnableID.(ids.AnyOwnableID)), nil
+		return newQueryRequest(assetID.(ids.AssetID)), nil
 	}
 }
 func (queryRequest *QueryRequest) Encode() ([]byte, error) {
@@ -68,6 +68,6 @@ func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
 		return &QueryRequest{}
 	}
 }
-func newQueryRequest(ownableID ids.OwnableID) helpers.QueryRequest {
-	return &QueryRequest{OwnableID: ownableID.ToAnyOwnableID().(*baseIDs.AnyOwnableID)}
+func newQueryRequest(assetID ids.AssetID) helpers.QueryRequest {
+	return &QueryRequest{AssetID: assetID.(*baseIDs.AssetID)}
 }

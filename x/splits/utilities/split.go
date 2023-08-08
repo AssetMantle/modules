@@ -16,16 +16,16 @@ import (
 	"github.com/AssetMantle/modules/x/splits/record"
 )
 
-func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Int) (helpers.Collection, error) {
+func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) (helpers.Collection, error) {
 	if value.LTE(sdkTypes.ZeroInt()) {
 		return nil, errorConstants.InvalidRequest.Wrapf("value must be greater than zero")
 	}
 
-	splitID := baseIDs.NewSplitID(ownableID, ownerID)
+	splitID := baseIDs.NewSplitID(assetID, ownerID)
 
 	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
-		splits.Add(record.NewRecord(baseIDs.NewSplitID(ownableID, ownerID), base.NewSplit(value)))
+		splits.Add(record.NewRecord(baseIDs.NewSplitID(assetID, ownerID), base.NewSplit(value)))
 	} else {
 		splits.Mutate(record.NewRecord(splitID, mappable.GetSplit(Mappable).Add(value)))
 	}
@@ -33,12 +33,12 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.
 	return splits, nil
 }
 
-func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, ownableID ids.OwnableID, value sdkTypes.Int) (helpers.Collection, error) {
+func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) (helpers.Collection, error) {
 	if value.LTE(sdkTypes.ZeroInt()) {
 		return nil, errorConstants.InvalidRequest.Wrapf("value must be greater than zero")
 	}
 
-	splitID := baseIDs.NewSplitID(ownableID, ownerID)
+	splitID := baseIDs.NewSplitID(assetID, ownerID)
 
 	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
