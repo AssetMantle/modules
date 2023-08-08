@@ -13,10 +13,10 @@ import (
 	"github.com/AssetMantle/modules/x/splits/mappable"
 )
 
-func GetTotalSupply(collection helpers.Collection, ownableID ids.OwnableID) sdkTypes.Int {
+func GetTotalSupply(collection helpers.Collection, assetID ids.AssetID) sdkTypes.Int {
 	value := sdkTypes.ZeroInt()
 
-	collection.Iterate(key.NewKey(baseIDs.NewSplitID(ownableID, baseIDs.PrototypeIdentityID())), func(record helpers.Record) bool {
+	collection.Iterate(key.NewKey(baseIDs.NewSplitID(assetID, baseIDs.PrototypeIdentityID())), func(record helpers.Record) bool {
 		value = value.Add(mappable.GetSplit(record.GetMappable()).GetValue())
 		return false
 	})
