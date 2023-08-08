@@ -26,7 +26,7 @@ func Test_validator(t *testing.T) {
 		{"+ve", args{Parameter}, false},
 		{"-ve InvalidParameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
 		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
-		{"+ve valid listData", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("wrapAllowedCoins"), baseData.NewListData(baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID("stake"))))))}, false},
+		{"+ve valid listData", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("wrapAllowedCoins"), baseData.NewListData(baseData.NewIDData(baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("stake"))))))}, false},
 		{"+ve with incorrect ID", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewHeightData(base.NewHeight(0))))}, true},
 		{"-ve nil", args{}, true},
 	}

@@ -23,7 +23,7 @@ func createTestInput1() (ids.IdentityID, ids.AssetID, types.Int) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
 	testValue := types.OneInt()
 	return testOwnerID, testAssetID, testValue
 }

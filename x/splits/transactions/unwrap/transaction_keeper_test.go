@@ -196,7 +196,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, Mapper, Parameters, supplyKeeper := createTestInput(t)
-	testAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("stake"))
+	testAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("stake"))
 	testRate2 := sdkTypes.NewDec(1)
 	split := baseTypes.NewSplit(fromID, testAssetID, testRate2)
 	keepers.UnwrapKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
