@@ -39,8 +39,8 @@ var (
 	mutables                      = baseQualified.NewMutables(mutableProperties)
 	testClassificationID          = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
 	testFromID                    = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
-	makerAssetID                  = baseIDs.NewCoinID(baseIDs.NewStringID("makerassetid")).(*baseIDs.AssetID)
-	takerAssetID                  = baseIDs.NewCoinID(baseIDs.NewStringID("takerassetid")).(*baseIDs.AssetID)
+	makerAssetID                  = baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("makerassetid")).(*baseIDs.AssetID)
+	takerAssetID                  = baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("takerassetid")).(*baseIDs.AssetID)
 	testBaseRequest               = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 	expiresIn                     = int64(60)
 	makerSplit                    = sdkTypes.NewInt(60)

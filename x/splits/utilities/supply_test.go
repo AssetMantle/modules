@@ -25,9 +25,9 @@ func TestGetTotalSupply(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
-	testRate := types.NewDec(10)
-	split := baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate)
+	testAssetID := baseIDs.GenerateCoinAssetID("OwnerID")
+	testRate := types.NewInt(10)
+	split := baseTypes.NewSplit(testRate)
 	context, testMapper := createTestInput1(t)
 	testSplits := testMapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(split))
 	type args struct {

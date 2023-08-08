@@ -8,7 +8,6 @@ import (
 
 	"github.com/AssetMantle/schema/go/data/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -39,8 +38,6 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	var coinID ids.AssetID
-
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err
 	}
@@ -50,16 +47,16 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	for _, coin := range message.Coins {
-		if _, found := transactionKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.WrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData).Search(base.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom)))); !found {
+		if _, found := transactionKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.WrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData).Search(base.NewStringData(coin.Denom)); !found {
 			return nil, errorConstants.NotAuthorized.Wrapf("coin %s is not allowed to be wrapped", coin.Denom)
 		}
-		coinID = baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom))
-		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, coinID, coin.Amount); err != nil {
+
+		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, baseIDs.GenerateCoinAssetID(coin.Denom), coin.Amount); err != nil {
 			return nil, err
 		}
 	}
 
-	return newTransactionResponse(coinID), nil
+	return newTransactionResponse(), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

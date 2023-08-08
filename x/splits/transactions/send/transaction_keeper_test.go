@@ -133,7 +133,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	fromID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
 	testRate := sdkTypes.OneInt()
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)

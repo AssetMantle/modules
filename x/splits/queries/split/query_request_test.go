@@ -27,7 +27,7 @@ var (
 	mutables            = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID    = baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID = baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID         = baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
+	testAssetID         = baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
 	splitID             = baseIDs.NewSplitID(testOwnerIdentityID, testAssetID).(*baseIDs.SplitID)
 )
 

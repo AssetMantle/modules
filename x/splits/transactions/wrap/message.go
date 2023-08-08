@@ -54,6 +54,7 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
+
 func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, coins sdkTypes.Coins) sdkTypes.Msg {
 	return &Message{
 		From:   from.String(),

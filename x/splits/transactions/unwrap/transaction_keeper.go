@@ -6,8 +6,11 @@ package unwrap
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/go/data/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	"github.com/cosmos/cosmos-sdk/types"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -30,8 +33,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-
-	fromAddress, err := types.AccAddressFromBech32(message.From)
+	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
 	if err != nil {
 		panic("Could not get from address from Bech32 string")
 	}
@@ -39,18 +41,19 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err
 	}
-	value, ok := types.NewIntFromString(message.Value)
-	if !ok {
-		return nil, errorConstants.IncorrectFormat.Wrapf("Value %s is not a valid integer", message.Value)
-	}
 
-	splits := transactionKeeper.mapper.NewCollection(context)
-	if _, err := utilities.SubtractSplits(splits, message.FromID, message.AssetID, value); err != nil {
+	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), constants.ModuleName, fromAddress, message.Coins); err != nil {
 		return nil, err
 	}
 
-	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(types.UnwrapSDKContext(context), constants.ModuleName, fromAddress, types.NewCoins(types.NewCoin(message.AssetID.AsString(), value))); err != nil {
-		return nil, err
+	for _, coin := range message.Coins {
+		if _, found := transactionKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.UnwrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData).Search(base.NewStringData(coin.Denom)); !found {
+			return nil, errorConstants.NotAuthorized.Wrapf("coin %s is not allowed to be unwrapped", coin.Denom)
+		}
+
+		if _, err := utilities.SubtractSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, baseIDs.GenerateCoinAssetID(coin.Denom), coin.Amount); err != nil {
+			return nil, err
+		}
 	}
 
 	return newTransactionResponse(), nil

@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package wrap_allowed_coins
+package unwrap_allowed_coins
 
 import (
 	"github.com/AssetMantle/schema/go/data"
@@ -15,7 +15,7 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
-var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()
+var ID = constantProperties.UnwrapAllowedCoinsProperty.GetKey()
 var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewListData(baseData.NewStringData(sdkTypes.DefaultBondDenom))))
 
 func validator(i interface{}) error {
@@ -23,7 +23,7 @@ func validator(i interface{}) error {
 	case string:
 		if data, err := baseData.PrototypeListData().FromString(value); err != nil {
 			return err
-		} else if err = validateWrapAllowedCoinsProperty(data.(*baseData.ListData)); err != nil {
+		} else if err = validateUnwrapAllowedCoinsProperty(data.(*baseData.ListData)); err != nil {
 			return err
 		} else {
 			return data.(*baseData.ListData).ValidateBasic()
@@ -33,7 +33,7 @@ func validator(i interface{}) error {
 	}
 }
 
-func validateWrapAllowedCoinsProperty(listData data.ListData) error {
+func validateUnwrapAllowedCoinsProperty(listData data.ListData) error {
 	for _, anyData := range listData.Get() {
 		if stringData, ok := anyData.Get().(*baseData.StringData); !ok {
 			return errorConstants.IncorrectFormat

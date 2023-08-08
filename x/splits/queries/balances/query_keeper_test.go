@@ -92,7 +92,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
 	testRate := sdkTypes.OneInt()
 	split := baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate)
 	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))

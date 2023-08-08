@@ -149,9 +149,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	mutableMetaProperties := baseLists.NewPropertyList(
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("exchangeRate"), baseData.NewDecData(types.NewDec(10))),
-		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerAssetID"), baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID("makerID")))),
+		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerAssetID"), baseData.NewIDData(baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("makerID")))),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("creationHeight"), baseData.NewHeightData(baseTypes.NewHeight(1))),
-		baseProperties.NewMetaProperty(baseIDs.NewStringID("takerAssetID"), baseData.NewIDData(baseIDs.NewCoinID(baseIDs.NewStringID("takerID")))),
+		baseProperties.NewMetaProperty(baseIDs.NewStringID("takerAssetID"), baseData.NewIDData(baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("takerID")))),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerID"), baseData.NewIDData(baseIDs.PrototypeIdentityID())),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerID"), baseData.NewIDData(baseIDs.PrototypeIdentityID())),
 	)
@@ -175,8 +175,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	testIdentity.ProvisionAddress([]types.AccAddress{fromAccAddress}...)
 	testOrder := baseDocuments.NewOrder(testClassificationID, immutablesMeta, mutablesMeta)
 	// testOrderID := mappable.NewMappable(testOrder).GenerateKey()
-	testMakerAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("makerID"))
-	testTakerAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("takerID"))
+	testMakerAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("makerID"))
+	testTakerAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("takerID"))
 	testRate := types.NewInt(10)
 	testHeight := baseTypes.NewHeight(1)
 	// testOrderID := baseIDs.NewOrderID(testClassificationID, testMakerAssetID, testTakerAssetID, testRate, testHeight, testFromID, immutablesMeta)

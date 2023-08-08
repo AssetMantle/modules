@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package wrap_allowed_coins
+package unwrap_allowed_coins
 
 import (
 	"testing"
