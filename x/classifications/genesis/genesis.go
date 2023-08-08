@@ -3,6 +3,7 @@ package genesis
 import (
 	"context"
 
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/lists"
 	"github.com/AssetMantle/schema/go/lists/base"
@@ -101,7 +102,11 @@ func (genesis *Genesis) Initialize(records []helpers.Record, parameterList lists
 
 func Prototype() helpers.Genesis {
 	return &Genesis{
-		Records:       []*record.Record{},
+		Records: []*record.Record{
+			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeMaintainer())).(*record.Record),
+			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeCoinAsset())).(*record.Record),
+			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeNubIdentity())).(*record.Record),
+		},
 		ParameterList: parameters.Prototype().Get().(*base.ParameterList),
 	}
 }
