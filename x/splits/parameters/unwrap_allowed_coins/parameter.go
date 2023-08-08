@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package wrap_allowed_coins
+package unwrap_allowed_coins
 
 import (
 	"github.com/AssetMantle/schema/go/data"
@@ -15,7 +15,7 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
-var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()
+var ID = constantProperties.UnwrapAllowedCoinsProperty.GetKey()
 var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewListData(baseData.NewStringData(sdkTypes.DefaultBondDenom))))
 
 func validator(i interface{}) error {

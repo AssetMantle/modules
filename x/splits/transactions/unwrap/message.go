@@ -5,7 +5,6 @@ package unwrap
 
 import (
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -25,11 +24,8 @@ func (message *Message) ValidateBasic() error {
 	if err := message.FromID.ValidateBasic(); err != nil {
 		return err
 	}
-	if err := message.AssetID.ValidateBasic(); err != nil {
+	if err := message.Coins.Validate(); err != nil {
 		return err
-	}
-	if _, ok := sdkTypes.NewIntFromString(message.Value); !ok {
-		return errorConstants.IncorrectFormat.Wrapf("unwrap value %s is not a valid integer", message.Value)
 	}
 	return nil
 }
@@ -58,11 +54,11 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) sdkTypes.Msg {
+
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, coins sdkTypes.Coins) sdkTypes.Msg {
 	return &Message{
-		From:    from.String(),
-		FromID:  fromID.(*baseIDs.IdentityID),
-		AssetID: assetID.(*baseIDs.AssetID),
-		Value:   value.String(),
+		From:   from.String(),
+		FromID: fromID.(*baseIDs.IdentityID),
+		Coins:  coins,
 	}
 }
