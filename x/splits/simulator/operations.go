@@ -106,7 +106,7 @@ func simulateWrapAndUnwrapMsg(module helpers.Module) simulationTypes.Operation {
 			return simulationTypes.NewOperationMsg(wrapMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 
-		unwrapMessage := unwrap.NewMessage(from.Address, fromID.(ids.IdentityID), baseIDs.GenerateCoinAssetID("stake"), sdkTypes.NewInt(1))
+		unwrapMessage := unwrap.NewMessage(from.Address, fromID.(ids.IdentityID), sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(1))))
 
 		result, err = simulationModules.ExecuteMessage(context, module, unwrapMessage.(helpers.Message))
 		if err != nil {
