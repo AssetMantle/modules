@@ -21,23 +21,23 @@ import (
 func orderIDHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		req, classificationID, ImmutableMetaProperties, ImmutableProperties, _, _ := Read(context, responseWriter, httpRequest)
-		makerOwnableSplit, _ := sdkTypes.NewDecFromStr(req.MakerOwnableSplit)
+		makerSplit, _ := sdkTypes.NewDecFromStr(req.MakerSplit)
 
-		takerOwnableSplit, _ := sdkTypes.NewDecFromStr(req.TakerOwnableSplit)
+		takerSplit, _ := sdkTypes.NewDecFromStr(req.TakerSplit)
 
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(req.FromID)
 
 		takerID, _ := baseIDs.PrototypeIdentityID().FromString(req.TakerID)
 
-		makerOwnableID, _ := baseIDs.PrototypeAnyOwnableID().FromString(req.MakerOwnableID)
+		makerAssetID, _ := baseIDs.PrototypeAssetID().FromString(req.MakerAssetID)
 		height, _ := strconv.Atoi(req.Height)
-		takerOwnableID, _ := baseIDs.PrototypeAnyOwnableID().FromString(req.TakerOwnableID)
+		takerAssetID, _ := baseIDs.PrototypeAssetID().FromString(req.TakerAssetID)
 
 		immutableMetaProperties := ImmutableMetaProperties.
-			Add(baseProperties.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(takerOwnableSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(makerOwnableSplit)))).
+			Add(baseProperties.NewMetaProperty(constants.ExchangeRateProperty.GetKey(), baseData.NewDecData(takerSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(makerSplit)))).
 			Add(baseProperties.NewMetaProperty(constants.CreationHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(int64(height))))).
-			Add(baseProperties.NewMetaProperty(constants.MakerOwnableIDProperty.GetKey(), baseData.NewIDData(makerOwnableID))).
-			Add(baseProperties.NewMetaProperty(constants.TakerOwnableIDProperty.GetKey(), baseData.NewIDData(takerOwnableID))).
+			Add(baseProperties.NewMetaProperty(constants.MakerAssetIDProperty.GetKey(), baseData.NewIDData(makerAssetID))).
+			Add(baseProperties.NewMetaProperty(constants.TakerAssetIDProperty.GetKey(), baseData.NewIDData(takerAssetID))).
 			Add(baseProperties.NewMetaProperty(constants.MakerIDProperty.GetKey(), baseData.NewIDData(fromID))).
 			Add(baseProperties.NewMetaProperty(constants.TakerIDProperty.GetKey(), baseData.NewIDData(takerID)))
 
@@ -58,8 +58,8 @@ func orderClassificationHandler(context client.Context) http.HandlerFunc {
 					immutableProperties.Add(
 						constants.ExchangeRateProperty.ToAnyProperty(),
 						constants.CreationHeightProperty.ToAnyProperty(),
-						constants.MakerOwnableIDProperty.ToAnyProperty(),
-						constants.TakerOwnableIDProperty.ToAnyProperty(),
+						constants.MakerAssetIDProperty.ToAnyProperty(),
+						constants.TakerAssetIDProperty.ToAnyProperty(),
 						constants.MakerIDProperty.ToAnyProperty(),
 						constants.TakerIDProperty.ToAnyProperty(),
 					).Get()...,

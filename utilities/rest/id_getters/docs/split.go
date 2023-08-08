@@ -28,7 +28,7 @@ func splitIDHandler(context client.Context) http.HandlerFunc {
 
 		coins, _ := sdkTypes.ParseCoinsNormalized(req.Coins)
 
-		var coinID ids.CoinID
+		var coinID ids.AssetID
 		for _, coin := range coins {
 			coinID = baseIDs.NewCoinID(baseIDs.NewStringID(coin.Denom))
 		}

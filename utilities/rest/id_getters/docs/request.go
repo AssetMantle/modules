@@ -23,10 +23,10 @@ type request struct {
 	MutableMetaProperties   string       `json:"mutableMetaProperties" valid:"optional"`
 	MutableProperties       string       `json:"mutableProperties" valid:"optional"`
 	ClassificationID        string       `json:"classificationID" valid:"optional"`
-	MakerOwnableID          string       `json:"makerOwnableID" valid:"optional"`
-	TakerOwnableID          string       `json:"takerOwnableID" valid:"optional"`
-	MakerOwnableSplit       string       `json:"makerOwnableSplit" valid:"optional"`
-	TakerOwnableSplit       string       `json:"takerOwnableSplit" valid:"optional"`
+	MakerAssetID            string       `json:"makerAssetID" valid:"optional"`
+	TakerAssetID            string       `json:"takerAssetID" valid:"optional"`
+	MakerSplit              string       `json:"makerSplit" valid:"optional"`
+	TakerSplit              string       `json:"takerSplit" valid:"optional"`
 	ExpiresIn               string       `json:"expiresIn" valid:"optional"`
 	Height                  string       `json:"height" valid:"optional"`
 	TakerID                 string       `json:"takerID" valid:"optional"`
