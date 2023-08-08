@@ -4,7 +4,6 @@ import (
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	"github.com/AssetMantle/schema/go/documents/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -79,7 +78,7 @@ func Prototype() helpers.Record {
 
 func NewRecord(Maintainer documents.Maintainer) helpers.Record {
 	return &Record{
-		Key: key.NewKey(baseIDs.NewMaintainerID(constants.MaintainerClassificationID,
+		Key: key.NewKey(baseIDs.NewMaintainerID(baseDocuments.PrototypeMaintainer().GetClassificationID(),
 			baseQualified.NewImmutables(baseLists.NewPropertyList(
 				baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(baseDocuments.NewMaintainerFromDocument(Maintainer).GetMaintainedClassificationID())),
 				baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(baseDocuments.NewMaintainerFromDocument(Maintainer).GetIdentityID())),

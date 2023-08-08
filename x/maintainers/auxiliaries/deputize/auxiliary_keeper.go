@@ -9,7 +9,6 @@ import (
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
-	documentConstants "github.com/AssetMantle/schema/go/documents/constants"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -41,7 +40,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	fromMaintainerID := baseIDs.NewMaintainerID(documentConstants.MaintainerClassificationID,
+	fromMaintainerID := baseIDs.NewMaintainerID(base.PrototypeMaintainer().GetClassificationID(),
 		baseQualified.NewImmutables(baseLists.NewPropertyList(
 			baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.MaintainedClassificationID)),
 			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.FromIdentityID)),
@@ -82,7 +81,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		return nil, err
 	}
 
-	toMaintainerID := baseIDs.NewMaintainerID(documentConstants.MaintainerClassificationID,
+	toMaintainerID := baseIDs.NewMaintainerID(base.PrototypeMaintainer().GetClassificationID(),
 		baseQualified.NewImmutables(baseLists.NewPropertyList(
 			baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.MaintainedClassificationID)),
 			baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(auxiliaryRequest.ToIdentityID)),
