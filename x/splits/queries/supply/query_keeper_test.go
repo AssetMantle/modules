@@ -31,7 +31,7 @@ import (
 )
 
 type TestKeepers struct {
-	OwnableKeeper helpers.QueryKeeper
+	QueryKeeper helpers.QueryKeeper
 }
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
@@ -64,7 +64,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		OwnableKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.QueryKeeper),
+		QueryKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.QueryKeeper),
 	}
 
 	return context, keepers, Mapper, parameterManager
@@ -92,10 +92,10 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID"))
 	testRate := sdkTypes.OneInt()
-	split := baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate)
-	keepers.OwnableKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
+	split := baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate)
+	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -109,7 +109,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 		args   args
 		want   helpers.QueryResponse
 	}{
-		{"+ve", fields{Mapper}, args{context, newQueryRequest(testOwnableID)}, newQueryResponse(testRate)},
+		{"+ve", fields{Mapper}, args{context, newQueryRequest(testAssetID)}, newQueryResponse(testRate)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

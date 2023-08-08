@@ -16,11 +16,11 @@ import (
 )
 
 type fields struct {
-	From      string
-	FromID    *baseIDs.IdentityID
-	ToID      *baseIDs.IdentityID
-	OwnableID *baseIDs.AnyOwnableID
-	Value     types.Int
+	From    string
+	FromID  *baseIDs.IdentityID
+	ToID    *baseIDs.IdentityID
+	AssetID *baseIDs.AssetID
+	Value   types.Int
 }
 
 func Test_messageFromInterface(t *testing.T) {
@@ -32,7 +32,7 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want *Message
 	}{
-		{"+ve", args{NewMessage(fromAccAddress, fromID, fromID, ownableID, testRate)}, &Message{fromAccAddress.String(), fromID, fromID, ownableID, testRate.String()}},
+		{"+ve", args{NewMessage(fromAccAddress, fromID, fromID, assetID, testRate)}, &Message{fromAccAddress.String(), fromID, fromID, assetID, testRate.String()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -66,16 +66,16 @@ func Test_message_GetSigners(t *testing.T) {
 		fields fields
 		want   []types.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, fromID, ownableID, testRate}, []types.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), fromID, fromID, assetID, testRate}, []types.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:      tt.fields.From,
-				FromID:    tt.fields.FromID,
-				ToID:      tt.fields.ToID,
-				OwnableID: tt.fields.OwnableID,
-				Value:     tt.fields.Value.String(),
+				From:    tt.fields.From,
+				FromID:  tt.fields.FromID,
+				ToID:    tt.fields.ToID,
+				AssetID: tt.fields.AssetID,
+				Value:   tt.fields.Value.String(),
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
@@ -94,16 +94,16 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, fromID, ownableID, testRate}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), fromID, fromID, assetID, testRate}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			me := &Message{
-				From:      tt.fields.From,
-				FromID:    tt.fields.FromID,
-				ToID:      tt.fields.ToID,
-				OwnableID: tt.fields.OwnableID,
-				Value:     tt.fields.Value.String(),
+				From:    tt.fields.From,
+				FromID:  tt.fields.FromID,
+				ToID:    tt.fields.ToID,
+				AssetID: tt.fields.AssetID,
+				Value:   tt.fields.Value.String(),
 			}
 			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -117,16 +117,16 @@ func Test_message_Type(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, fromID, ownableID, testRate}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), fromID, fromID, assetID, testRate}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:      tt.fields.From,
-				FromID:    tt.fields.FromID,
-				ToID:      tt.fields.ToID,
-				OwnableID: tt.fields.OwnableID,
-				Value:     tt.fields.Value.String(),
+				From:    tt.fields.From,
+				FromID:  tt.fields.FromID,
+				ToID:    tt.fields.ToID,
+				AssetID: tt.fields.AssetID,
+				Value:   tt.fields.Value.String(),
 			}
 			if got := message.Type(); got != tt.want {
 				t.Errorf("Type() = %v, want %v", got, tt.want)
@@ -142,16 +142,16 @@ func Test_message_ValidateBasic(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, fromID, ownableID, testRate}, false},
+		{"+ve", fields{fromAccAddress.String(), fromID, fromID, assetID, testRate}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:      tt.fields.From,
-				FromID:    tt.fields.FromID,
-				ToID:      tt.fields.ToID,
-				OwnableID: tt.fields.OwnableID,
-				Value:     tt.fields.Value.String(),
+				From:    tt.fields.From,
+				FromID:  tt.fields.FromID,
+				ToID:    tt.fields.ToID,
+				AssetID: tt.fields.AssetID,
+				Value:   tt.fields.Value.String(),
 			}
 			if err := message.ValidateBasic(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
@@ -162,22 +162,22 @@ func Test_message_ValidateBasic(t *testing.T) {
 
 func Test_NewMessage(t *testing.T) {
 	type args struct {
-		from      types.AccAddress
-		fromID    ids.IdentityID
-		toID      ids.IdentityID
-		ownableID ids.OwnableID
-		value     types.Int
+		from    types.AccAddress
+		fromID  ids.IdentityID
+		toID    ids.IdentityID
+		assetID ids.AssetID
+		value   types.Int
 	}
 	tests := []struct {
 		name string
 		args args
 		want types.Msg
 	}{
-		{"+ve", args{fromAccAddress, fromID, fromID, ownableID, testRate}, &Message{fromAccAddress.String(), fromID, fromID, ownableID, testRate.String()}},
+		{"+ve", args{fromAccAddress, fromID, fromID, assetID, testRate}, &Message{fromAccAddress.String(), fromID, fromID, assetID, testRate.String()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.toID, tt.args.ownableID, tt.args.value); !reflect.DeepEqual(got, tt.want) {
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.toID, tt.args.assetID, tt.args.value); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})

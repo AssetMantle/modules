@@ -196,9 +196,9 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 
 func Test_transactionKeeper_Transact(t *testing.T) {
 	context, keepers, Mapper, Parameters, supplyKeeper := createTestInput(t)
-	testOwnableID := baseIDs.NewCoinID(baseIDs.NewStringID("stake"))
+	testAssetID := baseIDs.NewCoinID(baseIDs.NewStringID("stake"))
 	testRate2 := sdkTypes.NewDec(1)
-	split := baseTypes.NewSplit(fromID, testOwnableID, testRate2)
+	split := baseTypes.NewSplit(fromID, testAssetID, testRate2)
 	keepers.UnwrapKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
 
 	type fields struct {
@@ -217,7 +217,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		args   args
 		want   helpers.TransactionResponse
 	}{
-		{"+ve", fields{Mapper, Parameters, supplyKeeper, authenticateAuxiliary}, args{context, NewMessage(delAddr1, fromID, testOwnableID, testRate)}, newTransactionResponse(nil)},
+		{"+ve", fields{Mapper, Parameters, supplyKeeper, authenticateAuxiliary}, args{context, NewMessage(delAddr1, fromID, testAssetID, testRate)}, newTransactionResponse(nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -45,11 +45,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	splits := transactionKeeper.mapper.NewCollection(context)
-	if _, err := utilities.SubtractSplits(splits, message.FromID, message.OwnableID, value); err != nil {
+	if _, err := utilities.SubtractSplits(splits, message.FromID, message.AssetID, value); err != nil {
 		return nil, err
 	}
 
-	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(types.UnwrapSDKContext(context), constants.ModuleName, fromAddress, types.NewCoins(types.NewCoin(message.OwnableID.AsString(), value))); err != nil {
+	if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(types.UnwrapSDKContext(context), constants.ModuleName, fromAddress, types.NewCoins(types.NewCoin(message.AssetID.AsString(), value))); err != nil {
 		return nil, err
 	}
 

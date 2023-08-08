@@ -36,6 +36,6 @@ var Transaction = baseHelpers.NewTransaction(
 
 	constants.FromIdentityID,
 	constants.ToIdentityID,
-	constants.OwnableID,
+	constants.AssetID,
 	constants.Value,
 )

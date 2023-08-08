@@ -26,12 +26,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
-	circulatingSupply := utilities.GetTotalSupply(splits, auxiliaryRequest.OwnableID)
+	circulatingSupply := utilities.GetTotalSupply(splits, auxiliaryRequest.AssetID)
 	if !circulatingSupply.Equal(auxiliaryRequest.Value) {
 		return nil, errorConstants.InvalidRequest.Wrapf("circulating supply %d doesn't match asset's supply %d", circulatingSupply, auxiliaryRequest.Value)
 	}
 
-	splitID := baseIDs.NewSplitID(auxiliaryRequest.OwnableID, auxiliaryRequest.OwnerID)
+	splitID := baseIDs.NewSplitID(auxiliaryRequest.AssetID, auxiliaryRequest.OwnerID)
 	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("split with ID %s not found", splitID.AsString())

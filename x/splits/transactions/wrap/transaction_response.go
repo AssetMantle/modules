@@ -15,9 +15,9 @@ var _ helpers.TransactionResponse = (*TransactionResponse)(nil)
 
 func (transactionResponse *TransactionResponse) GetResult() *sdkTypes.Result {
 	return &sdkTypes.Result{
-		Data: []byte(transactionResponse.CoinID.AsString()),
+		Data: []byte(transactionResponse.AssetID.AsString()),
 	}
 }
-func newTransactionResponse(coinID ids.CoinID) *TransactionResponse {
-	return &TransactionResponse{coinID.(*baseIDs.CoinID)}
+func newTransactionResponse(assetID ids.AssetID) *TransactionResponse {
+	return &TransactionResponse{assetID.(*baseIDs.AssetID)}
 }

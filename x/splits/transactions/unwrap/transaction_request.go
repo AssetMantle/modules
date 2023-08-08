@@ -21,10 +21,10 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq   rest.BaseReq `json:"baseReq"`
-	FromID    string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
-	OwnableID string       `json:"ownableID" valid:"required~required field ownableID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field ownableID"`
-	Value     string       `json:"value" valid:"required~required field value missing, matches(^[0-9]+$)~invalid field value"`
+	BaseReq rest.BaseReq `json:"baseReq"`
+	FromID  string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
+	AssetID string       `json:"assetID" valid:"required~required field assetID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field assetID"`
+	Value   string       `json:"value" valid:"required~required field value missing, matches(^[0-9]+$)~invalid field value"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -47,7 +47,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(context),
 		cliCommand.ReadString(constants.FromIdentityID),
-		cliCommand.ReadString(constants.OwnableID),
+		cliCommand.ReadString(constants.AssetID),
 		cliCommand.ReadString(constants.Value),
 	), nil
 }
@@ -77,7 +77,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	ownableID, err := baseIDs.PrototypeAnyOwnableID().FromString(transactionRequest.OwnableID)
+	assetID, err := baseIDs.PrototypeAssetID().FromString(transactionRequest.AssetID)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	return NewMessage(
 		from,
 		fromID.(ids.IdentityID),
-		ownableID.(ids.OwnableID),
+		assetID.(ids.AssetID),
 		value,
 	), nil
 }
@@ -95,11 +95,11 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, ownableID string, value string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, assetID string, value string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:   baseReq,
-		FromID:    fromID,
-		OwnableID: ownableID,
-		Value:     value,
+		BaseReq: baseReq,
+		FromID:  fromID,
+		AssetID: assetID,
+		Value:   value,
 	}
 }

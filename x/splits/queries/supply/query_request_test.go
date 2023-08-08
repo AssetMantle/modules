@@ -19,23 +19,23 @@ import (
 )
 
 var (
-	testOwnableID = baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID")).ToAnyOwnableID().(*baseIDs.AnyOwnableID)
+	testAssetID = baseIDs.NewCoinID(baseIDs.NewStringID("OwnerID")).(*baseIDs.AssetID)
 )
 
 func Test_newQueryRequest(t *testing.T) {
 	type args struct {
-		ownableID ids.OwnableID
+		assetID ids.AssetID
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve", args{testOwnableID}, newQueryRequest(testOwnableID)},
+		{"+ve", args{testAssetID}, newQueryRequest(testAssetID)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newQueryRequest(tt.args.ownableID); !reflect.DeepEqual(got, tt.want) {
+			if got := newQueryRequest(tt.args.assetID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newQueryRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -51,7 +51,7 @@ func Test_queryRequestFromInterface(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve", args{newQueryRequest(testOwnableID)}, newQueryRequest(testOwnableID).(*QueryRequest)},
+		{"+ve", args{newQueryRequest(testAssetID)}, newQueryRequest(testAssetID).(*QueryRequest)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -63,12 +63,12 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedReq, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testOwnableID))
+	encodedReq, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testAssetID))
 	require.NoError(t, err)
-	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAnyOwnableID()))
+	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID()))
 	require.NoError(t, err1)
 	type fields struct {
-		OwnableID *baseIDs.AnyOwnableID
+		AssetID *baseIDs.AssetID
 	}
 	type args struct {
 		bytes []byte
@@ -80,13 +80,13 @@ func Test_queryRequest_Decode(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testOwnableID}, args{encodedReq}, newQueryRequest(testOwnableID), false},
-		{"+ve", fields{baseIDs.PrototypeAnyOwnableID().(*baseIDs.AnyOwnableID)}, args{encodedReq1}, newQueryRequest(baseIDs.PrototypeAnyOwnableID()), false},
+		{"+ve", fields{testAssetID}, args{encodedReq}, newQueryRequest(testAssetID), false},
+		{"+ve", fields{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, args{encodedReq1}, newQueryRequest(baseIDs.PrototypeAssetID()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := &QueryRequest{
-				OwnableID: tt.fields.OwnableID,
+				AssetID: tt.fields.AssetID,
 			}
 			got, err := queryRequest.Decode(tt.args.bytes)
 			if (err != nil) != tt.wantErr {
@@ -101,12 +101,12 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedReq, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testOwnableID))
+	encodedReq, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testAssetID))
 	require.NoError(t, err)
-	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAnyOwnableID()))
+	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID()))
 	require.NoError(t, err1)
 	type fields struct {
-		OwnableID *baseIDs.AnyOwnableID
+		AssetID *baseIDs.AssetID
 	}
 	tests := []struct {
 		name    string
@@ -114,13 +114,13 @@ func Test_queryRequest_Encode(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{"+ve", fields{testOwnableID}, encodedReq, false},
-		{"+ve", fields{baseIDs.PrototypeAnyOwnableID().(*baseIDs.AnyOwnableID)}, encodedReq1, false},
+		{"+ve", fields{testAssetID}, encodedReq, false},
+		{"+ve", fields{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, encodedReq1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := &QueryRequest{
-				OwnableID: tt.fields.OwnableID,
+				AssetID: tt.fields.AssetID,
 			}
 			got, err := queryRequest.Encode()
 			if (err != nil) != tt.wantErr {
@@ -135,11 +135,11 @@ func Test_queryRequest_Encode(t *testing.T) {
 }
 
 func Test_queryRequest_FromCLI(t *testing.T) {
-	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.OwnableID})
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID})
 
-	viper.Set(constants.OwnableID.GetName(), testOwnableID.AsString())
+	viper.Set(constants.AssetID.GetName(), testAssetID.AsString())
 	type fields struct {
-		OwnableID *baseIDs.AnyOwnableID
+		AssetID *baseIDs.AssetID
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -152,12 +152,12 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testOwnableID}, args{cliCommand, base.TestClientContext}, newQueryRequest(testOwnableID), false},
+		{"+ve", fields{testAssetID}, args{cliCommand, base.TestClientContext}, newQueryRequest(testAssetID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			qu := &QueryRequest{
-				OwnableID: tt.fields.OwnableID,
+				AssetID: tt.fields.AssetID,
 			}
 			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -173,19 +173,19 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		OwnableID *baseIDs.AnyOwnableID
+		AssetID *baseIDs.AssetID
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testOwnableID}, false},
+		{"+ve", fields{testAssetID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := &QueryRequest{
-				OwnableID: tt.fields.OwnableID,
+				AssetID: tt.fields.AssetID,
 			}
 			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

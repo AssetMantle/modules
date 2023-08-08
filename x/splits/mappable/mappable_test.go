@@ -26,10 +26,10 @@ var (
 	mutables            = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID    = baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID = baseIDs.NewIdentityID(classificationID, immutables)
-	testOwnableID       = baseIDs.NewCoinID(baseIDs.NewStringID("ownerid"))
-	splitID             = baseIDs.NewSplitID(testOwnerIdentityID, testOwnableID)
+	testAssetID         = baseIDs.NewCoinID(baseIDs.NewStringID("ownerid"))
+	splitID             = baseIDs.NewSplitID(testOwnerIdentityID, testAssetID)
 	testRate            = sdkTypes.NewInt(1)
-	split               = baseTypes.NewSplit(testOwnerIdentityID, testOwnableID, testRate).(*baseTypes.Split)
+	split               = baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate).(*baseTypes.Split)
 )
 
 func TestNewMappable(t *testing.T) {

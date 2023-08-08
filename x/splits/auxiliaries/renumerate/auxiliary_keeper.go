@@ -22,17 +22,17 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
-	switch totalSplitsValue := utilities.GetTotalSupply(splits, auxiliaryRequest.OwnableID); {
+	switch totalSplitsValue := utilities.GetTotalSupply(splits, auxiliaryRequest.AssetID); {
 	case totalSplitsValue.LT(auxiliaryRequest.Supply):
-		if _, err := utilities.AddSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, auxiliaryRequest.Supply.Sub(totalSplitsValue)); err != nil {
+		if _, err := utilities.AddSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.AssetID, auxiliaryRequest.Supply.Sub(totalSplitsValue)); err != nil {
 			return nil, err
 		}
 	case totalSplitsValue.GT(auxiliaryRequest.Supply):
-		if _, err := utilities.SubtractSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.OwnableID, totalSplitsValue.Sub(auxiliaryRequest.Supply)); err != nil {
+		if _, err := utilities.SubtractSplits(splits, auxiliaryRequest.OwnerID, auxiliaryRequest.AssetID, totalSplitsValue.Sub(auxiliaryRequest.Supply)); err != nil {
 			return nil, err
 		}
 	case totalSplitsValue.IsZero():
-		return nil, errorConstants.EntityNotFound.Wrapf("no splits found for ownable %s", auxiliaryRequest.OwnableID.AsString())
+		return nil, errorConstants.EntityNotFound.Wrapf("no splits found for assetID %s", auxiliaryRequest.AssetID.AsString())
 	default:
 		return newAuxiliaryResponse(), nil
 	}
