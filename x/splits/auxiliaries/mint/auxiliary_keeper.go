@@ -5,6 +5,8 @@ package mint
 
 import (
 	"context"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/types/base"
@@ -23,6 +25,10 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
+	if auxiliaryRequest.Value.LTE(sdkTypes.ZeroInt()) {
+		return nil, errorConstants.IncorrectFormat.Wrapf("value is less than or equal to 0 for asset: %s", auxiliaryRequest.AssetID.AsString())
+	}
+
 	splitID := baseIDs.NewSplitID(auxiliaryRequest.AssetID, auxiliaryRequest.OwnerID)
 	splits := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(splitID))
 

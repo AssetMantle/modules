@@ -5,6 +5,8 @@ package issue
 
 import (
 	"context"
+	"github.com/AssetMantle/schema/go/documents"
+	"github.com/AssetMantle/schema/go/qualified"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
@@ -68,10 +70,19 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	authenticationProperty := baseProperties.NewMetaProperty(constantProperties.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(toAddress)))
-	mutableMetaProperties := message.MutableMetaProperties.Add(authenticationProperty.ToAnyProperty().Get())
+	var identity documents.Identity
+	var mutables qualified.Mutables
 
-	mutables := baseQualified.NewMutables(mutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
+	if authentication := message.MutableMetaProperties.GetProperty(constantProperties.AuthenticationProperty.GetID()); authentication != nil {
+		mutables = baseQualified.NewMutables(message.MutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
+		identity = base.NewIdentity(message.ClassificationID, immutables, mutables)
+		identity = identity.ProvisionAddress(toAddress)
+		mutables = identity.GetMutables()
+	} else {
+		authenticationProperty := baseProperties.NewMetaProperty(constantProperties.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(toAddress)))
+		mutables = baseQualified.NewMutables(message.MutableMetaProperties.Add(authenticationProperty).Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
+		identity = base.NewIdentity(message.ClassificationID, immutables, mutables)
+	}
 
 	if _, err := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); err != nil {
 		return nil, err
@@ -81,7 +92,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	identities.Add(record.NewRecord(base.NewIdentity(message.ClassificationID, immutables, mutables)))
+	identities.Add(record.NewRecord(identity))
 
 	return newTransactionResponse(identityID), nil
 }

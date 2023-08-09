@@ -5,6 +5,7 @@ package renumerate
 
 import (
 	"context"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 
@@ -20,6 +21,10 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
+	if auxiliaryRequest.Supply.LTE(sdkTypes.ZeroInt()) {
+		return nil, errorConstants.IncorrectFormat.Wrapf("value is less than or equal to 0 for asset: %s", auxiliaryRequest.AssetID.AsString())
+	}
+
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
 	switch totalSplitsValue := utilities.GetTotalSupply(splits, auxiliaryRequest.AssetID); {
