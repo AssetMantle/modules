@@ -34,7 +34,6 @@ var Transaction = baseHelpers.NewTransaction(
 		return RegisterServiceHandlerClient(context.Background(), mux, NewServiceClient(clientCtx))
 	},
 
-	constants.To,
 	constants.FromIdentityID,
 	constants.ClassificationID,
 	constants.ImmutableMetaProperties,

@@ -5,16 +5,11 @@ package issue
 
 import (
 	"context"
-	"github.com/AssetMantle/schema/go/documents"
-	"github.com/AssetMantle/schema/go/qualified"
 
-	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/types"
 
@@ -65,23 +60,16 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("identity with ID %s already exists", identityID.AsString())
 	}
 
-	toAddress, err := types.AccAddressFromBech32(message.To)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
+	mutables := baseQualified.NewMutables(message.MutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
+
+	identity := base.NewIdentity(message.ClassificationID, immutables, mutables)
+
+	if err := identity.ValidateBasic(); err != nil {
+		return nil, err
 	}
 
-	var identity documents.Identity
-	var mutables qualified.Mutables
-
-	if authentication := message.MutableMetaProperties.GetProperty(constantProperties.AuthenticationProperty.GetID()); authentication != nil {
-		mutables = baseQualified.NewMutables(message.MutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
-		identity = base.NewIdentity(message.ClassificationID, immutables, mutables)
-		identity = identity.ProvisionAddress(toAddress)
-		mutables = identity.GetMutables()
-	} else {
-		authenticationProperty := baseProperties.NewMetaProperty(constantProperties.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(toAddress)))
-		mutables = baseQualified.NewMutables(message.MutableMetaProperties.Add(authenticationProperty).Add(baseLists.AnyPropertiesToProperties(message.MutableProperties.Get()...)...))
-		identity = base.NewIdentity(message.ClassificationID, immutables, mutables)
+	if identity.GetProvisionedAddressCount().LT(types.OneInt()) {
+		return nil, errorConstants.IncorrectFormat.Wrapf("identity with ID %s has no provisioned address", identityID.AsString())
 	}
 
 	if _, err := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); err != nil {

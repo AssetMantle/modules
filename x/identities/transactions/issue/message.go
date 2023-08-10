@@ -23,9 +23,6 @@ func (message *Message) ValidateBasic() error {
 	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
 		return err
 	}
-	if _, err := sdkTypes.AccAddressFromBech32(message.To); err != nil {
-		return err
-	}
 	if err := message.FromID.ValidateBasic(); err != nil {
 		return err
 	}
@@ -71,10 +68,9 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, to sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 	return &Message{
 		From:                    from.String(),
-		To:                      to.String(),
 		FromID:                  fromID.(*baseIDs.IdentityID),
 		ClassificationID:        classificationID.(*baseIDs.ClassificationID),
 		ImmutableMetaProperties: immutableMetaProperties.(*baseLists.PropertyList),
