@@ -65,24 +65,29 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	auxiliaryResponse, err := transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetBurn()))
-	if err != nil {
-		return nil, err
-	}
-	metaProperties := supplement.GetMetaPropertiesFromResponse(auxiliaryResponse)
+	burnHeight := asset.GetBurnHeight()
 
-	if burnHeightMetaProperty := metaProperties.GetProperty(propertyConstants.BurnHeightProperty.GetID()); burnHeightMetaProperty != nil {
-		burnHeight := burnHeightMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.HeightData).Get()
-		if burnHeight.Compare(baseTypes.NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())) > 0 {
-			return nil, errorConstants.NotAuthorized.Wrapf("burning is not allowed until height %d", burnHeight.Get())
+	if burnHeightProperty := asset.GetProperty(propertyConstants.BurnHeightProperty.GetID()); burnHeightProperty != nil && !burnHeightProperty.IsMeta() {
+		auxiliaryResponse, err := transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(burnHeightProperty))
+		if err != nil {
+			return nil, err
+		}
+
+		if burnHeightProperty = supplement.GetMetaPropertiesFromResponse(auxiliaryResponse).GetProperty(propertyConstants.BurnHeightProperty.GetID()); burnHeightProperty != nil && burnHeightProperty.IsMeta() {
+			burnHeight = burnHeightProperty.Get().(properties.MetaProperty).GetData().Get().(data.HeightData).Get()
+		} else {
+			return nil, errorConstants.MetaDataError.Wrapf("burn height property is not revealed")
 		}
 	}
 
-	var supply sdkTypes.Int
-	if asset.GetSupply().IsMeta() {
-		supply = asset.GetSupply().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
-	} else {
-		auxiliaryResponse, err = transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetSupply()))
+	if burnHeight.Compare(baseTypes.CurrentHeight(context)) > 0 {
+		return nil, errorConstants.NotAuthorized.Wrapf("burning is not allowed until height %d", burnHeight.Get())
+	}
+
+	supply := asset.GetSupply()
+
+	if supplyProperty := asset.GetProperty(propertyConstants.SupplyProperty.GetID()); supplyProperty != nil && !supplyProperty.IsMeta() {
+		auxiliaryResponse, err := transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(supplyProperty))
 		if err != nil {
 			return nil, err
 		}
