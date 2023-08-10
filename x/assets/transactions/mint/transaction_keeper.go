@@ -11,7 +11,6 @@ import (
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/properties"
 	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -77,13 +76,19 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	split := sdkTypes.OneInt()
+	asset := base.NewAsset(message.ClassificationID, immutables, mutables)
 
-	if metaPropertyList := message.ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableMetaProperties.Get()...)...); metaPropertyList.GetProperty(propertyConstants.SupplyProperty.GetID()) != nil {
-		split = metaPropertyList.GetProperty(propertyConstants.SupplyProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
+	if err := asset.ValidateBasic(); err != nil {
+		return nil, err
 	}
 
-	if _, err := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.ToID, assetID, split)); err != nil {
+	supply := asset.GetSupply()
+
+	if supply.IsNegative() {
+		return nil, errorConstants.IncorrectFormat.Wrapf("asset supply is negative")
+	}
+
+	if _, err := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.ToID, assetID, supply)); err != nil {
 		return nil, err
 	}
 
