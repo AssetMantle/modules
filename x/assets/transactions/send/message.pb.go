@@ -4,12 +4,13 @@
 package send
 
 import (
-	fmt "fmt"
-	base "github.com/AssetMantle/schema/go/ids/base"
-	proto "github.com/gogo/protobuf/proto"
-	io "io"
-	math "math"
+	"fmt"
+	"io"
+	"math"
 	math_bits "math/bits"
+	
+	"github.com/AssetMantle/schema/go/ids/base"
+	"github.com/gogo/protobuf/proto"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
