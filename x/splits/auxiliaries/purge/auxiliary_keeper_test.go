@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -76,7 +77,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := base.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
 	testRate := sdkTypes.OneInt()
 	split := baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate)
 	keepers.AuxiliaryKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))

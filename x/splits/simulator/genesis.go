@@ -8,6 +8,7 @@ import (
 
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -55,7 +56,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		identityID, _ := base.PrototypeIdentityID().FromString(identityIDString)
 
 		records[index] = record.NewRecord(base.NewSplitID(assetID.(ids.AssetID), identityID.(ids.IdentityID)), baseTypes.NewSplit(sdkTypes.NewInt(1)))
-		records[index+1] = record.NewRecord(base.NewSplitID(base.GenerateCoinAssetID("stake"), identityID.(ids.IdentityID)), baseTypes.NewSplit(sdkTypes.NewInt(1000)))
+		records[index+1] = record.NewRecord(base.NewSplitID(baseDocuments.GenerateCoinAssetID("stake"), identityID.(ids.IdentityID)), baseTypes.NewSplit(sdkTypes.NewInt(1000)))
 		index += 2
 	}
 
