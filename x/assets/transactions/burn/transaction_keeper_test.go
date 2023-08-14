@@ -128,7 +128,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
-				burnAuxiliary:         tt.fields.renumerateAuxiliary,
+				purgeAuxiliary:        tt.fields.renumerateAuxiliary,
 				supplementAuxiliary:   tt.fields.supplementAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
@@ -175,7 +175,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
-				burnAuxiliary:         tt.fields.renumerateAuxiliary,
+				purgeAuxiliary:        tt.fields.renumerateAuxiliary,
 				supplementAuxiliary:   tt.fields.supplementAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}

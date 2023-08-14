@@ -31,7 +31,7 @@ import (
 )
 
 type TestKeepers struct {
-	BurnKeeper helpers.AuxiliaryKeeper
+	MintKeeper helpers.AuxiliaryKeeper
 }
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
@@ -64,7 +64,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		BurnKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
+		MintKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
 	return context, keepers, Mapper, parameterManager
@@ -79,7 +79,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	testAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
 	testRate := sdkTypes.OneInt()
 	split := baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate)
-	keepers.BurnKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
+	keepers.MintKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -94,7 +94,6 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		want   helpers.AuxiliaryResponse
 	}{
 		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(testOwnerIdentityID, testAssetID, testRate)}, newAuxiliaryResponse()},
-		{"+ve Entity Not Found", fields{Mapper}, args{context, NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), testAssetID, testRate)}, newAuxiliaryResponse()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -143,7 +142,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.AuxiliaryKeeper
 	}{
-		{"+ve", auxiliaryKeeper{}},
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

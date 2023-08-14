@@ -7,12 +7,9 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-
+	
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/splits/transactions/send"
-	"github.com/AssetMantle/modules/x/splits/transactions/unwrap"
-	"github.com/AssetMantle/modules/x/splits/transactions/wrap"
 )
 
 func TestPrototype(t *testing.T) {
@@ -20,11 +17,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Transactions
 	}{
-		{"+ve", baseHelpers.NewTransactions(
-			send.Transaction,
-			unwrap.Transaction,
-			wrap.Transaction,
-		)},
+		{"+ve", baseHelpers.NewTransactions()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

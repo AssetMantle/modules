@@ -22,7 +22,6 @@ import (
 
 type transactionRequest struct {
 	BaseReq                 rest.BaseReq `json:"baseReq"`
-	To                      string       `json:"to" valid:"required~required field to missing, matches(^[a-z0-9]+$)~invalid field to"`
 	FromID                  string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID "`
 	ClassificationID        string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field classificationID"`
 	ImmutableMetaProperties string       `json:"immutableMetaProperties" valid:"required~required field immutableMetaProperties missing, matches(^.*$)~invalid field immutableMetaProperties"`
@@ -54,7 +53,6 @@ func (transactionRequest transactionRequest) Validate() error {
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(context),
-		cliCommand.ReadString(constants.To),
 		cliCommand.ReadString(constants.FromIdentityID),
 		cliCommand.ReadString(constants.ClassificationID),
 		cliCommand.ReadString(constants.ImmutableMetaProperties),
@@ -75,11 +73,6 @@ func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
-	if err != nil {
-		return nil, err
-	}
-
-	to, err := sdkTypes.AccAddressFromBech32(transactionRequest.To)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +110,6 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 	}
 	return NewMessage(
 		from,
-		to,
 		fromID.(ids.IdentityID),
 		classificationID.(ids.ClassificationID),
 		immutableMetaProperties,
@@ -132,10 +124,9 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, to string, fromID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, fromID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq:                 baseReq,
-		To:                      to,
 		FromID:                  fromID,
 		ClassificationID:        classificationID,
 		ImmutableMetaProperties: immutableMetaProperties,

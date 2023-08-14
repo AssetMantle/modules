@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -19,7 +20,7 @@ import (
 )
 
 var (
-	testAssetID = baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID")).(*baseIDs.AssetID)
+	testAssetID = baseDocuments.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID")).(*baseIDs.AssetID)
 )
 
 func Test_newQueryRequest(t *testing.T) {

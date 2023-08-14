@@ -19,6 +19,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
 )
 
@@ -63,19 +64,27 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	auxiliaryResponse, err := transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(asset.GetSupply()))
-	if err != nil {
-		return nil, err
-	}
-	metaProperties := supplement.GetMetaPropertiesFromResponse(auxiliaryResponse)
+	supply := asset.GetSupply()
 
-	if supplyMetaProperty := metaProperties.GetProperty(propertyConstants.SupplyProperty.GetID()); supplyMetaProperty != nil && supplyMetaProperty.IsMeta() {
-		supply := supplyMetaProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
-		if _, err := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, supply)); err != nil {
+	if supplyProperty := asset.GetProperty(propertyConstants.SupplyProperty.GetID()); supplyProperty != nil && !supplyProperty.IsMeta() {
+		auxiliaryResponse, err := transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(supplyProperty))
+		if err != nil {
 			return nil, err
 		}
-	} else {
-		return nil, errorConstants.MetaDataError.Wrapf("meta property %s not found", propertyConstants.SupplyProperty.GetID().AsString())
+
+		if supplyProperty = supplement.GetMetaPropertiesFromResponse(auxiliaryResponse).GetProperty(propertyConstants.SupplyProperty.GetID()); supplyProperty != nil && supplyProperty.IsMeta() {
+			supply = supplyProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
+		} else {
+			return nil, errorConstants.MetaDataError.Wrapf("supply property is not revealed")
+		}
+	}
+
+	if supply.IsNegative() {
+		return nil, errorConstants.MetaDataError.Wrapf("asset supply is negative")
+	}
+
+	if _, err := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.FromID, message.AssetID, supply)); err != nil {
+		return nil, err
 	}
 
 	return newTransactionResponse(), nil

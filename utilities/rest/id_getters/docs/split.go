@@ -3,6 +3,7 @@ package docs
 import (
 	"net/http"
 
+	"github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -30,7 +31,7 @@ func splitIDHandler(context client.Context) http.HandlerFunc {
 
 		var coinID ids.AssetID
 		for _, coin := range coins {
-			coinID = baseIDs.GenerateCoinAssetID(coin.Denom)
+			coinID = base.GenerateCoinAssetID(coin.Denom)
 		}
 
 		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewSplitID(coinID, fromID.(ids.IdentityID)).AsString(), "", nil))
