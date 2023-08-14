@@ -94,7 +94,7 @@ func Test_auxiliaryRequest_Validate(t *testing.T) {
 			auxiliaryRequest := auxiliaryRequest{
 				OwnerID: tt.fields.OwnerID,
 				AssetID: tt.fields.AssetID,
-				Value:   tt.fields.Value,
+				Supply:  tt.fields.Value,
 			}
 			if err := auxiliaryRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

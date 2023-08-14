@@ -27,8 +27,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
 	circulatingSupply := utilities.GetTotalSupply(splits, auxiliaryRequest.AssetID)
-	if !circulatingSupply.Equal(auxiliaryRequest.Value) {
-		return nil, errorConstants.InvalidRequest.Wrapf("circulating supply %d doesn't match asset's supply %d", circulatingSupply, auxiliaryRequest.Value)
+	if !circulatingSupply.Equal(auxiliaryRequest.Supply) {
+		return nil, errorConstants.InvalidRequest.Wrapf("circulating supply %d doesn't match asset's supply %d", circulatingSupply, auxiliaryRequest.Supply)
 	}
 
 	splitID := baseIDs.NewSplitID(auxiliaryRequest.AssetID, auxiliaryRequest.OwnerID)
@@ -38,8 +38,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	}
 	split := mappable.GetSplit(Mappable)
 
-	if !split.GetValue().Equal(auxiliaryRequest.Value) {
-		return nil, errorConstants.InvalidRequest.Wrapf("owned value %d doesn't match asset's circulating supply %d", split.GetValue(), auxiliaryRequest.Value)
+	if !split.GetValue().Equal(auxiliaryRequest.Supply) {
+		return nil, errorConstants.InvalidRequest.Wrapf("owned value %d doesn't match asset's circulating supply %d", split.GetValue(), auxiliaryRequest.Supply)
 	}
 
 	splits.Remove(record.NewRecord(splitID, split))

@@ -14,7 +14,7 @@ import (
 type auxiliaryRequest struct {
 	OwnerID ids.IdentityID
 	ids.AssetID
-	Value sdkTypes.Int
+	Supply sdkTypes.Int
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -33,10 +33,10 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(ownerID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(ownerID ids.IdentityID, assetID ids.AssetID, supply sdkTypes.Int) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		OwnerID: ownerID,
 		AssetID: assetID,
-		Value:   value,
+		Supply:  supply,
 	}
 }
