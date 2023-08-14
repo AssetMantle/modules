@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"github.com/AssetMantle/schema/go/data/base"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
@@ -14,9 +15,11 @@ import (
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/assets/key"
+	"github.com/AssetMantle/modules/x/assets/record"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/x/splits/constants"
-	"github.com/AssetMantle/modules/x/splits/utilities"
 )
 
 type transactionKeeper struct {
@@ -24,6 +27,7 @@ type transactionKeeper struct {
 	parameterManager      helpers.ParameterManager
 	bankKeeper            bankKeeper.Keeper
 	authenticateAuxiliary helpers.Auxiliary
+	mintAuxiliary         helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -51,8 +55,17 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			return nil, errorConstants.NotAuthorized.Wrapf("coin %s is not allowed to be wrapped", coin.Denom)
 		}
 
-		if _, err := utilities.AddSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, baseIDs.GenerateCoinAssetID(coin.Denom), coin.Amount); err != nil {
+		coinAssetID := baseDocuments.GenerateCoinAssetID(coin.Denom)
+
+		if _, err := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.FromID, coinAssetID, coin.Amount)); err != nil {
 			return nil, err
+		}
+
+		assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(coinAssetID))
+
+		Mappable := assets.GetMappable(key.NewKey(coinAssetID))
+		if Mappable == nil {
+			assets.Add(record.NewRecord(baseDocuments.NewCoinAsset(baseIDs.NewStringID(coin.Denom))))
 		}
 	}
 
@@ -70,6 +83,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			switch value.GetName() {
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
+			case mint.Auxiliary.GetName():
+				transactionKeeper.mintAuxiliary = value
 			default:
 				break
 			}

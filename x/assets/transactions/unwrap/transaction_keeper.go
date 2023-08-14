@@ -7,22 +7,24 @@ import (
 	"context"
 
 	"github.com/AssetMantle/schema/go/data/base"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/burn"
 	"github.com/AssetMantle/modules/x/splits/constants"
-	"github.com/AssetMantle/modules/x/splits/utilities"
 )
 
 type transactionKeeper struct {
 	mapper                helpers.Mapper
 	parameterManager      helpers.ParameterManager
 	bankKeeper            bankKeeper.Keeper
+	burnAuxiliary         helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
 }
 
@@ -51,7 +53,14 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			return nil, errorConstants.NotAuthorized.Wrapf("coin %s is not allowed to be unwrapped", coin.Denom)
 		}
 
-		if _, err := utilities.SubtractSplits(transactionKeeper.mapper.NewCollection(context), message.FromID, baseIDs.GenerateCoinAssetID(coin.Denom), coin.Amount); err != nil {
+		coinAssetID := baseDocuments.GenerateCoinAssetID(coin.Denom)
+
+		Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(coinAssetID)).GetMappable(key.NewKey(coinAssetID))
+		if Mappable == nil {
+			return nil, errorConstants.EntityNotFound.Wrapf("asset %s not found", coinAssetID)
+		}
+
+		if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, coinAssetID, coin.Amount)); err != nil {
 			return nil, err
 		}
 	}
@@ -70,6 +79,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			switch value.GetName() {
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
+			case burn.Auxiliary.GetName():
+				transactionKeeper.burnAuxiliary = value
 			}
 		}
 	}
