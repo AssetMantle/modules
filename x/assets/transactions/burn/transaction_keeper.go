@@ -22,7 +22,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/x/splits/auxiliaries/burn"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/purge"
 )
 
 type transactionKeeper struct {
@@ -30,7 +30,7 @@ type transactionKeeper struct {
 	parameterManager      helpers.ParameterManager
 	authenticateAuxiliary helpers.Auxiliary
 	authorizeAuxiliary    helpers.Auxiliary
-	burnAuxiliary         helpers.Auxiliary
+	purgeAuxiliary        helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	unbondAuxiliary       helpers.Auxiliary
 }
@@ -99,7 +99,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		}
 	}
 
-	if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, message.AssetID, supply)); err != nil {
+	if _, err := transactionKeeper.purgeAuxiliary.GetKeeper().Help(context, purge.NewAuxiliaryRequest(message.FromID, message.AssetID, supply)); err != nil {
 		return nil, err
 	}
 
@@ -124,8 +124,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 				transactionKeeper.authenticateAuxiliary = value
 			case authorize.Auxiliary.GetName():
 				transactionKeeper.authorizeAuxiliary = value
-			case burn.Auxiliary.GetName():
-				transactionKeeper.burnAuxiliary = value
+			case purge.Auxiliary.GetName():
+				transactionKeeper.purgeAuxiliary = value
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			case unbond.Auxiliary.GetName():

@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package burn
+package purge
 
 import (
 	"fmt"
@@ -31,7 +31,7 @@ import (
 )
 
 type TestKeepers struct {
-	BurnKeeper helpers.AuxiliaryKeeper
+	AuxiliaryKeeper helpers.AuxiliaryKeeper
 }
 
 func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
@@ -64,7 +64,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		BurnKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
+		AuxiliaryKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
 	return context, keepers, Mapper, parameterManager
@@ -79,7 +79,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	testAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
 	testRate := sdkTypes.OneInt()
 	split := baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate)
-	keepers.BurnKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
+	keepers.AuxiliaryKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
 	type fields struct {
 		mapper helpers.Mapper
 	}
