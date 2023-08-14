@@ -31,15 +31,15 @@ type transactionRequest struct {
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
 // Validate godoc
-// @Summary Send split transaction
-// @Description Send split transaction
+// @Summary Send asset transaction
+// @Description Send asset transaction
 // @Accept text/plain
 // @Produce json
-// @Tags Splits
-// @Param body body  transactionRequest true "Request body to send split"
+// @Tags Assets
+// @Param body body  transactionRequest true "Request body to send asset"
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
-// @Router /splits/send [post]
+// @Router /assets/send [post]
 func (transactionRequest transactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
 	return err
