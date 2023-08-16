@@ -29,7 +29,7 @@ func validator(i interface{}) error {
 			return err
 		}
 	default:
-		return errorConstants.IncorrectFormat.Wrapf("incorrect format for maxPropertyCount parameter, expected %T, got %T", baseData.NewNumberData(sdkTypes.NewInt(22)), i)
+		return errorConstants.IncorrectFormat.Wrapf("incorrect type for maxProvisionAddressCount parameter, expected %s type as string, got %T", baseData.NewNumberData(sdkTypes.OneInt()).GetTypeID().AsString(), i)
 	}
 }
 
