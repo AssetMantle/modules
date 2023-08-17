@@ -49,6 +49,10 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	for _, coin := range message.Coins {
+		if err := sdkTypes.ValidateDenom(coin.Denom); err != nil {
+			return nil, errorConstants.InvalidRequest.Wrapf("coin denom %s is invalid", coin.Denom)
+		}
+
 		if _, found := transactionKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.UnwrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData).Search(base.NewStringData(coin.Denom)); !found {
 			return nil, errorConstants.NotAuthorized.Wrapf("coin %s is not allowed to be unwrapped", coin.Denom)
 		}
@@ -60,7 +64,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			return nil, errorConstants.EntityNotFound.Wrapf("asset %s not found", coinAssetID)
 		}
 
-		if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, coinAssetID, coin.Amount)); err != nil {
+		value := coin.Amount
+		if value.IsNegative() {
+			return nil, errorConstants.InvalidRequest.Wrapf("coin amount %s is negative", value)
+		}
+
+		if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(message.FromID, coinAssetID, value)); err != nil {
 			return nil, err
 		}
 	}

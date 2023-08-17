@@ -50,13 +50,22 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	for _, coin := range message.Coins {
+		if err := sdkTypes.ValidateDenom(coin.Denom); err != nil {
+			return nil, errorConstants.InvalidRequest.Wrapf("coin denom %s is invalid", coin.Denom)
+		}
+
 		if _, found := transactionKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.WrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData).Search(base.NewStringData(coin.Denom)); !found {
 			return nil, errorConstants.NotAuthorized.Wrapf("coin %s is not allowed to be wrapped", coin.Denom)
 		}
 
 		coinAsset := baseDocuments.NewCoinAsset(coin.Denom)
 
-		if _, err := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.FromID, coinAsset.GetCoinAssetID(), coin.Amount)); err != nil {
+		value := coin.Amount
+		if value.IsNegative() {
+			return nil, errorConstants.InvalidRequest.Wrapf("coin amount %s is negative", coin.Amount)
+		}
+
+		if _, err := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.FromID, coinAsset.GetCoinAssetID(), value)); err != nil {
 			return nil, err
 		}
 
@@ -64,6 +73,10 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 		Mappable := assets.GetMappable(key.NewKey(coinAsset.GetCoinAssetID()))
 		if Mappable == nil {
+			if err := coinAsset.ValidateBasic(); err != nil {
+				return nil, err
+			}
+
 			assets.Add(record.NewRecord(coinAsset))
 		}
 	}

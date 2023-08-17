@@ -32,7 +32,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	identity := mappable.GetIdentity(Mappable)
 
 	if !identity.IsProvisioned(auxiliaryRequest.Address) {
-		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned by identity with ID %s", auxiliaryRequest.Address.String(), auxiliaryRequest.IdentityID.AsString())
+		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned for identity with ID %s", auxiliaryRequest.Address.String(), auxiliaryRequest.IdentityID.AsString())
 	}
 
 	return newAuxiliaryResponse(), nil

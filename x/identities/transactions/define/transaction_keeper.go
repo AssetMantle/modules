@@ -14,7 +14,6 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/utilities"
@@ -23,11 +22,10 @@ import (
 )
 
 type transactionKeeper struct {
-	mapper                helpers.Mapper
-	authenticateAuxiliary helpers.Auxiliary
-	defineAuxiliary       helpers.Auxiliary
-	superAuxiliary        helpers.Auxiliary
-	supplementAuxiliary   helpers.Auxiliary
+	mapper              helpers.Mapper
+	defineAuxiliary     helpers.Auxiliary
+	superAuxiliary      helpers.Auxiliary
+	supplementAuxiliary helpers.Auxiliary
 }
 
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
@@ -41,10 +39,6 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
-		return nil, err
-	}
-
 	Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromID)).GetMappable(key.NewKey(message.FromID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.FromID.AsString())
@@ -52,7 +46,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	identity := mappable.GetIdentity(Mappable)
 
 	if !identity.IsProvisioned(fromAddress) {
-		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not authorized to define identity with ID %s", message.From, message.FromID.AsString())
+		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned by identity with ID %s", message.From, message.FromID.AsString())
 	}
 
 	immutables := base.NewImmutables(message.ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.ImmutableProperties.Get()...)...))
@@ -87,8 +81,6 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 		switch value := auxiliary.(type) {
 		case helpers.Auxiliary:
 			switch value.GetName() {
-			case authenticate.Auxiliary.GetName():
-				transactionKeeper.authenticateAuxiliary = value
 			case define.Auxiliary.GetName():
 				transactionKeeper.defineAuxiliary = value
 			case super.Auxiliary.GetName():
