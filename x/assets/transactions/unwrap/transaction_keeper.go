@@ -14,10 +14,10 @@ import (
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/burn"
-	"github.com/AssetMantle/modules/x/splits/constants"
 )
 
 type transactionKeeper struct {
@@ -53,7 +53,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			return nil, errorConstants.NotAuthorized.Wrapf("coin %s is not allowed to be unwrapped", coin.Denom)
 		}
 
-		coinAssetID := baseDocuments.GenerateCoinAssetID(coin.Denom)
+		coinAssetID := baseDocuments.NewCoinAsset(coin.Denom).GetCoinAssetID()
 
 		Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(coinAssetID)).GetMappable(key.NewKey(coinAssetID))
 		if Mappable == nil {
