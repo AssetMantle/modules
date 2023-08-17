@@ -31,10 +31,10 @@ var Query = baseHelpers.NewQuery(
 	keeperPrototype,
 
 	func(server grpc.Server, QueryKeeper helpers.QueryKeeper) {
-		RegisterServiceServer(server, QueryKeeper.(queryKeeper))
+		RegisterQueryServer(server, QueryKeeper.(queryKeeper))
 	},
 	func(clientContext client.Context, serveMux *runtime.ServeMux) error {
-		return RegisterServiceHandlerClient(context.Background(), serveMux, NewServiceClient(clientContext))
+		return RegisterQueryHandlerClient(context.Background(), serveMux, NewQueryClient(clientContext))
 	},
 
 	helperConstants.AssetID,
