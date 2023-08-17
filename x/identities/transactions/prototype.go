@@ -9,7 +9,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/transactions/define"
 	"github.com/AssetMantle/modules/x/identities/transactions/deputize"
 	"github.com/AssetMantle/modules/x/identities/transactions/issue"
-	"github.com/AssetMantle/modules/x/identities/transactions/nub"
+	"github.com/AssetMantle/modules/x/identities/transactions/name"
 	"github.com/AssetMantle/modules/x/identities/transactions/provision"
 	"github.com/AssetMantle/modules/x/identities/transactions/quash"
 	"github.com/AssetMantle/modules/x/identities/transactions/revoke"
@@ -23,7 +23,7 @@ func Prototype() helpers.Transactions {
 		deputize.Transaction,
 		issue.Transaction,
 		update.Transaction,
-		nub.Transaction,
+		name.Transaction,
 		provision.Transaction,
 		quash.Transaction,
 		revoke.Transaction,

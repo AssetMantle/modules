@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package nub
+package name
 
 import (
 	"context"
@@ -34,5 +34,5 @@ var Transaction = baseHelpers.NewTransaction(
 		return RegisterServiceHandlerClient(context.Background(), mux, NewServiceClient(clientCtx))
 	},
 
-	constants.NubID,
+	constants.Name,
 )

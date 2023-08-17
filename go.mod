@@ -23,7 +23,7 @@ require (
 	google.golang.org/genproto v0.0.0-20230125152338-dcaf20b6aeaa
 	google.golang.org/grpc v1.52.3
 )
-
+replace github.com/AssetMantle/schema/go => ../schema/go
 require (
 	cosmossdk.io/api v0.2.6 // indirect
 	cosmossdk.io/core v0.5.1 // indirect

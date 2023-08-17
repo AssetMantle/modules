@@ -105,7 +105,7 @@ func Prototype() helpers.Genesis {
 		Records: []*record.Record{
 			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeMaintainer())).(*record.Record),
 			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeCoinAsset())).(*record.Record),
-			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeNubIdentity())).(*record.Record),
+			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeNameIdentity())).(*record.Record),
 		},
 		ParameterList: parameters.Prototype().Get().(*base.ParameterList),
 	}

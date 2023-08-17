@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package nub
+package name
 
 import (
 	"github.com/AssetMantle/schema/go/ids"
@@ -15,9 +15,9 @@ var _ helpers.TransactionResponse = (*TransactionResponse)(nil)
 
 func (transactionResponse *TransactionResponse) GetResult() *sdkTypes.Result {
 	return &sdkTypes.Result{
-		Data: []byte(transactionResponse.NubID.AsString()),
+		Data: []byte(transactionResponse.NameIdentityID.AsString()),
 	}
 }
-func newTransactionResponse(nubID ids.IdentityID) *TransactionResponse {
-	return &TransactionResponse{nubID.(*baseIDs.IdentityID)}
+func newTransactionResponse(nameIdentityID ids.IdentityID) *TransactionResponse {
+	return &TransactionResponse{nameIdentityID.(*baseIDs.IdentityID)}
 }
