@@ -3,14 +3,22 @@ package genesis
 import (
 	"context"
 
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/lists"
 	"github.com/AssetMantle/schema/go/lists/base"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
+	assetsConstants "github.com/AssetMantle/modules/x/assets/constants"
+	classificationsConstants "github.com/AssetMantle/modules/x/classifications/constants"
+	identitiesConstants "github.com/AssetMantle/modules/x/identities/constants"
 	"github.com/AssetMantle/modules/x/identities/parameters"
 	"github.com/AssetMantle/modules/x/identities/record"
+	maintainersConstants "github.com/AssetMantle/modules/x/maintainers/constants"
+	metasConstants "github.com/AssetMantle/modules/x/metas/constants"
+	ordersConstants "github.com/AssetMantle/modules/x/orders/constants"
+	splitsConstants "github.com/AssetMantle/modules/x/splits/constants"
 )
 
 var _ helpers.Genesis = (*Genesis)(nil)
@@ -101,7 +109,15 @@ func (genesis *Genesis) Initialize(records []helpers.Record, parameterList lists
 
 func Prototype() helpers.Genesis {
 	return &Genesis{
-		Records:       []*record.Record{},
+		Records: []*record.Record{
+			record.NewRecord(baseDocuments.NewIdentityFromDocument(baseDocuments.NewModuleIdentity(assetsConstants.ModuleName))).(*record.Record),
+			record.NewRecord(baseDocuments.NewIdentityFromDocument(baseDocuments.NewModuleIdentity(classificationsConstants.ModuleName))).(*record.Record),
+			record.NewRecord(baseDocuments.NewIdentityFromDocument(baseDocuments.NewModuleIdentity(identitiesConstants.ModuleName))).(*record.Record),
+			record.NewRecord(baseDocuments.NewIdentityFromDocument(baseDocuments.NewModuleIdentity(maintainersConstants.ModuleName))).(*record.Record),
+			record.NewRecord(baseDocuments.NewIdentityFromDocument(baseDocuments.NewModuleIdentity(metasConstants.ModuleName))).(*record.Record),
+			record.NewRecord(baseDocuments.NewIdentityFromDocument(baseDocuments.NewModuleIdentity(ordersConstants.ModuleName))).(*record.Record),
+			record.NewRecord(baseDocuments.NewIdentityFromDocument(baseDocuments.NewModuleIdentity(splitsConstants.ModuleName))).(*record.Record),
+		},
 		ParameterList: parameters.Prototype().Get().(*base.ParameterList),
 	}
 }
