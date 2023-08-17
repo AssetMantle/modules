@@ -11,7 +11,6 @@ import (
 	"github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
@@ -42,17 +41,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
 	}
 	bondAmount := baseData.NewNumberData(auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.BondRateProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get().Mul(totalWeight))
-	immutables := baseQualified.NewImmutables(auxiliaryRequest.Immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), bondAmount)))
+	mutables := baseQualified.NewMutables(auxiliaryRequest.Mutables.GetMutablePropertyList().Add(baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), bondAmount)))
 
-	if sdkTypes.NewInt(int64(len(immutables.GetImmutablePropertyList().Get()) + len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()))).GT(auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()) {
-		return nil, errorConstants.InvalidRequest.Wrapf("total property count %d exceeds maximum %d", len(immutables.GetImmutablePropertyList().Get())+len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()), auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get())
+	if totalPropertyCount := sdkTypes.NewInt(int64(len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) + len(mutables.GetMutablePropertyList().Get()))); totalPropertyCount.GT(auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()) {
+		return nil, errorConstants.InvalidRequest.Wrapf("total property count %d exceeds maximum %d", totalPropertyCount, auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get())
 	}
 
-	if err := baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(append(immutables.GetImmutablePropertyList().Get(), auxiliaryRequest.Mutables.GetMutablePropertyList().Get()...)...)...).ValidateBasic(); err != nil {
-		return nil, errorConstants.InvalidRequest.Wrapf("invalid properties: %s", err.Error())
-	}
-
-	classificationID := baseIDs.NewClassificationID(immutables, auxiliaryRequest.Mutables)
+	classificationID := baseIDs.NewClassificationID(auxiliaryRequest.Immutables, mutables)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(classificationID))
 	if classifications.GetMappable(key.NewKey(classificationID)) != nil {
 		return newAuxiliaryResponse(classificationID), errorConstants.EntityAlreadyExists.Wrapf("classification with ID %s already exists", classificationID.AsString())
@@ -62,7 +57,13 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		return nil, err
 	}
 
-	classifications.Add(record.NewRecord(base.NewClassification(immutables, auxiliaryRequest.Mutables)))
+	classification := base.NewClassification(auxiliaryRequest.Immutables, mutables)
+
+	if err := classification.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	classifications.Add(record.NewRecord(classification))
 
 	return newAuxiliaryResponse(classificationID), nil
 }

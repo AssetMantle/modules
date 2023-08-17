@@ -32,24 +32,24 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 
 	if auxiliaryRequest.Immutables != nil {
 		if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) > len(classification.GetImmutables().GetImmutablePropertyList().Get()) {
-			return nil, errorConstants.IncorrectFormat
+			return nil, errorConstants.IncorrectFormat.Wrapf("more immutables than expected %d > %d", len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()), len(classification.GetImmutables().GetImmutablePropertyList().Get()))
 		}
 
 		for _, immutableProperty := range auxiliaryRequest.Immutables.GetImmutablePropertyList().Get() {
 			if property := classification.GetImmutables().GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) != 0 && property.GetDataID().GetHashID().Compare(immutableProperty.GetDataID().GetHashID()) != 0 {
-				return nil, errorConstants.IncorrectFormat
+				return nil, errorConstants.IncorrectFormat.Wrapf("invalid immutable property %s", immutableProperty.GetID().AsString())
 			}
 		}
 	}
 
 	if auxiliaryRequest.Mutables != nil {
 		if len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()) > len(classification.GetMutables().GetMutablePropertyList().Get()) {
-			return nil, errorConstants.IncorrectFormat
+			return nil, errorConstants.IncorrectFormat.Wrapf("more mutables than expected %d > %d", len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()), len(classification.GetMutables().GetMutablePropertyList().Get()))
 		}
 
 		for _, mutableProperty := range auxiliaryRequest.Mutables.GetMutablePropertyList().Get() {
 			if property := classification.GetMutables().GetMutablePropertyList().GetProperty(mutableProperty.GetID()); property == nil {
-				return nil, errorConstants.IncorrectFormat
+				return nil, errorConstants.IncorrectFormat.Wrapf("invalid mutable property %s", mutableProperty.GetID().AsString())
 			}
 		}
 	}

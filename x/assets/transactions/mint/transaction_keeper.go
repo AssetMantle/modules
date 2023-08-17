@@ -96,7 +96,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	assets.Add(record.NewRecord(base.NewAsset(message.ClassificationID, immutables, mutables)))
+	assets.Add(record.NewRecord(asset))
 
 	return newTransactionResponse(assetID), nil
 }

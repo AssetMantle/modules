@@ -59,11 +59,17 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.GetClassificationID(), nil, asset.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutables.GetMutablePropertyList().Get()...)...))); err != nil {
+	mutatedAsset := base.NewAsset(asset.GetClassificationID(), asset.GetImmutables(), asset.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutables.GetMutablePropertyList().Get()...)...))
+
+	if _, err := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(asset.GetClassificationID(), mutatedAsset.GetImmutables(), mutatedAsset.GetMutables())); err != nil {
 		return nil, err
 	}
 
-	assets.Mutate(record.NewRecord(base.NewAsset(asset.GetClassificationID(), asset.GetImmutables(), asset.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutables.GetMutablePropertyList().Get()...)...))))
+	if err := asset.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	assets.Mutate(record.NewRecord(mutatedAsset))
 
 	return newTransactionResponse(), nil
 }

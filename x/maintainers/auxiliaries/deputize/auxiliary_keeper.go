@@ -91,15 +91,25 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		if !fromMaintainer.IsPermitted(constants.CanAddMaintainerPermission) {
 			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the permission to add maintainers")
 		}
+		maintainer := base.NewMaintainer(auxiliaryRequest.ToIdentityID, auxiliaryRequest.MaintainedClassificationID, auxiliaryRequest.MaintainedProperties.GetPropertyIDList(), internalUtilities.SetModulePermissions(auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanMutateMaintainer, auxiliaryRequest.CanRemoveMaintainer).Add(baseIDs.StringIDsToIDs(auxiliaryRequest.PermissionIDs)...))
 
-		maintainers.Add(record.NewRecord(base.NewMaintainer(auxiliaryRequest.ToIdentityID, auxiliaryRequest.MaintainedClassificationID, auxiliaryRequest.MaintainedProperties.GetPropertyIDList(), internalUtilities.SetModulePermissions(auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanMutateMaintainer, auxiliaryRequest.CanRemoveMaintainer).Add(baseIDs.StringIDsToIDs(auxiliaryRequest.PermissionIDs)...))))
+		if err := maintainer.ValidateBasic(); err != nil {
+			return nil, err
+		}
+		maintainers.Add(record.NewRecord(maintainer))
 	} else {
 		if !fromMaintainer.IsPermitted(constants.CanMutateMaintainerPermission) {
 			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the permission to mutate maintainers")
 		}
 
 		maintainedProperties := mappable.GetMaintainer(Mappable).GetMutables().GetMutablePropertyList().Add(baseLists.AnyPropertiesToProperties(auxiliaryRequest.MaintainedProperties.Get()...)...).Remove(baseLists.AnyPropertiesToProperties(removeMaintainedPropertyList.Get()...)...)
-		maintainers.Mutate(record.NewRecord(base.NewMaintainer(auxiliaryRequest.ToIdentityID, auxiliaryRequest.MaintainedClassificationID, maintainedProperties.GetPropertyIDList(), internalUtilities.SetModulePermissions(auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanMutateMaintainer, auxiliaryRequest.CanRemoveMaintainer).Add(baseIDs.StringIDsToIDs(auxiliaryRequest.PermissionIDs)...))))
+		maintainer := base.NewMaintainer(auxiliaryRequest.ToIdentityID, auxiliaryRequest.MaintainedClassificationID, maintainedProperties.GetPropertyIDList(), internalUtilities.SetModulePermissions(auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanMutateMaintainer, auxiliaryRequest.CanRemoveMaintainer).Add(baseIDs.StringIDsToIDs(auxiliaryRequest.PermissionIDs)...))
+
+		if err := maintainer.ValidateBasic(); err != nil {
+			return nil, err
+		}
+
+		maintainers.Mutate(record.NewRecord(maintainer))
 	}
 
 	return newAuxiliaryResponse(), nil
