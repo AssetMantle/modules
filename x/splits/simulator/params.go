@@ -11,8 +11,8 @@ import (
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/simulation/schema/types/base"
+	"github.com/AssetMantle/modules/x/assets/parameters/wrap_allowed_coins"
 	"github.com/AssetMantle/modules/x/splits/constants"
-	"github.com/AssetMantle/modules/x/splits/parameters/wrap_allowed_coins"
 )
 
 func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {

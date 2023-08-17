@@ -22,7 +22,7 @@ import (
 	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
 	"github.com/AssetMantle/modules/x/splits/constants"
 	"github.com/AssetMantle/modules/x/splits/genesis"
-	"github.com/AssetMantle/modules/x/splits/parameters/wrap_allowed_coins"
+	"github.com/AssetMantle/modules/x/splits/parameters/transfer_enabled"
 	"github.com/AssetMantle/modules/x/splits/record"
 )
 
@@ -31,7 +31,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		wrap_allowed_coins.ID.AsString(),
+		transfer_enabled.ID.AsString(),
 		&Data,
 		simulationState.Rand,
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
@@ -60,7 +60,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		index += 2
 	}
 
-	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(wrap_allowed_coins.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(transfer_enabled.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }
