@@ -93,6 +93,6 @@ func RegisterRESTRoutes(context client.Context, router *mux.Router) {
 	router.HandleFunc("/get/document/assetID", assetIDHandler(context)).Methods("POST")
 	router.HandleFunc("/get/document/identityID", identityIDHandler(context)).Methods("POST")
 	router.HandleFunc("/get/document/orderID", orderIDHandler(context)).Methods("POST")
-	router.HandleFunc("/get/document/nubID", nubIDHandler(context)).Methods("POST")
+	router.HandleFunc("/get/document/nameIdentityID", nameIdentityIDHandler(context)).Methods("POST")
 	router.HandleFunc("/get/document/splitID", splitIDHandler(context)).Methods("POST")
 }

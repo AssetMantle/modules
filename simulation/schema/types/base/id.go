@@ -13,7 +13,7 @@ import (
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )
 
-func GenerateRandomID(r *rand.Rand) ids.ID {
+func GenerateRandomID(r *rand.Rand) ids.StringID {
 	return baseIDs.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(99)))
 }
 

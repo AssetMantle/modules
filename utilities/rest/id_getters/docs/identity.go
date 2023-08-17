@@ -14,7 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
-func nubIDHandler(context client.Context) http.HandlerFunc {
+func nameIdentityIDHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		transactionRequest := Prototype()
 		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
