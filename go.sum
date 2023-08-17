@@ -52,8 +52,8 @@ git.sr.ht/~sircmpwn/go-bare v0.0.0-20210406120253-ab86bc2846d9/go.mod h1:BVJwbDf
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 h1:/vQbFIOMbk2FiG/kXiLl8BRyzTWDw7gX/Hz7Dd5eDMs=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4/go.mod h1:hN7oaIRCjzsZ2dE+yG5k+rsdt3qcwykqK6HVGcKwsw4=
 github.com/AndreasBriese/bbloom v0.0.0-20190306092124-e2d15f34fcf9/go.mod h1:bOvUY6CB00SOBii9/FifXqc0awNKxLFCL/+pkDPuyl8=
-github.com/AssetMantle/schema/go v0.0.0-20230817064354-7c20d0c26d0d h1:BB74aLFZi91LDAg9uqhAZuzF3SUGJ3BZtdnyuki46p8=
-github.com/AssetMantle/schema/go v0.0.0-20230817064354-7c20d0c26d0d/go.mod h1:F8zKq4mDADBQZqkF5/ZCltYHmDLXwtAw/8slNvwaYxE=
+github.com/AssetMantle/schema/go v0.0.0-20230817084702-1c5a183d3dfc h1:mFX+IkAnFoa0nBWL7SONUwMIlcOCTuCCPWQpdaiPzY4=
+github.com/AssetMantle/schema/go v0.0.0-20230817084702-1c5a183d3dfc/go.mod h1:F8zKq4mDADBQZqkF5/ZCltYHmDLXwtAw/8slNvwaYxE=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v0.21.1/go.mod h1:fBF9PQNqB8scdgpZ3ufzaLntG0AG7C1WjPMsiFOmfHM=
 github.com/Azure/azure-sdk-for-go/sdk/internal v0.8.3/go.mod h1:KLF4gFr6DcKFZwSuH8w8yEK6DpFl3LP5rhdvAb7Yz5I=
 github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v0.3.0/go.mod h1:tPaiy8S5bQ+S5sOiDlINkp7+Ef339+Nz5L5XO+cnOHo=
