@@ -12,7 +12,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/record"
@@ -70,16 +69,6 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
 	transactionKeeper.parameterManager = parameterManager
-
-	for _, auxiliary := range auxiliaries {
-		switch value := auxiliary.(type) {
-		case helpers.Auxiliary:
-			switch value.GetName() {
-			case define.Auxiliary.GetName():
-				transactionKeeper.supplementAuxiliary = value
-			}
-		}
-	}
 
 	for _, auxiliary := range auxiliaries {
 		switch value := auxiliary.(type) {
