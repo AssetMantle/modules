@@ -56,7 +56,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		identityID, _ := base.PrototypeIdentityID().FromString(identityIDString)
 
 		records[index] = record.NewRecord(base.NewSplitID(assetID.(ids.AssetID), identityID.(ids.IdentityID)), baseTypes.NewSplit(sdkTypes.NewInt(1)))
-		records[index+1] = record.NewRecord(base.NewSplitID(baseDocuments.GenerateCoinAssetID("stake"), identityID.(ids.IdentityID)), baseTypes.NewSplit(sdkTypes.NewInt(1000)))
+		records[index+1] = record.NewRecord(base.NewSplitID(baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), identityID.(ids.IdentityID)), baseTypes.NewSplit(sdkTypes.NewInt(1000)))
 		index += 2
 	}
 

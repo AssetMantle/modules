@@ -9,17 +9,16 @@ import (
 	"github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/record"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
-	"github.com/AssetMantle/modules/x/splits/constants"
 )
 
 type transactionKeeper struct {
@@ -55,17 +54,17 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			return nil, errorConstants.NotAuthorized.Wrapf("coin %s is not allowed to be wrapped", coin.Denom)
 		}
 
-		coinAssetID := baseDocuments.GenerateCoinAssetID(coin.Denom)
+		coinAsset := baseDocuments.NewCoinAsset(coin.Denom)
 
-		if _, err := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.FromID, coinAssetID, coin.Amount)); err != nil {
+		if _, err := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.FromID, coinAsset.GetCoinAssetID(), coin.Amount)); err != nil {
 			return nil, err
 		}
 
-		assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(coinAssetID))
+		assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(coinAsset.GetCoinAssetID()))
 
-		Mappable := assets.GetMappable(key.NewKey(coinAssetID))
+		Mappable := assets.GetMappable(key.NewKey(coinAsset.GetCoinAssetID()))
 		if Mappable == nil {
-			assets.Add(record.NewRecord(baseDocuments.NewCoinAsset(baseIDs.NewStringID(coin.Denom))))
+			assets.Add(record.NewRecord(coinAsset))
 		}
 	}
 

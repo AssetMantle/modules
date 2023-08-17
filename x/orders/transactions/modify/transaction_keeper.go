@@ -66,11 +66,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	transferMakerSplit := makerSplit.Sub(order.GetMakerSplit())
 
 	if transferMakerSplit.LT(sdkTypes.ZeroInt()) {
-		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, message.FromID, order.GetMakerAssetID(), transferMakerSplit.Abs())); err != nil {
+		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), message.FromID, order.GetMakerAssetID(), transferMakerSplit.Abs())); err != nil {
 			return nil, err
 		}
 	} else if transferMakerSplit.GT(sdkTypes.ZeroInt()) {
-		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, constants.ModuleIdentityID, order.GetMakerAssetID(), transferMakerSplit)); err != nil {
+		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerAssetID(), transferMakerSplit)); err != nil {
 			return nil, err
 		}
 	}
