@@ -7,14 +7,9 @@ import (
 	"context"
 
 	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -35,9 +30,6 @@ type transactionKeeper struct {
 	transferAuxiliary     helpers.Auxiliary
 }
 
-// TODO move to proper package
-var PutOrderClassificationID = baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList(propertyConstants.MakerIDProperty, propertyConstants.MakerAssetIDProperty, propertyConstants.TakerAssetIDProperty, propertyConstants.MakerSplitProperty, propertyConstants.TakerSplitProperty, propertyConstants.ExpiryHeightProperty)), baseQualified.NewMutables(baseLists.NewPropertyList()))
-
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) (helpers.TransactionResponse, error) {
@@ -55,7 +47,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	makerSplit, ok := sdkTypes.NewIntFromString(message.MakerSplit)
-	if !ok {
+	if !ok || makerSplit.IsNegative() {
 		return nil, errorConstants.IncorrectFormat.Wrapf("maker split is not a valid integer")
 	}
 
@@ -64,7 +56,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	takerSplit, ok := sdkTypes.NewIntFromString(message.TakerSplit)
-	if !ok {
+	if !ok || takerSplit.IsNegative() {
 		return nil, errorConstants.IncorrectFormat.Wrapf("taker split is not a valid integer")
 	}
 
@@ -74,24 +66,20 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.InvalidRequest.Wrapf("order expiry exceeds maximum allowed %d", transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get())
 	}
 
-	immutables := baseQualified.NewImmutables(baseLists.PrototypePropertyList().
-		Add(baseProperties.NewMetaProperty(propertyConstants.MakerIDProperty.GetKey(), baseData.NewIDData(message.FromID))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.MakerAssetIDProperty.GetKey(), baseData.NewIDData(message.MakerAssetID))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.TakerAssetIDProperty.GetKey(), baseData.NewIDData(message.TakerAssetID))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(makerSplit))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.TakerSplitProperty.GetKey(), baseData.NewNumberData(takerSplit))).
-		Add(baseProperties.NewMetaProperty(propertyConstants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(message.ExpiryHeight))))
+	putOrder := base.NewPutOrder(message.FromID, message.MakerAssetID, message.TakerAssetID, makerSplit, takerSplit, message.ExpiryHeight)
 
-	orderID := baseIDs.NewOrderID(PutOrderClassificationID, immutables)
-
-	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(orderID))
-	if orders.GetMappable(key.NewKey(orderID)) != nil {
-		return nil, errorConstants.EntityAlreadyExists.Wrapf("order with ID %s already exists", orderID.AsString())
+	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(putOrder.GetPutOrderID()))
+	if orders.GetMappable(key.NewKey(putOrder.GetPutOrderID())) != nil {
+		return nil, errorConstants.EntityAlreadyExists.Wrapf("order with ID %s already exists", putOrder.GetPutOrderID().AsString())
 	}
 
-	orders.Add(record.NewRecord(base.NewOrder(PutOrderClassificationID, immutables, baseQualified.NewMutables(baseLists.PrototypePropertyList()))))
+	if err := putOrder.ValidateBasic(); err != nil {
+		return nil, err
+	}
 
-	return newTransactionResponse(orderID), nil
+	orders.Add(record.NewRecord(putOrder))
+
+	return newTransactionResponse(putOrder.GetPutOrderID()), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
