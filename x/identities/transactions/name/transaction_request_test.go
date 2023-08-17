@@ -23,7 +23,7 @@ import (
 func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, sdkTypes.AccAddress, rest.BaseReq) {
 	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.NubID})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.Name})
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
@@ -90,13 +90,13 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, args{cliCommand, baseHelpers.TestClientContext}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.NubID)}, false},
+		{"+ve", fields{testBaseReq, "nubID"}, args{cliCommand, baseHelpers.TestClientContext}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.Name)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
 				BaseReq: tt.fields.BaseReq,
-				NubID:   tt.fields.NubID,
+				Name:    tt.fields.NubID,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -133,7 +133,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
 				BaseReq: tt.fields.BaseReq,
-				NubID:   tt.fields.NubID,
+				Name:    tt.fields.NubID,
 			}
 			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
 			if (err != nil) != tt.wantErr {
@@ -165,7 +165,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
 				BaseReq: tt.fields.BaseReq,
-				NubID:   tt.fields.NubID,
+				Name:    tt.fields.NubID,
 			}
 			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
@@ -193,7 +193,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
 				BaseReq: tt.fields.BaseReq,
-				NubID:   tt.fields.NubID,
+				Name:    tt.fields.NubID,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -228,7 +228,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := transactionRequest{
 				BaseReq: tt.fields.BaseReq,
-				NubID:   tt.fields.NubID,
+				Name:    tt.fields.NubID,
 			}
 			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -253,7 +253,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
 				BaseReq: tt.fields.BaseReq,
-				NubID:   tt.fields.NubID,
+				Name:    tt.fields.NubID,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

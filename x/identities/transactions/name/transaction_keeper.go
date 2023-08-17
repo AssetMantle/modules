@@ -9,11 +9,6 @@ import (
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/constants"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -37,18 +32,19 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		panic("Could not get from address from Bech32 string")
 	}
 
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.NubIDProperty.GetKey(), baseData.NewIDData(message.NubID))))
+	nameIdentity := base.NewNameIdentity(message.Name, baseData.NewListData(baseData.NewAccAddressData(address)))
 
-	identityID := baseIDs.NewIdentityID(base.PrototypeNubIdentity().GetClassificationID(), immutables)
-
-	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
-	if identities.GetMappable(key.NewKey(identityID)) != nil {
-		return nil, errorConstants.EntityAlreadyExists.Wrapf("identity with ID %s already exists", identityID.AsString())
+	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(nameIdentity.GetNameIdentityID()))
+	if identities.GetMappable(key.NewKey(nameIdentity.GetNameIdentityID())) != nil {
+		return nil, errorConstants.EntityAlreadyExists.Wrapf("name identity with ID %s already exists", nameIdentity.GetNameIdentityID().AsString())
 	}
 
-	identities.Add(record.NewRecord(base.NewIdentity(NubIdentityClassificationID, immutables, baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(address))))))))
+	if err := nameIdentity.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	identities.Add(record.NewRecord(nameIdentity))
 
-	return newTransactionResponse(identityID), nil
+	return newTransactionResponse(nameIdentity.GetNameIdentityID()), nil
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

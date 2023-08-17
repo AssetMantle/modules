@@ -21,7 +21,7 @@ func (message *Message) ValidateBasic() error {
 	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
 		return err
 	}
-	if err := message.NubID.ValidateBasic(); err != nil {
+	if err := message.Name.ValidateBasic(); err != nil {
 		return err
 	}
 	return nil
@@ -51,9 +51,9 @@ func messageFromInterface(msg sdkTypes.Msg) *Message {
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, nubID ids.ID) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, name ids.StringID) sdkTypes.Msg {
 	return &Message{
-		From:  from.String(),
-		NubID: nubID.(*baseIDs.StringID),
+		From: from.String(),
+		Name: name.(*baseIDs.StringID),
 	}
 }

@@ -20,13 +20,13 @@ import (
 
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
-	NubID   string       `json:"nubID" valid:"required~required field nubID missing, matches(^.*$)~invalid field nubID"`
+	Name    string       `json:"name" valid:"required~required field name missing, matches(^.*$)~invalid field name"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
 // Validate godoc
-// @Summary Nub an identity
+// @Summary Name an identity
 // @Description A transaction to name an identity.
 // @Accept text/plain
 // @Produce json
@@ -46,7 +46,7 @@ func (transactionRequest transactionRequest) Validate() error {
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
 		cliCommand.ReadBaseReq(context),
-		cliCommand.ReadString(constants.NubID),
+		cliCommand.ReadString(constants.Name),
 	), nil
 }
 func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
@@ -67,7 +67,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 
 	return NewMessage(
 		from,
-		baseIDs.NewStringID(transactionRequest.NubID),
+		baseIDs.NewStringID(transactionRequest.Name),
 	), nil
 }
 func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
@@ -76,9 +76,9 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, nubID string) helpers.TransactionRequest {
+func newTransactionRequest(baseReq rest.BaseReq, name string) helpers.TransactionRequest {
 	return transactionRequest{
 		BaseReq: baseReq,
-		NubID:   nubID,
+		Name:    name,
 	}
 }

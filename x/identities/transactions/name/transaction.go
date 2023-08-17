@@ -34,5 +34,5 @@ var Transaction = baseHelpers.NewTransaction(
 		return RegisterServiceHandlerClient(context.Background(), mux, NewServiceClient(clientCtx))
 	},
 
-	constants.NubID,
+	constants.Name,
 )
