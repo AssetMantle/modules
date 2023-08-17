@@ -26,7 +26,7 @@ func validator(i interface{}) error {
 		} else if err = validateUnwrapAllowedCoinsProperty(data.(*baseData.ListData)); err != nil {
 			return err
 		} else {
-			return data.(*baseData.ListData).ValidateBasic()
+			return data.(*baseData.ListData).ValidateWithoutLengthCheck()
 		}
 	default:
 		return errorConstants.IncorrectFormat.Wrapf("incorrect type for unwrapAllowedCoins parameter, expected %s type as string, got %T", baseData.PrototypeListData().GetTypeID().AsString(), i)

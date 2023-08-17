@@ -5,7 +5,7 @@ import "google/api/annotations.proto";
 import "orders/transactions/define/message.proto";
 import "orders/transactions/define/transaction_response.proto";
 
-service Service {
+service Msg {
   rpc Handle(Message) returns (TransactionResponse) {
     option (google.api.http).post = "/mantle/orders/define";
   }

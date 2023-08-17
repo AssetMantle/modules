@@ -5,7 +5,7 @@ import "google/api/annotations.proto";
 import "orders/transactions/cancel/message.proto";
 import "orders/transactions/cancel/transaction_response.proto";
 
-service Service {
+service Msg {
   rpc Handle(Message) returns (TransactionResponse) {
     option (google.api.http).post = "/mantle/orders/cancel";
   }

@@ -5,7 +5,7 @@ import "google/api/annotations.proto";
 import "identities/transactions/unprovision/message.proto";
 import "identities/transactions/unprovision/transaction_response.proto";
 
-service Service {
+service Msg {
   rpc Handle(Message) returns (TransactionResponse) {
     option (google.api.http).post = "/mantle/identities/unprovision";
   }
