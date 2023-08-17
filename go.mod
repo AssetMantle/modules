@@ -3,7 +3,7 @@ module github.com/AssetMantle/modules
 go 1.19
 
 require (
-	github.com/AssetMantle/schema/go v0.0.0-20230816143822-50f22028e54f
+	github.com/AssetMantle/schema/go v0.0.0-20230817041911-b0ec9a5b649e
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/Shopify/sarama v1.19.0
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
@@ -23,7 +23,9 @@ require (
 	google.golang.org/genproto v0.0.0-20230125152338-dcaf20b6aeaa
 	google.golang.org/grpc v1.52.3
 )
-replace github.com/AssetMantle/schema/go => ../schema/go
+
+//replace github.com/AssetMantle/schema/go => ../schema/go
+
 require (
 	cosmossdk.io/api v0.2.6 // indirect
 	cosmossdk.io/core v0.5.1 // indirect
