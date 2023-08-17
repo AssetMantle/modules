@@ -26,7 +26,7 @@ func validator(i interface{}) error {
 		} else if err = validateWrapAllowedCoinsProperty(data.ToAnyData().Get().(*baseData.ListData)); err != nil {
 			return err
 		} else {
-			return data.(*baseData.ListData).ValidateBasic()
+			return data.(*baseData.ListData).ValidateWithoutLengthCheck()
 		}
 	default:
 		return errorConstants.IncorrectFormat.Wrapf("incorrect type for wrapAllowedCoins parameter, expected %s type as string, got %T", baseData.PrototypeListData().GetTypeID().AsString(), i)
