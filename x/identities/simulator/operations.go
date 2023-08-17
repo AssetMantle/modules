@@ -29,7 +29,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/transactions/define"
 	"github.com/AssetMantle/modules/x/identities/transactions/deputize"
 	"github.com/AssetMantle/modules/x/identities/transactions/issue"
-	"github.com/AssetMantle/modules/x/identities/transactions/nub"
+	"github.com/AssetMantle/modules/x/identities/transactions/name"
 	"github.com/AssetMantle/modules/x/identities/transactions/provision"
 	"github.com/AssetMantle/modules/x/identities/transactions/quash"
 	"github.com/AssetMantle/modules/x/identities/transactions/unprovision"
@@ -287,7 +287,7 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 }
 
 func GenerateNubMessage(from sdkTypes.AccAddress, nubID ids.ID) helpers.Message {
-	return nub.NewMessage(from, nubID).(helpers.Message)
+	return name.NewMessage(from, nubID).(helpers.Message)
 }
 func GenerateDefineMessage(from sdkTypes.AccAddress, nubID ids.IdentityID, r *rand.Rand) helpers.Message {
 	return define.NewMessage(from, nubID, baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r), baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r)).(helpers.Message)
