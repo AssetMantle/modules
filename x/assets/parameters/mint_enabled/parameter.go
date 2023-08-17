@@ -22,7 +22,7 @@ func validator(i interface{}) error {
 		_, err := baseData.PrototypeBooleanData().FromString(value)
 		return err
 	default:
-		return errorConstants.IncorrectFormat.Wrapf("incorrect format for mintEnabled parameter, expected %T, got %T", baseData.NewBooleanData(false), i)
+		return errorConstants.IncorrectFormat.Wrapf("incorrect type for mintEnabled parameter, expected %s type as string, got %T", baseData.NewBooleanData(false).GetTypeID().AsString(), i)
 	}
 }
 
