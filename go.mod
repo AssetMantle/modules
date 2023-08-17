@@ -3,11 +3,11 @@ module github.com/AssetMantle/modules
 go 1.19
 
 require (
-	github.com/AssetMantle/schema/go v0.0.0-20230817135028-5cad5120ba24
+	github.com/AssetMantle/schema/go v0.0.0-20230817222724-946609782209
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/Shopify/sarama v1.19.0
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
-	github.com/cosmos/cosmos-sdk v0.45.16-ics
+	github.com/cosmos/cosmos-sdk v0.45.16
 	github.com/cosmos/gogoproto v1.4.3
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
