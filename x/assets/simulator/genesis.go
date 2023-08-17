@@ -21,9 +21,11 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
+	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/genesis"
 	"github.com/AssetMantle/modules/x/assets/mappable"
+	"github.com/AssetMantle/modules/x/assets/parameters/burn_enabled"
 	"github.com/AssetMantle/modules/x/assets/parameters/mint_enabled"
 	"github.com/AssetMantle/modules/x/assets/record"
 )
@@ -33,10 +35,10 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		mint_enabled.ID.AsString(),
+		burn_enabled.ID.AsString(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
+		func(rand *rand.Rand) { Data = baseData.NewBooleanData(random.GenerateRandomBool()) },
 	)
 
 	records := make([]helpers.Record, len(simulationState.Accounts))
