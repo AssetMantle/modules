@@ -4,12 +4,7 @@
 package constants
 
 import (
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	"github.com/AssetMantle/schema/go/documents/base"
 
 	"github.com/AssetMantle/modules/utilities/name"
 )
@@ -20,7 +15,4 @@ var ModuleName = name.GetSuperPackageName(dummy{})
 
 const ModuleConsensusVersion = 1
 
-// TODO move to common constants
-// TODO move to proper package
-var NubClassificationID = baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList(constantProperties.NubIDProperty)), baseQualified.NewMutables(baseLists.NewPropertyList(constantProperties.AuthenticationProperty)))
-var ModuleIdentityID = baseIDs.NewIdentityID(NubClassificationID, baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(constantProperties.NubIDProperty.GetKey(), baseData.NewStringData(ModuleName)))))
+var ModuleIdentity = base.NewModuleIdentity(ModuleName)

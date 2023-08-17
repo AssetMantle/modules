@@ -38,7 +38,7 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 //		order := mappable.GetOrder(Record.GetMappable())
 //		if order.GetExpiryHeight().Compare(baseTypes.CurrentHeight(context)) <= 0 {
 //			// TODO ***** check security of sending and receiving from module and module account security
-//			if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, order.GetMakerID(), order.GetMakerAssetID(), order.GetMakerSplit())); err != nil {
+//			if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerID(), order.GetMakerAssetID(), order.GetMakerSplit())); err != nil {
 //				panic(err)
 //			}
 //			if _, err := block.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(order.GetClassificationID())); err != nil {
@@ -101,10 +101,10 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 //					if leftOrderExchangeRate.MulTruncate(rightOrderExchangeRate).MulTruncate(sdkTypes.SmallestDec()).MulTruncate(sdkTypes.SmallestDec()).LTE(sdkTypes.OneDec()) {
 //						switch {
 //						case leftOrderMakerSplit.GT(rightOrderTakerSplitDemanded):
-//							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerAssetID(), rightOrderMakerSplit)); err != nil {
+//							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), leftOrder.GetMakerID(), leftOrder.GetTakerAssetID(), rightOrderMakerSplit)); err != nil {
 //								panic(err)
 //							}
-//							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerAssetID(), rightOrderTakerSplitDemanded)); err != nil {
+//							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), rightOrder.GetMakerID(), leftOrder.GetMakerAssetID(), rightOrderTakerSplitDemanded)); err != nil {
 //								panic(err)
 //							}
 //
@@ -118,10 +118,10 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 //							}
 //						case leftOrderMakerSplit.LT(rightOrderTakerSplitDemanded):
 //							sendToLeftOrder := leftOrderMakerSplit.ToDec().QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(rightOrderExchangeRate)
-//							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerAssetID(), sendToLeftOrder.TruncateInt())); err != nil {
+//							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), leftOrder.GetMakerID(), leftOrder.GetTakerAssetID(), sendToLeftOrder.TruncateInt())); err != nil {
 //								panic(err)
 //							}
-//							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerAssetID(), leftOrderMakerSplit)); err != nil {
+//							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), rightOrder.GetMakerID(), leftOrder.GetMakerAssetID(), leftOrderMakerSplit)); err != nil {
 //								panic(err)
 //							}
 //
@@ -139,10 +139,10 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 //							}
 //						default:
 //							// case leftOrderMakerSplit.Equal(rightOrderTakerSplitDemanded):
-//							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, leftOrder.GetMakerID(), leftOrder.GetTakerAssetID(), rightOrderMakerSplit)); err != nil {
+//							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), leftOrder.GetMakerID(), leftOrder.GetTakerAssetID(), rightOrderMakerSplit)); err != nil {
 //								panic(err)
 //							}
-//							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, rightOrder.GetMakerID(), leftOrder.GetMakerAssetID(), leftOrderMakerSplit)); err != nil {
+//							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), rightOrder.GetMakerID(), leftOrder.GetMakerAssetID(), leftOrderMakerSplit)); err != nil {
 //								panic(err)
 //							}
 //
