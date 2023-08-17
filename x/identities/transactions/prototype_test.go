@@ -12,7 +12,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/transactions/define"
 	"github.com/AssetMantle/modules/x/identities/transactions/deputize"
 	"github.com/AssetMantle/modules/x/identities/transactions/issue"
-	"github.com/AssetMantle/modules/x/identities/transactions/nub"
+	"github.com/AssetMantle/modules/x/identities/transactions/name"
 	"github.com/AssetMantle/modules/x/identities/transactions/provision"
 	"github.com/AssetMantle/modules/x/identities/transactions/revoke"
 	"github.com/AssetMantle/modules/x/identities/transactions/unprovision"
@@ -23,7 +23,7 @@ func TestPrototype(t *testing.T) {
 		define.Transaction,
 		deputize.Transaction,
 		issue.Transaction,
-		nub.Transaction,
+		name.Transaction,
 		provision.Transaction,
 		revoke.Transaction,
 		unprovision.Transaction,

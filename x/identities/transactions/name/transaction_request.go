@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package nub
+package name
 
 import (
 	"encoding/json"
@@ -27,14 +27,14 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 
 // Validate godoc
 // @Summary Nub an identity
-// @Description A transaction to nub an identity.
+// @Description A transaction to name an identity.
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
-// @Param body  transactionRequest true "A transaction to nub a base identity."
+// @Param body  transactionRequest true "A transaction to name a base identity."
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
-// @Router /identities/nub [post]
+// @Router /identities/name [post]
 func (transactionRequest transactionRequest) Validate() error {
 	_, err := govalidator.ValidateStruct(transactionRequest)
 	if err != nil {

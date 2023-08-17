@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package nub
+package name
 
 import (
 	"context"
@@ -25,9 +25,6 @@ type transactionKeeper struct {
 	mapper helpers.Mapper
 }
 
-// TODO move to proper package
-var NubIdentityClassificationID = baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList(constants.NubIDProperty)), baseQualified.NewMutables(baseLists.NewPropertyList(constants.AuthenticationProperty)))
-
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) (helpers.TransactionResponse, error) {
@@ -42,9 +39,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.NubIDProperty.GetKey(), baseData.NewIDData(message.NubID))))
 
-	// TODO ***** add nub classificationID to genesis
-
-	identityID := baseIDs.NewIdentityID(NubIdentityClassificationID, immutables)
+	identityID := baseIDs.NewIdentityID(base.PrototypeNubIdentity().GetClassificationID(), immutables)
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 	if identities.GetMappable(key.NewKey(identityID)) != nil {
