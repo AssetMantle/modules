@@ -1,7 +1,7 @@
 // Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package mint_enabled
+package put_enabled
 
 import (
 	baseData "github.com/AssetMantle/schema/go/data/base"
@@ -13,7 +13,7 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
-var ID = constantProperties.MintEnabledProperty.GetKey()
+var ID = constantProperties.PutEnabledProperty.GetKey()
 var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(false)))
 
 func validator(i interface{}) error {
@@ -22,7 +22,7 @@ func validator(i interface{}) error {
 		_, err := baseData.PrototypeBooleanData().FromString(value)
 		return err
 	default:
-		return errorConstants.IncorrectFormat.Wrapf("incorrect type for mintEnabled parameter, expected %s type as string, got %T", baseData.NewBooleanData(false).GetTypeID().AsString(), i)
+		return errorConstants.IncorrectFormat.Wrapf("incorrect type for putEnabled parameter, expected %s type as string, got %T", baseData.NewBooleanData(false).GetTypeID().AsString(), i)
 	}
 }
 

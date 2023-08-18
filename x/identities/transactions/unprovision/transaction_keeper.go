@@ -56,7 +56,17 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityNotFound.Wrapf("address %s is not provisioned", toAddress.String())
 	}
 
-	identities.Mutate(record.NewRecord(identity.UnprovisionAddress(toAddress)))
+	updatedIdentity := identity.UnprovisionAddress(toAddress)
+
+	if updatedIdentity.GetProvisionedAddressCount().IsZero() {
+		return nil, errorConstants.InvalidRequest.Wrapf("identity %s must have at least one provisioned address", identityID.AsString())
+	}
+
+	if err := updatedIdentity.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	identities.Mutate(record.NewRecord(updatedIdentity))
 	return newTransactionResponse(), nil
 }
 

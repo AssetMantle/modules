@@ -61,7 +61,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("address %s is already provisioned", toAddress.String())
 	}
 
-	identities.Mutate(record.NewRecord(identity.ProvisionAddress(toAddress)))
+	updatedIdentity := identity.ProvisionAddress(toAddress)
+
+	if err := updatedIdentity.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	identities.Mutate(record.NewRecord(updatedIdentity))
 
 	return newTransactionResponse(), nil
 }

@@ -96,6 +96,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		if err := maintainer.ValidateBasic(); err != nil {
 			return nil, err
 		}
+
 		maintainers.Add(record.NewRecord(maintainer))
 	} else {
 		if !fromMaintainer.IsPermitted(constants.CanMutateMaintainerPermission) {

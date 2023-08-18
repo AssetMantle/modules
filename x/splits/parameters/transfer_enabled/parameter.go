@@ -14,7 +14,7 @@ import (
 )
 
 var ID = constantProperties.TransferEnabledProperty.GetKey()
-var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(false))) // NOTE: must always be set to false, legacy amino doesn't unmarshall false value well
+var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(false)))
 
 func validator(i interface{}) error {
 	switch value := i.(type) {

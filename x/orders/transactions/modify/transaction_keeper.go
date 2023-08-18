@@ -86,7 +86,14 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	orders.Remove(record.NewRecord(order))
-	orders.Add(record.NewRecord(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), updatedMutables)))
+
+	updatedOrder := base.NewOrder(order.GetClassificationID(), order.GetImmutables(), updatedMutables)
+
+	if err := updatedOrder.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	orders.Add(record.NewRecord(updatedOrder))
 
 	return newTransactionResponse(), nil
 }

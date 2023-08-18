@@ -99,6 +99,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	order := base.NewOrder(message.ClassificationID, immutables, mutables)
+
+	if err := order.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
 	orders = orders.Add(record.NewRecord(order))
 
 	// Order execution
@@ -138,7 +143,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 				mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(executableOrder.GetMakerSplit().Sub(sendToBuyer))))
 
-				orders.Mutate(record.NewRecord(base.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
+				updatedOrder := base.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))
+
+				if err := updatedOrder.ValidateBasic(); err != nil {
+					panic(err)
+				}
+
+				orders.Mutate(record.NewRecord(updatedOrder))
 
 				orderLeftOverMakerSplit = sdkTypes.ZeroInt()
 			default:
@@ -173,7 +184,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if !orderLeftOverMakerSplit.Equal(sdkTypes.ZeroInt()) && orderMutated {
 		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(orderLeftOverMakerSplit)))
 
-		orders.Mutate(record.NewRecord(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
+		updatedOrder := base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))
+
+		if err := updatedOrder.ValidateBasic(); err != nil {
+			return nil, err
+		}
+
+		orders.Mutate(record.NewRecord(updatedOrder))
 	}
 
 	return newTransactionResponse(), nil
