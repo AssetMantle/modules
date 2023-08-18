@@ -34,6 +34,10 @@ type auxiliaryKeeper struct {
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	if !auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.DefineEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+		return nil, errorConstants.NotAuthorized.Wrapf("classification defining is not enabled")
+	}
+
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
 	totalWeight := sdkTypes.ZeroInt()
