@@ -40,6 +40,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	if message.Data.GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {
+
+		if err := message.Data.ValidateBasic(); err != nil {
+			return nil, err
+		}
+
 		metas.Add(record.NewRecord(message.Data))
 	}
 

@@ -113,7 +113,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	orders.Add(record.NewRecord(base.NewOrder(message.ClassificationID, immutables, mutables)))
+	order := base.NewOrder(message.ClassificationID, immutables, mutables)
+
+	if err := order.ValidateBasic(); err != nil {
+		return nil, err
+
+	}
+	orders.Add(record.NewRecord(order))
 
 	return newTransactionResponse(orderID), nil
 }

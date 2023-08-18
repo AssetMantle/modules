@@ -42,6 +42,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if err := nameIdentity.ValidateBasic(); err != nil {
 		return nil, err
 	}
+
 	identities.Add(record.NewRecord(nameIdentity))
 
 	return newTransactionResponse(nameIdentity.GetNameIdentityID()), nil
