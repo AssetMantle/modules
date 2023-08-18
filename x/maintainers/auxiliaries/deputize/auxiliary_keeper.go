@@ -10,7 +10,9 @@ import (
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/schema/go/lists"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
@@ -103,8 +105,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 			return nil, errorConstants.NotAuthorized.Wrapf("maintainer does not have the permission to mutate maintainers")
 		}
 
-		maintainedProperties := mappable.GetMaintainer(Mappable).GetMutables().GetMutablePropertyList().Add(baseLists.AnyPropertiesToProperties(auxiliaryRequest.MaintainedProperties.Get()...)...).Remove(baseLists.AnyPropertiesToProperties(removeMaintainedPropertyList.Get()...)...)
-		maintainer := base.NewMaintainer(auxiliaryRequest.ToIdentityID, auxiliaryRequest.MaintainedClassificationID, maintainedProperties.GetPropertyIDList(), internalUtilities.SetModulePermissions(auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanMutateMaintainer, auxiliaryRequest.CanRemoveMaintainer).Add(baseIDs.StringIDsToIDs(auxiliaryRequest.PermissionIDs)...))
+		maintainedProperties := mappable.GetMaintainer(Mappable).GetMaintainedProperties().
+			Add(idListToListData(auxiliaryRequest.MaintainedProperties.GetPropertyIDList())...).
+			Remove(idListToListData(removeMaintainedPropertyList.GetPropertyIDList())...)
+
+		maintainer := base.NewMaintainer(auxiliaryRequest.ToIdentityID, auxiliaryRequest.MaintainedClassificationID, listDataToIDList(maintainedProperties), internalUtilities.SetModulePermissions(auxiliaryRequest.CanAddMaintainer, auxiliaryRequest.CanMutateMaintainer, auxiliaryRequest.CanRemoveMaintainer).Add(baseIDs.StringIDsToIDs(auxiliaryRequest.PermissionIDs)...))
 
 		if err := maintainer.ValidateBasic(); err != nil {
 			return nil, err
@@ -135,4 +140,24 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, paramet
 
 func keeperPrototype() helpers.AuxiliaryKeeper {
 	return auxiliaryKeeper{}
+}
+
+func idListToListData(idList lists.IDList) []data.ListableData {
+	listableData := make([]data.ListableData, len(idList.GetList()))
+
+	for i, id := range idList.GetList() {
+		listableData[i] = baseData.NewIDData(id)
+	}
+
+	return listableData
+}
+
+func listDataToIDList(listData data.ListData) lists.IDList {
+	idList := make([]ids.ID, len(listData.Get()))
+
+	for i, datum := range listData.Get() {
+		idList[i] = datum.Get().(data.IDData).Get()
+	}
+
+	return baseLists.NewIDList(idList...)
 }
