@@ -14,6 +14,7 @@ import (
 type auxiliaryRequest struct {
 	classificationID ids.ClassificationID
 	accAddress       sdkTypes.AccAddress
+	bondAmount       sdkTypes.Int
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -32,9 +33,10 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress, bondAmount sdkTypes.Int) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		classificationID: classificationID,
 		accAddress:       fromAddress,
+		bondAmount:       bondAmount,
 	}
 }
