@@ -6,15 +6,12 @@ package burn
 import (
 	"context"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/constants"
-	"github.com/AssetMantle/modules/x/classifications/key"
-	"github.com/AssetMantle/modules/x/classifications/mappable"
 )
 
 type auxiliaryKeeper struct {
@@ -28,15 +25,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
 
-	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.classificationID))
-
-	Mappable := classifications.GetMappable(key.NewKey(auxiliaryRequest.classificationID))
-	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound.Wrapf("classification with ID %s not found", auxiliaryRequest.classificationID.AsString())
-	}
-	classification := mappable.GetClassification(Mappable)
-
-	if err := auxiliaryKeeper.bankKeeper.BurnCoins(sdkTypes.UnwrapSDKContext(context), constants.ModuleName, sdkTypes.NewCoins(sdkTypes.NewCoin(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), classification.GetBondAmount()))); err != nil {
+	if err := auxiliaryKeeper.bankKeeper.BurnCoins(sdkTypes.UnwrapSDKContext(context), constants.ModuleName, sdkTypes.NewCoins(sdkTypes.NewCoin(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), auxiliaryRequest.bondAmount))); err != nil {
 		return nil, err
 	}
 
