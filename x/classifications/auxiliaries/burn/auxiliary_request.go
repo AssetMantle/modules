@@ -6,12 +6,14 @@ package burn
 import (
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/asaskevich/govalidator"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {
 	classificationID ids.ClassificationID
+	bondAmount       sdkTypes.Int
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -30,8 +32,9 @@ func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRe
 	}
 }
 
-func NewAuxiliaryRequest(classificationID ids.ClassificationID) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ClassificationID, bondAmount sdkTypes.Int) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		classificationID: classificationID,
+		bondAmount:       bondAmount,
 	}
 }

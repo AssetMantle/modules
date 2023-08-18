@@ -103,7 +103,14 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress)); err != nil {
+	bondAmount := sdkTypes.ZeroInt()
+	if bondAmountProperty := asset.GetProperty(propertyConstants.BondAmountProperty.GetID()); bondAmountProperty == nil || !bondAmountProperty.IsMeta() {
+		return nil, errorConstants.MetaDataError.Wrapf("asset with ID %s has no revealed bond amount", message.AssetID)
+	} else {
+		bondAmount = bondAmountProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
+	}
+
+	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress, bondAmount)); err != nil {
 		return nil, err
 	}
 

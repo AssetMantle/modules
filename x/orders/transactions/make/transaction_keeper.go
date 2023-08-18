@@ -112,7 +112,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	bondAmount := sdkTypes.ZeroInt()
 	if bondAmountProperty := mutables.GetProperty(propertyConstants.BondAmountProperty.GetID()); bondAmountProperty == nil || !bondAmountProperty.IsMeta() {
-		return nil, errorConstants.MetaDataError.Wrapf("asset with ID %s has no revealed bond amount", orderID.AsString())
+		return nil, errorConstants.MetaDataError.Wrapf("order with ID %s has no revealed bond amount", orderID.AsString())
 	} else {
 		bondAmount = bondAmountProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
 	}

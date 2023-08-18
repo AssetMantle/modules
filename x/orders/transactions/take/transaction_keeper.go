@@ -6,11 +6,13 @@ package take
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	"github.com/AssetMantle/schema/go/properties"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -102,7 +104,14 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(order.GetClassificationID())); err != nil {
+	bondAmount := sdkTypes.ZeroInt()
+	if bondAmountProperty := order.GetProperty(propertyConstants.BondAmountProperty.GetID()); bondAmountProperty == nil || !bondAmountProperty.IsMeta() {
+		return nil, errorConstants.MetaDataError.Wrapf("order with ID %s has no revealed bond amount", message.OrderID)
+	} else {
+		bondAmount = bondAmountProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
+	}
+
+	if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(order.GetClassificationID(), bondAmount)); err != nil {
 		return nil, err
 	}
 

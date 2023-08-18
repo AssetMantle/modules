@@ -8,6 +8,7 @@ import (
 
 	"github.com/AssetMantle/schema/go/data"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/properties"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -69,7 +70,14 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("identity with ID %s is not expired yet", message.IdentityID.AsString())
 	}
 
-	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(identity.GetClassificationID(), fromAddress)); err != nil {
+	bondAmount := sdkTypes.ZeroInt()
+	if bondAmountProperty := identity.GetProperty(constantProperties.BondAmountProperty.GetID()); bondAmountProperty == nil || !bondAmountProperty.IsMeta() {
+		return nil, errorConstants.MetaDataError.Wrapf("identity with ID %s has no revealed bond amount", message.IdentityID)
+	} else {
+		bondAmount = bondAmountProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
+	}
+
+	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(identity.GetClassificationID(), fromAddress, bondAmount)); err != nil {
 		return nil, err
 	}
 
