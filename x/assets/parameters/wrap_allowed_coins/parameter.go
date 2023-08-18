@@ -16,7 +16,7 @@ import (
 )
 
 var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()
-var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewListData(baseData.NewStringData("umntl"))))
+var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewListData()))
 
 func validator(i interface{}) error {
 	switch value := i.(type) {
