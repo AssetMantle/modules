@@ -6,7 +6,7 @@ package auxiliaries
 import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/burn"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/burn"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/purge"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
