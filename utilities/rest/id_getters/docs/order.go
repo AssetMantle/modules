@@ -4,11 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/properties"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	"github.com/AssetMantle/schema/go/properties/constants"
 	"github.com/AssetMantle/schema/go/qualified/base"
@@ -20,7 +18,7 @@ import (
 
 func orderIDHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		req, classificationID, ImmutableMetaProperties, ImmutableProperties, _, _ := Read(context, responseWriter, httpRequest)
+		req, classificationID, ImmutableMetaProperties, ImmutableProperties, _, _ := read(context, responseWriter, httpRequest)
 		makerSplit, _ := sdkTypes.NewDecFromStr(req.MakerSplit)
 
 		takerSplit, _ := sdkTypes.NewDecFromStr(req.TakerSplit)
@@ -43,15 +41,12 @@ func orderIDHandler(context client.Context) http.HandlerFunc {
 
 		Immutables := base.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(ImmutableProperties.Get()...)...))
 
-		// Mutables := base.NewMutables(baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(append(mutableMetaProperties.Get(), mutableProperties.Get()...)...)...))
-
-		// Immutables := base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GenerateKey(), baseData.NewDecData(GetTotalWeight(immutables, Mutables).Mul(sdkTypes.NewDec(1))))))
-		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewOrderID(classificationID, Immutables).AsString(), "", nil))
+		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewOrderID(classificationID, Immutables).AsString(), nil))
 	}
 }
 func orderClassificationHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		_, _, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties := Read(context, responseWriter, httpRequest)
+		_, _, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties := read(context, responseWriter, httpRequest)
 		immutables := base.NewImmutables(
 			immutableMetaProperties.Add(
 				baseLists.AnyPropertiesToProperties(
@@ -77,6 +72,6 @@ func orderClassificationHandler(context client.Context) http.HandlerFunc {
 			),
 		)
 		Immutables := base.NewImmutables(immutables.GetImmutablePropertyList().Add(baseProperties.NewMetaProperty(constants.BondAmountProperty.GetKey(), baseData.NewNumberData(GetTotalWeight(immutables, mutables).Mul(baseData.NewNumberData(sdkTypes.OneInt()).Get())))))
-		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewClassificationID(Immutables, mutables).AsString(), Immutables.GetProperty(constants.BondAmountProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.NumberData).AsString(), nil))
+		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewClassificationID(Immutables, mutables).AsString(), nil))
 	}
 }
