@@ -4,16 +4,17 @@
 package deputize_allowed
 
 import (
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	"github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 var ID = constantProperties.DeputizeAllowedProperty.GetKey()
-var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(false)))
+var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(true)))
 
 func validator(i interface{}) error {
 	switch value := i.(type) {
