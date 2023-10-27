@@ -6,29 +6,22 @@ package base
 import (
 	"context"
 	"encoding/json"
-	"log"
+	"github.com/AssetMantle/modules/utilities/rest/queuing"
 	"net/http"
 	"reflect"
 
+	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/errors"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/utilities/random"
-	"github.com/AssetMantle/modules/utilities/rest/queuing"
 )
 
 type transaction struct {
@@ -90,15 +83,13 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 		} else if reflect.TypeOf(transaction.requestPrototype()) != reflect.TypeOf(transactionRequest) {
 			rest.CheckBadRequestError(responseWriter, errorConstants.InvalidRequest.Wrapf("expected %s, got %s", reflect.TypeOf(transaction.requestPrototype()), reflect.TypeOf(transactionRequest)))
 			return
-		}
-
-		if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
+		} else if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
 			return
 		}
-		baseReq := transactionRequest.GetBaseReq()
-		baseReq = baseReq.Sanitize()
-		if !baseReq.ValidateBasic(responseWriter) {
 
+		baseReq := transactionRequest.GetBaseReq().Sanitize()
+		if !baseReq.ValidateBasic(responseWriter) {
+			rest.CheckBadRequestError(responseWriter, errorConstants.InvalidRequest.Wrapf("invalid base request"))
 		}
 
 		msg, err := transactionRequest.MakeMsg()
@@ -107,126 +98,8 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 			return
 		}
 
-		if rest.CheckBadRequestError(responseWriter, msg.ValidateBasic()) {
+		if rest.CheckInternalServerError(responseWriter, queuing.QueueOrBroadcastTransaction(context.WithOutput(responseWriter), baseReq, msg)) {
 			return
-		}
-
-		if viper.GetBool(flags.FlagGenerateOnly) {
-			tx.WriteGeneratedTxResponse(context, responseWriter, baseReq, []sdkTypes.Msg{msg}...)
-			return
-		}
-
-		gasAdj, ok := rest.ParseFloat64OrReturnBadRequest(responseWriter, baseReq.GasAdjustment, flags.DefaultGasAdjustment)
-		if !ok {
-			return
-		}
-
-		gasSetting, err := flags.ParseGasSetting(baseReq.Gas)
-		if rest.CheckBadRequestError(responseWriter, err) {
-			return
-		}
-
-		transactionFactory := tx.Factory{}.
-			WithFees(baseReq.Fees.String()).
-			WithGasPrices(baseReq.GasPrices.String()).
-			WithAccountNumber(baseReq.AccountNumber).
-			WithSequence(baseReq.Sequence).
-			WithGas(gasSetting.Gas).
-			WithGasAdjustment(gasAdj).
-			WithMemo(baseReq.Memo).
-			WithChainID(baseReq.ChainID).
-			WithSimulateAndExecute(baseReq.Simulate).
-			WithTxConfig(context.TxConfig).
-			WithTimeoutHeight(baseReq.TimeoutHeight).
-			WithKeybase(context.Keyring)
-
-		msgList := []sdkTypes.Msg{msg}
-
-		if baseReq.Simulate || gasSetting.Simulate {
-			if gasAdj < 0 {
-				rest.CheckBadRequestError(responseWriter, errors.ErrOutOfGas)
-				return
-			}
-
-			_, adjusted, err := tx.CalculateGas(context, transactionFactory, msgList...)
-			if rest.CheckInternalServerError(responseWriter, err) {
-				return
-			}
-
-			transactionFactory = transactionFactory.WithGas(adjusted)
-
-			if baseReq.Simulate {
-				rest.WriteSimulationResponse(responseWriter, context.LegacyAmino, transactionFactory.Gas())
-				return
-			}
-		}
-
-		fromAddress, fromName, _, err := client.GetFromFields(context, context.Keyring, baseReq.From)
-		if err != nil {
-			rest.CheckBadRequestError(responseWriter, err)
-			return
-		}
-
-		context = context.WithFromAddress(fromAddress)
-		context = context.WithFromName(fromName)
-		// TODO ***** from from client.toml, remove hardcode
-		context = context.WithBroadcastMode(flags.BroadcastBlock)
-
-		if queuing.KafkaState.IsEnabled {
-			responseWriter.WriteHeader(http.StatusAccepted)
-
-			output := queuing.SendToKafka(queuing.NewKafkaMsgFromRest(
-				msg,
-				queuing.TicketID(random.GenerateUniqueIdentifier(transaction.name)),
-				baseReq,
-				context),
-				context.LegacyAmino,
-			)
-
-			if _, err = responseWriter.Write(output); err != nil {
-				log.Printf("could not write response: %v", err)
-			}
-		} else {
-
-			accountNumber, sequence, err := types.AccountRetriever{}.GetAccountNumberSequence(context, fromAddress)
-			if err != nil {
-				rest.CheckBadRequestError(responseWriter, err)
-				return
-			}
-
-			transactionFactory = transactionFactory.WithAccountNumber(accountNumber).WithSequence(sequence)
-			transactionBuilder, err := transactionFactory.BuildUnsignedTx(msgList...)
-			if err != nil {
-				rest.CheckBadRequestError(responseWriter, err)
-				return
-			}
-
-			if rest.CheckBadRequestError(responseWriter, tx.Sign(transactionFactory, fromName, transactionBuilder, true)) {
-				return
-			}
-
-			transactionBytes, err := context.TxConfig.TxEncoder()(transactionBuilder.GetTx())
-			if err != nil {
-				rest.CheckBadRequestError(responseWriter, err)
-				return
-			}
-
-			response, err := context.BroadcastTx(transactionBytes)
-			if err != nil {
-				rest.CheckBadRequestError(responseWriter, err)
-				return
-			}
-
-			output, err := context.Codec.MarshalJSON(response)
-			if err != nil {
-				rest.CheckBadRequestError(responseWriter, err)
-				return
-			}
-
-			responseWriter.Header().Set("Content-Type", "application/json")
-			if _, err = responseWriter.Write(output); err != nil {
-				log.Printf("could not write response: %v", err)
-			}
 		}
 	}
 }
