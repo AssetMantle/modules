@@ -103,9 +103,11 @@ func (genesis *Genesis) Initialize(records []helpers.Record, parameterList lists
 func Prototype() helpers.Genesis {
 	return &Genesis{
 		Records: []*record.Record{
-			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeMaintainer())).(*record.Record),
 			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeCoinAsset())).(*record.Record),
-			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeNubIdentity())).(*record.Record),
+			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeNameIdentity())).(*record.Record),
+			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeModuleIdentity())).(*record.Record),
+			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeMaintainer())).(*record.Record),
+			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypePutOrder())).(*record.Record),
 		},
 		ParameterList: parameters.Prototype().Get().(*base.ParameterList),
 	}

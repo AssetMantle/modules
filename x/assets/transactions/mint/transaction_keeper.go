@@ -77,21 +77,34 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	split := sdkTypes.OneInt()
+	asset := base.NewAsset(message.ClassificationID, immutables, mutables)
 
-	if metaPropertyList := message.ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.MutableMetaProperties.Get()...)...); metaPropertyList.GetProperty(propertyConstants.SupplyProperty.GetID()) != nil {
-		split = metaPropertyList.GetProperty(propertyConstants.SupplyProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
-	}
-
-	if _, err := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.ToID, assetID, split)); err != nil {
+	if err := asset.ValidateBasic(); err != nil {
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.bondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(message.ClassificationID, fromAddress)); err != nil {
+	supply := asset.GetSupply()
+
+	if supply.IsNegative() {
+		return nil, errorConstants.IncorrectFormat.Wrapf("asset supply is negative")
+	}
+
+	if _, err := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.ToID, assetID, supply)); err != nil {
 		return nil, err
 	}
 
-	assets.Add(record.NewRecord(base.NewAsset(message.ClassificationID, immutables, mutables)))
+	bondAmount := sdkTypes.ZeroInt()
+	if bondAmountProperty := mutables.GetProperty(propertyConstants.BondAmountProperty.GetID()); bondAmountProperty == nil || !bondAmountProperty.IsMeta() {
+		return nil, errorConstants.MetaDataError.Wrapf("asset with ID %s has no revealed bond amount", assetID.AsString())
+	} else {
+		bondAmount = bondAmountProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
+	}
+
+	if _, err := transactionKeeper.bondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(message.ClassificationID, fromAddress, bondAmount)); err != nil {
+		return nil, err
+	}
+
+	assets.Add(record.NewRecord(asset))
 
 	return newTransactionResponse(assetID), nil
 }

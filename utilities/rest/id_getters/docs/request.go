@@ -30,7 +30,7 @@ type request struct {
 	ExpiresIn               string       `json:"expiresIn" valid:"optional"`
 	Height                  string       `json:"height" valid:"optional"`
 	TakerID                 string       `json:"takerID" valid:"optional"`
-	NubID                   string       `json:"nubID" valid:"optional"`
+	Name                    string       `json:"name" valid:"optional"`
 	Coins                   string       `json:"coins" valid:"optional"`
 }
 

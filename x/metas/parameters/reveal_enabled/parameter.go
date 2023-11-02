@@ -14,7 +14,7 @@ import (
 )
 
 var ID = constantProperties.RevealEnabledProperty.GetKey()
-var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(false)))
+var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(true)))
 
 func validator(i interface{}) error {
 	switch value := i.(type) {
@@ -22,7 +22,7 @@ func validator(i interface{}) error {
 		_, err := baseData.PrototypeBooleanData().FromString(value)
 		return err
 	default:
-		return errorConstants.IncorrectFormat
+		return errorConstants.IncorrectFormat.Wrapf("incorrect type for revealEnabled parameter, expected %s type as string, got %T", baseData.NewBooleanData(false).GetTypeID().AsString(), i)
 	}
 }
 

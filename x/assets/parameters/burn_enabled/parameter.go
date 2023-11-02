@@ -14,7 +14,7 @@ import (
 )
 
 var ID = constantProperties.BurnEnabledProperty.GetKey()
-var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(false))) // NOTE: must always be set to false, legacy amino doesn't unmarshall false value well
+var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewBooleanData(true)))
 
 func validator(i interface{}) error {
 	switch value := i.(type) {
@@ -22,7 +22,7 @@ func validator(i interface{}) error {
 		_, err := baseData.PrototypeBooleanData().FromString(value)
 		return err
 	default:
-		return errorConstants.IncorrectFormat.Wrapf("incorrect format for burnEnabled parameter, expected %T, got %T", baseData.NewBooleanData(false), i)
+		return errorConstants.IncorrectFormat.Wrapf("incorrect type for burnEnabled parameter, expected %s type as string, got %T", baseData.NewBooleanData(false).GetTypeID().AsString(), i)
 	}
 }
 

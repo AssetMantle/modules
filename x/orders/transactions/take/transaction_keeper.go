@@ -6,11 +6,13 @@ package take
 import (
 	"context"
 
+	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	"github.com/AssetMantle/schema/go/properties"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -85,18 +87,31 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		makerReceiveTakerSplit = takerSplit
 		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(updatedMakerSplit)))
 
-		orders.Mutate(record.NewRecord(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
+		updatedOrder := base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))
+
+		if err := updatedOrder.ValidateBasic(); err != nil {
+			return nil, err
+		}
+
+		orders.Mutate(record.NewRecord(updatedOrder))
 	}
 
 	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerAssetID(), makerReceiveTakerSplit.TruncateInt())); err != nil {
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, message.FromID, order.GetMakerAssetID(), takerReceiveMakerSplit.TruncateInt())); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), message.FromID, order.GetMakerAssetID(), takerReceiveMakerSplit.TruncateInt())); err != nil {
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(order.GetClassificationID())); err != nil {
+	bondAmount := sdkTypes.ZeroInt()
+	if bondAmountProperty := order.GetProperty(propertyConstants.BondAmountProperty.GetID()); bondAmountProperty == nil || !bondAmountProperty.IsMeta() {
+		return nil, errorConstants.MetaDataError.Wrapf("order with ID %s has no revealed bond amount", message.OrderID)
+	} else {
+		bondAmount = bondAmountProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
+	}
+
+	if _, err := transactionKeeper.burnAuxiliary.GetKeeper().Help(context, burn.NewAuxiliaryRequest(order.GetClassificationID(), bondAmount)); err != nil {
 		return nil, err
 	}
 

@@ -29,7 +29,7 @@ func validator(i interface{}) error {
 			return err
 		}
 	default:
-		return errorConstants.IncorrectFormat
+		return errorConstants.IncorrectFormat.Wrapf("incorrect type for bondRate parameter, expected %s type as string, got %T", baseData.NewNumberData(types.OneInt()).GetTypeID().AsString(), i)
 	}
 }
 

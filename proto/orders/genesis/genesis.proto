@@ -9,5 +9,5 @@ message Genesis {
   option (gogoproto.goproto_getters) = false;
 
   repeated record.Record records = 1;
-  assetmantle.schema.parameters.base.ParameterList parameter_list = 2;
+  assetmantle.schema.lists.base.ParameterList parameter_list = 2;
 }

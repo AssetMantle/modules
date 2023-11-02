@@ -27,7 +27,7 @@ func validator(i interface{}) error {
 			return err
 		}
 	default:
-		return errorConstants.IncorrectFormat
+		return errorConstants.IncorrectFormat.Wrapf("incorrect type for maxOrderLife parameter, expected %s type as string, got %T", baseData.NewHeightData(baseTypes.NewHeight(0)).GetTypeID().AsString(), i)
 	}
 }
 

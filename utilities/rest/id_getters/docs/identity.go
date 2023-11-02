@@ -3,20 +3,15 @@ package docs
 import (
 	"net/http"
 
-	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/properties"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/properties/constants"
-	"github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
-func nubIDHandler(context client.Context) http.HandlerFunc {
+func nameIdentityIDHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		transactionRequest := Prototype()
 		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
@@ -27,29 +22,21 @@ func nubIDHandler(context client.Context) http.HandlerFunc {
 			panic(errorConstants.IncorrectFormat)
 		}
 
-		req := transactionRequest.(request)
-
-		nubID := baseIDs.NewStringID(req.NubID)
-		immutables := base.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constants.NubIDProperty.GetKey(), baseData.NewIDData(nubID))))
-
-		// TODO move to proper package
-		var NubClassificationID = baseIDs.NewClassificationID(base.NewImmutables(baseLists.NewPropertyList(constants.NubIDProperty)), base.NewMutables(baseLists.NewPropertyList(constants.AuthenticationProperty)))
-
-		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewIdentityID(NubClassificationID, immutables).AsString(), "", nil))
+		rest.PostProcessResponse(responseWriter, context, newResponse(baseDocuments.NewNameIdentity(baseIDs.NewStringID(transactionRequest.(request).Name), baseData.PrototypeListData()).GetNameIdentityID().AsString(), nil))
 	}
 }
 
 func identityIDHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		classificationID, immutables, _ := ReadAndProcess(context, false, false, responseWriter, httpRequest)
+		classificationID, immutables, _ := ReadAndProcess(context, responseWriter, httpRequest)
 
-		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewIdentityID(classificationID, immutables).AsString(), "", nil))
+		rest.PostProcessResponse(responseWriter, context, newResponse(baseIDs.NewIdentityID(classificationID, immutables).AsString(), nil))
 	}
 }
 
 func identityClassificationHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		id, immutables, _ := ReadAndProcess(context, true, true, responseWriter, httpRequest)
-		rest.PostProcessResponse(responseWriter, context, newResponse(id.AsString(), immutables.GetProperty(constants.BondAmountProperty.GetID()).Get().(properties.MetaProperty).GetData().Get().(data.NumberData).AsString(), nil))
+		id, _, _ := ReadAndProcess(context, responseWriter, httpRequest)
+		rest.PostProcessResponse(responseWriter, context, newResponse(id.AsString(), nil))
 	}
 }

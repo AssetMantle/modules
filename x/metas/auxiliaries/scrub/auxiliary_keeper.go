@@ -30,6 +30,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		if property.IsMeta() {
 			metaProperty := property.Get().(properties.MetaProperty)
 			if metaProperty.GetData().GenerateHashID().Compare(baseIDs.GenerateHashID()) != 0 {
+
+				if err := metaProperty.GetData().ValidateBasic(); err != nil {
+					return nil, err
+				}
+
 				metas.Add(record.NewRecord(metaProperty.GetData()))
 			}
 			scrubbedPropertyList[i] = metaProperty.ScrubData()

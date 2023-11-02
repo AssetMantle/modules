@@ -8,6 +8,7 @@ import (
 
 	"github.com/AssetMantle/schema/go/data"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -21,7 +22,7 @@ import (
 	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
 	"github.com/AssetMantle/modules/x/splits/constants"
 	"github.com/AssetMantle/modules/x/splits/genesis"
-	"github.com/AssetMantle/modules/x/splits/parameters/wrap_allowed_coins"
+	"github.com/AssetMantle/modules/x/splits/parameters/transfer_enabled"
 	"github.com/AssetMantle/modules/x/splits/record"
 )
 
@@ -30,7 +31,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	simulationState.AppParams.GetOrGenerate(
 		simulationState.Cdc,
-		wrap_allowed_coins.ID.AsString(),
+		transfer_enabled.ID.AsString(),
 		&Data,
 		simulationState.Rand,
 		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
@@ -55,11 +56,11 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		identityID, _ := base.PrototypeIdentityID().FromString(identityIDString)
 
 		records[index] = record.NewRecord(base.NewSplitID(assetID.(ids.AssetID), identityID.(ids.IdentityID)), baseTypes.NewSplit(sdkTypes.NewInt(1)))
-		records[index+1] = record.NewRecord(base.NewSplitID(base.GenerateCoinAssetID("stake"), identityID.(ids.IdentityID)), baseTypes.NewSplit(sdkTypes.NewInt(1000)))
+		records[index+1] = record.NewRecord(base.NewSplitID(baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), identityID.(ids.IdentityID)), baseTypes.NewSplit(sdkTypes.NewInt(1000)))
 		index += 2
 	}
 
-	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(wrap_allowed_coins.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(transfer_enabled.Parameter.Mutate(Data)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

@@ -13,6 +13,9 @@ import (
 	"github.com/AssetMantle/modules/x/assets/transactions/mutate"
 	"github.com/AssetMantle/modules/x/assets/transactions/renumerate"
 	"github.com/AssetMantle/modules/x/assets/transactions/revoke"
+	"github.com/AssetMantle/modules/x/assets/transactions/send"
+	"github.com/AssetMantle/modules/x/assets/transactions/unwrap"
+	"github.com/AssetMantle/modules/x/assets/transactions/wrap"
 )
 
 func Prototype() helpers.Transactions {
@@ -24,5 +27,8 @@ func Prototype() helpers.Transactions {
 		mutate.Transaction,
 		renumerate.Transaction,
 		revoke.Transaction,
+		send.Transaction,
+		unwrap.Transaction,
+		wrap.Transaction,
 	)
 }

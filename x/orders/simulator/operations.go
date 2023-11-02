@@ -6,6 +6,7 @@ package simulator
 import (
 	"math/rand"
 
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -220,7 +221,7 @@ func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 		}
 	}
 
-	return make.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID.(ids.ClassificationID), toID.(ids.IdentityID), assetID.(ids.AssetID), baseIDs.GenerateCoinAssetID("stake"), baseTypesGo.NewHeight(-1), sdkTypes.NewInt(1), sdkTypes.NewInt(1), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+	return make.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID.(ids.ClassificationID), toID.(ids.IdentityID), assetID.(ids.AssetID), baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), baseTypesGo.NewHeight(-1), sdkTypes.NewInt(1), sdkTypes.NewInt(1), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 }
 func GenerateDefineMessage(from sdkTypes.AccAddress, identityID ids.IdentityID, r *rand.Rand) helpers.Message {
 	return define.NewMessage(from, identityID, baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r), baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r)).(helpers.Message)

@@ -12,9 +12,9 @@ import (
 )
 
 type auxiliaryRequest struct {
-	OwnerID ids.IdentityID
-	ids.AssetID
-	Value sdkTypes.Int
+	OwnerID     ids.IdentityID `json:"ownerID" valid:"required~required field ownerID missing"`
+	ids.AssetID `json:"assetID" valid:"required~required field assetId missing"`
+	Value       sdkTypes.Int `json:"value" valid:"required~required field value missing"`
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)

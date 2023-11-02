@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -92,7 +93,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID()
 	testRate := sdkTypes.OneInt()
 	split := baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate)
 	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))

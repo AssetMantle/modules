@@ -40,7 +40,7 @@ var (
 	MakerSplit              = baseHelpers.NewCLIFlag("makerSplit", "", "MakerSplit")
 	MutableMetaProperties   = baseHelpers.NewCLIFlag("mutableMetaProperties", "", "mutableMetaProperties")
 	MutableProperties       = baseHelpers.NewCLIFlag("mutableProperties", "", "mutableProperties")
-	NubID                   = baseHelpers.NewCLIFlag("nubID", "", "NubID")
+	Name                    = baseHelpers.NewCLIFlag("name", "", "Name")
 	Offset                  = baseHelpers.NewCLIFlag("offset", 0, "offset")
 	OrderID                 = baseHelpers.NewCLIFlag("orderID", "", "OrderID")
 	Queuing                 = baseHelpers.NewCLIFlag("queuing", false, "Enable kafka queuing and squashing of transactions")

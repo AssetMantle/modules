@@ -7,9 +7,11 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/identities/constants"
+	"github.com/AssetMantle/modules/x/identities/parameters/issue_enabled"
 	"github.com/AssetMantle/modules/x/identities/parameters/max_provision_address_count"
+	"github.com/AssetMantle/modules/x/identities/parameters/quash_enabled"
 )
 
 func Prototype() helpers.ParameterManager {
-	return baseHelpers.NewParameterManager(constants.ModuleName, max_provision_address_count.ValidatableParameter)
+	return baseHelpers.NewParameterManager(constants.ModuleName, issue_enabled.ValidatableParameter, max_provision_address_count.ValidatableParameter, quash_enabled.ValidatableParameter)
 }

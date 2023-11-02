@@ -16,6 +16,9 @@ import (
 	"github.com/AssetMantle/modules/x/assets/transactions/mutate"
 	"github.com/AssetMantle/modules/x/assets/transactions/renumerate"
 	"github.com/AssetMantle/modules/x/assets/transactions/revoke"
+	"github.com/AssetMantle/modules/x/assets/transactions/send"
+	"github.com/AssetMantle/modules/x/assets/transactions/unwrap"
+	"github.com/AssetMantle/modules/x/assets/transactions/wrap"
 )
 
 func TestPrototype(t *testing.T) {
@@ -25,7 +28,11 @@ func TestPrototype(t *testing.T) {
 		mint.Transaction,
 		mutate.Transaction,
 		renumerate.Transaction,
-		revoke.Transaction)
+		revoke.Transaction,
+		send.Transaction,
+		unwrap.Transaction,
+		wrap.Transaction,
+	)
 
 	require.Equal(t, Prototype().GetTransaction(""), want.GetTransaction(""))
 

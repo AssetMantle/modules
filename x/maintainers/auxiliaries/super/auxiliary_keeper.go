@@ -40,7 +40,16 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		return nil, errorConstants.EntityAlreadyExists.Wrapf("maintainer with ID %s already exists", maintainerID)
 	}
 
-	maintainers.Add(record.NewRecord(base.NewMaintainer(auxiliaryRequest.ToIdentityID, auxiliaryRequest.MaintainedClassificationID, auxiliaryRequest.MaintainedMutables.GetMutablePropertyList().GetPropertyIDList(), utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(auxiliaryRequest.PermissionIDs)...))))
+	// remove system reserved properties
+	maintainedPropertyIDLIst := auxiliaryRequest.MaintainedMutables.GetMutablePropertyList().GetPropertyIDList().Remove(constantProperties.BondAmountProperty.GetID(), constantProperties.AuthenticationProperty.GetID())
+
+	maintainer := base.NewMaintainer(auxiliaryRequest.ToIdentityID, auxiliaryRequest.MaintainedClassificationID, maintainedPropertyIDLIst, utilities.SetModulePermissions(true, true, true).Add(baseIDs.StringIDsToIDs(auxiliaryRequest.PermissionIDs)...))
+
+	if err := maintainer.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	maintainers.Add(record.NewRecord(maintainer))
 
 	return newAuxiliaryResponse(), nil
 }

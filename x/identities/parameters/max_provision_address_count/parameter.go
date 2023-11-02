@@ -5,6 +5,7 @@ package max_provision_address_count
 
 import (
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/data/constants"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	"github.com/AssetMantle/schema/go/properties/base"
@@ -22,14 +23,16 @@ func validator(i interface{}) error {
 	case string:
 		if number, err := baseData.PrototypeNumberData().FromString(value); err != nil {
 			return err
-		} else if number.(*baseData.NumberData).Get().LT(sdkTypes.OneInt()) {
-			return errorConstants.IncorrectFormat.Wrapf("incorrect format for maxProvisionAddressCount parameter, has to be a positive whole number")
+		} else if number.(*baseData.NumberData).Get().Equal(sdkTypes.ZeroInt()) {
+			return errorConstants.IncorrectFormat.Wrapf("maxProvisionAddressCount parameter cannot be zero")
+		} else if number.(*baseData.NumberData).Get().GT(sdkTypes.NewInt(constants.MaxListLength)) {
+			return errorConstants.IncorrectFormat.Wrapf("maxProvisionAddressCount parameter cannot be greater than %d", constants.MaxListLength)
 		} else {
 			err = number.(*baseData.NumberData).ValidateBasic()
 			return err
 		}
 	default:
-		return errorConstants.IncorrectFormat.Wrapf("incorrect format for maxPropertyCount parameter, expected %T, got %T", baseData.NewNumberData(sdkTypes.NewInt(22)), i)
+		return errorConstants.IncorrectFormat.Wrapf("incorrect type for maxProvisionAddressCount parameter, expected %s type as string, got %T", baseData.NewNumberData(sdkTypes.OneInt()).GetTypeID().AsString(), i)
 	}
 }
 

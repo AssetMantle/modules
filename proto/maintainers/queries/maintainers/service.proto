@@ -5,7 +5,7 @@ import "google/api/annotations.proto";
 import "maintainers/queries/maintainers/query_request.proto";
 import "maintainers/queries/maintainers/query_response.proto";
 
-service Service{
+service Query {
   rpc Handle(QueryRequest) returns(QueryResponse){
     option (google.api.http).get = "/mantle/maintainers/v1beta1/maintainers";
   }

@@ -65,7 +65,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.InvalidParameter.Wrapf("taker split %s is not a valid integer", message.TakerSplit)
 	}
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, constants.ModuleIdentityID, message.MakerAssetID, makerSplit)); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, constants.ModuleIdentity.GetModuleIdentityID(), message.MakerAssetID, makerSplit)); err != nil {
 		return nil, err
 	}
 	immutableMetaProperties := message.ImmutableMetaProperties.
@@ -99,6 +99,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	order := base.NewOrder(message.ClassificationID, immutables, mutables)
+
+	if err := order.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
 	orders = orders.Add(record.NewRecord(order))
 
 	// Order execution
@@ -114,11 +119,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			switch {
 			case orderLeftOverMakerSplit.GT(executableOrderTakerSplitDemanded):
 				// sending to buyer
-				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, order.GetMakerID(), order.GetTakerAssetID(), executableOrder.GetMakerSplit())); err != nil {
+				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), executableOrder.GetMakerSplit())); err != nil {
 					panic(err)
 				}
 				// sending to executableOrder
-				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, executableOrder.GetMakerID(), order.GetMakerAssetID(), executableOrderTakerSplitDemanded)); err != nil {
+				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), executableOrder.GetMakerID(), order.GetMakerAssetID(), executableOrderTakerSplitDemanded)); err != nil {
 					panic(err)
 				}
 
@@ -128,27 +133,33 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			case orderLeftOverMakerSplit.LT(executableOrderTakerSplitDemanded):
 				// sending to buyer
 				sendToBuyer := orderLeftOverMakerSplit.Quo(sdkTypes.OneInt()).ToDec().QuoTruncate(executableOrder.GetExchangeRate()).TruncateInt()
-				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, order.GetMakerID(), order.GetTakerAssetID(), sendToBuyer)); err != nil {
+				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), sendToBuyer)); err != nil {
 					panic(err)
 				}
 				// sending to executableOrder
-				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, executableOrder.GetMakerID(), order.GetMakerAssetID(), orderLeftOverMakerSplit)); err != nil {
+				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), executableOrder.GetMakerID(), order.GetMakerAssetID(), orderLeftOverMakerSplit)); err != nil {
 					panic(err)
 				}
 
 				mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(executableOrder.GetMakerSplit().Sub(sendToBuyer))))
 
-				orders.Mutate(record.NewRecord(base.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
+				updatedOrder := base.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))
+
+				if err := updatedOrder.ValidateBasic(); err != nil {
+					panic(err)
+				}
+
+				orders.Mutate(record.NewRecord(updatedOrder))
 
 				orderLeftOverMakerSplit = sdkTypes.ZeroInt()
 			default:
 				// case orderLeftOverMakerSplit.Equal(executableOrderTakerSplitDemanded):
 				// sending to buyer
-				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, order.GetMakerID(), order.GetTakerAssetID(), executableOrder.GetMakerSplit())); err != nil {
+				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), executableOrder.GetMakerSplit())); err != nil {
 					panic(err)
 				}
 				// sending to seller
-				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentityID, executableOrder.GetMakerID(), order.GetMakerAssetID(), orderLeftOverMakerSplit)); err != nil {
+				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), executableOrder.GetMakerID(), order.GetMakerAssetID(), orderLeftOverMakerSplit)); err != nil {
 					panic(err)
 				}
 
@@ -173,7 +184,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if !orderLeftOverMakerSplit.Equal(sdkTypes.ZeroInt()) && orderMutated {
 		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(orderLeftOverMakerSplit)))
 
-		orders.Mutate(record.NewRecord(base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))))
+		updatedOrder := base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))
+
+		if err := updatedOrder.ValidateBasic(); err != nil {
+			return nil, err
+		}
+
+		orders.Mutate(record.NewRecord(updatedOrder))
 	}
 
 	return newTransactionResponse(), nil

@@ -6,13 +6,7 @@ package burn
 import (
 	"context"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/key"
-	"github.com/AssetMantle/modules/x/splits/mappable"
-	"github.com/AssetMantle/modules/x/splits/record"
 	"github.com/AssetMantle/modules/x/splits/utilities"
 )
 
@@ -24,25 +18,10 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
-	circulatingSupply := utilities.GetTotalSupply(splits, auxiliaryRequest.AssetID)
-	if !circulatingSupply.Equal(auxiliaryRequest.Value) {
-		return nil, errorConstants.InvalidRequest.Wrapf("circulating supply %d doesn't match asset's supply %d", circulatingSupply, auxiliaryRequest.Value)
+	if _, err := utilities.SubtractSplits(auxiliaryKeeper.mapper.NewCollection(context), auxiliaryRequest.OwnerID, auxiliaryRequest.AssetID, auxiliaryRequest.Value); err != nil {
+		return newAuxiliaryResponse(), err
 	}
-
-	splitID := baseIDs.NewSplitID(auxiliaryRequest.AssetID, auxiliaryRequest.OwnerID)
-	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
-	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound.Wrapf("split with ID %s not found", splitID.AsString())
-	}
-	split := mappable.GetSplit(Mappable)
-
-	if !split.GetValue().Equal(auxiliaryRequest.Value) {
-		return nil, errorConstants.InvalidRequest.Wrapf("owned value %d doesn't match asset's circulating supply %d", split.GetValue(), auxiliaryRequest.Value)
-	}
-
-	splits.Remove(record.NewRecord(splitID, split))
 
 	return newAuxiliaryResponse(), nil
 }
