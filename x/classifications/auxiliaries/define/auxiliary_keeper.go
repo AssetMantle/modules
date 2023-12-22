@@ -45,6 +45,12 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	for _, property := range append(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get(), auxiliaryRequest.Mutables.GetMutablePropertyList().Get()...) {
 		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
 	}
+
+	// adding weight of bond amount itself when property is not given
+	if boundAmountProperty := auxiliaryRequest.Mutables.GetProperty(constantProperties.BondAmountProperty.GetID()); boundAmountProperty == nil {
+		totalWeight = totalWeight.Add(constantProperties.BondAmountProperty.GetBondWeight())
+	}
+
 	minBondAmount := baseData.NewNumberData(auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.BondRateProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get().Mul(totalWeight))
 
 	bondAmount := minBondAmount
