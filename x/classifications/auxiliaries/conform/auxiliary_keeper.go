@@ -30,11 +30,15 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	}
 	classification := mappable.GetClassification(Mappable)
 
-	if auxiliaryRequest.Immutables != nil {
-		if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) != len(classification.GetImmutables().GetImmutablePropertyList().Get()) {
-			return nil, errorConstants.IncorrectFormat.Wrapf("incorrect number of immutables")
-		}
+	if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) != len(classification.GetImmutables().GetImmutablePropertyList().Get()) {
+		return nil, errorConstants.IncorrectFormat.Wrapf("incorrect number of immutables")
+	}
 
+	if len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()) != len(classification.GetMutables().GetMutablePropertyList().Get()) {
+		return nil, errorConstants.IncorrectFormat.Wrapf("incorrect number of mutables")
+	}
+
+	if auxiliaryRequest.Immutables != nil {
 		for _, immutableProperty := range classification.GetImmutables().GetImmutablePropertyList().Get() {
 			if property := auxiliaryRequest.Immutables.GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) != 0 && property.GetDataID().GetHashID().Compare(immutableProperty.GetDataID().GetHashID()) != 0 {
 				return nil, errorConstants.IncorrectFormat.Wrapf("incorrect immutable %s", immutableProperty.GetID().AsString())
@@ -43,10 +47,6 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	}
 
 	if auxiliaryRequest.Mutables != nil {
-		if len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()) != len(classification.GetMutables().GetMutablePropertyList().Get()) {
-			return nil, errorConstants.IncorrectFormat.Wrapf("incorrect number of mutables")
-		}
-
 		for _, mutableProperty := range classification.GetMutables().GetMutablePropertyList().Get() {
 			if property := auxiliaryRequest.Mutables.GetMutablePropertyList().GetProperty(mutableProperty.GetID()); property == nil {
 				return nil, errorConstants.IncorrectFormat.Wrapf("incorrect mutable %s", mutableProperty.GetID().AsString())
