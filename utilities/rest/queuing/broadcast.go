@@ -19,7 +19,7 @@ func QueueOrBroadcastTransaction(context client.Context, baseReq rest.BaseReq, m
 		return err
 	}
 
-	context = context.WithFromAddress(fromAddress).WithFromName(fromName).WithSkipConfirmation(true).WithSimulation(baseReq.Simulate)
+	context = context.WithFromAddress(fromAddress).WithFromName(fromName).WithSkipConfirmation(true).WithGenerateOnly(baseReq.Simulate)
 
 	if KafkaState.IsEnabled {
 		if err = context.PrintBytes(SendToKafka(NewKafkaMsgFromRest(msg, TicketID(random.GenerateUniqueIdentifier(reflect.TypeOf(msg).String())), baseReq, context), context.LegacyAmino)); err != nil {
@@ -51,10 +51,17 @@ func QueueOrBroadcastTransaction(context client.Context, baseReq rest.BaseReq, m
 		WithGasAdjustment(gasAdjustment).
 		WithMemo(baseReq.Memo).
 		WithChainID(baseReq.ChainID).
-		WithSimulateAndExecute(baseReq.Simulate).
+		WithSimulateAndExecute(gasSetting.Simulate || baseReq.Simulate).
 		WithTxConfig(context.TxConfig).
 		WithTimeoutHeight(baseReq.TimeoutHeight).
 		WithKeybase(context.Keyring)
+
+	if context.GenerateOnly {
+		transactionFactory, err = transactionFactory.Prepare(context)
+		if err != nil {
+			return err
+		}
+	}
 
 	if err := tx.GenerateOrBroadcastTxWithFactory(context, transactionFactory, msg); err != nil {
 		return err
