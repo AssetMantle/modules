@@ -5,13 +5,12 @@ package conform
 
 import (
 	"context"
-
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/key"
 	"github.com/AssetMantle/modules/x/classifications/mappable"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 )
 
 type auxiliaryKeeper struct {
@@ -30,26 +29,34 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 	}
 	classification := mappable.GetClassification(Mappable)
 
-	if auxiliaryRequest.Immutables != nil {
-		if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) != len(classification.GetImmutables().GetImmutablePropertyList().Get()) {
+	if !(auxiliaryRequest.Immutables == nil && classification.GetImmutables() == nil) {
+		if (auxiliaryRequest.Immutables == nil && classification.GetImmutables() != nil) || (auxiliaryRequest.Immutables != nil && classification.GetImmutables() == nil) {
 			return nil, errorConstants.IncorrectFormat.Wrapf("incorrect number of immutables")
-		}
+		} else {
+			if len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) != len(classification.GetImmutables().GetImmutablePropertyList().Get()) {
+				return nil, errorConstants.IncorrectFormat.Wrapf("incorrect number of immutables")
+			}
 
-		for _, immutableProperty := range classification.GetImmutables().GetImmutablePropertyList().Get() {
-			if property := auxiliaryRequest.Immutables.GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) != 0 && property.GetDataID().GetHashID().Compare(immutableProperty.GetDataID().GetHashID()) != 0 {
-				return nil, errorConstants.IncorrectFormat.Wrapf("incorrect immutable %s", immutableProperty.GetID().AsString())
+			for _, immutableProperty := range classification.GetImmutables().GetImmutablePropertyList().Get() {
+				if property := auxiliaryRequest.Immutables.GetImmutablePropertyList().GetProperty(immutableProperty.GetID()); property == nil || immutableProperty.GetDataID().GetHashID().Compare(baseIDs.GenerateHashID()) != 0 && property.GetDataID().GetHashID().Compare(immutableProperty.GetDataID().GetHashID()) != 0 {
+					return nil, errorConstants.IncorrectFormat.Wrapf("incorrect immutable %s", immutableProperty.GetID().AsString())
+				}
 			}
 		}
 	}
 
-	if auxiliaryRequest.Mutables != nil {
-		if len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()) != len(classification.GetMutables().GetMutablePropertyList().Get()) {
+	if !(auxiliaryRequest.Mutables == nil && classification.GetMutables() == nil) {
+		if (auxiliaryRequest.Mutables == nil && classification.GetMutables() != nil) || (auxiliaryRequest.Mutables != nil && classification.GetMutables() == nil) {
 			return nil, errorConstants.IncorrectFormat.Wrapf("incorrect number of mutables")
-		}
+		} else {
+			if len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()) != len(classification.GetMutables().GetMutablePropertyList().Get()) {
+				return nil, errorConstants.IncorrectFormat.Wrapf("incorrect number of mutables")
+			}
 
-		for _, mutableProperty := range classification.GetMutables().GetMutablePropertyList().Get() {
-			if property := auxiliaryRequest.Mutables.GetMutablePropertyList().GetProperty(mutableProperty.GetID()); property == nil {
-				return nil, errorConstants.IncorrectFormat.Wrapf("incorrect mutable %s", mutableProperty.GetID().AsString())
+			for _, mutableProperty := range classification.GetMutables().GetMutablePropertyList().Get() {
+				if property := auxiliaryRequest.Mutables.GetMutablePropertyList().GetProperty(mutableProperty.GetID()); property == nil {
+					return nil, errorConstants.IncorrectFormat.Wrapf("incorrect mutable %s", mutableProperty.GetID().AsString())
+				}
 			}
 		}
 	}
