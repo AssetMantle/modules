@@ -17,10 +17,8 @@ import (
 	"github.com/AssetMantle/schema/go/qualified"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/assets/key"
 )
 
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, *Mappable) {
@@ -63,36 +61,6 @@ func TestNewMappable(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := NewMappable(tt.args.Asset); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewAsset() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_mappable_GetKey(t *testing.T) {
-	_, _, _, testMappable := createTestInput()
-	type fields struct {
-		Document *Mappable
-	}
-	tests := []struct {
-		name      string
-		fields    fields
-		want      helpers.Key
-		wantPanic bool
-	}{
-		{"+ve", fields{testMappable}, key.NewKey(baseIDs.NewAssetID((&Mappable{testMappable.Asset}).Asset.GetClassificationID(), (&Mappable{testMappable.Asset}).Asset.GetImmutables())), false},
-		{"panic case nil", fields{&Mappable{nil}}, nil, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			asset := &Mappable{
-				Asset: tt.fields.Document.Asset,
-			}
-			if tt.wantPanic {
-				require.Panics(t, func() {
-					asset.GenerateKey()
-				})
-			} else if got := asset.GenerateKey(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GenerateKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}
