@@ -4,6 +4,7 @@
 package member
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"testing"
@@ -25,9 +26,9 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/key"
-	"github.com/AssetMantle/modules/x/classifications/mappable"
+	"github.com/AssetMantle/modules/x/classifications/mapper"
 	"github.com/AssetMantle/modules/x/classifications/parameters"
+	"github.com/AssetMantle/modules/x/classifications/record"
 )
 
 type TestKeepers struct {
@@ -40,7 +41,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
@@ -59,7 +60,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -67,48 +68,54 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		MemberKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
-	return context, keepers, Mapper, parameterManager
+	return Context, keepers, Mapper, parameterManager
 }
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
-	context, keepers, Mapper, _ := createTestInput(t)
+	Context, keepers, Mapper, _ := createTestInput(t)
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	immutables1 := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("ImmutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	classificationID1 := baseIDs.NewClassificationID(immutables1, mutables)
-	keepers.MemberKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(baseDocuments.NewClassification(immutables, mutables)))
+	keepers.MemberKeeper.(auxiliaryKeeper).mapper.NewCollection(Context.Context()).Add(record.NewRecord(baseDocuments.NewClassification(immutables, mutables)))
 	type fields struct {
 		mapper helpers.Mapper
 	}
 	type args struct {
-		context sdkTypes.Context
+		context context.Context
 		request helpers.AuxiliaryRequest
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.AuxiliaryResponse
+		name    string
+		fields  fields
+		args    args
+		want    helpers.AuxiliaryResponse
+		wantErr bool
 	}{
-		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse()},
-		{"+ve Entity Not found", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID1, immutables, mutables)}, newAuxiliaryResponse()},
-		{"+ve IncorrectFormat", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, immutables1, mutables)}, newAuxiliaryResponse()},
+		{"+ve", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse(), false},
+		{"+ve Entity Not found", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(classificationID1, immutables, mutables)}, newAuxiliaryResponse(), false},
+		{"+ve IncorrectFormat", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(classificationID, immutables1, mutables)}, newAuxiliaryResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			auxiliaryKeeper := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := auxiliaryKeeper.Help(sdkTypes.WrapSDKContext(tt.args.context), tt.args.request); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Help() = %v, want %v", got, tt.want)
+			got, err := auxiliaryKeeper.Help(tt.args.context, tt.args.request)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Help() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
 func Test_auxiliaryKeeper_Initialize(t *testing.T) {
-	_, _, mapper, parameterManager := createTestInput(t)
+	_, _, Mapper, parameterManager := createTestInput(t)
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -124,7 +131,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, auxiliaryKeeper{}},
-		{"+ve", fields{mapper}, args{mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{mapper}},
+		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
