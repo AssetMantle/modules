@@ -6,6 +6,7 @@ package send
 import (
 	"encoding/json"
 	"fmt"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	"reflect"
 	"testing"
 
@@ -34,7 +35,7 @@ var (
 	mutables          = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
 	classificationID  = baseIDs.NewClassificationID(immutables, mutables)
 	fromID            = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
-	assetID           = baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("assetid")).(*baseIDs.AssetID)
+	assetID           = baseDocuments.NewCoinAsset("assetID").GetCoinAssetID().(*baseIDs.AssetID)
 	testRate          = types.OneInt()
 )
 

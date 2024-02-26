@@ -9,7 +9,9 @@ import (
 	"reflect"
 	"testing"
 
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/AssetMantle/schema/go/types/base"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -31,16 +33,16 @@ var (
 	immutablePropertiesString     = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString   = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString       = "defaultMutable1:S|defaultMutable1"
-	immutableMetaProperties, _    = base.PrototypePropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
-	immutableProperties, _        = base.PrototypePropertyList().FromMetaPropertiesString(immutablePropertiesString)
-	mutableMetaProperties, _      = base.PrototypePropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
-	mutableProperties, _          = base.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
+	immutableMetaProperties, _    = baseLists.PrototypePropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
+	immutableProperties, _        = baseLists.PrototypePropertyList().FromMetaPropertiesString(immutablePropertiesString)
+	mutableMetaProperties, _      = baseLists.PrototypePropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
+	mutableProperties, _          = baseLists.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	immutables                    = baseQualified.NewImmutables(immutableProperties)
 	mutables                      = baseQualified.NewMutables(mutableProperties)
 	testClassificationID          = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
 	testFromID                    = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
-	makerAssetID                  = baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("makerassetid")).(*baseIDs.AssetID)
-	takerAssetID                  = baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("takerassetid")).(*baseIDs.AssetID)
+	makerAssetID                  = baseDocuments.NewCoinAsset("MakerAssetID").GetCoinAssetID().(*baseIDs.AssetID)
+	takerAssetID                  = baseDocuments.NewCoinAsset("TakerAssetId").GetCoinAssetID().(*baseIDs.AssetID)
 	testBaseRequest               = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 	expiresIn                     = int64(60)
 	makerSplit                    = types.NewInt(60)
