@@ -9,8 +9,6 @@ import (
 
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/lists"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/types"
 	"github.com/AssetMantle/schema/go/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -21,23 +19,17 @@ import (
 
 var (
 	expiresInHeight = base.NewHeight(60).(*base.Height)
-	testMessage     = NewMessage(fromAccAddress, testFromID, testClassificationID, testFromID, makerAssetID, takerAssetID, expiresInHeight, makerSplit, takerSplit, immutableMetaProperties.(*baseLists.PropertyList), immutableProperties, mutableMetaProperties, mutableProperties)
+	testMessage     = NewMessage(fromAccAddress, testFromID, makerAssetID, takerAssetID, makerSplit, takerSplit, expiresInHeight)
 )
 
 type fields struct {
-	From                    string
-	FromID                  *baseIDs.IdentityID
-	ClassificationID        *baseIDs.ClassificationID
-	TakerID                 *baseIDs.IdentityID
-	MakerAssetID            *baseIDs.AssetID
-	TakerAssetID            *baseIDs.AssetID
-	ExpiresIn               *base.Height
-	MakerSplit              sdkTypes.Dec
-	TakerSplit              sdkTypes.Dec
-	ImmutableMetaProperties *baseLists.PropertyList
-	ImmutableProperties     *baseLists.PropertyList
-	MutableMetaProperties   *baseLists.PropertyList
-	MutableProperties       *baseLists.PropertyList
+	From         string
+	FromID       *baseIDs.IdentityID
+	MakerAssetID *baseIDs.AssetID
+	TakerAssetID *baseIDs.AssetID
+	MakerSplit   sdkTypes.Int
+	TakerSplit   sdkTypes.Int
+	ExpiryHeight *base.Height
 }
 
 func Test_messageFromInterface(t *testing.T) {
@@ -49,7 +41,7 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want *Message
 	}{
-		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), testFromID, testClassificationID, testFromID, makerAssetID, takerAssetID, expiresInHeight, makerSplit, takerSplit, immutableMetaProperties.(*baseLists.PropertyList), immutableProperties.(*baseLists.PropertyList), mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}},
+		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), testFromID, makerAssetID, takerAssetID, makerSplit.String(), takerSplit.String(), expiresInHeight}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -83,24 +75,13 @@ func Test_message_GetSigners(t *testing.T) {
 		fields fields
 		want   []sdkTypes.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testClassificationID, testFromID, makerAssetID, takerAssetID, expiresInHeight, makerSplit, takerSplit, immutableMetaProperties.(*baseLists.PropertyList), immutableProperties.(*baseLists.PropertyList), mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, []sdkTypes.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), testFromID, makerAssetID, takerAssetID, makerSplit, takerSplit, expiresInHeight}, []sdkTypes.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
-				ClassificationID:        tt.fields.ClassificationID,
-				TakerID:                 tt.fields.TakerID,
-				MakerAssetID:            tt.fields.MakerAssetID,
-				TakerAssetID:            tt.fields.TakerAssetID,
-				ExpiresIn:               tt.fields.ExpiresIn,
-				MakerSplit:              tt.fields.MakerSplit,
-				TakerSplit:              tt.fields.TakerSplit,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				From:   tt.fields.From,
+				FromID: tt.fields.FromID,
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
@@ -119,24 +100,18 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testClassificationID, testFromID, makerAssetID, takerAssetID, expiresInHeight, makerSplit, takerSplit, immutableMetaProperties.(*baseLists.PropertyList), immutableProperties.(*baseLists.PropertyList), mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), testFromID, makerAssetID, takerAssetID, makerSplit, takerSplit, expiresInHeight}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			me := &Message{
-				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
-				ClassificationID:        tt.fields.ClassificationID,
-				TakerID:                 tt.fields.TakerID,
-				MakerAssetID:            tt.fields.MakerAssetID,
-				TakerAssetID:            tt.fields.TakerAssetID,
-				ExpiresIn:               tt.fields.ExpiresIn,
-				MakerSplit:              tt.fields.MakerSplit,
-				TakerSplit:              tt.fields.TakerSplit,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				tt.fields.From,
+				tt.fields.FromID,
+				tt.fields.MakerAssetID,
+				tt.fields.TakerAssetID,
+				tt.fields.MakerSplit.String(),
+				tt.fields.TakerSplit.String(),
+				tt.fields.ExpiryHeight,
 			}
 			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -150,24 +125,18 @@ func Test_message_Type(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testClassificationID, testFromID, makerAssetID, takerAssetID, expiresInHeight, makerSplit, takerSplit, immutableMetaProperties.(*baseLists.PropertyList), immutableProperties.(*baseLists.PropertyList), mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), testFromID, makerAssetID, takerAssetID, makerSplit, takerSplit, expiresInHeight}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
-				ClassificationID:        tt.fields.ClassificationID,
-				TakerID:                 tt.fields.TakerID,
-				MakerAssetID:            tt.fields.MakerAssetID,
-				TakerAssetID:            tt.fields.TakerAssetID,
-				ExpiresIn:               tt.fields.ExpiresIn,
-				MakerSplit:              tt.fields.MakerSplit,
-				TakerSplit:              tt.fields.TakerSplit,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				tt.fields.From,
+				tt.fields.FromID,
+				tt.fields.MakerAssetID,
+				tt.fields.TakerAssetID,
+				tt.fields.MakerSplit.String(),
+				tt.fields.TakerSplit.String(),
+				tt.fields.ExpiryHeight,
 			}
 			if got := message.Type(); got != tt.want {
 				t.Errorf("Type() = %v, want %v", got, tt.want)
@@ -183,25 +152,19 @@ func Test_message_ValidateBasic(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testClassificationID, testFromID, makerAssetID, takerAssetID, expiresInHeight, makerSplit, takerSplit, immutableMetaProperties.(*baseLists.PropertyList), immutableProperties.(*baseLists.PropertyList), mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, false},
+		{"+ve", fields{fromAccAddress.String(), testFromID, makerAssetID, takerAssetID, makerSplit, takerSplit, expiresInHeight}, false},
 		{"-ve for nil", fields{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
-				ClassificationID:        tt.fields.ClassificationID,
-				TakerID:                 tt.fields.TakerID,
-				MakerAssetID:            tt.fields.MakerAssetID,
-				TakerAssetID:            tt.fields.TakerAssetID,
-				ExpiresIn:               tt.fields.ExpiresIn,
-				MakerSplit:              tt.fields.MakerSplit,
-				TakerSplit:              tt.fields.TakerSplit,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				tt.fields.From,
+				tt.fields.FromID,
+				tt.fields.MakerAssetID,
+				tt.fields.TakerAssetID,
+				tt.fields.MakerSplit.String(),
+				tt.fields.TakerSplit.String(),
+				tt.fields.ExpiryHeight,
 			}
 			if err := message.ValidateBasic(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
@@ -212,30 +175,24 @@ func Test_message_ValidateBasic(t *testing.T) {
 
 func Test_NewMessage(t *testing.T) {
 	type args struct {
-		from                    sdkTypes.AccAddress
-		fromID                  ids.IdentityID
-		classificationID        ids.ClassificationID
-		takerID                 ids.IdentityID
-		makerAssetID            ids.AssetID
-		takerAssetID            ids.AssetID
-		expiresIn               types.Height
-		makerSplit              sdkTypes.Dec
-		takerSplit              sdkTypes.Dec
-		immutableMetaProperties lists.PropertyList
-		immutableProperties     lists.PropertyList
-		mutableMetaProperties   lists.PropertyList
-		mutableProperties       lists.PropertyList
+		from         sdkTypes.AccAddress
+		fromID       ids.IdentityID
+		makerAssetID ids.AssetID
+		takerAssetID ids.AssetID
+		makerSplit   sdkTypes.Int
+		takerSplit   sdkTypes.Int
+		expiryHeight types.Height
 	}
 	tests := []struct {
 		name string
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve", args{fromAccAddress, testFromID, testClassificationID, testFromID, makerAssetID, takerAssetID, expiresInHeight, makerSplit, takerSplit, immutableMetaProperties.(*baseLists.PropertyList), immutableProperties.(*baseLists.PropertyList), mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, &Message{fromAccAddress.String(), testFromID, testClassificationID, testFromID, makerAssetID, takerAssetID, expiresInHeight, makerSplit, takerSplit, immutableMetaProperties.(*baseLists.PropertyList), immutableProperties.(*baseLists.PropertyList), mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}},
+		{"+ve", args{fromAccAddress, testFromID, makerAssetID, takerAssetID, makerSplit, takerSplit, expiresInHeight}, &Message{fromAccAddress.String(), testFromID, makerAssetID, takerAssetID, makerSplit.String(), takerSplit.String(), expiresInHeight}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.classificationID, tt.args.takerID, tt.args.makerAssetID, tt.args.takerAssetID, tt.args.expiresIn, tt.args.makerSplit, tt.args.takerSplit, tt.args.immutableMetaProperties.(*baseLists.PropertyList), tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.makerAssetID, tt.args.takerAssetID, tt.args.makerSplit, tt.args.takerSplit, tt.args.expiryHeight); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})
