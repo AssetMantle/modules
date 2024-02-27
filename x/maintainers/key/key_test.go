@@ -4,19 +4,15 @@
 package key
 
 import (
-	"reflect"
-	"testing"
-
+	"github.com/AssetMantle/modules/helpers"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/maintainers/constants"
+	"reflect"
+	"testing"
 )
 
 func createTestData() *baseIDs.MaintainerID {
@@ -128,8 +124,8 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{createTestData()}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{createTestData()}).GeneratePrefixedStoreKeyBytes())},
-		{"-ve", fields{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}).GeneratePrefixedStoreKeyBytes())},
+		{"+ve", fields{createTestData()}, (&Key{createTestData()}).GeneratePrefixedStoreKeyBytes()},
+		{"-ve", fields{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}, (&Key{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}).GeneratePrefixedStoreKeyBytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -163,31 +159,6 @@ func Test_key_IsPartial(t *testing.T) {
 			if got := key.IsPartial(); got != tt.want {
 				t.Errorf("IsPartial() = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_key_RegisterCodec(t *testing.T) {
-	type fields struct {
-		MaintainerID *baseIDs.MaintainerID
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{createTestData()}, args{codec.NewLegacyAmino()}},
-		{"-ve", fields{createTestData()}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ke := &Key{
-				MaintainerID: tt.fields.MaintainerID,
-			}
-			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }
