@@ -6,6 +6,8 @@ package unprovision
 import (
 	"context"
 	"fmt"
+	"github.com/AssetMantle/modules/x/identities/mapper"
+	"github.com/AssetMantle/modules/x/identities/record"
 	"reflect"
 	"testing"
 
@@ -27,8 +29,6 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/identities/key"
-	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/parameters"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 )
@@ -47,7 +47,7 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
@@ -66,7 +66,7 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -75,7 +75,7 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper
 		UnProvisionKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
 	}
 
-	return sdkTypes.WrapSDKContext(context), keepers, Mapper, parameterManager
+	return sdkTypes.WrapSDKContext(Context), keepers, Mapper, parameterManager
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -95,8 +95,8 @@ func Test_keeperPrototype(t *testing.T) {
 }
 
 func Test_transactionKeeper_Initialize(t *testing.T) {
-	_, _, mapper, parameterManager := CreateTestInput(t)
-	supplementAuxiliary = supplement.Auxiliary.Initialize(mapper, parameterManager)
+	_, _, Mapper, parameterManager := CreateTestInput(t)
+	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, parameterManager)
 	type fields struct {
 		mapper              helpers.Mapper
 		supplementAuxiliary helpers.Auxiliary
@@ -113,7 +113,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{mapper, supplementAuxiliary}, args{mapper, parameterManager, []interface{}{supplementAuxiliary}}, transactionKeeper{mapper, supplementAuxiliary}},
+		{"+ve", fields{Mapper, supplementAuxiliary}, args{Mapper, parameterManager, []interface{}{supplementAuxiliary}}, transactionKeeper{Mapper, supplementAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -129,7 +129,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	ctx, keepers, mapper, _ := CreateTestInput(t)
+	ctx, keepers, Mapper, _ := CreateTestInput(t)
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData())))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -141,24 +141,25 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Nil(t, err)
 	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutables, mutables)
 	testIdentity.ProvisionAddress([]sdkTypes.AccAddress{toAccAddress}...)
-	keepers.UnProvisionKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(mappable.NewMappable(testIdentity))
+	keepers.UnProvisionKeeper.(transactionKeeper).mapper.NewCollection(ctx).Add(record.NewRecord(testIdentity))
 	type fields struct {
 		mapper              helpers.Mapper
 		supplementAuxiliary helpers.Auxiliary
 	}
 	type args struct {
 		context context.Context
-		msg     helpers.Message
+		message helpers.Message
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.TransactionResponse
+		name    string
+		fields  fields
+		args    args
+		want    helpers.TransactionResponse
+		wantErr bool
 	}{
-		{"+ve Not Authorized", fields{mapper, supplementAuxiliary}, args{ctx, NewMessage(fromAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse()},
-		{"+ve Not Found", fields{mapper, supplementAuxiliary}, args{ctx, NewMessage(toAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse()},
-		{"+ve", fields{mapper, supplementAuxiliary}, args{ctx, NewMessage(toAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse()},
+		{"+ve Not Authorized", fields{Mapper, supplementAuxiliary}, args{ctx, NewMessage(fromAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
+		{"+ve Not Found", fields{Mapper, supplementAuxiliary}, args{ctx, NewMessage(toAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
+		{"+ve", fields{Mapper, supplementAuxiliary}, args{ctx, NewMessage(toAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -166,8 +167,13 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 				mapper:              tt.fields.mapper,
 				supplementAuxiliary: tt.fields.supplementAuxiliary,
 			}
-			if got := transactionKeeper.Transact(ctx, tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() = %v, want %v", got, tt.want)
+			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Transact() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

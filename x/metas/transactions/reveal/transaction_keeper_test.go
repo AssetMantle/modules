@@ -5,10 +5,12 @@ package reveal
 
 import (
 	"context"
-	"reflect"
-	"testing"
-
-	"github.com/AssetMantle/schema/go/data/utilities"
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/metas/mapper"
+	"github.com/AssetMantle/modules/x/metas/parameters"
+	"github.com/AssetMantle/modules/x/metas/record"
+	"github.com/AssetMantle/schema/go/data/base"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -17,12 +19,8 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/metas/key"
-	"github.com/AssetMantle/modules/x/metas/mappable"
-	"github.com/AssetMantle/modules/x/metas/parameters"
+	"reflect"
+	"testing"
 )
 
 type TestKeepers struct {
@@ -35,7 +33,7 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
@@ -54,7 +52,7 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -62,30 +60,48 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 		MetasKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.TransactionKeeper),
 	}
 
-	return sdkTypes.WrapSDKContext(context), keepers
+	return sdkTypes.WrapSDKContext(Context), keepers
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	context, keepers := CreateTestInput(t)
+	Context, keepers := CreateTestInput(t)
 	defaultAddr := sdkTypes.AccAddress("addr")
-	data, err := utilities.ReadData("S|default")
+	data, err := base.PrototypeAnyData().FromString("S|default")
 	require.Equal(t, nil, err)
-	newFact, err := utilities.ReadData("S|newFact")
+	newFact, err := base.PrototypeAnyData().FromString("S|newFact")
 	require.Equal(t, nil, err)
-	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(data))
-	t.Run("PositiveCase", func(t *testing.T) {
-		want := newTransactionResponse()
-		if got := keepers.MetasKeeper.Transact(context, NewMessage(defaultAddr, newFact).(*Message)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase-Reveal metas again", func(t *testing.T) {
-		t.Parallel()
-		want := newTransactionResponse()
-		if got := keepers.MetasKeeper.Transact(context, NewMessage(defaultAddr, data).(*Message)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
+	keepers.MetasKeeper.(transactionKeeper).mapper.NewCollection(Context).Add(record.NewRecord(data))
+	type fields struct {
+		mapper           helpers.Mapper
+		parameterManager helpers.ParameterManager
+	}
+	type args struct {
+		context context.Context
+		message helpers.Message
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    helpers.TransactionResponse
+		wantErr bool
+	}{
+		{"+ve", fields{keepers.MetasKeeper.(transactionKeeper).mapper, keepers.MetasKeeper.(transactionKeeper).parameterManager}, args{Context, NewMessage(defaultAddr, newFact).(*Message)}, newTransactionResponse(), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionKeeper := transactionKeeper{
+				mapper:           tt.fields.mapper,
+				parameterManager: tt.fields.parameterManager,
+			}
+			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Transact() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

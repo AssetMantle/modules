@@ -4,10 +4,17 @@
 package define
 
 import (
+	"context"
 	"fmt"
-	"reflect"
-	"testing"
-
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/identities/mapper"
+	"github.com/AssetMantle/modules/x/identities/parameters"
+	"github.com/AssetMantle/modules/x/identities/record"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/super"
+	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -22,16 +29,8 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/identities/key"
-	"github.com/AssetMantle/modules/x/identities/mappable"
-	"github.com/AssetMantle/modules/x/identities/parameters"
-	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/super"
-	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	"reflect"
+	"testing"
 )
 
 type TestKeepers struct {
@@ -52,7 +51,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
@@ -71,7 +70,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -83,7 +82,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		DefineKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary}).(helpers.TransactionKeeper),
 	}
 
-	return context, keepers, Mapper
+	return Context, keepers, Mapper
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -105,11 +104,10 @@ func Test_keeperPrototype(t *testing.T) {
 func Test_transactionKeeper_Initialize(t *testing.T) {
 	_, _, Mapper := createTestInput(t)
 	type fields struct {
-		mapper                helpers.Mapper
-		authenticateAuxiliary helpers.Auxiliary
-		defineAuxiliary       helpers.Auxiliary
-		superAuxiliary        helpers.Auxiliary
-		supplementAuxiliary   helpers.Auxiliary
+		mapper              helpers.Mapper
+		defineAuxiliary     helpers.Auxiliary
+		superAuxiliary      helpers.Auxiliary
+		supplementAuxiliary helpers.Auxiliary
 	}
 	type args struct {
 		mapper      helpers.Mapper
@@ -123,16 +121,15 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
-		{"+ve", fields{Mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}},
+		{"+ve", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
-				mapper:                tt.fields.mapper,
-				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
-				defineAuxiliary:       tt.fields.defineAuxiliary,
-				superAuxiliary:        tt.fields.superAuxiliary,
-				supplementAuxiliary:   tt.fields.supplementAuxiliary,
+				mapper:              tt.fields.mapper,
+				defineAuxiliary:     tt.fields.defineAuxiliary,
+				superAuxiliary:      tt.fields.superAuxiliary,
+				supplementAuxiliary: tt.fields.supplementAuxiliary,
 			}
 			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.in1, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
@@ -142,7 +139,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	context, keepers, mapper := createTestInput(t)
+	Context, keepers, Mapper := createTestInput(t)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
@@ -158,38 +155,43 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	identity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 	identity = identity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
-	keepers.DefineKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(identity))
+	keepers.DefineKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(identity))
+
 	type fields struct {
-		mapper                helpers.Mapper
-		authenticateAuxiliary helpers.Auxiliary
-		defineAuxiliary       helpers.Auxiliary
-		superAuxiliary        helpers.Auxiliary
-		supplementAuxiliary   helpers.Auxiliary
+		mapper              helpers.Mapper
+		defineAuxiliary     helpers.Auxiliary
+		superAuxiliary      helpers.Auxiliary
+		supplementAuxiliary helpers.Auxiliary
 	}
 	type args struct {
-		context sdkTypes.Context
-		msg     helpers.Message
+		context context.Context
+		message helpers.Message
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.TransactionResponse
+		name    string
+		fields  fields
+		args    args
+		want    helpers.TransactionResponse
+		wantErr bool
 	}{
-		{"+ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, NewMessage(fromAccAddress, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
-		{"-ve", fields{mapper, authenticateAuxiliary, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{context, NewMessage(fromAccAddress2, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse()},
+		{"+ve", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(classificationID), false},
+		{"-ve", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress2, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
-				mapper:                tt.fields.mapper,
-				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
-				defineAuxiliary:       tt.fields.defineAuxiliary,
-				superAuxiliary:        tt.fields.superAuxiliary,
-				supplementAuxiliary:   tt.fields.supplementAuxiliary,
+				mapper:              tt.fields.mapper,
+				defineAuxiliary:     tt.fields.defineAuxiliary,
+				superAuxiliary:      tt.fields.superAuxiliary,
+				supplementAuxiliary: tt.fields.supplementAuxiliary,
 			}
-			if got := transactionKeeper.Transact(sdkTypes.WrapSDKContext(context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() = %v, want %v", got, tt.want)
+			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Transact() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

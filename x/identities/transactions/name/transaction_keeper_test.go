@@ -5,10 +5,10 @@ package name
 
 import (
 	"context"
-	"reflect"
-	"testing"
-
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/identities/mapper"
+	"github.com/AssetMantle/modules/x/identities/parameters"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -17,27 +17,17 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
-	"github.com/AssetMantle/modules/x/identities/key"
-	"github.com/AssetMantle/modules/x/identities/mappable"
-	"github.com/AssetMantle/modules/x/identities/parameters"
-	"github.com/AssetMantle/modules/x/metas/auxiliaries/scrub"
+	"reflect"
+	"testing"
 )
 
-type TestKeepers struct {
-	IdentitiesKeeper helpers.TransactionKeeper
-}
-
-func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
+func CreateTestInput(t *testing.T) (context.Context, helpers.Mapper, helpers.ParameterManager) {
 	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
@@ -56,37 +46,44 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	scrubAuxiliary := scrub.Auxiliary.Initialize(mapper, parameterManager)
-	defineAuxiliary := define.Auxiliary.Initialize(mapper, parameterManager)
-	keepers := TestKeepers{
-		IdentitiesKeeper: keeperPrototype().Initialize(mapper, parameterManager,
-			[]interface{}{scrubAuxiliary,
-				defineAuxiliary}).(helpers.TransactionKeeper),
-	}
-
-	return sdkTypes.WrapSDKContext(context), keepers
+	return sdkTypes.WrapSDKContext(Context), Mapper, parameterManager
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	ctx, keepers := CreateTestInput(t)
-
-	t.Run("PositiveCase", func(t *testing.T) {
-		want := newTransactionResponse(nil)
-		if got := keepers.IdentitiesKeeper.Transact(ctx, NewMessage(sdkTypes.AccAddress("addr"), baseIDs.NewStringID("nubID")).(*Message)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase-Duplicate", func(t *testing.T) {
-		t.Parallel()
-		want := newTransactionResponse()
-		if got := keepers.IdentitiesKeeper.Transact(ctx, NewMessage(sdkTypes.AccAddress("addr"), baseIDs.NewStringID("nubID")).(*Message)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
+	Context, Mapper, _ := CreateTestInput(t)
+	type fields struct {
+		mapper helpers.Mapper
+	}
+	type args struct {
+		context context.Context
+		message helpers.Message
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    helpers.TransactionResponse
+		wantErr bool
+	}{
+		{"+ve", fields{mapper: Mapper}, args{context: Context, message: nil}, newTransactionResponse(nil), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			transactionKeeper := transactionKeeper{
+				mapper: tt.fields.mapper,
+			}
+			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Transact() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

@@ -4,9 +4,17 @@
 package mint
 
 import (
-	"reflect"
-	"testing"
-
+	"context"
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/assets/mapper"
+	"github.com/AssetMantle/modules/x/assets/parameters"
+	"github.com/AssetMantle/modules/x/assets/record"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -21,23 +29,16 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/assets/key"
-	"github.com/AssetMantle/modules/x/assets/mappable"
-	"github.com/AssetMantle/modules/x/assets/parameters"
-	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
-	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
+	"reflect"
+	"testing"
 )
 
 var (
-	conformAuxiliary      helpers.Auxiliary
-	mintAuxiliary         helpers.Auxiliary
 	authenticateAuxiliary helpers.Auxiliary
 	authorizeAuxiliary    helpers.Auxiliary
+	bondAuxiliary         helpers.Auxiliary
+	conformAuxiliary      helpers.Auxiliary
+	mintAuxiliary         helpers.Auxiliary
 )
 
 type TestKeepers struct {
@@ -50,7 +51,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
@@ -69,20 +70,21 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	mintAuxiliary = mint.Auxiliary.Initialize(Mapper, parameterManager)
-	conformAuxiliary = conform.Auxiliary.Initialize(Mapper, parameterManager)
 	authorizeAuxiliary = authorize.Auxiliary.Initialize(Mapper, parameterManager)
 	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
+	bondAuxiliary = bond.Auxiliary.Initialize(Mapper, parameterManager)
+	conformAuxiliary = conform.Auxiliary.Initialize(Mapper, parameterManager)
+	mintAuxiliary = mint.Auxiliary.Initialize(Mapper, parameterManager)
 
 	keepers := TestKeepers{
 		MintKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.TransactionKeeper),
 	}
 
-	return context, keepers, Mapper, parameterManager
+	return Context, keepers, Mapper, parameterManager
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -142,7 +144,7 @@ func Test_keeperPrototype(t *testing.T) {
 // }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	context, keepers, mapper, parameterManager := createTestInput(t)
+	Context, keepers, Mapper, parameterManager := createTestInput(t)
 	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 	immutables := baseQualified.NewImmutables(immutableMetaProperties)
@@ -155,41 +157,49 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 	fromID := baseIDs.NewIdentityID(classificationID, immutables)
-	keepers.MintKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(testAsset))
+	keepers.MintKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(testAsset))
 
 	type fields struct {
 		mapper                helpers.Mapper
 		parameterManager      helpers.ParameterManager
-		conformAuxiliary      helpers.Auxiliary
-		mintAuxiliary         helpers.Auxiliary
 		authenticateAuxiliary helpers.Auxiliary
 		authorizeAuxiliary    helpers.Auxiliary
+		bondAuxiliary         helpers.Auxiliary
+		conformAuxiliary      helpers.Auxiliary
+		mintAuxiliary         helpers.Auxiliary
 	}
 	type args struct {
-		context sdkTypes.Context
-		msg     helpers.Message
+		context context.Context
+		message helpers.Message
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.TransactionResponse
+		name    string
+		fields  fields
+		args    args
+		want    helpers.TransactionResponse
+		wantErr bool
 	}{
-		{"+ve", fields{mapper, parameterManager, conformAuxiliary, mintAuxiliary, authenticateAuxiliary, authorizeAuxiliary}, args{context, NewMessage(fromAccAddress, fromID, fromID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
-		{"+ve Entity Already Exists", fields{mapper, parameterManager, conformAuxiliary, mintAuxiliary, authenticateAuxiliary, authorizeAuxiliary}, args{context, NewMessage(fromAccAddress, fromID, fromID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil)},
+		{"+ve", fields{Mapper, parameterManager, authenticateAuxiliary, authorizeAuxiliary, bondAuxiliary, conformAuxiliary, mintAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, fromID, fromID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil), false},
+		{"+ve Entity Already Exists", fields{Mapper, parameterManager, authenticateAuxiliary, authorizeAuxiliary, bondAuxiliary, conformAuxiliary, mintAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, fromID, fromID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
 				parameterManager:      tt.fields.parameterManager,
-				conformAuxiliary:      tt.fields.conformAuxiliary,
-				mintAuxiliary:         tt.fields.mintAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 				authorizeAuxiliary:    tt.fields.authorizeAuxiliary,
+				bondAuxiliary:         tt.fields.bondAuxiliary,
+				conformAuxiliary:      tt.fields.conformAuxiliary,
+				mintAuxiliary:         tt.fields.mintAuxiliary,
 			}
-			if got := transactionKeeper.Transact(sdkTypes.WrapSDKContext(context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() = %v, want %v", got, tt.want)
+			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Transact() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
