@@ -6,11 +6,11 @@ package unwrap
 import (
 	"encoding/json"
 	"fmt"
-	"math/big"
-	"reflect"
-	"testing"
-
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -21,10 +21,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
+	"reflect"
+	"testing"
 )
 
 var (
@@ -35,26 +33,29 @@ var (
 	mutables          = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
 	classificationID  = baseIDs.NewClassificationID(immutables, mutables)
 	fromID            = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
-	coins             = types.NewCoins(types.NewCoin("stake", types.NewInt(100)))
+	coinAsset         = baseDocuments.NewCoinAsset("stake")
+	testRate          = types.NewInt(100)
+	assetID           = coinAsset.GetCoinAssetID().(*baseIDs.AssetID)
+	coin              = types.NewCoin(coinAsset.GetDenom(), testRate)
+	coins             = types.NewCoins(coin)
 )
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
 		baseReq rest.BaseReq
 		fromID  string
-		assetID string
-		value   string
+		Coins   string
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, transactionRequest{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}},
+		{"+ve", args{testBaseRequest, fromID.AsString(), coins.String()}, transactionRequest{testBaseRequest, fromID.AsString(), coins.String()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.assetID, tt.args.value); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.Coins); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -86,8 +87,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	type fields struct {
 		BaseReq rest.BaseReq
 		FromID  string
-		AssetID string
-		Value   string
+		Coins   string
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -100,15 +100,14 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, args{cliCommand, base.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), coins.String()}, args{cliCommand, base.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), coins.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
 				BaseReq: tt.fields.BaseReq,
 				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
-				Value:   tt.fields.Value,
+				Coins:   tt.fields.Coins,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -123,13 +122,12 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()))
+	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, fromID.AsString(), coins.String()))
 	require.NoError(t, err)
 	type fields struct {
 		BaseReq rest.BaseReq
 		FromID  string
-		AssetID string
-		Value   string
+		Coins   string
 	}
 	type args struct {
 		rawMessage json.RawMessage
@@ -141,15 +139,14 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, fromID.AsString(), assetID.AsString(), big.NewInt(1).String()), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), coins.String()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, fromID.AsString(), coins.String()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
 				BaseReq: tt.fields.BaseReq,
 				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
-				Value:   tt.fields.Value,
+				Coins:   tt.fields.Coins,
 			}
 			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
 			if (err != nil) != tt.wantErr {
@@ -167,23 +164,21 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
 		BaseReq rest.BaseReq
 		FromID  string
-		AssetID string
-		Value   string
+		Coins   string
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   rest.BaseReq
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, testBaseRequest},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), coins.String()}, testBaseRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
 				BaseReq: tt.fields.BaseReq,
 				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
-				Value:   tt.fields.Value,
+				Coins:   tt.fields.Coins,
 			}
 			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
@@ -196,8 +191,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
 		BaseReq rest.BaseReq
 		FromID  string
-		AssetID string
-		Value   string
+		Coins   string
 	}
 	tests := []struct {
 		name    string
@@ -205,15 +199,14 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, NewMessage(fromAccAddress, fromID, assetID, testRate), false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), coins.String()}, NewMessage(fromAccAddress, fromID, coins), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
 				BaseReq: tt.fields.BaseReq,
 				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
-				Value:   tt.fields.Value,
+				Coins:   tt.fields.Coins,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -231,8 +224,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
 		BaseReq rest.BaseReq
 		FromID  string
-		AssetID string
-		Value   string
+		Coins   string
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -242,15 +234,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), coins.String()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := transactionRequest{
 				BaseReq: tt.fields.BaseReq,
 				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
-				Value:   tt.fields.Value,
+				Coins:   tt.fields.Coins,
 			}
 			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -261,23 +252,21 @@ func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
 		BaseReq rest.BaseReq
 		FromID  string
-		AssetID string
-		Value   string
+		Coins   string
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), assetID.AsString(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), coins.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
 				BaseReq: tt.fields.BaseReq,
 				FromID:  tt.fields.FromID,
-				AssetID: tt.fields.AssetID,
-				Value:   tt.fields.Value,
+				Coins:   tt.fields.Coins,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
