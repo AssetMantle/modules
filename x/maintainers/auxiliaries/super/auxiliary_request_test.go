@@ -24,7 +24,7 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 		args args
 		want helpers.AuxiliaryRequest
 	}{
-		{"+ve", args{testClassificationID, testFromID, mutables}, auxiliaryRequest{testClassificationID, testFromID, mutables}},
+		{"+ve", args{testClassificationID, testFromID, mutables}, auxiliaryRequest{testClassificationID, testFromID, mutables, []ids.StringID{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -44,7 +44,7 @@ func Test_auxiliaryRequestFromInterface(t *testing.T) {
 		args args
 		want auxiliaryRequest
 	}{
-		{"+ve", args{NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, auxiliaryRequest{testClassificationID, testFromID, mutables}},
+		{"+ve", args{NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, auxiliaryRequest{testClassificationID, testFromID, mutables, []ids.StringID{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

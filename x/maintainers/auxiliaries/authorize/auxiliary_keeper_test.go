@@ -4,7 +4,7 @@
 package authorize
 
 import (
-	"fmt"
+	"context"
 	"reflect"
 	"testing"
 
@@ -25,21 +25,21 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/maintainers/key"
-	"github.com/AssetMantle/modules/x/maintainers/mappable"
+	"github.com/AssetMantle/modules/x/maintainers/mapper"
 	"github.com/AssetMantle/modules/x/maintainers/parameters"
+	"github.com/AssetMantle/modules/x/maintainers/record"
 	"github.com/AssetMantle/modules/x/maintainers/utilities"
 )
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
-	storeKey := sdkTypes.NewKVStoreKey("test")
+	kvStoreKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(kvStoreKey)
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(kvStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
 
@@ -55,34 +55,40 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	identityID := baseIDs.NewIdentityID(classificationID, immutables)
 	permissions := utilities.SetModulePermissions(true, true, true)
 
-	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
-	Mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(baseDocuments.NewMaintainer(identityID, classificationID, baseLists.NewPropertyList(mutableProperty).GetPropertyIDList(), permissions)))
+	Mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(baseDocuments.NewMaintainer(identityID, classificationID, baseLists.NewPropertyList(mutableProperty).GetPropertyIDList(), permissions)))
 
 	type fields struct {
 		mapper helpers.Mapper
 	}
 	type args struct {
-		context sdkTypes.Context
+		context context.Context
 		request helpers.AuxiliaryRequest
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.AuxiliaryResponse
+		name    string
+		fields  fields
+		args    args
+		want    helpers.AuxiliaryResponse
+		wantErr bool
 	}{
 		// TODO: Test dependency on issue #95: https://github.com/AssetMantle/modules/issues/95
-		{"+ve", fields{Mapper}, args{context, NewAuxiliaryRequest(classificationID, identityID)}, newAuxiliaryResponse()},
+		{"+ve", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(classificationID, identityID)}, newAuxiliaryResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			auxiliaryKeeper := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := auxiliaryKeeper.Help(sdkTypes.WrapSDKContext(tt.args.context), tt.args.request); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Help() = %v, want %v", got, tt.want)
+			got, err := auxiliaryKeeper.Help(tt.args.context, tt.args.request)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Help() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -92,7 +98,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(storeKey)
 	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
@@ -130,14 +136,14 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	}{
 		// TODO: Test dependency on #96  https://github.com/AssetMantle/modules/issues/96
 		{"+ve with nil", fields{}, args{}, auxiliaryKeeper{}},
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper}}, // TODO: type & data same but doesn't match
+		{"+ve", fields{Mapper}, args{Mapper, parameterManager, nil}, auxiliaryKeeper{Mapper}}, // TODO: type & data same but doesn't match
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			au := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
+			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})

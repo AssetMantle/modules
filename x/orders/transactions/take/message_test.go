@@ -22,7 +22,7 @@ var (
 type fields struct {
 	From       string
 	FromID     *baseIDs.IdentityID
-	TakerSplit types.Dec
+	TakerSplit types.Int
 	OrderID    *baseIDs.OrderID
 }
 
@@ -35,7 +35,7 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want *Message
 	}{
-		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), testFromID, takerSplit, testOrderID}},
+		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), testFromID, takerSplit.String(), testOrderID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -76,7 +76,7 @@ func Test_message_GetSigners(t *testing.T) {
 			message := &Message{
 				From:       tt.fields.From,
 				FromID:     tt.fields.FromID,
-				TakerSplit: tt.fields.TakerSplit,
+				TakerSplit: tt.fields.TakerSplit.String(),
 				OrderID:    tt.fields.OrderID,
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
@@ -103,7 +103,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 			me := &Message{
 				From:       tt.fields.From,
 				FromID:     tt.fields.FromID,
-				TakerSplit: tt.fields.TakerSplit,
+				TakerSplit: tt.fields.TakerSplit.String(),
 				OrderID:    tt.fields.OrderID,
 			}
 			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
@@ -125,7 +125,7 @@ func Test_message_Type(t *testing.T) {
 			message := &Message{
 				From:       tt.fields.From,
 				FromID:     tt.fields.FromID,
-				TakerSplit: tt.fields.TakerSplit,
+				TakerSplit: tt.fields.TakerSplit.String(),
 				OrderID:    tt.fields.OrderID,
 			}
 			if got := message.Type(); got != tt.want {
@@ -150,7 +150,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 			message := &Message{
 				From:       tt.fields.From,
 				FromID:     tt.fields.FromID,
-				TakerSplit: tt.fields.TakerSplit,
+				TakerSplit: tt.fields.TakerSplit.String(),
 				OrderID:    tt.fields.OrderID,
 			}
 			defer func() {
@@ -171,7 +171,7 @@ func Test_NewMessage(t *testing.T) {
 	type args struct {
 		from       types.AccAddress
 		fromID     ids.IdentityID
-		takerSplit types.Dec
+		takerSplit types.Int
 		orderID    ids.OrderID
 	}
 	tests := []struct {
@@ -179,7 +179,7 @@ func Test_NewMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		{"+ve", args{fromAccAddress, testFromID, takerSplit, testOrderID}, &Message{fromAccAddress.String(), testFromID, takerSplit, testOrderID}},
+		{"+ve", args{fromAccAddress, testFromID, takerSplit, testOrderID}, &Message{fromAccAddress.String(), testFromID, takerSplit.String(), testOrderID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

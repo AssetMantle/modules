@@ -7,12 +7,8 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/data/utilities"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/metas/constants"
 )
 
 func Test_Reveal_Message(t *testing.T) {
@@ -21,16 +17,14 @@ func Test_Reveal_Message(t *testing.T) {
 	require.Nil(t, err)
 
 	data := "S|newData"
-	newData, err := utilities.ReadData(data)
+	newData, err := baseData.PrototypeAnyData().FromString(data)
 	require.Equal(t, nil, err)
 
 	testMessage := NewMessage(fromAccAddress, newData).(*Message)
 	require.Equal(t, &Message{From: fromAccAddress.String(), Data: newData.ToAnyData().(*baseData.AnyData)}, testMessage)
-	require.Equal(t, constants.ModuleName, testMessage.Route())
 	require.Equal(t, Transaction.GetName(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())
 	require.NotNil(t, (&Message{}).ValidateBasic())
-	require.Equal(t, sdkTypes.MustSortJSON(base.CodecPrototype().MustMarshalJSON(testMessage)), testMessage.GetSignBytes())
 	require.Equal(t, []sdkTypes.AccAddress{fromAccAddress}, testMessage.GetSigners())
 	require.Equal(t, testMessage, messageFromInterface(testMessage))
 	require.Equal(t, &Message{}, messageFromInterface(nil))

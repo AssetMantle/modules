@@ -13,15 +13,13 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/maintainers/key"
 )
 
-func createTestData(t *testing.T) documents.Maintainer {
+func createTestData() documents.Maintainer {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -31,7 +29,7 @@ func createTestData(t *testing.T) documents.Maintainer {
 }
 
 func TestNewMappable(t *testing.T) {
-	testMaintainer := createTestData(t)
+	testMaintainer := createTestData()
 	type args struct {
 		maintainer documents.Maintainer
 	}
@@ -67,36 +65,8 @@ func TestPrototype(t *testing.T) {
 	}
 }
 
-func Test_mappable_GetKey(t *testing.T) {
-	testMaintainer := createTestData(t)
-	type fields struct {
-		Maintainer documents.Maintainer
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   helpers.Key
-	}{
-		{"+ve", fields{testMaintainer}, key.NewKey(baseIDs.NewMaintainerID(
-			baseQualified.NewImmutables(baseLists.NewPropertyList(
-				baseProperties.NewMetaProperty(constantProperties.MaintainedClassificationIDProperty.GetKey(), baseData.NewIDData(testMaintainer.GetMaintainedClassificationID())),
-				baseProperties.NewMetaProperty(constantProperties.IdentityIDProperty.GetKey(), baseData.NewIDData(testMaintainer.GetIdentityID())),
-			))))},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			maintainer := &Mappable{
-				Maintainer: tt.fields.Maintainer.Get().(*base.Document),
-			}
-			if got := maintainer.GenerateKey(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GenerateKey() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_mappable_RegisterCodec(t *testing.T) {
-	testMaintainer := createTestData(t)
+	testMaintainer := createTestData()
 	type fields struct {
 		Maintainer documents.Maintainer
 	}

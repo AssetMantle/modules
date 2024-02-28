@@ -30,7 +30,7 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want *Message
 	}{
-		{"+ve", args{NewMessage(fromAccAddress, fromID, testRate).(*Message)}, &Message{fromAccAddress.String(), fromID, testRate}},
+		{"+ve", args{NewMessage(fromAccAddress, fromID, coins).(*Message)}, &Message{fromAccAddress.String(), fromID, coins}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -64,7 +64,7 @@ func Test_message_GetSigners(t *testing.T) {
 		fields fields
 		want   []types.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, testRate}, []types.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), fromID, coins}, []types.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -90,7 +90,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, testRate}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), fromID, coins}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -111,7 +111,7 @@ func Test_message_Type(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, testRate}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), fromID, coins}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -134,7 +134,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, testRate}, false},
+		{"+ve", fields{fromAccAddress.String(), fromID, coins}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -161,7 +161,7 @@ func Test_NewMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		{"+ve", args{fromAccAddress, fromID, testRate}, &Message{fromAccAddress.String(), fromID, testRate}},
+		{"+ve", args{fromAccAddress, fromID, coins}, &Message{fromAccAddress.String(), fromID, coins}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

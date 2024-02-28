@@ -7,29 +7,17 @@ import (
 	"reflect"
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/AssetMantle/schema/go/types"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/key"
 )
 
 var (
-	immutables          = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables            = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID    = baseIDs.NewClassificationID(immutables, mutables)
-	testOwnerIdentityID = baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID         = baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("ownerid"))
-	splitID             = baseIDs.NewSplitID(testOwnerIdentityID, testAssetID)
-	testRate            = sdkTypes.NewInt(1)
-	split               = baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate).(*baseTypes.Split)
+	testRate = sdkTypes.NewInt(1)
+	split    = baseTypes.NewSplit(testRate).(*baseTypes.Split)
 )
 
 func TestNewMappable(t *testing.T) {
@@ -63,29 +51,6 @@ func TestPrototype(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Prototype() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_mappable_GetKey(t *testing.T) {
-	type fields struct {
-		Split *baseTypes.Split
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   helpers.Key
-	}{
-		{"+ve", fields{split}, key.NewKey(splitID)},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mappable := &Mappable{
-				Split: tt.fields.Split,
-			}
-			if got := mappable.GenerateKey(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GenerateKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

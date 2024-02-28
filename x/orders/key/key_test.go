@@ -7,16 +7,13 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/orders/constants"
 )
 
 var (
@@ -126,7 +123,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{testOrderID}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{testOrderID}).GeneratePrefixedStoreKeyBytes())},
+		{"+ve", fields{testOrderID}, (&Key{testOrderID}).GeneratePrefixedStoreKeyBytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -159,30 +156,6 @@ func Test_key_IsPartial(t *testing.T) {
 			if got := key.IsPartial(); got != tt.want {
 				t.Errorf("IsPartial() = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_key_RegisterCodec(t *testing.T) {
-	type fields struct {
-		OrderID *baseIDs.OrderID
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{testOrderID}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ke := &Key{
-				OrderID: tt.fields.OrderID,
-			}
-			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

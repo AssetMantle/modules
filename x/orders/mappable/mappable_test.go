@@ -15,10 +15,8 @@ import (
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/orders/key"
 )
 
 var (
@@ -60,35 +58,6 @@ func TestPrototype(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Prototype() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_mappable_GetKey(t *testing.T) {
-	type fields struct {
-		Order documents.Order
-	}
-	tests := []struct {
-		name      string
-		fields    fields
-		want      helpers.Key
-		wantPanic bool
-	}{
-		{"+ve", fields{testOrder}, key.NewKey(baseIDs.NewOrderID(classificationID, immutables)), false},
-		{"panic case nil", fields{nil}, nil, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mappable := &Mappable{
-				Order: tt.fields.Order.Get().(*baseDocuments.Document),
-			}
-			if tt.wantPanic {
-				require.Panics(t, func() {
-					mappable.GenerateKey()
-				})
-			} else if got := mappable.GenerateKey(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GenerateKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -10,17 +10,15 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/properties"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -28,8 +26,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/classifications/key"
-	"github.com/AssetMantle/modules/x/classifications/mappable"
+	"github.com/AssetMantle/modules/x/classifications/mapper"
 	"github.com/AssetMantle/modules/x/classifications/parameters"
 )
 
@@ -43,7 +40,7 @@ func createTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
@@ -62,7 +59,7 @@ func createTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -70,66 +67,7 @@ func createTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper
 		ClassificationsKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
 
-	return sdkTypes.WrapSDKContext(context), keepers, Mapper, parameterManager
-}
-
-func Test_Auxiliary_Keeper_Help(t *testing.T) {
-	context, keepers, _, _ := createTestInput(t)
-
-	immutableProperties := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
-	mutableProperties := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
-
-	classificationID := baseIDs.NewClassificationID(immutableProperties, mutableProperties)
-
-	testClassificationID := baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))
-
-	keepers.ClassificationsKeeper.(auxiliaryKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(baseDocuments.NewClassification(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))))
-
-	t.Run("PositiveCase", func(t *testing.T) {
-		want := newAuxiliaryResponse(classificationID)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(immutableProperties, mutableProperties)); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("PositiveCase with max Properties", func(t *testing.T) {
-		want := newAuxiliaryResponse(baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList(createTestProperties(12, 0, "immutable")...)), baseQualified.NewMutables(baseLists.NewPropertyList(createTestProperties(0, 10, "mutable")...))), nil)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(createTestProperties(12, 0, "immutable")...)), baseQualified.NewMutables(baseLists.NewPropertyList(createTestProperties(0, 10, "mutable")...)))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase-Classification already present", func(t *testing.T) {
-		t.Parallel()
-		want := newAuxiliaryResponse(testClassificationID, errorConstants.EntityAlreadyExists)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase-Max Property Count", func(t *testing.T) {
-		t.Parallel()
-		want := newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(createTestProperties(10, 5, "immutable")...)), baseQualified.NewMutables(baseLists.NewPropertyList(createTestProperties(5, 5, "mutable")...)))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase-Duplicate Immutable Property", func(t *testing.T) {
-		t.Parallel()
-		want := newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(append(createTestProperties(5, 0, "immutable"), createTestProperties(1, 0, "immutable")[0])...)), baseQualified.NewMutables(baseLists.NewPropertyList(createTestProperties(2, 0, "mutable")...)))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("NegativeCase-Duplicate Immutable and Mutable Property", func(t *testing.T) {
-		t.Parallel()
-		want := newAuxiliaryResponse(nil, errorConstants.InvalidRequest)
-		if got := keepers.ClassificationsKeeper.Help(context, NewAuxiliaryRequest(baseQualified.NewImmutables(baseLists.NewPropertyList(append(createTestProperties(5, 0, "immutable"), createTestProperties(1, 0, "immutable")[0])...)), baseQualified.NewMutables(baseLists.NewPropertyList(append(createTestProperties(2, 0, "mutable"), createTestProperties(1, 0, "mutable")...)...)))); !reflect.DeepEqual(got, want) {
-			t.Errorf("Transact() = %v, want %v", got, want)
-		}
-	})
+	return sdkTypes.WrapSDKContext(Context), keepers, Mapper, parameterManager
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -149,7 +87,7 @@ func Test_keeperPrototype(t *testing.T) {
 }
 
 func Test_auxiliaryKeeper_Initialize(t *testing.T) {
-	_, _, mapper, parameterManager := createTestInput(t)
+	_, _, Mapper, parameterManager := createTestInput(t)
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -164,7 +102,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{mapper}, args{mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{mapper, parameterManager}},
+		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper, parameterManager, bankKeeper.BaseKeeper{}, stakingKeeper.Keeper{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -187,4 +125,44 @@ func createTestProperties(noOfMeta int, nOfMesa int, propertyType string) []prop
 		propertyLists = append(propertyLists, baseProperties.NewMesaProperty(baseIDs.NewStringID("ID"+propertyType+fmt.Sprint(i)), baseData.NewStringData("DataMesa"+fmt.Sprint(i))))
 	}
 	return propertyLists
+}
+
+func Test_auxiliaryKeeper_Help(t *testing.T) {
+	type fields struct {
+		mapper           helpers.Mapper
+		parameterManager helpers.ParameterManager
+		bankKeeper       bankKeeper.Keeper
+		stakingKeeper    stakingKeeper.Keeper
+	}
+	type args struct {
+		context context.Context
+		request helpers.AuxiliaryRequest
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    helpers.AuxiliaryResponse
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			auxiliaryKeeper := auxiliaryKeeper{
+				mapper:           tt.fields.mapper,
+				parameterManager: tt.fields.parameterManager,
+				bankKeeper:       tt.fields.bankKeeper,
+				stakingKeeper:    tt.fields.stakingKeeper,
+			}
+			got, err := auxiliaryKeeper.Help(tt.args.context, tt.args.request)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Help() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

@@ -7,16 +7,13 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/constants"
 )
 
 func createTestInput() *baseIDs.ClassificationID {
@@ -103,7 +100,7 @@ func Test_key_Equals(t *testing.T) {
 		want   bool
 	}{
 		{"+ve", fields{createTestInput()}, args{&Key{createTestInput()}}, true},
-		{"+ve", fields{createTestInput()}, args{KeyPrototype()}, false},
+		{"+ve", fields{createTestInput()}, args{Prototype()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -126,7 +123,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{createTestInput()}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{createTestInput()}).GeneratePrefixedStoreKeyBytes())},
+		{"+ve", fields{createTestInput()}, (&Key{createTestInput()}).GeneratePrefixedStoreKeyBytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -160,30 +157,6 @@ func Test_key_IsPartial(t *testing.T) {
 			if got := key.IsPartial(); got != tt.want {
 				t.Errorf("IsPartial() = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_key_RegisterCodec(t *testing.T) {
-	type fields struct {
-		ClassificationID *baseIDs.ClassificationID
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{createTestInput()}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ke := &Key{
-				ClassificationID: tt.fields.ClassificationID,
-			}
-			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

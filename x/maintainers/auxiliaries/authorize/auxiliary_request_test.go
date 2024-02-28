@@ -30,13 +30,14 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 	type args struct {
 		maintainedClassificationID ids.ClassificationID
 		maintainedIdentityID       ids.IdentityID
+		permissionIDs              []ids.StringID
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.AuxiliaryRequest
 	}{
-		{"+ve", args{classificationID, identityID}, auxiliaryRequest{classificationID, identityID}},
+		{"+ve", args{classificationID, identityID, []ids.StringID{}}, auxiliaryRequest{classificationID, identityID, []ids.StringID{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -56,7 +57,7 @@ func Test_auxiliaryRequestFromInterface(t *testing.T) {
 		args args
 		want auxiliaryRequest
 	}{
-		{"+ve", args{NewAuxiliaryRequest(classificationID, identityID)}, auxiliaryRequest{classificationID, identityID}},
+		{"+ve", args{NewAuxiliaryRequest(classificationID, identityID)}, auxiliaryRequest{classificationID, identityID, []ids.StringID{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

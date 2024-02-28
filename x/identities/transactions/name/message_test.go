@@ -41,7 +41,7 @@ func Test_messageFromInterface(t *testing.T) {
 		args args
 		want *Message
 	}{
-		{"+ve", args{&Message{From: fromAccAddress.String(), NubID: testNubID}}, &Message{From: fromAccAddress.String(), NubID: testNubID}},
+		{"+ve", args{&Message{fromAccAddress.String(), testNubID}}, &Message{fromAccAddress.String(), testNubID}},
 		{"+ve", args{nil}, &Message{}},
 	}
 	for _, tt := range tests {
@@ -82,8 +82,8 @@ func Test_message_GetSigners(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:  tt.fields.From,
-				NubID: tt.fields.NubID,
+				tt.fields.From,
+				tt.fields.NubID,
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
@@ -108,8 +108,8 @@ func Test_message_RegisterCodec(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			me := &Message{
-				From:  tt.fields.From,
-				NubID: tt.fields.NubID,
+				tt.fields.From,
+				tt.fields.NubID,
 			}
 			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -129,8 +129,8 @@ func Test_message_Type(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:  tt.fields.From,
-				NubID: tt.fields.NubID,
+				tt.fields.From,
+				tt.fields.NubID,
 			}
 			if got := message.Type(); got != tt.want {
 				t.Errorf("Type() = %v, want %v", got, tt.want)
@@ -153,8 +153,8 @@ func Test_message_ValidateBasic(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
-				From:  tt.fields.From,
-				NubID: tt.fields.NubID,
+				tt.fields.From,
+				tt.fields.NubID,
 			}
 			if err := message.ValidateBasic(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
@@ -167,7 +167,7 @@ func Test_NewMessage(t *testing.T) {
 	testNubID, _, fromAccAddress := createTestInput(t)
 	type args struct {
 		from  sdkTypes.AccAddress
-		nubID ids.ID
+		nubID ids.StringID
 	}
 	tests := []struct {
 		name string

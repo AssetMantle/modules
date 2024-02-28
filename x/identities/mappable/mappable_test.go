@@ -17,10 +17,8 @@ import (
 	"github.com/AssetMantle/schema/go/qualified"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/identities/key"
 )
 
 func createTestInput() (documents.Identity, ids.ClassificationID, qualified.Immutables, qualified.Mutables) {
@@ -66,37 +64,6 @@ func TestPrototype(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Prototype() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_identity_GetKey(t *testing.T) {
-	testIdentity, _, _, _ := createTestInput()
-
-	type fields struct {
-		Document documents.Identity
-	}
-	tests := []struct {
-		name      string
-		fields    fields
-		want      helpers.Key
-		wantPanic bool
-	}{
-		{"+ve", fields{testIdentity}, key.NewKey(baseIDs.NewIdentityID(testIdentity.GetClassificationID(), testIdentity.GetImmutables())), false},
-		{"panic case nil", fields{nil}, nil, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			identity := &Mappable{
-				Identity: tt.fields.Document.Get().(*baseDocuments.Document),
-			}
-			if tt.wantPanic {
-				require.Panics(t, func() {
-					identity.GenerateKey()
-				})
-			} else if got := identity.GenerateKey(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GenerateKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

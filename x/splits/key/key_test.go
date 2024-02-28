@@ -4,19 +4,17 @@
 package key
 
 import (
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/constants"
 )
 
 var (
@@ -24,8 +22,8 @@ var (
 	mutables            = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID    = baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID = baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID         = baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("ownerid"))
-	splitID             = baseIDs.NewSplitID(testOwnerIdentityID, testAssetID).(*baseIDs.SplitID)
+	testAssetID         = baseDocuments.NewCoinAsset("ownerID").GetCoinAssetID().(*baseIDs.AssetID)
+	splitID             = baseIDs.NewSplitID(testAssetID, testOwnerIdentityID).(*baseIDs.SplitID)
 )
 
 func TestNewKey(t *testing.T) {
@@ -129,8 +127,8 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{splitID}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{splitID}).GeneratePrefixedStoreKeyBytes())},
-		{"+ve", fields{baseIDs.PrototypeSplitID()}, constants.ModuleStoreKeyPrefix.GenerateStoreKey((&Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}).GeneratePrefixedStoreKeyBytes())},
+		{"+ve", fields{splitID}, (&Key{splitID}).GeneratePrefixedStoreKeyBytes()},
+		{"+ve", fields{baseIDs.PrototypeSplitID()}, (&Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}).GeneratePrefixedStoreKeyBytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -164,30 +162,6 @@ func Test_key_IsPartial(t *testing.T) {
 			if got := key.IsPartial(); got != tt.want {
 				t.Errorf("IsPartial() = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_key_RegisterCodec(t *testing.T) {
-	type fields struct {
-		SplitID ids.SplitID
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{splitID}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ke := &Key{
-				SplitID: tt.fields.SplitID.(*baseIDs.SplitID),
-			}
-			ke.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

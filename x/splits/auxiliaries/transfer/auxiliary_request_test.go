@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -23,7 +24,7 @@ func createTestInput1() (ids.IdentityID, ids.AssetID, types.Int) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID()
 	testValue := types.OneInt()
 	return testOwnerID, testAssetID, testValue
 }

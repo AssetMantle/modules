@@ -32,9 +32,9 @@ func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, clie
 
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
-	mutableMetaProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
+	mutableMetaProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	mutableProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
+	mutableProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

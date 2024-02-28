@@ -27,9 +27,8 @@ type fields struct {
 	ToID                 *baseIDs.IdentityID
 	ClassificationID     *baseIDs.ClassificationID
 	MaintainedProperties *baseLists.PropertyList
-	CanMintAsset         bool `json:"canMintAsset"`
-	CanBurnAsset         bool `json:"canBurnAsset"`
-	CanRenumerateAsset   bool `json:"canRenumerateAsset"`
+	CanIssueIdentity     bool `json:"canIssueIdentity"`
+	CanQuashIdentity     bool `json:"canQuashIdentity"`
 	CanAddMaintainer     bool `json:"canAddMaintainer"`
 	CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
 	CanMutateMaintainer  bool `json:"canMutateMaintainer"`
@@ -46,7 +45,7 @@ func createTestInput(t *testing.T) (*baseIDs.IdentityID, *baseIDs.IdentityID, *b
 	require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(maintainedProperty)
+	maintainedProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(maintainedProperty)
 	return testFromID.(*baseIDs.IdentityID), testToID.(*baseIDs.IdentityID), testClassificationID.(*baseIDs.ClassificationID), fromAccAddress, maintainedProperties.(*baseLists.PropertyList)
 }
 
@@ -61,7 +60,7 @@ func Test_messageFromInterface(t *testing.T) {
 		want *Message
 	}{
 
-		{"+ve", args{&Message{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}}, &Message{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}},
+		{"+ve", args{&Message{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false}}, &Message{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -98,7 +97,7 @@ func Test_message_GetSigners(t *testing.T) {
 		want   []sdkTypes.AccAddress
 	}{
 
-		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, []sdkTypes.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false}, []sdkTypes.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -131,7 +130,7 @@ func Test_message_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -159,7 +158,7 @@ func Test_message_Type(t *testing.T) {
 		want   string
 	}{
 
-		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false}, Transaction.GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -169,9 +168,8 @@ func Test_message_Type(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMintAsset:         tt.fields.CanMintAsset,
-				CanBurnAsset:         tt.fields.CanBurnAsset,
-				CanRenumerateAsset:   tt.fields.CanRenumerateAsset,
+				CanIssueIdentity:     tt.fields.CanIssueIdentity,
+				CanQuashIdentity:     tt.fields.CanQuashIdentity,
 				CanAddMaintainer:     tt.fields.CanAddMaintainer,
 				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
 				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
@@ -192,7 +190,7 @@ func Test_message_ValidateBasic(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, false},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -202,9 +200,8 @@ func Test_message_ValidateBasic(t *testing.T) {
 				ToID:                 tt.fields.ToID,
 				ClassificationID:     tt.fields.ClassificationID,
 				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMintAsset:         tt.fields.CanMintAsset,
-				CanBurnAsset:         tt.fields.CanBurnAsset,
-				CanRenumerateAsset:   tt.fields.CanRenumerateAsset,
+				CanIssueIdentity:     tt.fields.CanIssueIdentity,
+				CanQuashIdentity:     tt.fields.CanQuashIdentity,
 				CanAddMaintainer:     tt.fields.CanAddMaintainer,
 				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
 				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
@@ -224,9 +221,8 @@ func Test_NewMessage(t *testing.T) {
 		toID                 ids.IdentityID
 		classificationID     ids.ClassificationID
 		maintainedProperties lists.PropertyList
-		CanMintAsset         bool `json:"canMintAsset"`
-		CanBurnAsset         bool `json:"canBurnAsset"`
-		CanRenumerateAsset   bool `json:"canRenumerateAsset"`
+		CanIssueIdentity     bool `json:"canIssueIdentity"`
+		CanQuashIdentity     bool `json:"canQuashIdentity"`
 		CanAddMaintainer     bool `json:"canAddMaintainer"`
 		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
 		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
@@ -236,11 +232,11 @@ func Test_NewMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve", args{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}, &Message{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false, false}},
+		{"+ve", args{fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false}, &Message{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, false, false, false, false, false}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.toID, tt.args.classificationID, tt.args.maintainedProperties, tt.args.CanMintAsset, tt.args.CanBurnAsset, tt.args.CanRenumerateAsset, tt.args.CanAddMaintainer, tt.args.CanRemoveMaintainer, tt.args.CanMutateMaintainer); !reflect.DeepEqual(got, tt.want) {
+			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.toID, tt.args.classificationID, tt.args.maintainedProperties, tt.args.CanIssueIdentity, tt.args.CanQuashIdentity, tt.args.CanAddMaintainer, tt.args.CanRemoveMaintainer, tt.args.CanMutateMaintainer); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
 			}
 		})
