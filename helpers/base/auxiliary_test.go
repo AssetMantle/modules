@@ -4,129 +4,162 @@
 package base
 
 import (
-	"reflect"
+	"github.com/stretchr/testify/assert"
+	"golang.org/x/net/context"
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
 )
 
+func TestGetName(t *testing.T) {
+
+	tests := []struct {
+		name   string
+		input  string
+		expect string
+	}{
+		{
+			"Valid name",
+			"sampleName",
+			"sampleName",
+		},
+		{
+			"Empty name",
+			"",
+			"",
+		},
+		{
+			"Whitespace name",
+			"   ",
+			"   ",
+		},
+		{
+			"Special character in name",
+			"@#$-_=+!",
+			"@#$-_=+!",
+		},
+	}
+
+	// Create mock KeeperPrototype function
+	mockKeeperPrototype := func() helpers.AuxiliaryKeeper {
+		return nil
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			aux := NewAuxiliary(tt.input, mockKeeperPrototype)
+			if got := aux.GetName(); got != tt.expect {
+				t.Errorf("GetName() = %v, want = %v", got, tt.expect)
+			}
+		})
+	}
+}
+
+func TestGetKeeper(t *testing.T) {
+	tests := []struct {
+		name        string
+		auxiliary   auxiliary
+		expectedObj helpers.AuxiliaryKeeper
+	}{
+		{
+			name: "Normal case",
+			auxiliary: auxiliary{
+				auxiliaryKeeper: &dummyAuxiliaryKeeper{},
+				name:            "testCase1",
+			},
+			expectedObj: &dummyAuxiliaryKeeper{},
+		},
+		{
+			name: "Nil case",
+			auxiliary: auxiliary{
+				auxiliaryKeeper: nil,
+				name:            "testCase2",
+			},
+			expectedObj: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotKeeper := tt.auxiliary.GetKeeper(); gotKeeper != tt.expectedObj {
+				t.Errorf("GetKeeper() = %v, want %v", gotKeeper, tt.expectedObj)
+			}
+		})
+	}
+}
+
+func TestInitialize(t *testing.T) {
+	// Define the test cases
+	testCases := []struct {
+		name              string
+		auxiliaryName     string
+		keeperPrototype   func() helpers.AuxiliaryKeeper
+		mapper            helpers.Mapper
+		parameterManager  helpers.ParameterManager
+		auxiliaryKeepers  []interface{}
+		expectedAuxiliary helpers.Auxiliary
+	}{
+		{
+			name:             "Valid case",
+			auxiliaryName:    "TestAuxiliary",
+			keeperPrototype:  func() helpers.AuxiliaryKeeper { return nil },
+			mapper:           nil,
+			parameterManager: nil,
+			auxiliaryKeepers: []interface{}{ /*...*/ },
+			expectedAuxiliary: &auxiliary{ // Adjust as per actual implementation
+				name:            "TestAuxiliary",
+				keeperPrototype: func() helpers.AuxiliaryKeeper { return nil },
+				auxiliaryKeeper: nil,
+			},
+		},
+		// Add more test cases for all corner cases
+	}
+
+	// Run the tests
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// Define the auxiliary
+			auxiliary := NewAuxiliary(tc.auxiliaryName, tc.keeperPrototype)
+
+			// Call initialize method
+			gotAuxiliary := auxiliary.Initialize(tc.mapper, tc.parameterManager, tc.auxiliaryKeepers...)
+
+			// Assert that the returned Auxiliary is the expected one
+			assert.Equal(t, tc.expectedAuxiliary, gotAuxiliary)
+		})
+	}
+}
+
 func TestNewAuxiliary(t *testing.T) {
-	type args struct {
+	var tests = []struct {
 		name            string
 		keeperPrototype func() helpers.AuxiliaryKeeper
-	}
-	tests := []struct {
-		name string
-		args args
-		want helpers.Auxiliary
+		expectedName    string
+		keeperTest      bool
 	}{
-
-		// TODO get it verified as it's failing
-		{"+ve", args{"testAuxiliary", base.TestAuxiliaryKeeperPrototype}, auxiliary{name: "testAuxiliary", keeperPrototype: base.TestAuxiliaryKeeperPrototype}},
-		{"nil", args{"nil", nil}, auxiliary{"nil", nil, nil}},
+		{"test1", func() helpers.AuxiliaryKeeper { return nil }, "test1", false},
+		{"", func() helpers.AuxiliaryKeeper { return nil }, "", false},
+		{"test3", func() helpers.AuxiliaryKeeper { return &dummyAuxiliaryKeeper{} }, "test3", true},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewAuxiliary(tt.args.name, tt.args.keeperPrototype); !reflect.DeepEqual(got.GetName(), tt.want.GetName()) {
-				t.Errorf("NewAuxiliary() = %v, want %v", got, tt.want)
+			auxiliary := NewAuxiliary(tt.name, tt.keeperPrototype)
+			if gotName := auxiliary.GetName(); gotName != tt.expectedName {
+				t.Errorf("NewAuxiliary().GetName() = %v, expected %v", gotName, tt.expectedName)
+			}
+			if gotKeeper := auxiliary.GetKeeper(); (gotKeeper != nil) != tt.keeperTest {
+				t.Errorf("NewAuxiliary().GetKeeper() existence = %v, expected %v", gotKeeper != nil, tt.keeperTest)
 			}
 		})
 	}
 }
 
-func Test_auxiliary_GetKeeper(t *testing.T) {
-	context, _, _ := test.SetupTest(t)
-	type fields struct {
-		name            string
-		auxiliaryKeeper helpers.AuxiliaryKeeper
-		keeperPrototype func() helpers.AuxiliaryKeeper
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   helpers.AuxiliaryKeeper
-	}{
+type dummyAuxiliaryKeeper struct{}
 
-		{"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, auxiliary{name: "testAuxiliary", keeperPrototype: base.TestAuxiliaryKeeperPrototype}.auxiliaryKeeper},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			auxiliary := auxiliary{
-				name:            tt.fields.name,
-				auxiliaryKeeper: tt.fields.auxiliaryKeeper,
-				keeperPrototype: tt.fields.keeperPrototype,
-			}
-			if got := auxiliary.GetKeeper().Help(context, nil); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetKeeper() = %T, want %T", got, tt.want)
-			}
-		})
-	}
+func (d *dummyAuxiliaryKeeper) Initialize(_ helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {
+	return nil
 }
-
-func Test_auxiliary_GetName(t *testing.T) {
-	type fields struct {
-		name            string
-		auxiliaryKeeper helpers.AuxiliaryKeeper
-		keeperPrototype func() helpers.AuxiliaryKeeper
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-
-		{"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, auxiliary{name: "testAuxiliary", keeperPrototype: base.TestAuxiliaryKeeperPrototype}.name},
-		{"nil", fields{"", nil, nil}, ""},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			auxiliary := auxiliary{
-				name:            tt.fields.name,
-				auxiliaryKeeper: tt.fields.auxiliaryKeeper,
-				keeperPrototype: tt.fields.keeperPrototype,
-			}
-			if got := auxiliary.GetName(); got != tt.want {
-				t.Errorf("GetName() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_auxiliary_Initialize(t *testing.T) {
-	_, storeKey, _ := test.SetupTest(t)
-
-	Mapper := NewMapper(base.KeyPrototype, base.MappablePrototype).Initialize(storeKey)
-	Auxiliary := auxiliary{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}
-	Auxiliary.auxiliaryKeeper = Auxiliary.keeperPrototype().Initialize(Mapper, nil, nil).(helpers.AuxiliaryKeeper)
-	type fields struct {
-		name            string
-		auxiliaryKeeper helpers.AuxiliaryKeeper
-		keeperPrototype func() helpers.AuxiliaryKeeper
-	}
-	type args struct {
-		mapper           helpers.Mapper
-		parameterManager helpers.ParameterManager
-		auxiliaryKeepers []interface{}
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.Auxiliary
-	}{
-		// TODO find fix
-		// {"+ve", fields{"testAuxiliary", base.TestAuxiliaryKeeperPrototype(), base.TestAuxiliaryKeeperPrototype}, args{mapper: Mapper, parameterManager: nil, auxiliaryKeepers: nil}, Auxiliary},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			auxiliary := auxiliary{
-				name:            tt.fields.name,
-				auxiliaryKeeper: tt.fields.auxiliaryKeeper,
-				keeperPrototype: tt.fields.keeperPrototype,
-			}
-			if got := auxiliary.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.auxiliaryKeepers...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Initialize() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+func (d *dummyAuxiliaryKeeper) Help(_ context.Context, _ helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	return nil, nil
 }
