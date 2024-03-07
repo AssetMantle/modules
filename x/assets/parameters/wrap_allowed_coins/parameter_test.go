@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -26,7 +27,7 @@ func Test_validator(t *testing.T) {
 		{"+ve", args{Parameter}, false},
 		{"-ve InvalidParameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
 		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
-		{"+ve valid listData", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("wrapAllowedCoins"), baseData.NewListData(baseData.NewIDData(baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("stake"))))))}, false},
+		{"+ve valid listData", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("wrapAllowedCoins"), baseData.NewListData(baseData.NewIDData(baseDocuments.NewCoinAsset("stake").GetCoinAssetID()))))}, false},
 		{"+ve with incorrect ID", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewHeightData(base.NewHeight(0))))}, true},
 		{"-ve nil", args{}, true},
 	}

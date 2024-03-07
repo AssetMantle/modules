@@ -4,6 +4,7 @@
 package max_property_count
 
 import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
