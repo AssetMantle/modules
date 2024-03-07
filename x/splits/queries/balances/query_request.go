@@ -24,7 +24,7 @@ var _ helpers.QueryRequest = (*QueryRequest)(nil)
 // @Accept json
 // @Produce json
 // @Tags Splits
-// @Param assetID path string true "identity ID"
+// @Param identityID path string true "identity ID"
 // @Success 200 {object} queryRequest "Message for a successful query response"
 // @Failure default  {object}  queryRequest "Message for an unexpected error response."
 // @Router /balances/{identityID} [get]
