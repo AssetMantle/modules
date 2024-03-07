@@ -4,6 +4,8 @@
 package utilities
 
 import (
+	"github.com/AssetMantle/modules/x/splits/record"
+	"github.com/AssetMantle/schema/go/documents/base"
 	"reflect"
 	"testing"
 
@@ -17,7 +19,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/mappable"
 )
 
 func TestGetTotalSupply(t *testing.T) {
@@ -25,19 +26,19 @@ func TestGetTotalSupply(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := baseIDs.GenerateCoinAssetID("OwnerID")
+	testAssetID := base.NewCoinAsset("OwnerID").GetCoinAssetID()
 	testRate := types.NewInt(10)
 	split := baseTypes.NewSplit(testRate)
 	context, testMapper := createTestInput1(t)
-	testSplits := testMapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(split))
+	testSplits := testMapper.NewCollection(types.WrapSDKContext(context)).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))
 	type args struct {
 		collection helpers.Collection
-		assetID    ids.ID
+		assetID    ids.AssetID
 	}
 	tests := []struct {
 		name string
 		args args
-		want types.Dec
+		want types.Int
 	}{
 		{"+ve", args{testSplits, testAssetID}, testRate},
 	}
