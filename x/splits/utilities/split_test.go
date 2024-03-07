@@ -5,10 +5,12 @@ package utilities
 
 import (
 	"fmt"
+	"github.com/AssetMantle/modules/x/splits/record"
 	"reflect"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -23,7 +25,6 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/mappable"
 	"github.com/AssetMantle/modules/x/splits/mapper"
 )
 
@@ -54,11 +55,11 @@ func TestAddSplits(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID()
 	testRate := sdkTypes.OneInt()
-	split := baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate)
+	split := baseTypes.NewSplit(testRate)
 	context, testMapper := createTestInput1(t)
-	testSplits := testMapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
+	testSplits := testMapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))
 	type args struct {
 		splits  helpers.Collection
 		ownerID ids.IdentityID
@@ -71,7 +72,7 @@ func TestAddSplits(t *testing.T) {
 		want    helpers.Collection
 		wantErr bool
 	}{
-		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.NewInt(100)}, testSplits.Mutate(mappable.NewMappable(split.Receive(sdkTypes.NewInt(100)))), false},
+		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.NewInt(100)}, testSplits.Mutate(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split.Subtract(sdkTypes.NewInt(100)))), false},
 		{"+ve Not authorized", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.ZeroInt()}, nil, true},
 	}
 	for _, tt := range tests {
@@ -93,11 +94,11 @@ func TestSubtractSplits(t *testing.T) {
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
+	testAssetID := baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID()
 	testRate := sdkTypes.NewInt(10)
-	split := baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate)
+	split := baseTypes.NewSplit(testRate)
 	context, testMapper := createTestInput1(t)
-	testSplits := testMapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
+	testSplits := testMapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))
 	type args struct {
 		splits  helpers.Collection
 		ownerID ids.IdentityID
@@ -110,7 +111,7 @@ func TestSubtractSplits(t *testing.T) {
 		want    helpers.Collection
 		wantErr bool
 	}{
-		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.NewInt(9)}, testSplits.Mutate(mappable.NewMappable(split)), false},
+		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.NewInt(9)}, testSplits.Mutate(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split)), false},
 		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.NewInt(100)}, nil, true},
 		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.ZeroInt()}, nil, true},
 		{"+ve Entity Not found", args{testSplits, baseIDs.PrototypeIdentityID(), testAssetID, testRate}, nil, true},

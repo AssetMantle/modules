@@ -34,7 +34,6 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 			simulateRevealMsg(module),
 		),
 	}
-	return nil
 }
 
 func simulateRevealMsg(module helpers.Module) simulationTypes.Operation {

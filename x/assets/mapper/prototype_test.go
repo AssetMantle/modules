@@ -9,8 +9,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/assets/key"
-	"github.com/AssetMantle/modules/x/assets/mappable"
+	"github.com/AssetMantle/modules/x/assets/record"
 )
 
 func TestPrototype(t *testing.T) {
@@ -19,7 +18,7 @@ func TestPrototype(t *testing.T) {
 		want helpers.Mapper
 	}{
 		// TODO: it should pass, but possibly due to a bug in the code, it fails
-		{"+ve", baseHelpers.NewMapper(key.Prototype, mappable.Prototype)},
+		{"+ve", baseHelpers.NewMapper(record.Prototype)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

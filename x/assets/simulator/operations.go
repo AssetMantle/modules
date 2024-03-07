@@ -80,7 +80,6 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 			simulateWrapAndUnwrapMsg(module),
 		),
 	}
-	return nil
 }
 
 func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {

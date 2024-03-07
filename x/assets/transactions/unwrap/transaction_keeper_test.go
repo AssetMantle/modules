@@ -4,56 +4,45 @@
 package unwrap
 
 import (
+	"context"
 	"fmt"
-	"reflect"
-	"testing"
-
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/assets/mapper"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/burn"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/splits/constants"
+	"github.com/AssetMantle/modules/x/splits/parameters"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/cosmos/cosmos-sdk/x/bank"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/distribution/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/cosmos/cosmos-sdk/x/staking"
+	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/splits/constants"
-	"github.com/AssetMantle/modules/x/splits/key"
-	"github.com/AssetMantle/modules/x/splits/mappable"
-	"github.com/AssetMantle/modules/x/splits/parameters"
+	"reflect"
+	"testing"
 )
 
 var (
 	authenticateAuxiliary helpers.Auxiliary
 	delPk1                = ed25519.GenPrivKey().PubKey()
 	delAddr1              = sdkTypes.AccAddress(delPk1.Address())
-
-	// test addresses
-	TestAddrs = []sdkTypes.AccAddress{
-		delAddr1,
-	}
 )
 
-type TestKeepers struct {
-	UnwrapKeeper helpers.TransactionKeeper
-}
-
-func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager, bankKeeper.Keeper) {
+func createTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.ParameterManager, bankKeeper.Keeper, helpers.Auxiliary) {
 	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
+
+	Codec := baseHelpers.CodecPrototype()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
@@ -61,16 +50,16 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	keyDistr := sdkTypes.NewKVStoreKey(types.StoreKey)
 	keyStaking := sdkTypes.NewKVStoreKey(stakingTypes.StoreKey)
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
-	paramsKeeper := paramsKeeper.NewKeeper(
+	ParamsKeeper := paramsKeeper.NewKeeper(
 		appCodec,
 		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
 	)
-	parameterManager := parameters.Prototype().Initialize(paramsKeeper.Subspace("test"))
+	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
@@ -85,7 +74,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 
 	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
 
-	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -102,44 +91,26 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	blacklistedAddrs[distrAcc.GetAddress().String()] = true
 	blacklistedAddrs[splitAcc.GetAddress().String()] = true
 
-	accountKeeper := keeper.NewAccountKeeper(legacyAmino, keyAcc, paramsKeeper.Subspace(auth.DefaultParamspace), auth.ProtoBaseAccount)
-	bankKeeper := bankKeeper.NewBaseKeeper(accountKeeper, paramsKeeper.Subspace(bank.DefaultParamspace), blacklistedAddrs)
+	accountKeeper := keeper.NewAccountKeeper(Codec.GetProtoCodec(), keyAcc, ParamsKeeper.Subspace(authTypes.ModuleName), authTypes.ProtoBaseAccount, nil)
+	BankKeeper := bankKeeper.NewBaseKeeper(Codec.GetProtoCodec(), keyAcc, accountKeeper, ParamsKeeper.Subspace(bankTypes.ModuleName), blacklistedAddrs)
 
-	maccPerms := map[string][]string{
-		authTypes.FeeCollectorName:     nil,
-		types.ModuleName:               nil,
-		constants.ModuleName:           nil,
-		stakingTypes.NotBondedPoolName: {authTypes.Burner, authTypes.Staking},
-		stakingTypes.BondedPoolName:    {authTypes.Burner, authTypes.Staking},
-	}
-	sk := staking.NewKeeper(legacyAmino, keyStaking, supplyKeeper, paramsKeeper.Subspace(staking.DefaultParamspace))
-	sk.SetParams(context, staking.DefaultParams())
-	intToken := sdkTypes.TokensFromConsensusPower(100000000)
-	initCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(context), intToken))
-	testCoin := sdkTypes.NewCoins(sdkTypes.NewCoin("stake", intToken))
-	totalSupply := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(context), intToken.MulRaw(int64(len(TestAddrs)))))
-	supplyKeeper.SetSupply(context, NewSupply(totalSupply))
-
-	for _, addr := range TestAddrs {
-		_, err := bankKeeper.AddCoins(context, addr, initCoins)
-		require.Nil(t, err)
-	}
+	sk := stakingKeeper.NewKeeper(Codec.GetProtoCodec(), keyStaking, accountKeeper, BankKeeper, ParamsKeeper.Subspace(stakingTypes.ModuleName))
+	sk.SetParams(Context, stakingTypes.DefaultParams())
+	//intToken := sdkTypes.TokensFromConsensusPower(100000000)
+	//initCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(Context), intToken))
+	//testCoin := sdkTypes.NewCoins(sdkTypes.NewCoin("stake", intToken))
+	//totalSupply := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(Context), intToken.MulRaw(int64(len(TestAddrs)))))
 
 	// set module accounts
-	supplyKeeper.SetModuleAccount(context, feeCollectorAcc)
-	supplyKeeper.SetModuleAccount(context, notBondedPool)
-	supplyKeeper.SetModuleAccount(context, bondPool)
-	supplyKeeper.SetModuleAccount(context, distrAcc)
-	supplyKeeper.SetModuleAccount(context, splitAcc)
+	accountKeeper.SetModuleAccount(Context, feeCollectorAcc)
+	accountKeeper.SetModuleAccount(Context, notBondedPool)
+	accountKeeper.SetModuleAccount(Context, bondPool)
+	accountKeeper.SetModuleAccount(Context, distrAcc)
+	accountKeeper.SetModuleAccount(Context, splitAcc)
 
-	_, err = bankKeeper.AddCoins(context, splitAcc.GetAddress(), testCoin)
-	require.Nil(t, err)
+	burnAuxiliary := burn.Auxiliary.Initialize(Mapper, parameterManager)
 
-	keepers := TestKeepers{
-		UnwrapKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.TransactionKeeper),
-	}
-
-	return context, keepers, Mapper, parameterManager, supplyKeeper
+	return Context, Mapper, parameterManager, BankKeeper, burnAuxiliary
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -159,11 +130,11 @@ func Test_keeperPrototype(t *testing.T) {
 }
 
 func Test_transactionKeeper_Initialize(t *testing.T) {
-	_, _, Mapper, Parameters, supplyKeeper := createTestInput(t)
+	_, Mapper, Parameters, BankKeeper, burnAuxiliary := createTestInput(t)
 	type fields struct {
 		mapper                helpers.Mapper
 		parameterManager      helpers.ParameterManager
-		supplyKeeper          Keeper
+		bankKeeper            bankKeeper.Keeper
 		authenticateAuxiliary helpers.Auxiliary
 	}
 	type args struct {
@@ -177,14 +148,14 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper, Parameters, supplyKeeper, authenticateAuxiliary}, args{Mapper, Parameters, []interface{}{}}, transactionKeeper{Mapper, Parameters, supplyKeeper, authenticateAuxiliary}},
+		{"+ve", fields{Mapper, Parameters, BankKeeper, authenticateAuxiliary}, args{Mapper, Parameters, []interface{}{}}, transactionKeeper{Mapper, Parameters, BankKeeper, burnAuxiliary, authenticateAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
 				parameterManager:      tt.fields.parameterManager,
-				bankKeeper:            tt.fields.supplyKeeper,
+				bankKeeper:            tt.fields.bankKeeper,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
 			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
@@ -195,40 +166,44 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	context, keepers, Mapper, Parameters, supplyKeeper := createTestInput(t)
-	testAssetID := baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("stake"))
-	testRate2 := sdkTypes.NewDec(1)
-	split := baseTypes.NewSplit(fromID, testAssetID, testRate2)
-	keepers.UnwrapKeeper.(transactionKeeper).mapper.NewCollection(context).Add(mappable.NewMappable(split))
+	Context, Mapper, Parameters, BankKeeper, burnAuxiliary := createTestInput(t)
 
 	type fields struct {
 		mapper                helpers.Mapper
 		parameterManager      helpers.ParameterManager
-		supplyKeeper          Keeper
+		bankKeeper            bankKeeper.Keeper
+		burnAuxiliary         helpers.Auxiliary
 		authenticateAuxiliary helpers.Auxiliary
 	}
 	type args struct {
-		context sdkTypes.Context
-		msg     helpers.Message
+		context context.Context
+		message sdkTypes.Msg
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.TransactionResponse
+		name    string
+		fields  fields
+		args    args
+		want    helpers.TransactionResponse
+		wantErr bool
 	}{
-		{"+ve", fields{Mapper, Parameters, supplyKeeper, authenticateAuxiliary}, args{context, NewMessage(delAddr1, fromID, testAssetID, testRate)}, newTransactionResponse(nil)},
+		{"+ve", fields{Mapper, Parameters, BankKeeper, burnAuxiliary, authenticateAuxiliary}, args{Context.Context(), NewMessage(delAddr1, fromID, coins)}, newTransactionResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionKeeper := transactionKeeper{
 				mapper:                tt.fields.mapper,
 				parameterManager:      tt.fields.parameterManager,
-				bankKeeper:            tt.fields.supplyKeeper,
+				bankKeeper:            tt.fields.bankKeeper,
+				burnAuxiliary:         tt.fields.burnAuxiliary,
 				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
 			}
-			if got := transactionKeeper.Transact(sdkTypes.WrapSDKContext(context), tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() = %v, want %v", got, tt.want)
+			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message.(helpers.Message))
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Transact() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

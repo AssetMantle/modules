@@ -4,6 +4,7 @@
 package classification
 
 import (
+	"github.com/AssetMantle/modules/x/classifications/record"
 	"testing"
 
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
@@ -22,7 +23,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/key"
-	"github.com/AssetMantle/modules/x/classifications/mappable"
+	"github.com/AssetMantle/modules/x/classifications/mapper"
 	"github.com/AssetMantle/modules/x/classifications/parameters"
 )
 
@@ -45,7 +46,7 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
-	mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
@@ -56,7 +57,7 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 	)
 	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
 
-	testQueryKeeper := keeperPrototype().Initialize(mapper, parameterManager, []interface{}{})
+	testQueryKeeper := keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{})
 
 	return context, testQueryKeeper
 }
@@ -69,9 +70,10 @@ func Test_Query_Keeper_Classification(t *testing.T) {
 	require.Equal(t, nil, Error2)
 
 	classificationID := baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))
-	keepers.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(baseDocuments.NewClassification(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))))
+	keepers.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(record.NewRecord(baseDocuments.NewClassification(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))))
 
 	testQueryRequest := newQueryRequest(classificationID)
-	require.Equal(t, &QueryResponse{List: mappable.MappablesFromInterface(keepers.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Fetch(key.NewKey(classificationID)).Get())}, keepers.(queryKeeper).Enquire(sdkTypes.WrapSDKContext(context), testQueryRequest))
+	queryResponse, err := keepers.(queryKeeper).Enquire(sdkTypes.WrapSDKContext(context), testQueryRequest)
+	require.Equal(t, &QueryResponse{Record: keepers.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Fetch(key.NewKey(classificationID)).FetchRecord(key.NewKey(classificationID)).(*record.Record)}, queryResponse, testQueryRequest)
 
 }

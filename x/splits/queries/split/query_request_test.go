@@ -4,6 +4,8 @@
 package split
 
 import (
+	"github.com/AssetMantle/modules/x/splits/key"
+	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	"reflect"
 	"testing"
 
@@ -27,8 +29,8 @@ var (
 	mutables            = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID    = baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID = baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID         = baseIDs.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID"))
-	splitID             = baseIDs.NewSplitID(testOwnerIdentityID, testAssetID).(*baseIDs.SplitID)
+	testAssetID         = baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID().(*baseIDs.AssetID)
+	splitID             = baseIDs.NewSplitID(testAssetID, testOwnerIdentityID).(*baseIDs.SplitID)
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -95,7 +97,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := &QueryRequest{
-				SplitID: tt.fields.SplitID,
+				Key: key.NewKey(tt.fields.SplitID).(*key.Key),
 			}
 			got, err := queryRequest.Decode(tt.args.bytes)
 			if (err != nil) != tt.wantErr {
@@ -129,7 +131,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := &QueryRequest{
-				SplitID: tt.fields.SplitID,
+				Key: key.NewKey(tt.fields.SplitID).(*key.Key),
 			}
 			got, err := queryRequest.Encode()
 			if (err != nil) != tt.wantErr {
@@ -166,7 +168,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			qu := &QueryRequest{
-				SplitID: tt.fields.SplitID,
+				Key: key.NewKey(tt.fields.SplitID).(*key.Key),
 			}
 			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -194,7 +196,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := &QueryRequest{
-				SplitID: tt.fields.SplitID,
+				Key: key.NewKey(tt.fields.SplitID).(*key.Key),
 			}
 			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

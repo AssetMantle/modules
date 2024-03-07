@@ -4,6 +4,7 @@
 package order
 
 import (
+	"github.com/AssetMantle/modules/x/orders/record"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/store"
@@ -14,7 +15,6 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/orders/mapper"
 )
 
 func createTestInput(t *testing.T) sdkTypes.Context {
@@ -38,10 +38,7 @@ func createTestInput(t *testing.T) sdkTypes.Context {
 }
 
 func Test_Order_Response(t *testing.T) {
-	context := createTestInput(t)
-	collection := mapper.Prototype().NewCollection(sdkTypes.WrapSDKContext(context))
-
-	testQueryResponse := newQueryResponse(collection)
+	testQueryResponse := newQueryResponse(record.NewRecord(nil))
 
 	encodedResponse, _ := testQueryResponse.Encode()
 	bytes, _ := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(testQueryResponse)

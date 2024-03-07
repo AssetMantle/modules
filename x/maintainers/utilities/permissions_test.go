@@ -29,17 +29,14 @@ func TestSetPermissions(t *testing.T) {
 		args args
 		want lists.IDList
 	}{
-		{"+ve for can Mint", args{true, false, false, false, false, false}, idList.Add(constants.Mint)},
-		{"+ve for can Burn", args{false, true, false, false, false, false}, idList.Add(constants.Burn)},
-		{"+ve for can Remunerate", args{false, false, true, false, false, false}, idList.Add(constants.Renumerate)},
-		{"+ve for can Add", args{false, false, false, true, false, false}, idList.Add(constants.Add)},
-		{"+ve for can remove", args{false, false, false, false, true, false}, idList.Add(constants.Remove)},
-		{"+ve for can mutate", args{false, false, false, false, false, true}, idList.Add(constants.Mutate)},
-		{"+ve", args{true, true, true, true, true, true}, idList.Add([]ids.ID{constants.Mint, constants.Burn, constants.Renumerate, constants.Add, constants.Remove, constants.Mutate}...)},
+		{"+ve for can Add", args{false, false, false, true, false, false}, idList.Add(constants.CanAddMaintainerPermission)},
+		{"+ve for can remove", args{false, false, false, false, true, false}, idList.Add(constants.CanRemoveMaintainerPermission)},
+		{"+ve for can mutate", args{false, false, false, false, false, true}, idList.Add(constants.CanMutateMaintainerPermission)},
+		{"+ve", args{true, true, true, true, true, true}, idList.Add([]ids.ID{constants.CanAddMaintainerPermission, constants.CanRemoveMaintainerPermission, constants.CanMutateMaintainerPermission}...)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := SetModulePermissions(tt.args.mint, tt.args.burn, tt.args.renumerate, tt.args.add, tt.args.remove, tt.args.mutate); !reflect.DeepEqual(got, tt.want) {
+			if got := SetModulePermissions(tt.args.add, tt.args.remove, tt.args.mutate); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("SetModulePermissions() = %v, want %v", got, tt.want)
 			}
 		})

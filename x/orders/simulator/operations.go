@@ -60,7 +60,6 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 			simulateTakeMsg(module),
 		),
 	}
-	return nil
 }
 
 func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {

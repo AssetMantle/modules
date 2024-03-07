@@ -4,10 +4,14 @@
 package identity
 
 import (
+	"context"
 	"fmt"
-	"reflect"
-	"testing"
-
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/identities/key"
+	"github.com/AssetMantle/modules/x/identities/mapper"
+	"github.com/AssetMantle/modules/x/identities/parameters"
+	"github.com/AssetMantle/modules/x/identities/record"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -22,12 +26,8 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/identities/key"
-	"github.com/AssetMantle/modules/x/identities/mappable"
-	"github.com/AssetMantle/modules/x/identities/parameters"
+	"reflect"
+	"testing"
 )
 
 type TestKeepers struct {
@@ -40,7 +40,7 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 	storeKey := types.NewKVStoreKey("test")
 	paramsStoreKey := types.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := types.NewTransientStoreKey("testParamsTransient")
-	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
@@ -59,7 +59,7 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := types.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	Context := types.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -67,7 +67,7 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 		QueryKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.QueryKeeper),
 	}
 
-	return context, keepers, Mapper, parameterManager
+	return Context, keepers, Mapper, parameterManager
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -86,45 +86,8 @@ func Test_keeperPrototype(t *testing.T) {
 	}
 }
 
-func Test_queryKeeper_Enquire(t *testing.T) {
-	context, keepers, Mapper, _ := CreateTestInput(t)
-	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
-	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData()))
-	immutables := baseQualified.NewImmutables(immutableProperties)
-	mutables := baseQualified.NewMutables(mutableProperties)
-	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
-	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutables, mutables)
-	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Add(mappable.NewMappable(testIdentity))
-	type fields struct {
-		mapper helpers.Mapper
-	}
-	type args struct {
-		context      types.Context
-		queryRequest helpers.QueryRequest
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.QueryResponse
-	}{
-		{"+ve", fields{Mapper}, args{context, newQueryRequest(testFromID)}, newQueryResponse(keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(context)).Fetch(key.NewKey(testFromID)))},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			queryKeeper := queryKeeper{
-				mapper: tt.fields.mapper,
-			}
-			if got := queryKeeper.Enquire(types.WrapSDKContext(tt.args.context), tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Enquire() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_queryKeeper_Initialize(t *testing.T) {
-	_, _, mapper, parameterManager := CreateTestInput(t)
+	_, _, Mapper, parameterManager := CreateTestInput(t)
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -140,7 +103,7 @@ func Test_queryKeeper_Initialize(t *testing.T) {
 		want   helpers.Keeper
 	}{
 		{"+ve", fields{}, args{}, queryKeeper{}},
-		{"+ve", fields{mapper}, args{mapper, parameterManager, []interface{}{}}, queryKeeper{mapper}},
+		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, queryKeeper{Mapper}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -149,6 +112,50 @@ func Test_queryKeeper_Initialize(t *testing.T) {
 			}
 			if got := queryKeeper.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_queryKeeper_Enquire(t *testing.T) {
+	Context, keepers, Mapper, _ := CreateTestInput(t)
+	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
+	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData()))
+	immutables := baseQualified.NewImmutables(immutableProperties)
+	mutables := baseQualified.NewMutables(mutableProperties)
+	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
+	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutables, mutables)
+	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(Context)).Add(record.NewRecord(testIdentity))
+
+	type fields struct {
+		mapper helpers.Mapper
+	}
+	type args struct {
+		context      context.Context
+		queryRequest helpers.QueryRequest
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    helpers.QueryResponse
+		wantErr bool
+	}{
+		{"+ve", fields{Mapper}, args{Context.Context(), newQueryRequest(testFromID)}, newQueryResponse(keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(Context)).Fetch(key.NewKey(testFromID)).FetchRecord(key.NewKey(testFromID))), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			queryKeeper := queryKeeper{
+				mapper: tt.fields.mapper,
+			}
+			got, err := queryKeeper.Enquire(tt.args.context, tt.args.queryRequest)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Enquire() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Enquire() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
