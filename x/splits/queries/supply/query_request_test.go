@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	testAssetID = baseDocuments.GenerateCoinAssetID(baseIDs.NewStringID("OwnerID")).(*baseIDs.AssetID)
+	testAssetID = baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID().(*baseIDs.AssetID)
 )
 
 func Test_newQueryRequest(t *testing.T) {
