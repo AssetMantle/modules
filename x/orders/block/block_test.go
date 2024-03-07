@@ -20,8 +20,7 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/scrub"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/x/orders/key"
-	"github.com/AssetMantle/modules/x/orders/mappable"
+	"github.com/AssetMantle/modules/x/orders/mapper"
 	"github.com/AssetMantle/modules/x/orders/parameters"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 )
@@ -41,7 +40,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Au
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	Mapper := baseHelpers.NewMapper(key.Prototype, mappable.Prototype).Initialize(storeKey)
+	Mapper := mapper.Prototype().Initialize(storeKey)
 	encodingConfig := simapp.MakeTestEncodingConfig()
 	appCodec := encodingConfig.Marshaler
 	ParamsKeeper := paramsKeeper.NewKeeper(
@@ -65,15 +64,15 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Au
 
 func Test_Block_Methods(t *testing.T) {
 	block := Prototype()
-	context, mapper, transferAuxiliary, supplementAuxiliary, _ := CreateTestInput(t)
-	block = block.Initialize(mapper, parameters.Prototype(), transferAuxiliary, supplementAuxiliary)
+	context, Mapper, transferAuxiliary, supplementAuxiliary, _ := CreateTestInput(t)
+	block = block.Initialize(Mapper, parameters.Prototype(), transferAuxiliary, supplementAuxiliary)
 	block.Begin(sdkTypes.WrapSDKContext(context), abciTypes.RequestBeginBlock{})
 
 	block.End(sdkTypes.WrapSDKContext(context), abciTypes.RequestEndBlock{})
 }
 
 func Test_block_End(t *testing.T) {
-	context, mapper, transferAuxiliary, supplementAuxiliary, scrubAuxiliary := CreateTestInput(t)
+	context, Mapper, transferAuxiliary, supplementAuxiliary, scrubAuxiliary := CreateTestInput(t)
 	testContext := context.WithBlockHeight(1)
 	testContext1 := context.WithBlockHeight(-1)
 	type fields struct {
@@ -92,18 +91,14 @@ func Test_block_End(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve with block height", fields{mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{testContext, abciTypes.RequestEndBlock{Height: int64(1)}}},
-		{"-ve without block height", fields{mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{context, abciTypes.RequestEndBlock{}}},
-		{"-ve with -ve block height", fields{mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{testContext1, abciTypes.RequestEndBlock{Height: int64(-1)}}},
+		{"+ve with block height", fields{Mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{testContext, abciTypes.RequestEndBlock{Height: int64(1)}}},
+		{"-ve without block height", fields{Mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{context, abciTypes.RequestEndBlock{}}},
+		{"-ve with -ve block height", fields{Mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{testContext1, abciTypes.RequestEndBlock{Height: int64(-1)}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
-				mapper:              tt.fields.mapper,
-				parameterManager:    tt.fields.parameterManager,
-				supplementAuxiliary: tt.fields.supplementAuxiliary,
-				transferAuxiliary:   tt.fields.transferAuxiliary,
-				scrubAuxiliary:      tt.fields.scrubAuxiliary,
+				mapper: tt.fields.mapper,
 			}
 			block.End(sdkTypes.WrapSDKContext(tt.args.context), tt.args.in1)
 		})
