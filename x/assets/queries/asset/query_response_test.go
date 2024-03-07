@@ -4,6 +4,7 @@
 package asset
 
 import (
+	"github.com/AssetMantle/modules/x/assets/record"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/store"
@@ -14,7 +15,6 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/assets/mapper"
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
@@ -39,10 +39,7 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 }
 
 func Test_Asset_Response(t *testing.T) {
-	context := CreateTestInput(t)
-	collection := mapper.Prototype().NewCollection(sdkTypes.WrapSDKContext(context))
-
-	testQueryResponse := newQueryResponse(collection)
+	testQueryResponse := newQueryResponse(record.NewRecord(nil))
 
 	encodedResponse, _ := testQueryResponse.Encode()
 	bytes, _ := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(testQueryResponse)
