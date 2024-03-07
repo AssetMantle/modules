@@ -4,6 +4,7 @@
 package meta
 
 import (
+	"github.com/AssetMantle/modules/x/metas/record"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/store"
@@ -14,7 +15,6 @@ import (
 	tendermintDB "github.com/tendermint/tm-db"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/metas/mapper"
 )
 
 func CreateTestInput(t *testing.T) sdkTypes.Context {
@@ -38,10 +38,7 @@ func CreateTestInput(t *testing.T) sdkTypes.Context {
 }
 
 func Test_Meta_Response(t *testing.T) {
-	context := CreateTestInput(t)
-	collection := mapper.Prototype().NewCollection(sdkTypes.WrapSDKContext(context))
-
-	testQueryResponse := newQueryResponse(collection)
+	testQueryResponse := newQueryResponse(record.NewRecord(nil))
 
 	encodedResponse, _ := testQueryResponse.Encode()
 	bytes, _ := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(testQueryResponse)
