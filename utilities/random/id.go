@@ -30,3 +30,38 @@ func GenerateUniqueIdentifier(prefix ...string) string {
 		strconv.Itoa(10000000+int(time.Now().UnixNano())%89999999) +
 		strconv.FormatInt(10000+randomNumber.Int64(), 10)
 }
+
+// GenerateUniqueIdentifierList generates a list of unique IDs with the given prefix and count.
+// The returned value is a slice of strings.
+// The prefix is used to customize the generated IDs.
+// The count specifies the number of IDs to generate.
+// Each generated ID is unique.
+//
+// Example:
+// ids := GenerateUniqueIdentifierList("user-", 5)
+//
+// The above example will generate 5 unique IDs with the prefix "user-".
+// The returned slice will contain ["user-123...1", "user-234...2", "user-345...3", "user-456...4", "user-567...5"].
+//
+// Warning: This function is non-deterministic and is not suitable for generating blockchain state.
+// It is intended for testing and client utility purposes only.
+//
+// Dependencies:
+// The function depends on the GenerateUniqueIdentifier function.
+//
+// Code Snippet:
+//
+//	func GenerateUniqueIdentifierList(prefix string, count int) []string {
+//	    ids := make([]string, count)
+//	    for i := 0; i < count; i++ {
+//	        ids[i] = GenerateUniqueIdentifier(prefix)
+//	    }
+//	    return ids
+//	}
+func GenerateUniqueIdentifierList(prefix string, count int) []string {
+	ids := make([]string, count)
+	for i := 0; i < count; i++ {
+		ids[i] = GenerateUniqueIdentifier(prefix)
+	}
+	return ids
+}
