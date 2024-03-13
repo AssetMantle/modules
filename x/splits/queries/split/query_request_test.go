@@ -163,7 +163,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{splitID}, args{cliCommand, base.TestClientContext}, newQueryRequest(splitID), false},
+		{"+ve", fields{splitID}, args{cliCommand, client.Context{}.WithCodec(base.CodecPrototype())}, newQueryRequest(splitID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

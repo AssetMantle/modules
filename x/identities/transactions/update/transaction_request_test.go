@@ -43,7 +43,7 @@ func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, clie
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 
-	return legacyAmino, cliCommand, baseHelpers.TestClientContext, mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, testBaseReq
+	return legacyAmino, cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, testBaseReq
 }
 
 func Test_newTransactionRequest(t *testing.T) {

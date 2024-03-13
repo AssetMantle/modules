@@ -98,7 +98,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", fields{BaseReq: testBaseReq, FromID: "", ImmutableMetaProperties: "", ImmutableProperties: "", MutableMetaProperties: "", MutableProperties: ""}, args{cliCommand, baseHelpers.TestClientContext}, transactionRequest{cliCommand.ReadBaseReq(baseHelpers.TestClientContext), cliCommand.ReadString(constants.FromIdentityID), cliCommand.ReadString(constants.ImmutableMetaProperties), cliCommand.ReadString(constants.ImmutableProperties), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
+		{"+ve", fields{BaseReq: testBaseReq, FromID: "", ImmutableMetaProperties: "", ImmutableProperties: "", MutableMetaProperties: "", MutableProperties: ""}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{cliCommand.ReadBaseReq(client.Context{}.WithCodec(baseHelpers.CodecPrototype())), cliCommand.ReadString(constants.FromIdentityID), cliCommand.ReadString(constants.ImmutableMetaProperties), cliCommand.ReadString(constants.ImmutableProperties), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

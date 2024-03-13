@@ -31,7 +31,7 @@ func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 
-	return legacyAmino, cliCommand, baseHelpers.TestClientContext, fromAddress, fromAccAddress, testBaseReq
+	return legacyAmino, cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), fromAddress, fromAccAddress, testBaseReq
 }
 
 func Test_newTransactionRequest(t *testing.T) {
@@ -90,7 +90,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, args{cliCommand, baseHelpers.TestClientContext}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.Name)}, false},
+		{"+ve", fields{testBaseReq, "nubID"}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.Name)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

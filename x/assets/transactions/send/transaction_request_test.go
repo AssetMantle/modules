@@ -104,7 +104,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), assetID.AsString(), testRate.String()}, args{cliCommand, base.TestClientContext}, transactionRequest{testBaseRequest, fromID.AsString(), fromID.AsString(), assetID.AsString(), testRate.String()}, false},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), assetID.AsString(), testRate.String()}, args{cliCommand, client.Context{}.WithCodec(base.CodecPrototype())}, transactionRequest{testBaseRequest, fromID.AsString(), fromID.AsString(), assetID.AsString(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

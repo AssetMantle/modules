@@ -5,6 +5,7 @@ package reveal
 
 import (
 	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/client"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -28,9 +29,9 @@ func Test_Reveal_Request(t *testing.T) {
 	require.Equal(t, transactionRequest{BaseReq: testBaseReq, Data: data}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
-	requestFromCLI, err := transactionRequest{}.FromCLI(cliCommand, baseHelpers.TestClientContext)
+	requestFromCLI, err := transactionRequest{}.FromCLI(cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()))
 	require.Equal(t, nil, err)
-	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: baseHelpers.TestClientContext.GetFromAddress().String(), ChainID: baseHelpers.TestClientContext.ChainID, Simulate: baseHelpers.TestClientContext.Simulate}, Data: ""}, requestFromCLI)
+	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: client.Context{}.WithCodec(baseHelpers.CodecPrototype()).GetFromAddress().String(), ChainID: client.Context{}.WithCodec(baseHelpers.CodecPrototype()).ChainID, Simulate: client.Context{}.WithCodec(baseHelpers.CodecPrototype()).Simulate}, Data: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
 	transactionRequestUnmarshalled, err := transactionRequest{}.FromJSON(jsonMessage)
