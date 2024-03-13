@@ -18,13 +18,18 @@ func (validatableParameter validatableParameter) GetParameter() parameters.Param
 	return validatableParameter.parameter
 }
 func (validatableParameter validatableParameter) Mutate(data data.Data) helpers.ValidatableParameter {
-	validatableParameter.parameter = validatableParameter.parameter.Mutate(data)
+	if data != nil {
+		validatableParameter.parameter = validatableParameter.parameter.Mutate(data)
+	}
 	return validatableParameter
 }
 func (validatableParameter validatableParameter) GetValidator() func(i interface{}) error {
 	return validatableParameter.validator
 }
 func (validatableParameter validatableParameter) Validate() error {
+	if validatableParameter.validator == nil {
+		return nil
+	}
 	return validatableParameter.validator(validatableParameter.parameter)
 }
 
