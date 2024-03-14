@@ -131,9 +131,10 @@ func TestNewAuxiliaries(t *testing.T) {
 		auxiliaryList []helpers.Auxiliary
 	}
 	tests := []struct {
-		name string
-		args args
-		want helpers.Auxiliaries
+		name  string
+		args  args
+		want  helpers.Auxiliaries
+		panic bool
 	}{
 		{
 			name: "Empty AuxiliaryList",
@@ -158,9 +159,21 @@ func TestNewAuxiliaries(t *testing.T) {
 			args: args{
 				auxiliaryList: []helpers.Auxiliary{nil},
 			},
-			want: auxiliaries{
-				auxiliaryList: []helpers.Auxiliary{nil},
+			panic: true,
+		},
+		{
+			name: "Nil Auxiliary in list",
+			args: args{
+				auxiliaryList: []helpers.Auxiliary{mockAuxiliary{randomUniqueIdentifiers[0]}, nil, mockAuxiliary{randomUniqueIdentifiers[1]}},
 			},
+			panic: true,
+		},
+		{
+			name: "Repeated Auxiliary",
+			args: args{
+				auxiliaryList: []helpers.Auxiliary{mockAuxiliary{randomUniqueIdentifiers[0]}, mockAuxiliary{randomUniqueIdentifiers[0]}},
+			},
+			panic: true,
 		},
 	}
 	for _, tt := range tests {
@@ -169,7 +182,12 @@ func TestNewAuxiliaries(t *testing.T) {
 			for i, v := range tt.args.auxiliaryList {
 				auxListInterface[i] = v
 			}
-			assert.Equalf(t, tt.want, NewAuxiliaries(tt.args.auxiliaryList...), "NewAuxiliaries(%v)", auxListInterface...)
+			if tt.panic {
+				assert.Panicsf(t, func() { NewAuxiliaries(tt.args.auxiliaryList...) }, "NewAuxiliaries(%v)", auxListInterface...)
+				return
+			} else {
+				assert.Equalf(t, tt.want, NewAuxiliaries(tt.args.auxiliaryList...), "NewAuxiliaries(%v)", auxListInterface...)
+			}
 		})
 	}
 }
