@@ -3,7 +3,9 @@
 
 package base
 
-import "github.com/AssetMantle/modules/helpers"
+import (
+	"github.com/AssetMantle/modules/helpers"
+)
 
 type auxiliaries struct {
 	auxiliaryList []helpers.Auxiliary
@@ -25,6 +27,19 @@ func (auxiliaries auxiliaries) Get() []helpers.Auxiliary {
 }
 
 func NewAuxiliaries(auxiliaryList ...helpers.Auxiliary) helpers.Auxiliaries {
+	for i, auxiliary := range auxiliaryList {
+
+		if auxiliary == nil {
+			panic("nil auxiliary")
+		}
+
+		for j, checkAuxiliary := range auxiliaryList {
+			if i != j && auxiliary.GetName() == checkAuxiliary.GetName() {
+				panic("repeated auxiliary")
+			}
+		}
+	}
+
 	return auxiliaries{
 		auxiliaryList: auxiliaryList,
 	}
