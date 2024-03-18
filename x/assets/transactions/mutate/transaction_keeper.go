@@ -6,12 +6,6 @@ package mutate
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mappable"
@@ -19,6 +13,10 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
+	"github.com/AssetMantle/schema/go/documents/base"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 )
 
 type transactionKeeper struct {
@@ -35,11 +33,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-
-	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
-	}
+	fromAddress := message.GetFromAddress()
 
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err

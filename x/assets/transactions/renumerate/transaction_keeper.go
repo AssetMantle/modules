@@ -6,12 +6,6 @@ package renumerate
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/go/data"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	"github.com/AssetMantle/schema/go/properties"
-	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/key"
@@ -21,6 +15,10 @@ import (
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
+	"github.com/AssetMantle/schema/go/data"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/properties"
+	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
 )
 
 type transactionKeeper struct {
@@ -43,10 +41,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("renumerate is not enabled")
 	}
 
-	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
-	}
+	fromAddress := message.GetFromAddress()
 
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err

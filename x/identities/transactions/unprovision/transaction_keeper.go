@@ -28,7 +28,6 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-
 	identityID := message.IdentityID
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(identityID))
 
@@ -38,10 +37,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	identity := mappable.GetIdentity(Mappable)
 
-	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
-	}
+	fromAddress := message.GetFromAddress()
 
 	toAddress, err := sdkTypes.AccAddressFromBech32(message.To)
 	if err != nil {

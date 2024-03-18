@@ -59,10 +59,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		// return nil, err
 	}
 
-	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
-	}
+	fromAddress := message.GetFromAddress()
 
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err

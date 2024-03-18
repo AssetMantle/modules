@@ -6,14 +6,12 @@ package deputize
 import (
 	"context"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/utilities"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/deputize"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 )
 
 type transactionKeeper struct {
@@ -29,10 +27,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
-	}
+	fromAddress := message.GetFromAddress()
 
 	if Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromID)).GetMappable(key.NewKey(message.FromID)); Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.FromID.AsString())
