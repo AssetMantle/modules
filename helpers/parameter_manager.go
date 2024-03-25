@@ -21,7 +21,7 @@ type ParameterManager interface {
 	ValidateParameter(parameters.Parameter) error
 
 	Fetch(context.Context) ParameterManager
-	Set(context.Context, lists.ParameterList)
+	Set(context.Context, lists.ParameterList) ParameterManager
 
 	GetKeyTable() paramsTypes.KeyTable
 	RESTQueryHandler(client.Context) http.HandlerFunc

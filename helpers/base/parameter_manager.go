@@ -30,11 +30,11 @@ type parameterManager struct {
 var _ helpers.ParameterManager = (*parameterManager)(nil)
 
 func (parameterManager parameterManager) Get() lists.ParameterList {
-	parameters := make([]parameters.Parameter, len(parameterManager.validatableParameters))
+	Parameters := make([]parameters.Parameter, len(parameterManager.validatableParameters))
 	for i, validatableParameter := range parameterManager.validatableParameters {
-		parameters[i] = validatableParameter.GetParameter()
+		Parameters[i] = validatableParameter.GetParameter()
 	}
-	return baseLists.NewParameterList(parameters...)
+	return baseLists.NewParameterList(Parameters...)
 }
 func (parameterManager parameterManager) GetParameter(propertyID ids.PropertyID) parameters.Parameter {
 	if validatableParameter := parameterManager.GetValidatableParameter(propertyID); validatableParameter != nil {
@@ -74,10 +74,12 @@ func (parameterManager parameterManager) Fetch(context context.Context) helpers.
 
 	return parameterManager
 }
-func (parameterManager parameterManager) Set(context context.Context, parameterList lists.ParameterList) {
+func (parameterManager parameterManager) Set(context context.Context, parameterList lists.ParameterList) helpers.ParameterManager {
 	for _, parameter := range parameterList.Get() {
 		parameterManager.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData().Get().AsString())
 	}
+
+	return parameterManager
 }
 func (parameterManager parameterManager) ParamSetPairs() paramsTypes.ParamSetPairs {
 	paramSetPairList := make([]paramsTypes.ParamSetPair, len(parameterManager.validatableParameters))
