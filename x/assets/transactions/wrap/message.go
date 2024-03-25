@@ -4,7 +4,9 @@
 package wrap
 
 import (
+	"github.com/AssetMantle/modules/x/assets/constants"
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -33,6 +35,9 @@ func (message *Message) ValidateBasic() error {
 	}
 	if err := message.Coins.Validate(); err != nil {
 		return err
+	}
+	if message.Coins.Len() > constants.MaxListLength {
+		return errorConstants.InvalidRequest.Wrapf("coins length %d exceeds max length %d", message.Coins.Len(), constants.MaxListLength)
 	}
 	return nil
 }
