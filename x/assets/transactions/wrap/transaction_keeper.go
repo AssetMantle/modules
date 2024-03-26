@@ -33,6 +33,32 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 	return transactionKeeper.Handle(context, message.(*Message))
 }
 
+// Handle is a method of the transactionKeeper struct. It processes the transaction message passed to it.
+//
+// Parameters:
+// - context (context.Context): Used for timing, cancelation signals, and carrying deadlines, among other things.
+// - message (*Message): The transaction message being processed. It should contain details such as the source, destination, and coins involved.
+//
+// Return values:
+// - *TransactionResponse: A response object detailing the result of the transaction.
+// - error: In case of an error, this will contain the error message.
+//
+// The Handle method performs the following steps:
+//
+// 1. It authenticates the transaction request using the authenticateAuxiliary getter from the transactionKeeper object. If this fails, it returns the error encountered.
+//
+// 2. It fetches allowed coins from the parameter manager attached to the transactionKeeper object.
+//
+// 3. For each coin in the transaction message:
+// - It first validates the coin asset. If this fails, it returns an error.
+// - It then checks whether the coin value is negative. If it is, it returns an error.
+// - It checks if the coin is on the list of allowed coins. If it isn't, it returns a not authorized error.
+// - It tries to mint the coin using the mintAuxiliary getter of the transactionKeeper object. If this fails, the error is returned.
+// - It fetches the coinAsset from the mapper attached to the transactionKeeper.
+// - If the coinAsset isn't already in the collection, it is added using a new record.
+// - It tries to send the coins from the sender's account to the module account using the bankKeeper attached to transactionKeeper object. If this fails, the error is returned.
+//
+// 4. If the process completes successfully for all coins, it returns a new transaction response object.
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.GetFromAddress(), message.FromID)); err != nil {
 		return nil, err
@@ -41,15 +67,19 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	wrapAllowedCoins := transactionKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.WrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData)
 
 	for _, coin := range message.Coins {
+		coinAsset := baseDocuments.NewCoinAsset(coin.Denom)
+
+		if err := coinAsset.ValidateCoinAsset(); err != nil {
+			return nil, errorConstants.InvalidParameter.Wrapf("%s", err.Error())
+		}
+
+		if coin.IsNegative() {
+			return nil, errorConstants.InvalidParameter.Wrapf("coin %s is negative", coin.Denom)
+		}
+
 		if _, found := wrapAllowedCoins.Search(base.NewStringData(coin.Denom)); !found {
 			return nil, errorConstants.NotAuthorized.Wrapf("coin %s is not allowed to be wrapped", coin.Denom)
 		}
-
-		if err := transactionKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), message.GetFromAddress(), constants.ModuleName, sdkTypes.NewCoins(coin)); err != nil {
-			return nil, err
-		}
-
-		coinAsset := baseDocuments.NewCoinAsset(coin.Denom)
 
 		if _, err := transactionKeeper.mintAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.FromID, coinAsset.GetCoinAssetID(), coin.Amount)); err != nil {
 			return nil, err
@@ -57,13 +87,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 		assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(coinAsset.GetCoinAssetID()))
 
-		Mappable := assets.GetMappable(key.NewKey(coinAsset.GetCoinAssetID()))
-		if Mappable == nil {
-			if err := coinAsset.ValidateBasic(); err != nil {
-				return nil, err
-			}
-
+		if assets.GetMappable(key.NewKey(coinAsset.GetCoinAssetID())) == nil {
 			assets.Add(record.NewRecord(coinAsset))
+		}
+
+		if err := transactionKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), message.GetFromAddress(), constants.ModuleName, sdkTypes.NewCoins(coin)); err != nil {
+			return nil, err
 		}
 	}
 
