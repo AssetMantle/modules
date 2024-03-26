@@ -85,9 +85,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			return nil, err
 		}
 
-		assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(coinAsset.GetCoinAssetID()))
-
-		if assets.GetMappable(key.NewKey(coinAsset.GetCoinAssetID())) == nil {
+		if assets := transactionKeeper.mapper.NewCollection(context); assets.Fetch(key.NewKey(coinAsset.GetCoinAssetID())).GetMappable(key.NewKey(coinAsset.GetCoinAssetID())) == nil {
 			assets.Add(record.NewRecord(coinAsset))
 		}
 
