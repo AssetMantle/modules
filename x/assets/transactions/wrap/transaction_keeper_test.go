@@ -6,13 +6,18 @@ package wrap
 import (
 	"context"
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mapper"
 	"github.com/AssetMantle/modules/x/assets/parameters"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	"github.com/AssetMantle/schema/go/ids"
+	"github.com/AssetMantle/schema/go/errors"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
@@ -20,6 +25,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -77,11 +83,15 @@ const (
 var (
 	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
 
-	authenticateAuxiliaryKeeper = new(MockAuxiliaryKeeper)
-	_                           = authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	authenticateAuxiliaryKeeper         = new(MockAuxiliaryKeeper)
+	authenticateAuxiliaryFailureAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
+	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(authenticateAuxiliaryFailureAddress, baseIDs.PrototypeIdentityID())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
+	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
 
-	mintAuxiliaryKeeper = new(MockAuxiliaryKeeper)
-	_                   = mintAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	mintAuxiliaryKeeper       = new(MockAuxiliaryKeeper)
+	mintAuxiliaryFailureDenom = "mint"
+	_                         = mintAuxiliaryKeeper.On("Help", mock.Anything, mint.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseDocuments.NewCoinAsset(mintAuxiliaryFailureDenom).GetCoinAssetID(), sdkTypes.OneInt())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
+	_                         = mintAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
 
 	authenticateAuxiliary = new(MockAuxiliary)
 	_                     = authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
@@ -136,7 +146,6 @@ func setContext() sdkTypes.Context {
 func TestTransactionKeeperTransact(t *testing.T) {
 	type args struct {
 		from   sdkTypes.AccAddress
-		fromID ids.IdentityID
 		denom  string
 		amount int
 	}
@@ -145,60 +154,84 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		args    args
 		setup   func()
 		want    *TransactionResponse
-		wantErr bool
+		wantErr errors.Error
 	}{
 		{"wrapOne",
-			args{genesisAddress, fromID, Denom, 1},
+			args{genesisAddress, Denom, 1},
 			func() {},
 			newTransactionResponse(),
-			false,
+			nil,
 		},
 		{"wrapRandom",
-			args{genesisAddress, fromID, Denom, rand.Intn(GenesisSupply)},
+			args{genesisAddress, Denom, rand.Intn(GenesisSupply)},
 			func() {},
 			newTransactionResponse(),
-			false,
+			nil,
 		},
 		{"wrapOneMoreThanSupply",
-			args{genesisAddress, fromID, Denom, GenesisSupply + 1},
+			args{genesisAddress, Denom, GenesisSupply + 1},
 			func() {},
 			nil,
-			true,
+			sdkErrors.ErrInsufficientFunds,
 		},
-		{"wrapZero",
-			args{genesisAddress, fromID, Denom, 0},
+		{
+			"wrapNegative",
+			args{genesisAddress, Denom, -1},
+			func() {},
+			nil,
+			errorConstants.InvalidParameter,
+		},
+		{
+			"wrapInvalidDenom",
+			args{genesisAddress, random.GenerateUniqueIdentifier(), 1},
+			func() {},
+			nil,
+			errorConstants.InvalidParameter,
+		},
+		{
+			"identityAuthenticationFailure",
+			args{authenticateAuxiliaryFailureAddress, Denom, 1},
+			func() {},
+			nil,
+			errorConstants.MockError,
+		},
+		{
+			"wrapZero",
+			args{genesisAddress, Denom, 0},
 			func() {},
 			newTransactionResponse(),
-			false,
+			nil,
 		},
-		{"wrapCoinNotPresent",
-			args{genesisAddress, fromID, "coinNotPresent", 1},
+		{
+			"wrapCoinNotPresent",
+			args{genesisAddress, "coinNotPresent", 1},
 			func() {},
 			nil,
-			true,
+			errorConstants.NotAuthorized,
 		},
-		{"wrapCoinNotAuthorized",
-			args{genesisAddress, fromID, "unauthorizedCoin", 1},
+		{
+			"wrapCoinNotAuthorized",
+			args{genesisAddress, "unauthorizedCoin", 1},
 			func() {
 				coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin("unauthorizedCoin", sdkTypes.NewInt(GenesisSupply)))
 				_ = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
 				_ = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
 			},
 			nil,
-			true,
+			errorConstants.NotAuthorized,
 		},
-		{"wrapCoinNotAuthorized",
-			args{genesisAddress, fromID, "unauthorizedCoin", 1},
+		{
+			"mintAuxiliaryFailure",
+			args{genesisAddress, mintAuxiliaryFailureDenom, 1},
 			func() {
-				coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin("unauthorizedCoin", sdkTypes.NewInt(GenesisSupply)))
-				_ = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
-				_ = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
+				parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(mintAuxiliaryFailureDenom), baseData.NewStringData(Denom))))))
 			},
 			nil,
-			true,
+			errorConstants.MockError,
 		},
-		{"wrapInMultiCoinScenario",
-			args{genesisAddress, fromID, Denom, 1},
+		{
+			"wrapInMultiCoinScenario",
+			args{genesisAddress, Denom, 1},
 			func() {
 				for i := 0; i < 1000; i++ {
 					coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom+strconv.Itoa(i), sdkTypes.NewInt(GenesisSupply)))
@@ -207,10 +240,11 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				}
 			},
 			newTransactionResponse(),
-			false,
+			nil,
 		},
-		{"wrapInMultiCoinMultipleAddressScenario",
-			args{genesisAddress, fromID, Denom, 1},
+		{
+			"wrapInMultiCoinMultipleAddressScenario",
+			args{genesisAddress, Denom, 1},
 			func() {
 				for i := 0; i < 1000; i++ {
 					coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom+strconv.Itoa(i), sdkTypes.NewInt(GenesisSupply)))
@@ -219,10 +253,11 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				}
 			},
 			newTransactionResponse(),
-			false,
+			nil,
 		},
-		{"wrapInMultiAssetScenario",
-			args{genesisAddress, fromID, Denom, 1},
+		{
+			"wrapInMultiAssetScenario",
+			args{genesisAddress, Denom, 1},
 			func() {
 				wrapAllowedDenoms := baseData.NewListData(baseData.NewStringData(Denom))
 				wrapCoins := sdkTypes.NewCoins()
@@ -234,13 +269,13 @@ func TestTransactionKeeperTransact(t *testing.T) {
 					wrapCoins = wrapCoins.Add(sdkTypes.NewCoin(Denom+strconv.Itoa(i), sdkTypes.NewInt(GenesisSupply)))
 				}
 				parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), wrapAllowedDenoms))))
-				_, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(genesisAddress, fromID, wrapCoins).(helpers.Message))
+				_, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(genesisAddress, baseIDs.PrototypeIdentityID(), wrapCoins).(helpers.Message))
 				if err != nil {
 					t.Error("unexpected error")
 				}
 			},
 			newTransactionResponse(),
-			false,
+			nil,
 		},
 	}
 
@@ -249,34 +284,38 @@ func TestTransactionKeeperTransact(t *testing.T) {
 
 			tt.setup()
 
-			initialSupply := BankKeeper.GetSupply(Context, tt.args.denom).Amount
-			initialAddressBalance := BankKeeper.GetBalance(Context, genesisAddress, tt.args.denom).Amount
+			var initialSupply, initialAddressBalance, finalSupply, finalAddressBalance sdkTypes.Int
+			if sdkTypes.ValidateDenom(tt.args.denom) == nil {
+				initialSupply = BankKeeper.GetSupply(Context, tt.args.denom).Amount
+				initialAddressBalance = BankKeeper.GetBalance(Context, genesisAddress, tt.args.denom).Amount
+			}
+			got, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(tt.args.from, baseIDs.PrototypeIdentityID(), sdkTypes.Coins{sdkTypes.Coin{Denom: tt.args.denom, Amount: sdkTypes.NewInt(int64(tt.args.amount))}}).(helpers.Message))
 
-			got, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(tt.args.from, tt.args.fromID, sdkTypes.NewCoins(sdkTypes.NewCoin(tt.args.denom, sdkTypes.NewInt(int64(tt.args.amount))))).(helpers.Message))
+			if sdkTypes.ValidateDenom(tt.args.denom) == nil {
+				finalSupply = BankKeeper.GetSupply(Context, tt.args.denom).Amount
+				if !initialSupply.Sub(finalSupply).IsZero() {
+					t.Error("supply should not change")
+				}
 
-			finalSupply := BankKeeper.GetSupply(Context, tt.args.denom).Amount
-			if !initialSupply.Sub(finalSupply).IsZero() {
-				t.Error("supply should not change")
+				finalAddressBalance = BankKeeper.GetBalance(Context, genesisAddress, tt.args.denom).Amount
+				if tt.wantErr == nil && !initialAddressBalance.Sub(finalAddressBalance).Equal(sdkTypes.NewInt(int64(tt.args.amount))) {
+					t.Error("unexpected address balance")
+				}
 			}
 
-			finalAddressBalance := BankKeeper.GetBalance(Context, genesisAddress, tt.args.denom).Amount
-			if !tt.wantErr && !initialAddressBalance.Sub(finalAddressBalance).Equal(sdkTypes.NewInt(int64(tt.args.amount))) {
-				t.Error("unexpected address balance")
-			}
-
-			if !tt.wantErr {
+			if tt.wantErr == nil {
 				if Mappable := TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Fetch(key.NewKey(baseDocuments.NewCoinAsset(tt.args.denom).GetCoinAssetID())).GetMappable(key.NewKey(baseDocuments.NewCoinAsset(tt.args.denom).GetCoinAssetID())); Mappable == nil {
 					t.Error("coin asset should have been created")
 				}
 			}
 
-			if tt.wantErr && !initialAddressBalance.Equal(finalAddressBalance) {
+			if tt.wantErr != nil && !initialAddressBalance.Equal(finalAddressBalance) {
 				t.Error("address balance should not have changed")
 
 			}
 
-			if (err != nil) != tt.wantErr {
-				t.Error("unexpected error")
+			if (err != nil) && !tt.wantErr.Is(err) {
+				t.Errorf("unexpected error: %v", err)
 			}
 
 			if !reflect.DeepEqual(got, tt.want) {
