@@ -34,6 +34,31 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 	return transactionKeeper.Handle(context, message.(*Message))
 }
 
+// Handle is a method of the transactionKeeper struct. It processes the transaction message passed to it.
+//
+// Parameters:
+// - context (context.Context): Used for timing, cancellation signals, and carrying deadlines, among other things.
+// - message (*Message): The transaction message being processed. It contains information about the coins involved and the source of the transaction.
+//
+// Return values:
+// - *TransactionResponse: A response object detailing the outcome of the transaction.
+// - error: In case of an error, this will contain the error message.
+//
+// The Handle method performs the following steps:
+//
+// 1. It authenticates the transaction sender using the authenticateAuxiliary getter from the transactionKeeper object. If this fails, it returns the error encountered.
+//
+// 2. It fetches the list of allowed coins for unwrap operation from the parameter manager attached to the transactionKeeper object.
+//
+// 3. For each coin mentioned in the transaction message:
+// - A new CoinAsset object is created and validated. If this is unsuccessful, it returns an error.
+// - It checks whether the coin amount is negative. If it is, it returns an error.
+// - Tests whether the coin is in the list of allowed coins for unwrap operation. If not, returns a not authorized error.
+// - It fetches the coinAsset from the mapper collection attached to the transactionKeeper. If it's not present, returns an entity not found error.
+// - It sends a burn request to the auxiliary to deduct the coin amount from the sender's account. If unsuccessful, the error is returned.
+// - It attempts to transfer the coins from the module to the sender's account using the bankKeeper attached to transactionKeeper object. If this fails, the error is returned.
+//
+// 4. If the process completes successfully for all coins, it returns a new TransactionResponse object.
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.GetFromAddress(), message.FromID)); err != nil {
 		return nil, err
