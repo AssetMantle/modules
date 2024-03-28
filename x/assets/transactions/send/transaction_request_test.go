@@ -6,15 +6,10 @@ package send
 import (
 	"encoding/json"
 	"fmt"
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	"reflect"
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
@@ -28,14 +23,9 @@ import (
 )
 
 var (
-	fromAddress       = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, _ = types.AccAddressFromBech32(fromAddress)
-	testBaseRequest   = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
-	immutables        = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables          = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
-	classificationID  = baseIDs.NewClassificationID(immutables, mutables)
-	fromID            = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
-	assetID           = baseDocuments.NewCoinAsset("assetID").GetCoinAssetID().(*baseIDs.AssetID)
+	fromAccAddress, _ = types.AccAddressFromBech32(fromAddress.String())
+	testBaseRequest   = rest.BaseReq{From: fromAddress.String(), ChainID: "test", Fees: types.NewCoins()}
+	fromID            = baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)
 	testRate          = types.OneInt()
 )
 
