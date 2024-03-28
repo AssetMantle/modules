@@ -5,20 +5,17 @@ package send
 
 import (
 	"context"
-
-	"github.com/AssetMantle/schema/go/data"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	"github.com/AssetMantle/schema/go/properties"
-	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
+	"github.com/AssetMantle/schema/go/data"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/properties"
+	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
+	baseTypes "github.com/AssetMantle/schema/go/types/base"
 )
 
 type transactionKeeper struct {
@@ -35,16 +32,51 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 	return transactionKeeper.Handle(context, message.(*Message))
 }
 
+// Handle is a method of the transactionKeeper struct. It processes the transaction message passed to it.
+//
+// Parameters:
+// - context (context.Context): Used for process synchronization and carrying deadlines, among other things.
+// - message (*Message): The transaction message being processed. It should contain details such as the source, destination, and the asset involved.
+//
+// Return values:
+// - *TransactionResponse: A response object detailing the result of the transaction.
+// - error: In case of an error, this will contain the error message.
+//
+// The Handle method performs the following steps:
+//
+// 1. It authenticates the transaction request using the authenticateAuxiliary getter from the transactionKeeper object. If this fails, it returns the error encountered.
+//
+// 2. It extracts the value from the message as an integer. If there's an error in this operation, it returns the error encountered.
+//
+// 3. It fetches the asset from the mapper attached to the transactionKeeper object using the asset ID from the message.
+// - If the asset does not exist, it returns an EntityNotFound error.
+//
+// 4. It checks the asset's lock height property.
+// - If the property exists and is not a meta property, it makes a call to supplementAuxiliary's Help method with the lock height property.
+// - If the returned lock height property is a meta property, it updates the lock height.
+// - If the property isn't a meta property, it returns a MetaDataError error.
+//
+// 5. If the lock height is greater than the current context height, it returns a NotAuthorized error.
+//
+// 6. It attempts to perform a transfer via the transferAuxiliary's Help method.
+// - If an error occurs during the transfer, it returns the error.
+//
+// 7. If the process completes successfully, it returns a new transaction response object.
+//
+// Note: The errorConstants and propertyConstants are used for error handling and property checking respectively.
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	fromAddress := message.GetFromAddress()
-
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.GetFromAddress(), message.FromID)); err != nil {
 		return nil, err
 	}
 
-	assets := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.AssetID))
+	value, err := message.GetValueAsInt()
+	if err != nil {
+		return nil, err
+	}
 
-	Mappable := assets.GetMappable(key.NewKey(message.AssetID))
+	assets := transactionKeeper.mapper.NewCollection(context)
+
+	Mappable := assets.Fetch(key.NewKey(message.AssetID)).GetMappable(key.NewKey(message.AssetID))
 	if Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("asset with ID %s not found", message.AssetID.AsString())
 	}
@@ -67,11 +99,6 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	if lockHeight.Compare(baseTypes.CurrentHeight(context)) > 0 {
 		return nil, errorConstants.NotAuthorized.Wrapf("transfer is not allowed until height %d", lockHeight.Get())
-	}
-
-	value, ok := sdkTypes.NewIntFromString(message.Value)
-	if !ok || value.IsNegative() {
-		return nil, errorConstants.IncorrectFormat.Wrapf("invalid value %s", message.Value)
 	}
 
 	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, message.ToID, message.AssetID, value)); err != nil {
