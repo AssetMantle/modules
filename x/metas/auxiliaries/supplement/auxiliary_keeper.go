@@ -42,7 +42,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request hel
 		}
 	}
 
-	return newAuxiliaryResponse(propertyList), nil
+	return NewAuxiliaryResponse(propertyList), nil
 }
 
 func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {
