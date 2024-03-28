@@ -12,6 +12,8 @@ import (
 	"github.com/AssetMantle/modules/x/assets/parameters"
 	"github.com/AssetMantle/modules/x/assets/record"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
@@ -82,8 +84,10 @@ var (
 		return baseProperties.NewMetaProperty(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewStringData(random.GenerateUniqueIdentifier()))
 	}
 
-	randomAssetGenerator = func(withImmutable, withMutable properties.MetaProperty) documents.Asset {
-		return baseDocuments.NewAsset(baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList(randomMetaPropertyGenerator(), randomMetaPropertyGenerator(), randomMetaPropertyGenerator())), baseQualified.NewMutables(baseLists.NewPropertyList(randomMetaPropertyGenerator(), randomMetaPropertyGenerator(), randomMetaPropertyGenerator()))), baseQualified.NewImmutables(baseLists.NewPropertyList(randomMetaPropertyGenerator(), randomMetaPropertyGenerator(), randomMetaPropertyGenerator())), baseQualified.NewMutables(baseLists.NewPropertyList(randomMetaPropertyGenerator(), randomMetaPropertyGenerator(), randomMetaPropertyGenerator())))
+	randomAssetGenerator = func(withImmutable, withMutable properties.Property) documents.Asset {
+		immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(withImmutable, randomMetaPropertyGenerator(), randomMetaPropertyGenerator(), randomMetaPropertyGenerator()))
+		mutables := baseQualified.NewMutables(baseLists.NewPropertyList(withMutable, randomMetaPropertyGenerator(), randomMetaPropertyGenerator(), randomMetaPropertyGenerator()))
+		return baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, mutables), immutables, mutables)
 	}
 
 	fromAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
@@ -112,8 +116,15 @@ var (
 
 	supplementAuxiliaryKeeper = new(MockAuxiliaryKeeper)
 
-	supplementAuxiliaryFailureAsset   = randomAssetGenerator(baseProperties.NewMetaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(0))), nil)
+	supplementAuxiliaryFailureAsset   = randomAssetGenerator(baseProperties.NewMetaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(0))).ScrubData(), nil)
 	supplementAuxiliaryFailureAssetID = baseIDs.NewAssetID(supplementAuxiliaryFailureAsset.GetClassificationID(), supplementAuxiliaryFailureAsset.GetImmutables()).(*baseIDs.AssetID)
+	_                                 = supplementAuxiliaryKeeper.On("Help", mock.Anything, supplement.NewAuxiliaryRequest(supplementAuxiliaryFailureAsset.GetProperty(constantProperties.LockHeightProperty.GetID()))).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
+	mesaLockAsset                     = randomAssetGenerator(baseProperties.NewMesaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))), nil)
+	mesaLockAssetID                   = baseIDs.NewAssetID(mesaLockAsset.GetClassificationID(), mesaLockAsset.GetImmutables()).(*baseIDs.AssetID)
+	_                                 = supplementAuxiliaryKeeper.On("Help", mock.Anything, supplement.NewAuxiliaryRequest(mesaLockAsset.GetProperty(constantProperties.LockHeightProperty.GetID()))).Return(supplement.NewAuxiliaryResponse(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))), nil)
+	unrevealedLockAsset               = randomAssetGenerator(baseProperties.NewMesaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(2))), nil)
+	unrevealedLockAssetID             = baseIDs.NewAssetID(unrevealedLockAsset.GetClassificationID(), unrevealedLockAsset.GetImmutables()).(*baseIDs.AssetID)
+	_                                 = supplementAuxiliaryKeeper.On("Help", mock.Anything, supplement.NewAuxiliaryRequest(unrevealedLockAsset.GetProperty(constantProperties.LockHeightProperty.GetID()))).Return(supplement.NewAuxiliaryResponse(baseLists.NewPropertyList()), nil)
 	_                                 = supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
 
 	supplementAuxiliaryAuxiliary = new(MockAuxiliary)
@@ -123,6 +134,7 @@ var (
 
 	transferAuxiliaryFailureAsset   = randomAssetGenerator(baseProperties.NewMetaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(0))), nil)
 	transferAuxiliaryFailureAssetID = baseIDs.NewAssetID(transferAuxiliaryFailureAsset.GetClassificationID(), transferAuxiliaryFailureAsset.GetImmutables()).(*baseIDs.AssetID)
+	_                               = transferAuxiliaryKeeper.On("Help", mock.Anything, transfer.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), transferAuxiliaryFailureAssetID, sdkTypes.NewInt(1))).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 	_                               = transferAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
 
 	transferAuxiliaryAuxiliary = new(MockAuxiliary)
@@ -159,6 +171,8 @@ var (
 	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(transferAuxiliaryFailureAsset))
 	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(immutableLockAsset))
 	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(mutableLockAsset))
+	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(mesaLockAsset))
+	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(unrevealedLockAsset))
 )
 
 func TestTransactionKeeperTransact(t *testing.T) {
@@ -231,6 +245,24 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			errorConstants.NotAuthorized,
 		},
 		{
+			"sendAssetWithMesaLock",
+			args{fromAddress, mesaLockAssetID, 1},
+			func() {
+				Context = Context.WithBlockHeight(2)
+			},
+			newTransactionResponse(),
+			nil,
+		},
+		{
+			"sendAssetWithUnrevealedLock",
+			args{fromAddress, unrevealedLockAssetID, 1},
+			func() {
+
+			},
+			nil,
+			errorConstants.MetaDataError,
+		},
+		{
 			"supplementAuxiliaryFailure",
 			args{fromAddress, supplementAuxiliaryFailureAssetID, 1},
 			func() {
@@ -249,6 +281,9 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			"sendInMultiAssetScenario",
 			args{fromAddress, assetID, 1},
 			func() {
+				for i := 0; i < 10000; i++ {
+					_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(randomAssetGenerator(nil, nil)))
+				}
 			},
 			newTransactionResponse(),
 			nil,
