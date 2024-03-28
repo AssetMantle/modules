@@ -17,6 +17,16 @@ import (
 
 var _ helpers.Message = (*Message)(nil)
 
+func (message *Message) GetValueAsInt() (sdkTypes.Int, error) {
+	value, ok := sdkTypes.NewIntFromString(message.Value)
+	if !ok {
+		return sdkTypes.ZeroInt(), errorConstants.IncorrectFormat.Wrapf("send value %s is not a valid integer", message.Value)
+	} else if value.IsNegative() {
+		return sdkTypes.ZeroInt(), errorConstants.InvalidParameter.Wrapf("invalid value %s", message.Value)
+	}
+
+	return value, nil
+}
 func (message *Message) Type() string { return Transaction.GetName() }
 func (message *Message) GetFromAddress() sdkTypes.AccAddress {
 	from, err := sdkTypes.AccAddressFromBech32(message.From)
@@ -38,8 +48,8 @@ func (message *Message) ValidateBasic() error {
 	if err := message.AssetID.ValidateBasic(); err != nil {
 		return err
 	}
-	if _, ok := sdkTypes.NewIntFromString(message.Value); !ok {
-		return errorConstants.IncorrectFormat.Wrapf("send value %s is not a valid integer", message.Value)
+	if _, err := message.GetValueAsInt(); err != nil {
+		return err
 	}
 	return nil
 }
