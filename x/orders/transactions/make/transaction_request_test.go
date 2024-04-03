@@ -33,10 +33,10 @@ var (
 	immutablePropertiesString     = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString   = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString       = "defaultMutable1:S|defaultMutable1"
-	immutableMetaProperties, _    = baseLists.PrototypePropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
-	immutableProperties, _        = baseLists.PrototypePropertyList().FromMetaPropertiesString(immutablePropertiesString)
-	mutableMetaProperties, _      = baseLists.PrototypePropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
-	mutableProperties, _          = baseLists.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
+	immutableMetaProperties, _    = baseLists.NewPropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
+	immutableProperties, _        = baseLists.NewPropertyList().FromMetaPropertiesString(immutablePropertiesString)
+	mutableMetaProperties, _      = baseLists.NewPropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
+	mutableProperties, _          = baseLists.NewPropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	immutables                    = baseQualified.NewImmutables(immutableProperties)
 	mutables                      = baseQualified.NewMutables(mutableProperties)
 	testClassificationID          = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)

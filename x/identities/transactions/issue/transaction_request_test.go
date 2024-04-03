@@ -35,19 +35,19 @@ func createTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
-	immutableMetaProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
+	immutableMetaProperties, err := baseLists.NewPropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 
 	var immutableProperties lists.PropertyList
-	immutableProperties, err = baseLists.PrototypePropertyList().FromMetaPropertiesString(immutablePropertiesString)
+	immutableProperties, err = baseLists.NewPropertyList().FromMetaPropertiesString(immutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.PropertyList
-	mutableMetaProperties, err = baseLists.PrototypePropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
+	mutableMetaProperties, err = baseLists.NewPropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 
 	var mutableProperties lists.PropertyList
-	mutableProperties, err = baseLists.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
+	mutableProperties, err = baseLists.NewPropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

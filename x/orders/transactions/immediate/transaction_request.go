@@ -123,23 +123,23 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, errorConstants.IncorrectFormat.Wrapf("taker split %s is not a valid integer", transactionRequest.TakerSplit)
 	}
 
-	immutableMetaProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.ImmutableMetaProperties)
+	immutableMetaProperties, err := base.NewPropertyList().FromMetaPropertiesString(transactionRequest.ImmutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
 
-	immutableProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.ImmutableProperties)
+	immutableProperties, err := base.NewPropertyList().FromMetaPropertiesString(transactionRequest.ImmutableProperties)
 	if err != nil {
 		return nil, err
 	}
 	immutableProperties = immutableProperties.ScrubData()
 
-	mutableMetaProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.MutableMetaProperties)
+	mutableMetaProperties, err := base.NewPropertyList().FromMetaPropertiesString(transactionRequest.MutableMetaProperties)
 	if err != nil {
 		return nil, err
 	}
 
-	mutableProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.MutableProperties)
+	mutableProperties, err := base.NewPropertyList().FromMetaPropertiesString(transactionRequest.MutableProperties)
 	if err != nil {
 		return nil, err
 	}

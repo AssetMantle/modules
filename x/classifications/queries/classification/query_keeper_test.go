@@ -64,9 +64,9 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 
 func Test_Query_Keeper_Classification(t *testing.T) {
 	context, keepers := CreateTestInput2(t)
-	immutableProperties, err := base.PrototypePropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err := base.NewPropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
-	mutableProperties, Error2 := base.PrototypePropertyList().FromMetaPropertiesString("burn:S|100")
+	mutableProperties, Error2 := base.NewPropertyList().FromMetaPropertiesString("burn:S|100")
 	require.Equal(t, nil, Error2)
 
 	classificationID := baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties))

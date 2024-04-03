@@ -220,11 +220,11 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 	immutableMetaProperties, err := base.PrototypeMetaProperty().FromString(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	immutableProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(immutablePropertiesString)
+	immutableProperties, err := baseLists.NewPropertyList().FromMetaPropertiesString(immutablePropertiesString)
 	require.Equal(t, nil, err)
 	mutableMetaProperties, err := base.PrototypeMetaProperty().FromString(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	mutableProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
+	mutableProperties, err := baseLists.NewPropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

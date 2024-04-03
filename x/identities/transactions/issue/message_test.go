@@ -47,19 +47,19 @@ func createTestInput(t *testing.T) (*baseIDs.IdentityID, *baseIDs.Classification
 	require.Nil(t, err)
 
 	var immutableMetaProperties lists.PropertyList
-	immutableMetaProperties, err = baseLists.PrototypePropertyList().FromMetaPropertiesString("defaultImmutableMeta1:S|defaultImmutableMeta1")
+	immutableMetaProperties, err = baseLists.NewPropertyList().FromMetaPropertiesString("defaultImmutableMeta1:S|defaultImmutableMeta1")
 	require.Equal(t, nil, err)
 
 	var immutableProperties lists.PropertyList
-	immutableProperties, err = baseLists.PrototypePropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
+	immutableProperties, err = baseLists.NewPropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.PropertyList
-	mutableMetaProperties, err = baseLists.PrototypePropertyList().FromMetaPropertiesString("defaultMutableMeta1:S|defaultMutableMeta1")
+	mutableMetaProperties, err = baseLists.NewPropertyList().FromMetaPropertiesString("defaultMutableMeta1:S|defaultMutableMeta1")
 	require.Equal(t, nil, err)
 
 	var mutableProperties lists.PropertyList
-	mutableProperties, err = baseLists.PrototypePropertyList().FromMetaPropertiesString("defaultMutable1:S|defaultMutable1")
+	mutableProperties, err = baseLists.NewPropertyList().FromMetaPropertiesString("defaultMutable1:S|defaultMutable1")
 	require.Equal(t, nil, err)
 
 	return testFromID.(*baseIDs.IdentityID), testClassificationID.(*baseIDs.ClassificationID), fromAddress, fromAccAddress, toAddress, toAccAddress, immutableMetaProperties.(*baseLists.PropertyList), immutableProperties.(*baseLists.PropertyList), mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)

@@ -32,13 +32,13 @@ var (
 	immutablePropertiesString            = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString          = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString              = "defaultMutable1:S|defaultMutable1"
-	immutableMetaPropertiesInterfaces, _ = baseLists.PrototypePropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
+	immutableMetaPropertiesInterfaces, _ = baseLists.NewPropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
 	immutableMetaProperties              = immutableMetaPropertiesInterfaces.(*baseLists.PropertyList)
-	immutablePropertiesInterfaces, _     = baseLists.PrototypePropertyList().FromMetaPropertiesString(immutablePropertiesString)
+	immutablePropertiesInterfaces, _     = baseLists.NewPropertyList().FromMetaPropertiesString(immutablePropertiesString)
 	immutableProperties                  = immutablePropertiesInterfaces.(*baseLists.PropertyList)
-	mutableMetaPropertiesInterfaces, _   = baseLists.PrototypePropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
+	mutableMetaPropertiesInterfaces, _   = baseLists.NewPropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
 	mutableMetaProperties                = mutableMetaPropertiesInterfaces.(*baseLists.PropertyList)
-	mutablePropertiesInterfaces, _       = baseLists.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
+	mutablePropertiesInterfaces, _       = baseLists.NewPropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	mutableProperties                    = mutablePropertiesInterfaces.(*baseLists.PropertyList)
 	immutables                           = base.NewImmutables(immutableProperties)
 	mutables                             = base.NewMutables(mutableProperties)

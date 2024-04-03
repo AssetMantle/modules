@@ -35,7 +35,7 @@ var (
 	testClassificationID     = baseIDs.NewClassificationID(immutables, mutables)
 	testFromID               = baseIDs.NewIdentityID(testClassificationID, immutables)
 	maintainedPropertyString = "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, _  = base.PrototypePropertyList().FromMetaPropertiesString(maintainedPropertyString)
+	maintainedProperties, _  = base.NewPropertyList().FromMetaPropertiesString(maintainedPropertyString)
 	testBaseRequest          = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 )
 
