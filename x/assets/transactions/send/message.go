@@ -37,19 +37,19 @@ func (message *Message) GetFromAddress() sdkTypes.AccAddress {
 }
 func (message *Message) ValidateBasic() error {
 	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
-		return errorConstants.IncorrectMessage.Wrapf("invalid from address %s", err.Error())
+		return errorConstants.InvalidMessage.Wrapf("invalid from address %s", err.Error())
 	}
 	if err := message.FromID.ValidateBasic(); err != nil {
-		return errorConstants.IncorrectMessage.Wrapf("invalid from id %s", err.Error())
+		return errorConstants.InvalidMessage.Wrapf("invalid from id %s", err.Error())
 	}
 	if err := message.ToID.ValidateBasic(); err != nil {
-		return errorConstants.IncorrectMessage.Wrapf("invalid to id %s", err.Error())
+		return errorConstants.InvalidMessage.Wrapf("invalid to id %s", err.Error())
 	}
 	if err := message.AssetID.ValidateBasic(); err != nil {
-		return errorConstants.IncorrectMessage.Wrapf("invalid asset id %s", err.Error())
+		return errorConstants.InvalidMessage.Wrapf("invalid asset id %s", err.Error())
 	}
 	if _, err := message.GetValueAsInt(); err != nil {
-		return errorConstants.IncorrectMessage.Wrapf("invalid value %s", err.Error())
+		return errorConstants.InvalidMessage.Wrapf("invalid value %s", err.Error())
 	}
 	return nil
 }

@@ -51,7 +51,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 		{
 			"empty message",
 			&Message{},
-			errorConstants.IncorrectMessage,
+			errorConstants.InvalidMessage,
 		},
 		{
 			"invalid from address",
@@ -62,7 +62,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 				AssetID: coinAssetID,
 				Value:   testValue,
 			},
-			errorConstants.IncorrectMessage,
+			errorConstants.InvalidMessage,
 		},
 		{
 			"invalid from id",
@@ -73,7 +73,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 				AssetID: coinAssetID,
 				Value:   testValue,
 			},
-			errorConstants.IncorrectMessage,
+			errorConstants.InvalidMessage,
 		},
 		{
 			"invalid to id",
@@ -84,7 +84,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 				AssetID: coinAssetID,
 				Value:   testValue,
 			},
-			errorConstants.IncorrectMessage,
+			errorConstants.InvalidMessage,
 		},
 		{
 			"invalid asset id",
@@ -95,7 +95,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 				AssetID: &baseIDs.AssetID{HashID: &baseIDs.HashID{IDBytes: []byte{1, 2, 3, 4}}},
 				Value:   testValue,
 			},
-			errorConstants.IncorrectMessage,
+			errorConstants.InvalidMessage,
 		},
 		{
 			"invalid value",
@@ -106,7 +106,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 				AssetID: coinAssetID,
 				Value:   "invalid",
 			},
-			errorConstants.IncorrectMessage,
+			errorConstants.InvalidMessage,
 		},
 	}
 	for _, tt := range tests {

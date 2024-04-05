@@ -161,7 +161,7 @@ func (module module) Route() sdkTypes.Route {
 				return transaction.HandleMessage(sdkTypes.WrapSDKContext(context.WithEventManager(sdkTypes.NewEventManager())), message)
 			}
 		}
-		return nil, errorConstants.IncorrectMessage.Wrapf("message type %T is not supported by module %s", msg, module.Name())
+		return nil, errorConstants.InvalidMessage.Wrapf("message type %T is not supported by module %s", msg, module.Name())
 	})
 }
 func (module module) QuerierRoute() string {
@@ -235,7 +235,7 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 		return transaction.DecodeTransactionRequest(rawMessage)
 	}
 
-	return nil, errorConstants.IncorrectMessage.Wrapf("transaction %s is not supported by module %s", transactionName, module.Name())
+	return nil, errorConstants.InvalidMessage.Wrapf("transaction %s is not supported by module %s", transactionName, module.Name())
 }
 func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace paramsTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)

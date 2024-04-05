@@ -59,7 +59,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 				FromID: testID,
 				Coins:  types.Coins{types.Coin{Denom: denom, Amount: types.NewInt(100)}, types.Coin{Denom: denom, Amount: types.NewInt(100)}},
 			},
-			constants.InvalidRequest,
+			constants.InvalidMessage,
 		},
 		{
 			"too many coins",
@@ -80,7 +80,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 					types.Coin{Denom: denom + "10", Amount: types.NewInt(100)},
 				},
 			},
-			constants.InvalidRequest,
+			constants.InvalidMessage,
 		},
 		{
 			"unsorted coins",
@@ -92,12 +92,12 @@ func TestMessage_ValidateBasic(t *testing.T) {
 					types.Coin{Denom: denom, Amount: types.NewInt(100)},
 				},
 			},
-			constants.InvalidRequest,
+			constants.InvalidMessage,
 		},
 		{
 			"empty message",
 			&Message{},
-			constants.InvalidRequest,
+			constants.InvalidMessage,
 		},
 		{
 			"invalid from address",
@@ -106,7 +106,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 				FromID: testID,
 				Coins:  testCoins,
 			},
-			constants.InvalidRequest,
+			constants.InvalidMessage,
 		},
 		{
 			name: "invalid from id",
@@ -115,7 +115,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 				FromID: &baseIDs.IdentityID{HashID: &baseIDs.HashID{IDBytes: []byte{1, 2, 3, 4}}},
 				Coins:  testCoins,
 			},
-			wantErr: constants.InvalidRequest,
+			wantErr: constants.InvalidMessage,
 		},
 		{
 			name: "invalid coin amount",
@@ -124,7 +124,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 				FromID: testID,
 				Coins:  types.Coins{types.Coin{Denom: denom, Amount: types.NewInt(-100)}},
 			},
-			wantErr: constants.InvalidRequest,
+			wantErr: constants.InvalidMessage,
 		},
 		{
 			name: "invalid coin denom",
@@ -133,7 +133,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 				FromID: testID,
 				Coins:  types.Coins{types.Coin{Denom: "", Amount: types.NewInt(100)}},
 			},
-			wantErr: constants.InvalidRequest,
+			wantErr: constants.InvalidMessage,
 		},
 	}
 	for _, tt := range tests {
