@@ -28,16 +28,16 @@ func (message *Message) GetFromAddress() sdkTypes.AccAddress {
 }
 func (message *Message) ValidateBasic() error {
 	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
-		return err
+		return errorConstants.InvalidRequest.Wrapf(err.Error())
 	}
 	if err := message.FromID.ValidateBasic(); err != nil {
-		return err
+		return errorConstants.InvalidRequest.Wrapf(err.Error())
 	}
 	if err := message.Coins.Validate(); err != nil {
-		return err
+		return errorConstants.InvalidRequest.Wrapf(err.Error())
 	}
 	if message.Coins.Len() > constants.MaxListLength {
-		return errorConstants.InvalidRequest.Wrapf("coins length %d exceeds max length %d", message.Coins.Len(), constants.MaxListLength)
+		return errorConstants.InvalidRequest.Wrapf("number of coins in message: %d exceeds maximum allowed: %d", message.Coins.Len(), constants.MaxListLength)
 	}
 	return nil
 }
