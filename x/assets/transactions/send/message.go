@@ -37,19 +37,19 @@ func (message *Message) GetFromAddress() sdkTypes.AccAddress {
 }
 func (message *Message) ValidateBasic() error {
 	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
-		return err
+		return errorConstants.IncorrectMessage.Wrapf(err.Error())
 	}
 	if err := message.FromID.ValidateBasic(); err != nil {
-		return err
+		return errorConstants.IncorrectMessage.Wrapf(err.Error())
 	}
 	if err := message.ToID.ValidateBasic(); err != nil {
-		return err
+		return errorConstants.IncorrectMessage.Wrapf(err.Error())
 	}
 	if err := message.AssetID.ValidateBasic(); err != nil {
-		return err
+		return errorConstants.IncorrectMessage.Wrapf(err.Error())
 	}
 	if _, err := message.GetValueAsInt(); err != nil {
-		return err
+		return errorConstants.IncorrectMessage.Wrapf(err.Error())
 	}
 	return nil
 }
