@@ -4,6 +4,9 @@
 package wrap
 
 import (
+	"github.com/AssetMantle/schema/go/errors"
+	"github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/tendermint/tendermint/crypto/ed25519"
 	"reflect"
 	"testing"
 
@@ -15,10 +18,133 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 )
 
-type fields struct {
-	From   string
-	FromID *baseIDs.IdentityID
-	Coins  types.Coins
+var (
+	testAddress = types.AccAddress(ed25519.GenPrivKey().PubKey().Address()).String()
+	testID      = baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)
+	testCoins   = types.NewCoins(types.NewCoin(denom, types.NewInt(100)))
+)
+
+const (
+	denom = "stake"
+)
+
+func TestMessage_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name    string
+		message *Message
+		wantErr errors.Error
+	}{
+		{
+			"valid message",
+			&Message{
+				From:   testAddress,
+				FromID: testID,
+				Coins:  testCoins,
+			},
+			nil,
+		},
+		{
+			"multiple coins",
+			&Message{
+				From:   testAddress,
+				FromID: testID,
+				Coins:  types.Coins{types.Coin{Denom: denom + "1", Amount: types.NewInt(100)}, types.Coin{Denom: denom + "2", Amount: types.NewInt(100)}},
+			},
+			nil,
+		},
+		{
+			"duplicate denom",
+			&Message{
+				From:   testAddress,
+				FromID: testID,
+				Coins:  types.Coins{types.Coin{Denom: denom, Amount: types.NewInt(100)}, types.Coin{Denom: denom, Amount: types.NewInt(100)}},
+			},
+			constants.InvalidRequest,
+		},
+		{
+			"too many coins",
+			&Message{
+				From:   testAddress,
+				FromID: testID,
+				Coins: types.Coins{
+					types.Coin{Denom: denom, Amount: types.NewInt(100)},
+					types.Coin{Denom: denom + "01", Amount: types.NewInt(100)},
+					types.Coin{Denom: denom + "02", Amount: types.NewInt(100)},
+					types.Coin{Denom: denom + "03", Amount: types.NewInt(100)},
+					types.Coin{Denom: denom + "04", Amount: types.NewInt(100)},
+					types.Coin{Denom: denom + "05", Amount: types.NewInt(100)},
+					types.Coin{Denom: denom + "06", Amount: types.NewInt(100)},
+					types.Coin{Denom: denom + "07", Amount: types.NewInt(100)},
+					types.Coin{Denom: denom + "08", Amount: types.NewInt(100)},
+					types.Coin{Denom: denom + "09", Amount: types.NewInt(100)},
+					types.Coin{Denom: denom + "10", Amount: types.NewInt(100)},
+				},
+			},
+			constants.InvalidRequest,
+		},
+		{
+			"unsorted coins",
+			&Message{
+				From:   testAddress,
+				FromID: testID,
+				Coins: types.Coins{
+					types.Coin{Denom: denom + "1", Amount: types.NewInt(100)},
+					types.Coin{Denom: denom, Amount: types.NewInt(100)},
+				},
+			},
+			constants.InvalidRequest,
+		},
+		{
+			"empty message",
+			&Message{},
+			constants.InvalidRequest,
+		},
+		{
+			"invalid from address",
+			&Message{
+				From:   "invalid",
+				FromID: testID,
+				Coins:  testCoins,
+			},
+			constants.InvalidRequest,
+		},
+		{
+			name: "invalid from id",
+			message: &Message{
+				From:   testAddress,
+				FromID: &baseIDs.IdentityID{HashID: &baseIDs.HashID{IDBytes: []byte{1, 2, 3, 4}}},
+				Coins:  testCoins,
+			},
+			wantErr: constants.InvalidRequest,
+		},
+		{
+			name: "invalid coin amount",
+			message: &Message{
+				From:   testAddress,
+				FromID: testID,
+				Coins:  types.Coins{types.Coin{Denom: denom, Amount: types.NewInt(-100)}},
+			},
+			wantErr: constants.InvalidRequest,
+		},
+		{
+			name: "invalid coin denom",
+			message: &Message{
+				From:   testAddress,
+				FromID: testID,
+				Coins:  types.Coins{types.Coin{Denom: "", Amount: types.NewInt(100)}},
+			},
+			wantErr: constants.InvalidRequest,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.message.ValidateBasic()
+
+			if err != nil && tt.wantErr == nil || err == nil && tt.wantErr != nil || err != nil && tt.wantErr != nil && !tt.wantErr.Is(err) {
+				t.Errorf("\n got: \n %v \n want: \n %v", err, tt.wantErr)
+			}
+		})
+	}
 }
 
 func Test_messageFromInterface(t *testing.T) {
@@ -58,7 +184,11 @@ func Test_messagePrototype(t *testing.T) {
 }
 
 func Test_message_GetSigners(t *testing.T) {
-
+	type fields struct {
+		From   string
+		FromID *baseIDs.IdentityID
+		Coins  types.Coins
+	}
 	tests := []struct {
 		name   string
 		fields fields
@@ -81,7 +211,11 @@ func Test_message_GetSigners(t *testing.T) {
 }
 
 func Test_message_RegisterCodec(t *testing.T) {
-
+	type fields struct {
+		From   string
+		FromID *baseIDs.IdentityID
+		Coins  types.Coins
+	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
 	}
@@ -105,7 +239,11 @@ func Test_message_RegisterCodec(t *testing.T) {
 }
 
 func Test_message_Type(t *testing.T) {
-
+	type fields struct {
+		From   string
+		FromID *baseIDs.IdentityID
+		Coins  types.Coins
+	}
 	tests := []struct {
 		name   string
 		fields fields
@@ -122,29 +260,6 @@ func Test_message_Type(t *testing.T) {
 			}
 			if got := message.Type(); got != tt.want {
 				t.Errorf("Type() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_ValidateBasic(t *testing.T) {
-
-	tests := []struct {
-		name    string
-		fields  fields
-		wantErr bool
-	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, coins}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:   tt.fields.From,
-				FromID: tt.fields.FromID,
-				Coins:  tt.fields.Coins,
-			}
-			if err := message.ValidateBasic(); (err != nil) != tt.wantErr {
-				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
