@@ -5,6 +5,7 @@ package transfer
 
 import (
 	"context"
+	"reflect"
 
 	"github.com/AssetMantle/schema/go/data"
 	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
@@ -21,21 +22,28 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRequest helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	if err := AuxiliaryRequest.Validate(); err != nil {
+		return nil, err
+	}
+
+	auxiliaryRequest, ok := AuxiliaryRequest.(auxiliaryRequest)
+	if !ok {
+		return nil, errorConstants.InvalidRequest.Wrapf("invalid request type: %s", reflect.TypeOf(AuxiliaryRequest).String())
+	}
+
 	if !auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.TransferEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
 		return nil, errorConstants.NotAuthorized.Wrapf("transfer is not enabled")
 	}
 
-	auxiliaryRequest := auxiliaryRequestFromInterface(request)
-
 	splits := auxiliaryKeeper.mapper.NewCollection(context)
 
 	if _, err := utilities.SubtractSplits(splits, auxiliaryRequest.FromID, auxiliaryRequest.AssetID, auxiliaryRequest.Value); err != nil {
-		return newAuxiliaryResponse(), err
+		return nil, err
 	}
 
 	if _, err := utilities.AddSplits(splits, auxiliaryRequest.ToID, auxiliaryRequest.AssetID, auxiliaryRequest.Value); err != nil {
-		return newAuxiliaryResponse(), err
+		return nil, err
 	}
 
 	return newAuxiliaryResponse(), nil
