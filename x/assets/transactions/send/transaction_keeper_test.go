@@ -166,13 +166,14 @@ var (
 
 	TransactionKeeper = transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager, authenticateAuxiliary, supplementAuxiliaryAuxiliary, transferAuxiliaryAuxiliary}
 
-	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(asset))
-	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(supplementAuxiliaryFailureAsset))
-	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(transferAuxiliaryFailureAsset))
-	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(immutableLockAsset))
-	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(mutableLockAsset))
-	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(mesaLockAsset))
-	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(unrevealedLockAsset))
+	_ = TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
+		Add(record.NewRecord(asset)).
+		Add(record.NewRecord(supplementAuxiliaryFailureAsset)).
+		Add(record.NewRecord(transferAuxiliaryFailureAsset)).
+		Add(record.NewRecord(immutableLockAsset)).
+		Add(record.NewRecord(mutableLockAsset)).
+		Add(record.NewRecord(mesaLockAsset)).
+		Add(record.NewRecord(unrevealedLockAsset))
 )
 
 func TestTransactionKeeperTransact(t *testing.T) {
