@@ -19,7 +19,6 @@ import (
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/types"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
@@ -32,9 +31,8 @@ import (
 )
 
 const (
-	ChainID       = "testChain"
-	Denom         = "stake"
-	GenesisSupply = 1000000000
+	ChainID = "testChain"
+	Denom   = "stake"
 )
 
 type mockAuxiliaryRequest struct {
@@ -54,8 +52,6 @@ var (
 
 	testCoinAsset   = base.NewCoinAsset(Denom)
 	testCoinAssetID = testCoinAsset.GetCoinAssetID()
-
-	encodingConfig = simapp.MakeTestEncodingConfig()
 
 	moduleStoreKey  = sdkTypes.NewKVStoreKey(constants.ModuleName)
 	AuxiliaryKeeper = auxiliaryKeeper{mapper.Prototype().Initialize(moduleStoreKey)}
