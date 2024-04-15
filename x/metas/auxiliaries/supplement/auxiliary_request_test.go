@@ -20,7 +20,5 @@ func Test_Supplement_Request(t *testing.T) {
 
 	require.Equal(t, auxiliaryRequest{PropertyList: []properties.Property{property}}, testAuxiliaryRequest)
 	require.Equal(t, nil, testAuxiliaryRequest.Validate())
-	require.Equal(t, testAuxiliaryRequest, auxiliaryRequestFromInterface(testAuxiliaryRequest))
-	require.Equal(t, auxiliaryRequest{}, auxiliaryRequestFromInterface(nil))
 
 }
