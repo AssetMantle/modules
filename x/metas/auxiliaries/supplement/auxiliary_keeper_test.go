@@ -4,150 +4,276 @@
 package supplement
 
 import (
-	"context"
-	"fmt"
-	"reflect"
-	"testing"
-
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/x/metas/constants"
+	"github.com/AssetMantle/modules/x/metas/mapper"
+	"github.com/AssetMantle/modules/x/metas/record"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	dataConstants "github.com/AssetMantle/schema/go/data/constants"
+	"github.com/AssetMantle/schema/go/errors"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	"github.com/AssetMantle/schema/go/lists/base"
+	"github.com/AssetMantle/schema/go/properties"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/mock"
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
+	"math/rand"
+	"reflect"
+	"strconv"
+	"testing"
+)
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/metas/mapper"
-	"github.com/AssetMantle/modules/x/metas/parameters"
+type mockAuxiliaryRequest struct {
+	mock.Mock
+}
+
+func (*mockAuxiliaryRequest) Validate() error {
+	return nil
+}
+
+const (
+	ChainID = "testChain"
 )
 
 var (
-	propertiesList = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1")))
+	randomMetaPropertyGenerator = func() properties.MetaProperty {
+		return baseProperties.NewMetaProperty(baseIDs.NewStringID(strconv.Itoa(rand.Intn(99999999999999999))), baseData.NewStringData(strconv.Itoa(rand.Intn(rand.Intn(99999999999999999)))))
+	}
+
+	randomPropertiesGenerator = func(n int) (unScrubbed []properties.Property, scrubbed []properties.Property) {
+		unScrubbed = make([]properties.Property, n)
+		scrubbed = make([]properties.Property, n)
+		for i := 0; i < n; i++ {
+			unScrubbed[i] = randomMetaPropertyGenerator()
+			scrubbed[i] = unScrubbed[i].(properties.MetaProperty).ScrubData().ToAnyProperty().(*baseProperties.AnyProperty)
+		}
+
+		return unScrubbed, scrubbed
+	}
+
+	testPropertiesCount                              = 100
+	testUnScrubbedProperties, testScrubbedProperties = randomPropertiesGenerator(testPropertiesCount)
+	randomIndex                                      = rand.Intn(testPropertiesCount)
+
+	invalidMetaProperty = &baseProperties.MetaProperty{
+		ID:   baseIDs.NewPropertyID(baseIDs.NewStringID("invalid"), baseIDs.NewStringID("invalid")).(*baseIDs.PropertyID),
+		Data: baseData.NewStringData("invalid").ToAnyData().(*baseData.AnyData),
+	}
+
+	moduleStoreKey  = sdkTypes.NewKVStoreKey(constants.ModuleName)
+	AuxiliaryKeeper = auxiliaryKeeper{mapper.Prototype().Initialize(moduleStoreKey)}
+
+	setContext = func() sdkTypes.Context {
+		memDB := tendermintDB.NewMemDB()
+		commitMultiStore := store.NewCommitMultiStore(memDB)
+		commitMultiStore.MountStoreWithDB(moduleStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+		_ = commitMultiStore.LoadLatestVersion()
+		return sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{ChainID: ChainID}, false, log.NewNopLogger())
+
+	}
+
+	Context = setContext()
+
+	setMeta = func() error {
+		for _, property := range testUnScrubbedProperties {
+			AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
+				Add(record.NewRecord(property.(properties.MetaProperty).GetData()))
+		}
+		return nil
+	}
+
+	_ = setMeta()
 )
 
-type TestKeepers struct {
-	SupplementKeeper helpers.AuxiliaryKeeper
-}
-
-func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
-
-	storeKey := sdkTypes.NewKVStoreKey("test")
-	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := mapper.Prototype().Initialize(storeKey)
-	encodingConfig := simapp.MakeTestEncodingConfig()
-	appCodec := encodingConfig.Marshaler
-	ParamsKeeper := paramsKeeper.NewKeeper(
-		appCodec,
-		legacyAmino,
-		paramsStoreKey,
-		paramsTransientStoreKeys,
-	)
-	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
-
-	memDB := tendermintDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
-
-	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
-		ChainID: "test",
-	}, false, log.NewNopLogger())
-
-	keepers := TestKeepers{
-		SupplementKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
-	}
-
-	return Context, keepers, Mapper, parameterManager
-}
-
 func Test_auxiliaryKeeper_Help(t *testing.T) {
-	Context, _, Mapper, _ := createTestInput(t)
-	type fields struct {
-		mapper helpers.Mapper
-	}
-	type args struct {
-		context context.Context
-		request helpers.AuxiliaryRequest
-	}
 	tests := []struct {
 		name    string
-		fields  fields
-		args    args
+		setup   func()
+		request helpers.AuxiliaryRequest
 		want    helpers.AuxiliaryResponse
-		wantErr bool
+		wantErr errors.Error
 	}{
-		{"+ve", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(baseLists.AnyPropertiesToProperties(propertiesList.Get()...)...)}, NewAuxiliaryResponse(propertiesList), false},
+		{
+			"valid request",
+			func() {},
+			NewAuxiliaryRequest(testScrubbedProperties...),
+			NewAuxiliaryResponse(base.NewPropertyList(testUnScrubbedProperties...)),
+			nil,
+		},
+		{
+			"empty request",
+			func() {},
+			NewAuxiliaryRequest(),
+			NewAuxiliaryResponse(base.NewPropertyList()),
+			nil,
+		},
+		{
+			"invalid request",
+			func() {},
+			NewAuxiliaryRequest(invalidMetaProperty),
+			nil,
+			errorConstants.InvalidRequest,
+		},
+		{
+			"invalid request type",
+			func() {},
+			&mockAuxiliaryRequest{},
+			nil,
+			errorConstants.InvalidRequest,
+		},
+		{
+			"nil properties",
+			func() {},
+			NewAuxiliaryRequest(nil),
+			NewAuxiliaryResponse(base.NewPropertyList()),
+			nil,
+		},
+		{
+			"one property",
+			func() {},
+			NewAuxiliaryRequest(testScrubbedProperties[randomIndex]),
+			NewAuxiliaryResponse(base.NewPropertyList(testUnScrubbedProperties[randomIndex])),
+			nil,
+		},
+		{
+			"two properties",
+			func() {},
+			NewAuxiliaryRequest(testScrubbedProperties[0], testScrubbedProperties[1]),
+			NewAuxiliaryResponse(base.NewPropertyList(testUnScrubbedProperties[0], testUnScrubbedProperties[1])),
+			nil,
+		},
+		{
+			"prototype property",
+			func() {},
+			NewAuxiliaryRequest(baseProperties.PrototypeMetaProperty().ScrubData()),
+			NewAuxiliaryResponse(base.NewPropertyList()),
+			nil,
+		},
+		{
+			"nil with properties",
+			func() {},
+			NewAuxiliaryRequest(nil, testScrubbedProperties[0], nil, testScrubbedProperties[1], nil),
+			NewAuxiliaryResponse(base.NewPropertyList(testUnScrubbedProperties[0], testUnScrubbedProperties[1])),
+			nil,
+		},
+		{
+			"prototype property with properties",
+			func() {},
+			NewAuxiliaryRequest(baseProperties.PrototypeMetaProperty().ScrubData(), testScrubbedProperties[0], baseProperties.PrototypeMetaProperty().ScrubData(), testScrubbedProperties[1]),
+			NewAuxiliaryResponse(base.NewPropertyList(testUnScrubbedProperties[0], testUnScrubbedProperties[1])),
+			nil,
+		},
+		{
+			"property not present",
+			func() {},
+			NewAuxiliaryRequest(randomMetaPropertyGenerator().ScrubData()),
+			NewAuxiliaryResponse(base.NewPropertyList()),
+			nil,
+		},
+		{
+			"meta property",
+			func() {},
+			NewAuxiliaryRequest(testUnScrubbedProperties[randomIndex]),
+			NewAuxiliaryResponse(base.NewPropertyList(testUnScrubbedProperties[randomIndex])),
+			nil,
+		},
+		{
+			"zero value number",
+			func() {},
+			NewAuxiliaryRequest(&baseProperties.MesaProperty{
+				ID: baseIDs.NewPropertyID(baseIDs.NewStringID("zero"), dataConstants.NumberDataTypeID).(*baseIDs.PropertyID),
+				DataID: &baseIDs.DataID{
+					TypeID: dataConstants.NumberDataTypeID.(*baseIDs.StringID),
+					HashID: baseIDs.PrototypeHashID().(*baseIDs.HashID),
+				},
+			}),
+			NewAuxiliaryResponse(base.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("zero"), baseData.PrototypeNumberData().ZeroValue()))),
+			nil,
+		},
+		{
+			"zero value string",
+			func() {},
+			NewAuxiliaryRequest(&baseProperties.MesaProperty{
+				ID: baseIDs.NewPropertyID(baseIDs.NewStringID("zero"), dataConstants.StringDataTypeID).(*baseIDs.PropertyID),
+				DataID: &baseIDs.DataID{
+					TypeID: dataConstants.StringDataTypeID.(*baseIDs.StringID),
+					HashID: baseIDs.PrototypeHashID().(*baseIDs.HashID),
+				},
+			}),
+			NewAuxiliaryResponse(base.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("zero"), baseData.PrototypeStringData().ZeroValue()))),
+			nil,
+		},
+		{
+			"zero value boolean",
+			func() {},
+			NewAuxiliaryRequest(&baseProperties.MesaProperty{
+				ID: baseIDs.NewPropertyID(baseIDs.NewStringID("zero"), dataConstants.BooleanDataTypeID).(*baseIDs.PropertyID),
+				DataID: &baseIDs.DataID{
+					TypeID: dataConstants.BooleanDataTypeID.(*baseIDs.StringID),
+					HashID: baseIDs.PrototypeHashID().(*baseIDs.HashID),
+				},
+			},
+			),
+			NewAuxiliaryResponse(base.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("zero"), baseData.PrototypeBooleanData().ZeroValue()))),
+			nil,
+		},
+		{
+			"zero value list",
+			func() {},
+			NewAuxiliaryRequest(&baseProperties.MesaProperty{
+				ID: baseIDs.NewPropertyID(baseIDs.NewStringID("zero"), dataConstants.ListDataTypeID).(*baseIDs.PropertyID),
+				DataID: &baseIDs.DataID{
+					TypeID: dataConstants.ListDataTypeID.(*baseIDs.StringID),
+					HashID: baseIDs.PrototypeHashID().(*baseIDs.HashID),
+				},
+			},
+			),
+			NewAuxiliaryResponse(base.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("zero"), baseData.PrototypeListData().ZeroValue()))),
+			nil,
+		},
+		{
+			"zero value linked",
+			func() {},
+			NewAuxiliaryRequest(&baseProperties.MesaProperty{
+				ID: baseIDs.NewPropertyID(baseIDs.NewStringID("zero"), dataConstants.LinkedDataTypeID).(*baseIDs.PropertyID),
+				DataID: &baseIDs.DataID{
+					TypeID: dataConstants.LinkedDataTypeID.(*baseIDs.StringID),
+					HashID: baseIDs.PrototypeHashID().(*baseIDs.HashID),
+				},
+			},
+			),
+			NewAuxiliaryResponse(base.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("zero"), baseData.PrototypeLinkedData().ZeroValue()))),
+			nil,
+		},
+		{
+			"very large number of properties",
+			func() {
+				for i := 0; i < 100000; i++ {
+					AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
+						Add(record.NewRecord(randomMetaPropertyGenerator().GetData()))
+				}
+			},
+			NewAuxiliaryRequest(testScrubbedProperties...),
+			NewAuxiliaryResponse(base.NewPropertyList(testUnScrubbedProperties...)),
+			nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			auxiliaryKeeper := auxiliaryKeeper{
-				mapper: tt.fields.mapper,
-			}
-			got, err := auxiliaryKeeper.Help(tt.args.context, tt.args.request)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			tt.setup()
+
+			got, err := AuxiliaryKeeper.Help(sdkTypes.WrapSDKContext(Context), tt.request)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Help() got = %v, want %v", got, tt.want)
+				t.Errorf("\n got: \n %v \n want: \n %v", got, tt.want)
 			}
-		})
-	}
-}
 
-func Test_auxiliaryKeeper_Initialize(t *testing.T) {
-	_, _, Mapper, parameterManager := createTestInput(t)
-	type fields struct {
-		mapper helpers.Mapper
-	}
-	type args struct {
-		mapper           helpers.Mapper
-		parameterManager helpers.ParameterManager
-		in2              []interface{}
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.Keeper
-	}{
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			au := auxiliaryKeeper{
-				mapper: tt.fields.mapper,
-			}
-			if got := au.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("Initialize() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_keeperPrototype(t *testing.T) {
-	tests := []struct {
-		name string
-		want helpers.AuxiliaryKeeper
-	}{
-		{"+ve", auxiliaryKeeper{}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
+			if err != nil && tt.wantErr == nil || err == nil && tt.wantErr != nil || err != nil && tt.wantErr != nil && !tt.wantErr.Is(err) {
+				t.Errorf("\n want error: \n %v \n got error: \n %v", err, tt.wantErr)
 			}
 		})
 	}
