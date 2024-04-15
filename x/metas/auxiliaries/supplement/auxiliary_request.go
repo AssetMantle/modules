@@ -4,30 +4,27 @@
 package supplement
 
 import (
-	"github.com/AssetMantle/schema/go/properties"
-	"github.com/asaskevich/govalidator"
-
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/schema/go/properties"
 )
 
 type auxiliaryRequest struct {
-	PropertyList []properties.Property `json:"propertyList"`
+	PropertyList []properties.Property
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(auxiliaryRequest)
-	return err
-}
-
-func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := request.(type) {
-	case auxiliaryRequest:
-		return value
-	default:
-		return auxiliaryRequest{}
+	for _, property := range auxiliaryRequest.PropertyList {
+		if property != nil {
+			if err := property.ValidateBasic(); err != nil {
+				return constants.InvalidRequest.Wrapf("invalid property %s: %s", property.GetKey().AsString(), err.Error())
+			}
+		}
 	}
+
+	return nil
 }
 
 func NewAuxiliaryRequest(propertyList ...properties.Property) helpers.AuxiliaryRequest {
