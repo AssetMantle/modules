@@ -5,6 +5,8 @@ package burn
 
 import (
 	"context"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"reflect"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/utilities"
@@ -17,10 +19,17 @@ type auxiliaryKeeper struct {
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
-	auxiliaryRequest := auxiliaryRequestFromInterface(request)
+	if err := request.Validate(); err != nil {
+		return nil, err
+	}
 
+	auxiliaryRequest, ok := request.(auxiliaryRequest)
+	if !ok {
+		return nil, errorConstants.InvalidRequest.Wrapf("invalid request type: %s", reflect.TypeOf(request).String())
+	}
+	
 	if _, err := utilities.SubtractSplits(auxiliaryKeeper.mapper.NewCollection(context), auxiliaryRequest.OwnerID, auxiliaryRequest.AssetID, auxiliaryRequest.Value); err != nil {
-		return newAuxiliaryResponse(), err
+		return nil, err
 	}
 
 	return newAuxiliaryResponse(), nil

@@ -17,22 +17,39 @@ import (
 
 var _ helpers.Message = (*Message)(nil)
 
+func (message *Message) GetValueAsInt() (sdkTypes.Int, error) {
+	value, ok := sdkTypes.NewIntFromString(message.Value)
+	if !ok {
+		return sdkTypes.ZeroInt(), errorConstants.IncorrectFormat.Wrapf("send value %s is not a valid integer", message.Value)
+	} else if value.IsNegative() {
+		return sdkTypes.ZeroInt(), errorConstants.InvalidParameter.Wrapf("send value is negative %s", message.Value)
+	}
+
+	return value, nil
+}
 func (message *Message) Type() string { return Transaction.GetName() }
+func (message *Message) GetFromAddress() sdkTypes.AccAddress {
+	from, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic(err)
+	}
+	return from
+}
 func (message *Message) ValidateBasic() error {
 	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
-		return err
+		return errorConstants.InvalidMessage.Wrapf("invalid from address %s", err.Error())
 	}
 	if err := message.FromID.ValidateBasic(); err != nil {
-		return err
+		return errorConstants.InvalidMessage.Wrapf("invalid from id %s", err.Error())
 	}
 	if err := message.ToID.ValidateBasic(); err != nil {
-		return err
+		return errorConstants.InvalidMessage.Wrapf("invalid to id %s", err.Error())
 	}
 	if err := message.AssetID.ValidateBasic(); err != nil {
-		return err
+		return errorConstants.InvalidMessage.Wrapf("invalid asset id %s", err.Error())
 	}
-	if _, ok := sdkTypes.NewIntFromString(message.Value); !ok {
-		return errorConstants.IncorrectFormat.Wrapf("send value %s is not a valid integer", message.Value)
+	if _, err := message.GetValueAsInt(); err != nil {
+		return errorConstants.InvalidMessage.Wrapf("invalid value %s", err.Error())
 	}
 	return nil
 }

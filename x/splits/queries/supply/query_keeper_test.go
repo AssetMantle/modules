@@ -4,6 +4,7 @@
 package supply
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"testing"
@@ -26,7 +27,6 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/splits/mappable"
 	"github.com/AssetMantle/modules/x/splits/parameters"
 	"github.com/AssetMantle/modules/x/splits/record"
 )
@@ -60,7 +60,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
-	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
+	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
@@ -68,7 +68,7 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		QueryKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.QueryKeeper),
 	}
 
-	return context, keepers, Mapper, parameterManager
+	return Context, keepers, Mapper, parameterManager
 }
 
 func Test_keeperPrototype(t *testing.T) {
@@ -82,43 +82,6 @@ func Test_keeperPrototype(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_queryKeeper_Enquire(t *testing.T) {
-	context, keepers, Mapper, _ := createTestInput(t)
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID()
-	testRate := sdkTypes.OneInt()
-	split := baseTypes.NewSplit(testOwnerIdentityID, testAssetID, testRate)
-	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(mappable.NewMappable(split))
-	type fields struct {
-		mapper helpers.Mapper
-	}
-	type args struct {
-		context      sdkTypes.Context
-		queryRequest helpers.QueryRequest
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.QueryResponse
-	}{
-		{"+ve", fields{Mapper}, args{context, newQueryRequest(testAssetID)}, newQueryResponse(testRate)},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			queryKeeper := queryKeeper{
-				mapper: tt.fields.mapper,
-			}
-			if got := queryKeeper.Enquire(sdkTypes.WrapSDKContext(tt.args.context), tt.args.queryRequest); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Enquire() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -149,6 +112,50 @@ func Test_queryKeeper_Initialize(t *testing.T) {
 			}
 			if got := queryKeeper.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_queryKeeper_Enquire(t *testing.T) {
+	Context, keepers, Mapper, _ := createTestInput(t)
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
+	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
+	classificationID := baseIDs.NewClassificationID(immutables, mutables)
+	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
+	testAssetID := baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID()
+	testRate := sdkTypes.OneInt()
+	split := baseTypes.NewSplit(testRate)
+	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))
+
+	type fields struct {
+		mapper helpers.Mapper
+	}
+	type args struct {
+		context      context.Context
+		queryRequest helpers.QueryRequest
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    helpers.QueryResponse
+		wantErr bool
+	}{
+		{"+ve", fields{Mapper}, args{Context.Context(), newQueryRequest(testAssetID)}, newQueryResponse(testRate), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			queryKeeper := queryKeeper{
+				mapper: tt.fields.mapper,
+			}
+			got, err := queryKeeper.Enquire(tt.args.context, tt.args.queryRequest)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Enquire() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Enquire() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

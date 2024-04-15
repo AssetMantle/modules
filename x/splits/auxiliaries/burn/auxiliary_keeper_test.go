@@ -4,157 +4,186 @@
 package burn
 
 import (
-	"context"
-	"fmt"
-	"reflect"
-	"testing"
-
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/utilities/random"
+	"github.com/AssetMantle/modules/x/splits/constants"
+	"github.com/AssetMantle/modules/x/splits/key"
+	"github.com/AssetMantle/modules/x/splits/mappable"
+	"github.com/AssetMantle/modules/x/splits/mapper"
+	"github.com/AssetMantle/modules/x/splits/record"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
+	"github.com/AssetMantle/schema/go/errors"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	"github.com/AssetMantle/schema/go/types"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/mock"
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/splits/mapper"
-	"github.com/AssetMantle/modules/x/splits/parameters"
-	"github.com/AssetMantle/modules/x/splits/record"
+	"math/rand"
+	"reflect"
+	"testing"
 )
 
-type TestKeepers struct {
-	MintKeeper helpers.AuxiliaryKeeper
+const (
+	ChainID       = "testChain"
+	Denom         = "stake"
+	GenesisAmount = 100000000000
+)
+
+type mockAuxiliaryRequest struct {
+	mock.Mock
 }
 
-func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
+func (*mockAuxiliaryRequest) Validate() error {
+	return nil
+}
 
-	storeKey := sdkTypes.NewKVStoreKey("test")
-	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := mapper.Prototype().Initialize(storeKey)
-	encodingConfig := simapp.MakeTestEncodingConfig()
-	appCodec := encodingConfig.Marshaler
-	ParamsKeeper := paramsKeeper.NewKeeper(
-		appCodec,
-		legacyAmino,
-		paramsStoreKey,
-		paramsTransientStoreKeys,
-	)
-	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+var _ helpers.AuxiliaryRequest = (*mockAuxiliaryRequest)(nil)
+var (
+	testSendAmount = sdkTypes.NewInt(100)
 
-	memDB := tendermintDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
+	testFromIdentity   = baseDocuments.NewNameIdentity(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewListData())
+	testFromIdentityID = testFromIdentity.(documents.NameIdentity).GetNameIdentityID()
 
-	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
-		ChainID: "test",
-	}, false, log.NewNopLogger())
+	testCoinAsset   = baseDocuments.NewCoinAsset(Denom)
+	testCoinAssetID = testCoinAsset.GetCoinAssetID()
 
-	keepers := TestKeepers{
-		MintKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
+	uninitializedCoinAsset   = baseDocuments.NewCoinAsset("uninitialized")
+	uninitializedCoinAssetID = uninitializedCoinAsset.GetCoinAssetID()
+
+	moduleStoreKey  = sdkTypes.NewKVStoreKey(constants.ModuleName)
+	AuxiliaryKeeper = auxiliaryKeeper{mapper.Prototype().Initialize(moduleStoreKey)}
+
+	setContext = func() sdkTypes.Context {
+		memDB := tendermintDB.NewMemDB()
+		commitMultiStore := store.NewCommitMultiStore(memDB)
+		commitMultiStore.MountStoreWithDB(moduleStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+		_ = commitMultiStore.LoadLatestVersion()
+		return sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{ChainID: ChainID}, false, log.NewNopLogger())
+
 	}
 
-	return Context, keepers, Mapper, parameterManager
-}
+	Context = setContext()
+
+	_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
+		Add(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(sdkTypes.NewInt(GenesisAmount))))
+)
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
-	Context, keepers, Mapper, _ := createTestInput(t)
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID()
-	testRate := sdkTypes.OneInt()
-	split := baseTypes.NewSplit(testRate)
-	keepers.MintKeeper.(auxiliaryKeeper).mapper.NewCollection(Context.Context()).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))
-	type fields struct {
-		mapper helpers.Mapper
-	}
-	type args struct {
-		context context.Context
-		request helpers.AuxiliaryRequest
-	}
 	tests := []struct {
 		name    string
-		fields  fields
-		args    args
+		setup   func()
+		request helpers.AuxiliaryRequest
 		want    helpers.AuxiliaryResponse
-		wantErr bool
+		wantErr errors.Error
 	}{
-		{"+ve", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(testOwnerIdentityID, testAssetID, testRate)}, newAuxiliaryResponse(), false},
+		{
+			"valid request",
+			func() {},
+			auxiliaryRequest{
+				OwnerID: testFromIdentityID,
+				AssetID: testCoinAssetID,
+				Value:   testSendAmount,
+			},
+			newAuxiliaryResponse(),
+			nil,
+		},
+		{
+			"invalid ownerID",
+			func() {},
+			auxiliaryRequest{
+				OwnerID: &baseIDs.IdentityID{HashID: &baseIDs.HashID{IDBytes: []byte("invalid")}},
+				AssetID: testCoinAssetID,
+				Value:   testSendAmount,
+			},
+			nil,
+			errorConstants.InvalidRequest,
+		},
+		{
+			"invalid assetID",
+			func() {},
+			auxiliaryRequest{
+				OwnerID: testFromIdentityID,
+				AssetID: &baseIDs.AssetID{HashID: &baseIDs.HashID{IDBytes: []byte("invalid")}},
+				Value:   testSendAmount,
+			},
+			nil,
+			errorConstants.InvalidRequest,
+		}, {
+			"invalid value",
+			func() {},
+			auxiliaryRequest{
+				OwnerID: testFromIdentityID,
+				AssetID: testCoinAssetID,
+				Value:   sdkTypes.NewInt(-1),
+			},
+			nil,
+			errorConstants.InvalidRequest,
+		},
+		{
+			"invalid request type",
+			func() {},
+			&mockAuxiliaryRequest{},
+			nil,
+			errorConstants.InvalidRequest,
+		},
+		{
+			"split not found",
+			func() {},
+			auxiliaryRequest{
+				OwnerID: testFromIdentityID,
+				AssetID: uninitializedCoinAssetID,
+				Value:   testSendAmount,
+			},
+			nil,
+			errorConstants.EntityNotFound,
+		},
+		{
+			"with many splits",
+			func() {
+				for i := 0; i < 100000; i++ {
+					_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
+						Add(record.NewRecord(baseIDs.NewSplitID(baseDocuments.NewCoinAsset(random.GenerateUniqueIdentifier()).GetCoinAssetID(), baseDocuments.NewNameIdentity(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewListData()).GetNameIdentityID()), baseTypes.NewSplit(sdkTypes.NewInt(int64(rand.Intn(100000000000))))))
+				}
+			},
+			auxiliaryRequest{
+				OwnerID: testFromIdentityID,
+				AssetID: testCoinAssetID,
+				Value:   testSendAmount,
+			},
+			newAuxiliaryResponse(),
+			nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			auxiliaryKeeper := auxiliaryKeeper{
-				mapper: tt.fields.mapper,
+			tt.setup()
+
+			var splitBefore types.Split
+			if tt.wantErr == nil {
+				splitBefore = mappable.GetSplit(AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).FetchRecord(key.NewKey(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID))).GetMappable())
 			}
-			got, err := auxiliaryKeeper.Help(tt.args.context, tt.args.request)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got, err := AuxiliaryKeeper.Help(sdkTypes.WrapSDKContext(Context), tt.request)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Help() got = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-func Test_auxiliaryKeeper_Initialize(t *testing.T) {
-	_, _, Mapper, parameterManager := createTestInput(t)
-	type fields struct {
-		mapper helpers.Mapper
-	}
-	type args struct {
-		mapper helpers.Mapper
-		in1    helpers.ParameterManager
-		in2    []interface{}
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.Keeper
-	}{
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			au := auxiliaryKeeper{
-				mapper: tt.fields.mapper,
-			}
-			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("Initialize() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
-func Test_keeperPrototype(t *testing.T) {
-	tests := []struct {
-		name string
-		want helpers.AuxiliaryKeeper
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
+			if err != nil && tt.wantErr == nil || err == nil && tt.wantErr != nil || err != nil && tt.wantErr != nil && !tt.wantErr.Is(err) {
+				t.Errorf("\n want error: \n %v \n got error: \n %v", err, tt.wantErr)
+			}
+
+			if tt.wantErr == nil {
+				splitAfter := mappable.GetSplit(AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).FetchRecord(key.NewKey(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID))).GetMappable())
+
+				if !splitBefore.GetValue().Sub(splitAfter.GetValue()).Equal(testSendAmount) {
+					t.Errorf("incorrect split value after minting")
+				}
 			}
 		})
 	}

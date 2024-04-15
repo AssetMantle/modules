@@ -35,7 +35,7 @@ var (
 	testClassificationID     = baseIDs.NewClassificationID(immutables, mutables)
 	testFromID               = baseIDs.NewIdentityID(testClassificationID, immutables)
 	maintainedPropertyString = "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, _  = base.PrototypePropertyList().FromMetaPropertiesString(maintainedPropertyString)
+	maintainedProperties, _  = base.NewPropertyList().FromMetaPropertiesString(maintainedPropertyString)
 	testBaseRequest          = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
 )
 
@@ -120,7 +120,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, args{cliCommand, baseHelpers.TestClientContext}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true), false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

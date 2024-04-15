@@ -21,7 +21,7 @@ func CustomEncoder(moduleList ...helpers.Module) wasm.CustomEncoder {
 
 		err := json.Unmarshal(rawMessage, &wasmMessage)
 		if err != nil {
-			return nil, errorConstants.IncorrectMessage.Wrapf(err.Error())
+			return nil, errorConstants.InvalidMessage.Wrapf(err.Error())
 		}
 
 		path := strings.Split(wasmMessage.GetType(), "/")
@@ -37,6 +37,6 @@ func CustomEncoder(moduleList ...helpers.Module) wasm.CustomEncoder {
 			}
 		}
 
-		return nil, errorConstants.IncorrectMessage.Wrapf("module not found")
+		return nil, errorConstants.InvalidMessage.Wrapf("module not found")
 	}
 }

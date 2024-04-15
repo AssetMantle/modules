@@ -95,7 +95,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, testToAddress, testFromID.AsString()}, args{cliCommand: cliCommand, context: baseHelpers.TestClientContext}, transactionRequest{cliCommand.ReadBaseReq(baseHelpers.TestClientContext), cliCommand.ReadString(constants.To), cliCommand.ReadString(constants.IdentityID)}, false},
+		{"+ve", fields{testBaseReq, testToAddress, testFromID.AsString()}, args{cliCommand: cliCommand, context: client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{cliCommand.ReadBaseReq(client.Context{}.WithCodec(baseHelpers.CodecPrototype())), cliCommand.ReadString(constants.To), cliCommand.ReadString(constants.IdentityID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

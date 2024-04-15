@@ -5,162 +5,274 @@ package transfer
 
 import (
 	"context"
-	"fmt"
-	"reflect"
-	"testing"
-
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/utilities/random"
+	"github.com/AssetMantle/modules/x/splits/constants"
+	"github.com/AssetMantle/modules/x/splits/key"
+	"github.com/AssetMantle/modules/x/splits/mappable"
+	"github.com/AssetMantle/modules/x/splits/mapper"
+	"github.com/AssetMantle/modules/x/splits/parameters"
+	"github.com/AssetMantle/modules/x/splits/parameters/transfer_enabled"
+	"github.com/AssetMantle/modules/x/splits/record"
 	baseData "github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/go/documents"
 	"github.com/AssetMantle/schema/go/documents/base"
+	"github.com/AssetMantle/schema/go/errors"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	"github.com/AssetMantle/schema/go/types"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/stretchr/testify/require"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/stretchr/testify/mock"
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/splits/mapper"
-	"github.com/AssetMantle/modules/x/splits/parameters"
-	"github.com/AssetMantle/modules/x/splits/record"
+	"math/rand"
+	"reflect"
+	"testing"
 )
 
-type TestKeepers struct {
-	TransferKeeper helpers.AuxiliaryKeeper
+type MockAuxiliary struct {
+	mock.Mock
 }
 
-func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
+var _ helpers.Auxiliary = (*MockAuxiliary)(nil)
 
-	storeKey := sdkTypes.NewKVStoreKey("test")
-	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := mapper.Prototype().Initialize(storeKey)
-	encodingConfig := simapp.MakeTestEncodingConfig()
-	appCodec := encodingConfig.Marshaler
-	ParamsKeeper := paramsKeeper.NewKeeper(
-		appCodec,
-		legacyAmino,
-		paramsStoreKey,
-		paramsTransientStoreKeys,
-	)
-	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+func (mockAuxiliary *MockAuxiliary) GetName() string { panic(mockAuxiliary) }
+func (mockAuxiliary *MockAuxiliary) GetKeeper() helpers.AuxiliaryKeeper {
+	args := mockAuxiliary.Called()
+	return args.Get(0).(helpers.AuxiliaryKeeper)
+}
+func (mockAuxiliary *MockAuxiliary) Initialize(_ helpers.Mapper, _ helpers.ParameterManager, _ ...interface{}) helpers.Auxiliary {
+	panic(mockAuxiliary)
+}
 
-	memDB := tendermintDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
+type MockAuxiliaryKeeper struct {
+	mock.Mock
+}
 
-	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
-		ChainID: "test",
-	}, false, log.NewNopLogger())
+var _ helpers.AuxiliaryKeeper = (*MockAuxiliaryKeeper)(nil)
 
-	keepers := TestKeepers{
-		TransferKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	args := mockAuxiliaryKeeper.Called(context, request)
+	return args.Get(0).(helpers.AuxiliaryResponse), args.Error(1)
+}
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(m2 helpers.Mapper, manager helpers.ParameterManager, i []interface{}) helpers.Keeper {
+	args := mockAuxiliaryKeeper.Called(m2, manager, i)
+	return args.Get(0).(helpers.Keeper)
+}
+
+// mockAuxiliaryRequest
+type mockAuxiliaryRequest struct {
+}
+
+func (mockAuxiliaryRequest) Validate() error {
+	return nil
+}
+
+var _ helpers.AuxiliaryRequest = (*mockAuxiliaryRequest)(nil)
+
+const (
+	ChainID       = "testChain"
+	Denom         = "stake"
+	GenesisSupply = 1000000000
+)
+
+var (
+	testSendAmount = sdkTypes.NewInt(100)
+
+	testFromIdentity   = base.NewNameIdentity(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewListData())
+	testFromIdentityID = testFromIdentity.(documents.NameIdentity).GetNameIdentityID()
+
+	testToIdentity   = base.NewNameIdentity(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewListData())
+	testToIdentityID = testToIdentity.(documents.NameIdentity).GetNameIdentityID()
+
+	testCoinAsset   = base.NewCoinAsset(Denom)
+	testCoinAssetID = testCoinAsset.GetCoinAssetID()
+
+	uninitializedCoinAsset   = base.NewCoinAsset("uninitialized")
+	uninitializedCoinAssetID = uninitializedCoinAsset.GetCoinAssetID()
+
+	encodingConfig = simapp.MakeTestEncodingConfig()
+
+	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
+	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
+	ParamsKeeper             = paramsKeeper.NewKeeper(encodingConfig.Marshaler, encodingConfig.Amino, paramsStoreKey, paramsTransientStoreKeys)
+
+	moduleStoreKey  = sdkTypes.NewKVStoreKey(constants.ModuleName)
+	AuxiliaryKeeper = auxiliaryKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager}
+
+	setContext = func() sdkTypes.Context {
+		memDB := tendermintDB.NewMemDB()
+		commitMultiStore := store.NewCommitMultiStore(memDB)
+		commitMultiStore.MountStoreWithDB(moduleStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+		commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+		commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
+		_ = commitMultiStore.LoadLatestVersion()
+		return sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{ChainID: ChainID}, false, log.NewNopLogger())
+
 	}
 
-	return Context, keepers, Mapper, parameterManager
-}
+	Context = setContext()
+
+	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace(constants.ModuleName).WithKeyTable(parameters.Prototype().GetKeyTable())).
+				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(true)))))
+
+	_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
+		Add(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(sdkTypes.NewInt(GenesisSupply))))
+)
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
-	Context, keepers, Mapper, parameterManager := createTestInput(t)
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testAssetID := base.NewCoinAsset("OwnerID").GetCoinAssetID()
-	testRate := sdkTypes.OneInt()
-	split := baseTypes.NewSplit(testRate)
-	keepers.TransferKeeper.(auxiliaryKeeper).mapper.NewCollection(Context.Context()).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))
-
-	type fields struct {
-		mapper           helpers.Mapper
-		parameterManager helpers.ParameterManager
-	}
-	type args struct {
-		context context.Context
-		request helpers.AuxiliaryRequest
-	}
 	tests := []struct {
 		name    string
-		fields  fields
-		args    args
+		setup   func()
+		request helpers.AuxiliaryRequest
 		want    helpers.AuxiliaryResponse
-		wantErr bool
+		wantErr errors.Error
 	}{
-		{"+ve", fields{Mapper, parameterManager}, args{Context.Context(), NewAuxiliaryRequest(testOwnerIdentityID, testOwnerIdentityID, testAssetID, testRate)}, newAuxiliaryResponse(), false},
-		{"+ve Not Authorized", fields{Mapper, parameterManager}, args{Context.Context(), NewAuxiliaryRequest(testOwnerIdentityID, testOwnerIdentityID, testAssetID, sdkTypes.ZeroInt())}, newAuxiliaryResponse(), false},
-		{"+ve Entity Not Found", fields{Mapper, parameterManager}, args{Context.Context(), NewAuxiliaryRequest(testOwnerIdentityID, testOwnerIdentityID, base.NewCoinAsset("test").GetCoinAssetID(), testRate)}, newAuxiliaryResponse(), false},
+		{
+			"valid request",
+			func() {},
+			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, testSendAmount),
+			newAuxiliaryResponse(),
+			nil,
+		},
+		{
+			"split not present",
+			func() {},
+			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, uninitializedCoinAssetID, testSendAmount),
+			nil,
+			errorConstants.EntityNotFound,
+		},
+		{
+			"insufficient balance",
+			func() {},
+			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, sdkTypes.NewInt(GenesisSupply+1)),
+			nil,
+			errorConstants.InsufficientBalance,
+		},
+		{
+			"send zero",
+			func() {},
+			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, sdkTypes.ZeroInt()),
+			nil,
+			errorConstants.InvalidRequest,
+		},
+		{
+			"send negative",
+			func() {},
+			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, sdkTypes.NewInt(-1)),
+			nil,
+			errorConstants.InvalidRequest,
+		},
+		{
+			"invalid from identity",
+			func() {},
+			NewAuxiliaryRequest(&baseIDs.IdentityID{HashID: &baseIDs.HashID{IDBytes: []byte("invalid")}}, testToIdentityID, testCoinAssetID, testSendAmount),
+			nil,
+			errorConstants.InvalidRequest,
+		},
+		{
+			"invalid to identity",
+			func() {},
+			NewAuxiliaryRequest(testFromIdentityID, &baseIDs.IdentityID{HashID: &baseIDs.HashID{IDBytes: []byte("invalid")}}, testCoinAssetID, testSendAmount),
+			nil,
+			errorConstants.InvalidRequest,
+		},
+		{
+			"invalid request type",
+			func() {},
+			mockAuxiliaryRequest{},
+			nil,
+			errorConstants.InvalidRequest,
+		},
+		{
+			"with many splits",
+			func() {
+				for i := 0; i < 100000; i++ {
+					_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
+						Add(record.NewRecord(baseIDs.NewSplitID(base.NewCoinAsset(random.GenerateUniqueIdentifier()).GetCoinAssetID(), base.NewNameIdentity(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewListData()).GetNameIdentityID()), baseTypes.NewSplit(sdkTypes.NewInt(int64(rand.Intn(100000000000))))))
+				}
+			},
+			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, testSendAmount),
+			newAuxiliaryResponse(),
+			nil,
+		},
+		{
+			"transfer full amount",
+			func() {
+				_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
+					Remove(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(sdkTypes.OneInt()))).
+					Add(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(sdkTypes.NewInt(GenesisSupply))))
+			},
+			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, sdkTypes.NewInt(GenesisSupply)),
+			newAuxiliaryResponse(),
+			nil,
+		},
+		{
+			"transfer not enabled",
+			func() {
+				parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(false)))))
+			},
+			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, testSendAmount),
+			nil,
+			errorConstants.NotAuthorized,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			auxiliaryKeeper := auxiliaryKeeper{
-				mapper:           tt.fields.mapper,
-				parameterManager: tt.fields.parameterManager,
+			tt.setup()
+
+			var fromSplitBefore, toSplitBefore types.Split
+			if tt.wantErr == nil {
+				fromSplitBefore = mappable.GetSplit(AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).FetchRecord(key.NewKey(baseIDs.NewSplitID(tt.request.(auxiliaryRequest).AssetID, tt.request.(auxiliaryRequest).FromID))).GetMappable())
+				toSplitBefore = mappable.GetSplit(AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).FetchRecord(key.NewKey(baseIDs.NewSplitID(tt.request.(auxiliaryRequest).AssetID, tt.request.(auxiliaryRequest).ToID))).GetMappable())
 			}
-			got, err := auxiliaryKeeper.Help(tt.args.context, tt.args.request)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+
+			got, err := AuxiliaryKeeper.Help(sdkTypes.WrapSDKContext(Context), tt.request)
+
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Help() got = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
 
-func Test_auxiliaryKeeper_Initialize(t *testing.T) {
-	_, _, Mapper, parameterManager := createTestInput(t)
-	type fields struct {
-		mapper helpers.Mapper
-	}
-	type args struct {
-		mapper helpers.Mapper
-		in1    helpers.ParameterManager
-		in2    []interface{}
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.Keeper
-	}{
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper, parameterManager}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			au := auxiliaryKeeper{
-				mapper: tt.fields.mapper,
+			if err != nil && tt.wantErr == nil || err == nil && tt.wantErr != nil || err != nil && tt.wantErr != nil && !tt.wantErr.Is(err) {
+				t.Errorf("Help() err = %v, wantErr %v", err, tt.wantErr)
 			}
-			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("Initialize() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
-func Test_keeperPrototype(t *testing.T) {
-	tests := []struct {
-		name string
-		want helpers.AuxiliaryKeeper
-	}{
-		{"+ve", auxiliaryKeeper{}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
+			if tt.wantErr == nil {
+				fromSplitAfter := mappable.GetSplit(AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).FetchRecord(key.NewKey(baseIDs.NewSplitID(tt.request.(auxiliaryRequest).AssetID, tt.request.(auxiliaryRequest).FromID))).GetMappable())
+				toSplitAfter := mappable.GetSplit(AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).FetchRecord(key.NewKey(baseIDs.NewSplitID(tt.request.(auxiliaryRequest).AssetID, tt.request.(auxiliaryRequest).ToID))).GetMappable())
+
+				if toSplitAfter == nil {
+					t.Errorf("to split not created")
+				}
+
+				if fromSplitBefore == nil {
+					t.Errorf("from split was not present")
+				}
+
+				if fromSplitAfter == nil {
+					if !fromSplitBefore.GetValue().Equal(tt.request.(auxiliaryRequest).Value) {
+						t.Errorf("from split incorrectly deleted")
+					}
+				} else if !fromSplitBefore.GetValue().Sub(tt.request.(auxiliaryRequest).Value).Equal(fromSplitAfter.GetValue()) {
+					t.Errorf("from split not updated")
+				}
+
+				if toSplitBefore == nil {
+					if !toSplitAfter.GetValue().Equal(tt.request.(auxiliaryRequest).Value) {
+						t.Errorf("to split incorrectly created")
+					}
+				} else if !toSplitBefore.GetValue().Add(tt.request.(auxiliaryRequest).Value).Equal(toSplitAfter.GetValue()) {
+					t.Errorf("to split not updated")
+				}
 			}
 		})
 	}

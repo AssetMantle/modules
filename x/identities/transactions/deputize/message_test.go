@@ -45,7 +45,7 @@ func createTestInput(t *testing.T) (*baseIDs.IdentityID, *baseIDs.IdentityID, *b
 	require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(maintainedProperty)
+	maintainedProperties, err := baseLists.NewPropertyList().FromMetaPropertiesString(maintainedProperty)
 	return testFromID.(*baseIDs.IdentityID), testToID.(*baseIDs.IdentityID), testClassificationID.(*baseIDs.ClassificationID), fromAccAddress, maintainedProperties.(*baseLists.PropertyList)
 }
 

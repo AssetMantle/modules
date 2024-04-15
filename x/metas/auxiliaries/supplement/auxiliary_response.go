@@ -16,7 +16,7 @@ type auxiliaryResponse struct {
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
 
-func newAuxiliaryResponse(metaProperties lists.PropertyList) helpers.AuxiliaryResponse {
+func NewAuxiliaryResponse(metaProperties lists.PropertyList) helpers.AuxiliaryResponse {
 	return auxiliaryResponse{
 		PropertyList: metaProperties,
 	}

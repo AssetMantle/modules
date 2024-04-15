@@ -30,6 +30,9 @@ func Prototype() helpers.Mappable {
 }
 
 func GetSplit(mappable helpers.Mappable) types.Split {
+	if mappable == nil || mappable.(*Mappable).Split == nil {
+		return nil
+	}
 	return mappable.(*Mappable).Split
 }
 

@@ -94,9 +94,9 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve",
-			fields{BaseReq: rest.BaseReq{From: baseHelpers.TestClientContext.GetFromAddress().String(), ChainID: baseHelpers.TestClientContext.ChainID, Simulate: baseHelpers.TestClientContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
-			args{cliCommand, baseHelpers.TestClientContext},
-			transactionRequest{BaseReq: rest.BaseReq{From: baseHelpers.TestClientContext.GetFromAddress().String(), ChainID: baseHelpers.TestClientContext.ChainID, Simulate: baseHelpers.TestClientContext.Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
+			fields{BaseReq: rest.BaseReq{From: client.Context{}.WithCodec(baseHelpers.CodecPrototype()).GetFromAddress().String(), ChainID: client.Context{}.WithCodec(baseHelpers.CodecPrototype()).ChainID, Simulate: client.Context{}.WithCodec(baseHelpers.CodecPrototype()).Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
+			args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())},
+			transactionRequest{BaseReq: rest.BaseReq{From: client.Context{}.WithCodec(baseHelpers.CodecPrototype()).GetFromAddress().String(), ChainID: client.Context{}.WithCodec(baseHelpers.CodecPrototype()).ChainID, Simulate: client.Context{}.WithCodec(baseHelpers.CodecPrototype()).Simulate}, FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
 			false}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

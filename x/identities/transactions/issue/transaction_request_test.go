@@ -35,19 +35,19 @@ func createTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
-	immutableMetaProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
+	immutableMetaProperties, err := baseLists.NewPropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 
 	var immutableProperties lists.PropertyList
-	immutableProperties, err = baseLists.PrototypePropertyList().FromMetaPropertiesString(immutablePropertiesString)
+	immutableProperties, err = baseLists.NewPropertyList().FromMetaPropertiesString(immutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	var mutableMetaProperties lists.PropertyList
-	mutableMetaProperties, err = baseLists.PrototypePropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
+	mutableMetaProperties, err = baseLists.NewPropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 
 	var mutableProperties lists.PropertyList
-	mutableProperties, err = baseLists.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
+	mutableProperties, err = baseLists.NewPropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
@@ -62,7 +62,7 @@ func createTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 
-	return legacyAmino, cliCommand, baseHelpers.TestClientContext, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, toAddress, toAccAddress, testBaseReq
+	return legacyAmino, cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, toAddress, toAccAddress, testBaseReq
 }
 
 func Test_newTransactionRequest(t *testing.T) {
@@ -134,7 +134,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, baseHelpers.TestClientContext}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromIdentityID), cliCommand.ReadString(constants.ClassificationID), cliCommand.ReadString(constants.ImmutableMetaProperties), cliCommand.ReadString(constants.ImmutableProperties), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
+		{"+ve", fields{testBaseReq, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.FromIdentityID), cliCommand.ReadString(constants.ClassificationID), cliCommand.ReadString(constants.ImmutableMetaProperties), cliCommand.ReadString(constants.ImmutableProperties), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

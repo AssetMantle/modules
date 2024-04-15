@@ -4,6 +4,7 @@
 package meta
 
 import (
+	"github.com/AssetMantle/modules/x/metas/key"
 	"reflect"
 	"testing"
 
@@ -20,7 +21,8 @@ import (
 )
 
 var (
-	testDataID = baseIDs.GenerateDataID(baseData.NewStringData("Data")).(*baseIDs.DataID)
+	testDataID = baseData.NewStringData("testData").GetID()
+	testKey    = key.NewKey(testDataID).(*key.Key)
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -32,8 +34,8 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve with nil", args{baseIDs.PrototypeDataID().(*baseIDs.DataID)}, &QueryRequest{baseIDs.PrototypeDataID().(*baseIDs.DataID)}},
-		{"+ve", args{testDataID}, &QueryRequest{testDataID}},
+		{"+ve with nil", args{baseIDs.PrototypeDataID().(*baseIDs.DataID)}, &QueryRequest{key.NewKey(baseIDs.PrototypeDataID().(*baseIDs.DataID)).(*key.Key)}},
+		{"+ve", args{testDataID}, &QueryRequest{testKey}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -53,7 +55,7 @@ func Test_queryRequestFromInterface(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve", args{newQueryRequest(testDataID)}, &QueryRequest{testDataID}},
+		{"+ve", args{newQueryRequest(testDataID)}, &QueryRequest{key.NewKey(testDataID).(*key.Key)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -70,7 +72,7 @@ func Test_queryRequest_Decode(t *testing.T) {
 	encodedQuery1, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)))
 	require.NoError(t, err)
 	type fields struct {
-		DataID *baseIDs.DataID
+		Key *key.Key
 	}
 	type args struct {
 		bytes []byte
@@ -82,13 +84,13 @@ func Test_queryRequest_Decode(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testDataID}, args{encodedQuery}, newQueryRequest(testDataID), false},
-		{"+ve with nil", fields{baseIDs.PrototypeDataID().(*baseIDs.DataID)}, args{encodedQuery1}, newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)), false},
+		{"+ve", fields{testKey}, args{encodedQuery}, newQueryRequest(testDataID), false},
+		{"+ve with nil", fields{key.NewKey(baseIDs.PrototypeDataID()).(*key.Key)}, args{encodedQuery1}, newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := &QueryRequest{
-				DataID: tt.fields.DataID,
+				Key: tt.fields.Key,
 			}
 			got, err := queryRequest.Decode(tt.args.bytes)
 			if (err != nil) != tt.wantErr {
@@ -108,7 +110,7 @@ func Test_queryRequest_Encode(t *testing.T) {
 	encodedQuery1, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)))
 	require.NoError(t, err)
 	type fields struct {
-		DataID *baseIDs.DataID
+		Key *key.Key
 	}
 	tests := []struct {
 		name    string
@@ -116,13 +118,13 @@ func Test_queryRequest_Encode(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{"+ve", fields{testDataID}, encodedQuery, false},
-		{"+ve with nil", fields{baseIDs.PrototypeDataID().(*baseIDs.DataID)}, encodedQuery1, false},
+		{"+ve", fields{testKey}, encodedQuery, false},
+		{"+ve with nil", fields{key.NewKey(baseIDs.PrototypeDataID()).(*key.Key)}, encodedQuery1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := &QueryRequest{
-				DataID: tt.fields.DataID,
+				Key: tt.fields.Key,
 			}
 			got, err := queryRequest.Encode()
 			if (err != nil) != tt.wantErr {
@@ -138,9 +140,9 @@ func Test_queryRequest_Encode(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.DataID})
-	viper.Set(constants.DataID.GetName(), testDataID.AsString())
+	viper.Set(constants.DataID.GetName(), testKey)
 	type fields struct {
-		DataID *baseIDs.DataID
+		Key *key.Key
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -153,12 +155,12 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testDataID}, args{cliCommand, client.Context{}}, newQueryRequest(testDataID), false},
+		{"+ve", fields{testKey}, args{cliCommand, client.Context{}}, newQueryRequest(testDataID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			qu := &QueryRequest{
-				DataID: tt.fields.DataID,
+				Key: tt.fields.Key,
 			}
 			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -174,20 +176,20 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		DataID *baseIDs.DataID
+		Key *key.Key
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testDataID}, false},
-		{"+ve", fields{baseIDs.PrototypeDataID().(*baseIDs.DataID)}, false},
+		{"+ve", fields{testKey}, false},
+		{"+ve", fields{key.NewKey(baseIDs.PrototypeDataID()).(*key.Key)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := &QueryRequest{
-				DataID: tt.fields.DataID,
+				Key: tt.fields.Key,
 			}
 			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

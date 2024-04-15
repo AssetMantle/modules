@@ -14,5 +14,6 @@ type Message interface {
 	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 	RegisterInterface(types.InterfaceRegistry)
 	Type() string
+	GetFromAddress() sdkTypes.AccAddress
 	sdkTypes.Msg
 }

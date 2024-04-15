@@ -5,285 +5,321 @@ package wrap
 
 import (
 	"context"
-	"fmt"
-	"github.com/AssetMantle/modules/x/splits/record"
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/utilities/random"
+	"github.com/AssetMantle/modules/x/assets/constants"
+	"github.com/AssetMantle/modules/x/assets/key"
+	"github.com/AssetMantle/modules/x/assets/mapper"
+	"github.com/AssetMantle/modules/x/assets/parameters"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
+	"github.com/AssetMantle/schema/go/errors"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	"github.com/AssetMantle/schema/go/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"reflect"
-	"testing"
-
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
-	"github.com/cosmos/cosmos-sdk/codec"
+	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/cosmos/cosmos-sdk/x/distribution/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	stakingTypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/stretchr/testify/require"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/stretchr/testify/mock"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/libs/log"
 	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	tendermintDB "github.com/tendermint/tm-db"
+	"math/rand"
+	"reflect"
+	"strconv"
+	"testing"
+)
 
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/assets/mapper"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/splits/constants"
-	"github.com/AssetMantle/modules/x/splits/parameters"
+type MockAuxiliary struct {
+	mock.Mock
+}
+
+var _ helpers.Auxiliary = (*MockAuxiliary)(nil)
+
+func (mockAuxiliary *MockAuxiliary) GetName() string { panic(mockAuxiliary) }
+func (mockAuxiliary *MockAuxiliary) GetKeeper() helpers.AuxiliaryKeeper {
+	args := mockAuxiliary.Called()
+	return args.Get(0).(helpers.AuxiliaryKeeper)
+}
+func (mockAuxiliary *MockAuxiliary) Initialize(_ helpers.Mapper, _ helpers.ParameterManager, _ ...interface{}) helpers.Auxiliary {
+	panic(mockAuxiliary)
+}
+
+type MockAuxiliaryKeeper struct {
+	mock.Mock
+}
+
+var _ helpers.AuxiliaryKeeper = (*MockAuxiliaryKeeper)(nil)
+
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	args := mockAuxiliaryKeeper.Called(context, request)
+	return args.Get(0).(helpers.AuxiliaryResponse), args.Error(1)
+}
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(m2 helpers.Mapper, manager helpers.ParameterManager, i []interface{}) helpers.Keeper {
+	args := mockAuxiliaryKeeper.Called(m2, manager, i)
+	return args.Get(0).(helpers.Keeper)
+}
+
+const (
+	TestMinterModuleName = "testMinter"
+	Denom                = "stake"
+	ChainID              = "testChain"
+	GenesisSupply        = 1000000000000
 )
 
 var (
-	authenticateAuxiliary helpers.Auxiliary
-	mintAuxiliary         helpers.Auxiliary
-	delPk1                = ed25519.GenPrivKey().PubKey()
-	delAddr1              = sdkTypes.AccAddress(delPk1.Address())
+	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
+
+	authenticateAuxiliaryKeeper         = new(MockAuxiliaryKeeper)
+	authenticateAuxiliaryFailureAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
+	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(authenticateAuxiliaryFailureAddress, baseIDs.PrototypeIdentityID())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
+	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+
+	mintAuxiliaryKeeper       = new(MockAuxiliaryKeeper)
+	mintAuxiliaryFailureDenom = "mint"
+	_                         = mintAuxiliaryKeeper.On("Help", mock.Anything, mint.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseDocuments.NewCoinAsset(mintAuxiliaryFailureDenom).GetCoinAssetID(), sdkTypes.OneInt())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
+	_                         = mintAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+
+	authenticateAuxiliary = new(MockAuxiliary)
+	_                     = authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
+
+	mintAuxiliary = new(MockAuxiliary)
+	_             = mintAuxiliary.On("GetKeeper").Return(mintAuxiliaryKeeper)
+
+	encodingConfig = simapp.MakeTestEncodingConfig()
+
+	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
+	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
+	ParamsKeeper             = paramsKeeper.NewKeeper(encodingConfig.Marshaler, encodingConfig.Amino, paramsStoreKey, paramsTransientStoreKeys)
+
+	authStoreKey             = sdkTypes.NewKVStoreKey(authTypes.StoreKey)
+	moduleAccountPermissions = map[string][]string{TestMinterModuleName: {authTypes.Minter}, constants.ModuleName: nil}
+	AuthKeeper               = authKeeper.NewAccountKeeper(encodingConfig.Marshaler, authStoreKey, ParamsKeeper.Subspace(authTypes.ModuleName), authTypes.ProtoBaseAccount, moduleAccountPermissions)
+
+	bankStoreKey         = sdkTypes.NewKVStoreKey(bankTypes.StoreKey)
+	blacklistedAddresses = map[string]bool{authTypes.NewModuleAddress(TestMinterModuleName).String(): false, authTypes.NewModuleAddress(constants.ModuleName).String(): false}
+	BankKeeper           = bankKeeper.NewBaseKeeper(encodingConfig.Marshaler, bankStoreKey, AuthKeeper, ParamsKeeper.Subspace(bankTypes.ModuleName), blacklistedAddresses)
+
+	Context = setContext()
+
+	coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom, sdkTypes.NewInt(GenesisSupply)))
+	_          = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
+
+	genesisAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
+	_              = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
+
+	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace(constants.ModuleName).WithKeyTable(parameters.Prototype().GetKeyTable())).
+				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom)))))).
+				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))))
+
+	TransactionKeeper = transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager, BankKeeper, authenticateAuxiliary, mintAuxiliary}
 )
 
-type TestKeepers struct {
-	WrapKeeper helpers.TransactionKeeper
-}
-
-func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager, bankKeeper.Keeper) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
-
-	Codec := baseHelpers.CodecPrototype()
-
-	storeKey := sdkTypes.NewKVStoreKey("test")
-	keyAcc := sdkTypes.NewKVStoreKey(authTypes.StoreKey)
-	keyDistr := sdkTypes.NewKVStoreKey(types.StoreKey)
-	keyStaking := sdkTypes.NewKVStoreKey(stakingTypes.StoreKey)
-	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := mapper.Prototype().Initialize(storeKey)
-	encodingConfig := simapp.MakeTestEncodingConfig()
-	appCodec := encodingConfig.Marshaler
-	ParamsKeeper := paramsKeeper.NewKeeper(
-		appCodec,
-		legacyAmino,
-		paramsStoreKey,
-		paramsTransientStoreKeys,
-	)
-	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
-
+func setContext() sdkTypes.Context {
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(keyDistr, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(keyStaking, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(keyAcc, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(moduleStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(authStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(bankStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
-
-	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
-
-	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
-		ChainID: "test",
-	}, false, log.NewNopLogger())
-
-	feeCollectorAcc := authTypes.NewEmptyModuleAccount(authTypes.FeeCollectorName)
-	notBondedPool := authTypes.NewEmptyModuleAccount(stakingTypes.NotBondedPoolName, authTypes.Burner, authTypes.Staking)
-	bondPool := authTypes.NewEmptyModuleAccount(stakingTypes.BondedPoolName, authTypes.Burner, authTypes.Staking)
-	distrAcc := authTypes.NewEmptyModuleAccount(types.ModuleName)
-	splitAcc := authTypes.NewEmptyModuleAccount(constants.ModuleName)
-
-	blacklistedAddrs := make(map[string]bool)
-	blacklistedAddrs[feeCollectorAcc.GetAddress().String()] = true
-	blacklistedAddrs[notBondedPool.GetAddress().String()] = true
-	blacklistedAddrs[bondPool.GetAddress().String()] = true
-	blacklistedAddrs[distrAcc.GetAddress().String()] = true
-	blacklistedAddrs[splitAcc.GetAddress().String()] = true
-
-	accountKeeper := keeper.NewAccountKeeper(Codec.GetProtoCodec(), keyAcc, ParamsKeeper.Subspace(authTypes.ModuleName), authTypes.ProtoBaseAccount, nil)
-	BankKeeper := bankKeeper.NewBaseKeeper(Codec.GetProtoCodec(), keyAcc, accountKeeper, ParamsKeeper.Subspace(bankTypes.ModuleName), blacklistedAddrs)
-
-	sk := stakingKeeper.NewKeeper(Codec.GetProtoCodec(), keyStaking, accountKeeper, BankKeeper, ParamsKeeper.Subspace(stakingTypes.ModuleName))
-	sk.SetParams(Context, stakingTypes.DefaultParams())
-	//intToken := sdkTypes.TokensFromConsensusPower(1000000, sdkTypes.NewInt(100))
-	//initCoins := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(Context), intToken))
-	//totalSupply := sdkTypes.NewCoins(sdkTypes.NewCoin(sk.BondDenom(Context), intToken.MulRaw(int64(len(TestAddrs)))))
-
-	// set module accounts
-	accountKeeper.SetModuleAccount(Context, feeCollectorAcc)
-	accountKeeper.SetModuleAccount(Context, notBondedPool)
-	accountKeeper.SetModuleAccount(Context, bondPool)
-	accountKeeper.SetModuleAccount(Context, distrAcc)
-	accountKeeper.SetModuleAccount(Context, splitAcc)
-
-	keepers := TestKeepers{
-		WrapKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.TransactionKeeper),
-	}
-
-	return Context, keepers, Mapper, parameterManager, BankKeeper
+	_ = commitMultiStore.LoadLatestVersion()
+	return sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{ChainID: ChainID}, false, log.NewNopLogger())
 }
 
-func Test_keeperPrototype(t *testing.T) {
-	tests := []struct {
-		name string
-		want helpers.TransactionKeeper
-	}{
-		{"+ve", transactionKeeper{}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_transactionKeeper_Initialize(t *testing.T) {
-	_, _, Mapper, parameterManager, _ := createTestInput(t)
-	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	encodingConfig := simapp.MakeTestEncodingConfig()
-	appCodec := encodingConfig.Marshaler
-	ParamsKeeper := paramsKeeper.NewKeeper(
-		appCodec,
-		codec.NewLegacyAmino(),
-		paramsStoreKey,
-		paramsTransientStoreKeys,
-	)
-	accountKeeper := authKeeper.NewAccountKeeper(
-		codec.NewProtoCodec(nil),
-		sdkTypes.NewKVStoreKey(authTypes.StoreKey),
-		ParamsKeeper.Subspace(authTypes.ModuleName),
-		authTypes.ProtoBaseAccount,
-		nil,
-	)
-	feeCollectorAcc := authTypes.NewEmptyModuleAccount(authTypes.FeeCollectorName)
-	notBondedPool := authTypes.NewEmptyModuleAccount(stakingTypes.NotBondedPoolName, authTypes.Burner, authTypes.Staking)
-	bondPool := authTypes.NewEmptyModuleAccount(stakingTypes.BondedPoolName, authTypes.Burner, authTypes.Staking)
-	distrAcc := authTypes.NewEmptyModuleAccount(types.ModuleName)
-	blacklistedAddrs := make(map[string]bool)
-	blacklistedAddrs[feeCollectorAcc.GetAddress().String()] = true
-	blacklistedAddrs[notBondedPool.GetAddress().String()] = true
-	blacklistedAddrs[bondPool.GetAddress().String()] = true
-	blacklistedAddrs[distrAcc.GetAddress().String()] = true
-	BankKeeper := bankKeeper.NewBaseKeeper(appCodec, sdkTypes.NewKVStoreKey(bankTypes.StoreKey), accountKeeper, ParamsKeeper.Subspace(bankTypes.ModuleName), blacklistedAddrs)
-	type fields struct {
-		mapper                helpers.Mapper
-		parameterManager      helpers.ParameterManager
-		bankKeeper            bankKeeper.Keeper
-		authenticateAuxiliary helpers.Auxiliary
-		mintAuxiliary         helpers.Auxiliary
-	}
+func TestTransactionKeeperTransact(t *testing.T) {
 	type args struct {
-		mapper           helpers.Mapper
-		parameterManager helpers.ParameterManager
-		auxiliaries      []interface{}
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.Keeper
-	}{
-		{"+ve", fields{Mapper, parameterManager, BankKeeper, authenticateAuxiliary, mintAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, parameterManager, BankKeeper, authenticateAuxiliary, mintAuxiliary}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionKeeper := transactionKeeper{
-				mapper:                tt.fields.mapper,
-				parameterManager:      tt.fields.parameterManager,
-				bankKeeper:            tt.fields.bankKeeper,
-				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
-				mintAuxiliary:         tt.fields.mintAuxiliary,
-			}
-			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("Initialize() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_transactionKeeper_Transact(t *testing.T) {
-	Context, keepers, Mapper, parameterManager, _ := createTestInput(t)
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	testRate1 := sdkTypes.NewCoins(sdkTypes.NewInt64Coin("stake", 1))
-	testAssetID := baseDocuments.NewCoinAsset("stake").GetCoinAssetID()
-	split := baseTypes.NewSplit(sdkTypes.NewInt(1))
-	keepers.WrapKeeper.(transactionKeeper).mapper.NewCollection(Context.Context()).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))
-	feeCollectorAcc := authTypes.NewEmptyModuleAccount(authTypes.FeeCollectorName)
-	notBondedPool := authTypes.NewEmptyModuleAccount(stakingTypes.NotBondedPoolName, authTypes.Burner, authTypes.Staking)
-	bondPool := authTypes.NewEmptyModuleAccount(stakingTypes.BondedPoolName, authTypes.Burner, authTypes.Staking)
-	distrAcc := authTypes.NewEmptyModuleAccount(types.ModuleName)
-	blacklistedAddrs := make(map[string]bool)
-	blacklistedAddrs[feeCollectorAcc.GetAddress().String()] = true
-	blacklistedAddrs[notBondedPool.GetAddress().String()] = true
-	blacklistedAddrs[bondPool.GetAddress().String()] = true
-	blacklistedAddrs[distrAcc.GetAddress().String()] = true
-	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-
-	ParamsKeeper := paramsKeeper.NewKeeper(
-		baseHelpers.CodecPrototype(),
-		codec.NewLegacyAmino(),
-		paramsStoreKey,
-		paramsTransientStoreKeys,
-	)
-	accountKeeper := authKeeper.NewAccountKeeper(
-		codec.NewProtoCodec(nil),
-		sdkTypes.NewKVStoreKey(authTypes.StoreKey),
-		ParamsKeeper.Subspace(authTypes.ModuleName),
-		authTypes.ProtoBaseAccount,
-		nil,
-	)
-	BankKeeper := bankKeeper.NewBaseKeeper(baseHelpers.CodecPrototype().GetProtoCodec(), sdkTypes.NewKVStoreKey(bankTypes.StoreKey), accountKeeper, ParamsKeeper.Subspace(bankTypes.ModuleName), blacklistedAddrs)
-
-	type fields struct {
-		mapper                helpers.Mapper
-		parameterManager      helpers.ParameterManager
-		bankKeeper            bankKeeper.Keeper
-		authenticateAuxiliary helpers.Auxiliary
-		mintAuxiliary         helpers.Auxiliary
-	}
-	type args struct {
-		context context.Context
-		message sdkTypes.Msg
+		from   sdkTypes.AccAddress
+		denom  string
+		amount int
 	}
 	tests := []struct {
 		name    string
-		fields  fields
 		args    args
-		want    helpers.TransactionResponse
-		wantErr bool
+		setup   func()
+		want    *TransactionResponse
+		wantErr errors.Error
 	}{
-		{"+ve", fields{Mapper, parameterManager, BankKeeper, authenticateAuxiliary, mintAuxiliary}, args{Context.Context(), NewMessage(delAddr1, fromID, testRate1)}, newTransactionResponse(), false},
+		{"wrapOne",
+			args{genesisAddress, Denom, 1},
+			func() {},
+			newTransactionResponse(),
+			nil,
+		},
+		{"wrapRandom",
+			args{genesisAddress, Denom, rand.Intn(GenesisSupply)},
+			func() {},
+			newTransactionResponse(),
+			nil,
+		},
+		{"wrapOneMoreThanSupply",
+			args{genesisAddress, Denom, GenesisSupply + 1},
+			func() {},
+			nil,
+			sdkErrors.ErrInsufficientFunds,
+		},
+		{
+			"wrapNegative",
+			args{genesisAddress, Denom, -1},
+			func() {},
+			nil,
+			errorConstants.InvalidParameter,
+		},
+		{
+			"wrapInvalidDenom",
+			args{genesisAddress, random.GenerateUniqueIdentifier(), 1},
+			func() {},
+			nil,
+			errorConstants.InvalidParameter,
+		},
+		{
+			"identityAuthenticationFailure",
+			args{authenticateAuxiliaryFailureAddress, Denom, 1},
+			func() {},
+			nil,
+			errorConstants.MockError,
+		},
+		{
+			"wrapZero",
+			args{genesisAddress, Denom, 0},
+			func() {},
+			newTransactionResponse(),
+			nil,
+		},
+		{
+			"wrapCoinNotPresent",
+			args{genesisAddress, "coinNotPresent", 1},
+			func() {},
+			nil,
+			errorConstants.NotAuthorized,
+		},
+		{
+			"wrapCoinNotAuthorized",
+			args{genesisAddress, "unauthorizedCoin", 1},
+			func() {
+				coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin("unauthorizedCoin", sdkTypes.NewInt(GenesisSupply)))
+				_ = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
+				_ = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
+			},
+			nil,
+			errorConstants.NotAuthorized,
+		},
+		{
+			"mintAuxiliaryFailure",
+			args{genesisAddress, mintAuxiliaryFailureDenom, 1},
+			func() {
+				parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(mintAuxiliaryFailureDenom), baseData.NewStringData(Denom))))))
+			},
+			nil,
+			errorConstants.MockError,
+		},
+		{
+			"wrapInMultiCoinScenario",
+			args{genesisAddress, Denom, 1},
+			func() {
+				for i := 0; i < 1000; i++ {
+					coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom+strconv.Itoa(i), sdkTypes.NewInt(GenesisSupply)))
+					_ = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
+					_ = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
+				}
+			},
+			newTransactionResponse(),
+			nil,
+		},
+		{
+			"wrapInMultiCoinMultipleAddressScenario",
+			args{genesisAddress, Denom, 1},
+			func() {
+				for i := 0; i < 1000; i++ {
+					coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom+strconv.Itoa(i), sdkTypes.NewInt(GenesisSupply)))
+					_ = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
+					_ = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address()), coinSupply)
+				}
+			},
+			newTransactionResponse(),
+			nil,
+		},
+		{
+			"wrapInMultiAssetScenario",
+			args{genesisAddress, Denom, 1},
+			func() {
+				wrapAllowedDenoms := baseData.NewListData(baseData.NewStringData(Denom))
+				wrapCoins := sdkTypes.NewCoins()
+				for i := 0; i < 1000; i++ {
+					coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom+strconv.Itoa(i), sdkTypes.NewInt(GenesisSupply)))
+					_ = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
+					_ = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
+					wrapAllowedDenoms = wrapAllowedDenoms.Add(baseData.NewStringData(Denom + strconv.Itoa(i)))
+					wrapCoins = wrapCoins.Add(sdkTypes.NewCoin(Denom+strconv.Itoa(i), sdkTypes.NewInt(GenesisSupply)))
+				}
+				parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), wrapAllowedDenoms))))
+				_, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(genesisAddress, baseIDs.PrototypeIdentityID(), wrapCoins).(helpers.Message))
+				if err != nil {
+					t.Error("unexpected error")
+				}
+			},
+			newTransactionResponse(),
+			nil,
+		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionKeeper := transactionKeeper{
-				mapper:                tt.fields.mapper,
-				parameterManager:      tt.fields.parameterManager,
-				bankKeeper:            tt.fields.bankKeeper,
-				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
-				mintAuxiliary:         tt.fields.mintAuxiliary,
+
+			tt.setup()
+
+			var initialSupply, initialAddressBalance, finalSupply, finalAddressBalance sdkTypes.Int
+			if sdkTypes.ValidateDenom(tt.args.denom) == nil {
+				initialSupply = BankKeeper.GetSupply(Context, tt.args.denom).Amount
+				initialAddressBalance = BankKeeper.GetBalance(Context, genesisAddress, tt.args.denom).Amount
 			}
-			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message.(helpers.Message))
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			got, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(tt.args.from, baseIDs.PrototypeIdentityID(), sdkTypes.Coins{sdkTypes.Coin{Denom: tt.args.denom, Amount: sdkTypes.NewInt(int64(tt.args.amount))}}).(helpers.Message))
+
+			if sdkTypes.ValidateDenom(tt.args.denom) == nil {
+				finalSupply = BankKeeper.GetSupply(Context, tt.args.denom).Amount
+				if !initialSupply.Sub(finalSupply).IsZero() {
+					t.Error("supply should not change")
+				}
+
+				finalAddressBalance = BankKeeper.GetBalance(Context, genesisAddress, tt.args.denom).Amount
+				if tt.wantErr == nil && !initialAddressBalance.Sub(finalAddressBalance).Equal(sdkTypes.NewInt(int64(tt.args.amount))) {
+					t.Error("unexpected address balance")
+				}
 			}
+
+			if tt.wantErr == nil {
+				if Mappable := TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Fetch(key.NewKey(baseDocuments.NewCoinAsset(tt.args.denom).GetCoinAssetID())).GetMappable(key.NewKey(baseDocuments.NewCoinAsset(tt.args.denom).GetCoinAssetID())); Mappable == nil {
+					t.Error("coin asset should have been created")
+				}
+			}
+
+			if tt.wantErr != nil && !initialAddressBalance.Equal(finalAddressBalance) {
+				t.Error("address balance should not have changed")
+
+			}
+
+			if (err != nil) && !tt.wantErr.Is(err) {
+				t.Errorf("unexpected error: %v", err)
+			}
+
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() got = %v, want %v", got, tt.want)
+				t.Error("unexpected response")
 			}
 		})
 	}

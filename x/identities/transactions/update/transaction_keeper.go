@@ -6,18 +6,16 @@ package update
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/record"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
+	"github.com/AssetMantle/schema/go/documents/base"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	baseLists "github.com/AssetMantle/schema/go/lists/base"
+	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 )
 
 type transactionKeeper struct {
@@ -33,10 +31,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	fromAddress, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
-	}
+	fromAddress := message.GetFromAddress()
 
 	if Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromID)).GetMappable(key.NewKey(message.FromID)); Mappable == nil {
 		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.FromID.AsString())

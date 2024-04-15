@@ -32,13 +32,13 @@ var (
 	immutablePropertiesString            = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString          = "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString              = "defaultMutable1:S|defaultMutable1"
-	immutableMetaPropertiesInterfaces, _ = baseLists.PrototypePropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
+	immutableMetaPropertiesInterfaces, _ = baseLists.NewPropertyList().FromMetaPropertiesString(immutableMetaPropertiesString)
 	immutableMetaProperties              = immutableMetaPropertiesInterfaces.(*baseLists.PropertyList)
-	immutablePropertiesInterfaces, _     = baseLists.PrototypePropertyList().FromMetaPropertiesString(immutablePropertiesString)
+	immutablePropertiesInterfaces, _     = baseLists.NewPropertyList().FromMetaPropertiesString(immutablePropertiesString)
 	immutableProperties                  = immutablePropertiesInterfaces.(*baseLists.PropertyList)
-	mutableMetaPropertiesInterfaces, _   = baseLists.PrototypePropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
+	mutableMetaPropertiesInterfaces, _   = baseLists.NewPropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
 	mutableMetaProperties                = mutableMetaPropertiesInterfaces.(*baseLists.PropertyList)
-	mutablePropertiesInterfaces, _       = baseLists.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
+	mutablePropertiesInterfaces, _       = baseLists.NewPropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	mutableProperties                    = mutablePropertiesInterfaces.(*baseLists.PropertyList)
 	immutables                           = base.NewImmutables(immutableProperties)
 	mutables                             = base.NewMutables(mutableProperties)
@@ -115,7 +115,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, baseHelpers.TestClientContext}, newTransactionRequest(testBaseRequest, testFromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
+		{"+ve", fields{testBaseRequest, testFromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(testBaseRequest, testFromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

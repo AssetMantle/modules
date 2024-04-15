@@ -4,33 +4,35 @@
 package mint
 
 import (
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
-	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {
-	OwnerID     ids.IdentityID `json:"ownerID" valid:"required~required field ownerID missing"`
-	ids.AssetID `json:"assetID" valid:"required~required field assetId missing"`
-	Value       sdkTypes.Int `json:"value" valid:"required~required field value missing"`
+	OwnerID ids.IdentityID
+	ids.AssetID
+	Value sdkTypes.Int
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(auxiliaryRequest)
-	return err
-}
-
-func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := request.(type) {
-	case auxiliaryRequest:
-		return value
-	default:
-		return auxiliaryRequest{}
+	if err := auxiliaryRequest.OwnerID.ValidateBasic(); err != nil {
+		return errorConstants.InvalidRequest.Wrapf("invalid owner ID: %s", err)
 	}
+
+	if err := auxiliaryRequest.AssetID.ValidateBasic(); err != nil {
+		return errorConstants.InvalidRequest.Wrapf("invalid asset ID: %s", err)
+	}
+
+	if auxiliaryRequest.Value.LTE(sdkTypes.ZeroInt()) {
+		return errorConstants.InvalidRequest.Wrapf("value must be greater than zero")
+	}
+
+	return nil
 }
 
 func NewAuxiliaryRequest(ownerID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) helpers.AuxiliaryRequest {

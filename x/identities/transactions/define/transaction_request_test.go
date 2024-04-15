@@ -98,7 +98,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		wantErr bool
 	}{
 
-		{"+ve", fields{BaseReq: testBaseReq, FromID: "", ImmutableMetaProperties: "", ImmutableProperties: "", MutableMetaProperties: "", MutableProperties: ""}, args{cliCommand, baseHelpers.TestClientContext}, transactionRequest{cliCommand.ReadBaseReq(baseHelpers.TestClientContext), cliCommand.ReadString(constants.FromIdentityID), cliCommand.ReadString(constants.ImmutableMetaProperties), cliCommand.ReadString(constants.ImmutableProperties), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
+		{"+ve", fields{BaseReq: testBaseReq, FromID: "", ImmutableMetaProperties: "", ImmutableProperties: "", MutableMetaProperties: "", MutableProperties: ""}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{cliCommand.ReadBaseReq(client.Context{}.WithCodec(baseHelpers.CodecPrototype())), cliCommand.ReadString(constants.FromIdentityID), cliCommand.ReadString(constants.ImmutableMetaProperties), cliCommand.ReadString(constants.ImmutableProperties), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -220,11 +220,11 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 	immutableMetaProperties, err := base.PrototypeMetaProperty().FromString(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	immutableProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(immutablePropertiesString)
+	immutableProperties, err := baseLists.NewPropertyList().FromMetaPropertiesString(immutablePropertiesString)
 	require.Equal(t, nil, err)
 	mutableMetaProperties, err := base.PrototypeMetaProperty().FromString(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	mutableProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
+	mutableProperties, err := baseLists.NewPropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"

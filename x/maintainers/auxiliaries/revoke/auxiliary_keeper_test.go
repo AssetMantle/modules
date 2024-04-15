@@ -42,7 +42,7 @@ var (
 	testClassificationID    = baseIDs.NewClassificationID(immutables, mutables)
 	testFromID              = baseIDs.NewIdentityID(testClassificationID, immutables)
 	maintainedProperty      = "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, _ = base.PrototypePropertyList().FromMetaPropertiesString(maintainedProperty)
+	maintainedProperties, _ = base.NewPropertyList().FromMetaPropertiesString(maintainedProperty)
 	permissions             = maintainerUtilities.SetModulePermissions(true, true, true)
 )
 

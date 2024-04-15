@@ -32,9 +32,9 @@ func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, clie
 
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
-	mutableMetaProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
+	mutableMetaProperties, err := baseLists.NewPropertyList().FromMetaPropertiesString(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
-	mutableProperties, err := baseLists.PrototypePropertyList().FromMetaPropertiesString(mutablePropertiesString)
+	mutableProperties, err := baseLists.NewPropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
@@ -43,7 +43,7 @@ func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, clie
 
 	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
 
-	return legacyAmino, cliCommand, baseHelpers.TestClientContext, mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, testBaseReq
+	return legacyAmino, cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, testBaseReq
 }
 
 func Test_newTransactionRequest(t *testing.T) {

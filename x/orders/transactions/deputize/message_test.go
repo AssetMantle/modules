@@ -48,7 +48,7 @@ func CreateTestInputForMessage(t *testing.T) (*baseIDs.IdentityID, *baseIDs.Iden
 	require.Nil(t, err)
 
 	maintainedProperty := "maintainedProperty:S|maintainedProperty"
-	maintainedProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(maintainedProperty)
+	maintainedProperties, err := base.NewPropertyList().FromMetaPropertiesString(maintainedProperty)
 	require.Equal(t, nil, err)
 
 	testMessage := NewMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, true, true, true, true, true)

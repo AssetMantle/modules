@@ -79,7 +79,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	maintainedProperties, err := base.PrototypePropertyList().FromMetaPropertiesString(transactionRequest.MaintainedProperties)
+	maintainedProperties, err := base.NewPropertyList().FromMetaPropertiesString(transactionRequest.MaintainedProperties)
 	if err != nil {
 		return nil, err
 	}

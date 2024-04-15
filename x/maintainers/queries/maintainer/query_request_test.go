@@ -4,6 +4,7 @@
 package maintainer
 
 import (
+	"github.com/AssetMantle/modules/x/maintainers/key"
 	"reflect"
 	"testing"
 
@@ -20,7 +21,9 @@ import (
 
 var (
 	testMaintainerID, _ = createTestData()
+	testKey             = key.NewKey(testMaintainerID).(*key.Key)
 	testMaintainerID1   = baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)
+	testKey1            = key.NewKey(testMaintainerID1).(*key.Key)
 )
 
 func Test_newQueryRequest(t *testing.T) {
@@ -32,8 +35,8 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve", args{testMaintainerID}, &QueryRequest{testMaintainerID}},
-		{"+ve with nil", args{testMaintainerID1}, &QueryRequest{testMaintainerID1}},
+		{"+ve", args{testMaintainerID}, &QueryRequest{testKey}},
+		{"+ve with nil", args{testMaintainerID1}, &QueryRequest{testKey1}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -53,8 +56,8 @@ func Test_queryRequestFromInterface(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve", args{newQueryRequest(testMaintainerID)}, &QueryRequest{testMaintainerID}},
-		{"+ve with nil", args{newQueryRequest(testMaintainerID1)}, &QueryRequest{testMaintainerID1}},
+		{"+ve", args{newQueryRequest(testMaintainerID)}, &QueryRequest{testKey}},
+		{"+ve with nil", args{newQueryRequest(testMaintainerID1)}, &QueryRequest{testKey1}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -66,12 +69,12 @@ func Test_queryRequestFromInterface(t *testing.T) {
 }
 
 func Test_queryRequest_Decode(t *testing.T) {
-	encodedQuery, err := (&QueryRequest{testMaintainerID}).Encode()
+	encodedQuery, err := (&QueryRequest{testKey}).Encode()
 	require.NoError(t, err)
-	encodedQuery1, err := (&QueryRequest{testMaintainerID1}).Encode()
+	encodedQuery1, err := (&QueryRequest{testKey1}).Encode()
 	require.NoError(t, err)
 	type fields struct {
-		MaintainerID *baseIDs.MaintainerID
+		key *key.Key
 	}
 	type args struct {
 		bytes []byte
@@ -83,13 +86,13 @@ func Test_queryRequest_Decode(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testMaintainerID}, args{encodedQuery}, &QueryRequest{testMaintainerID}, false},
-		{"+ve", fields{testMaintainerID1}, args{encodedQuery1}, &QueryRequest{testMaintainerID1}, false},
+		{"+ve", fields{testKey}, args{encodedQuery}, &QueryRequest{testKey}, false},
+		{"+ve", fields{testKey1}, args{encodedQuery1}, &QueryRequest{testKey1}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := &QueryRequest{
-				MaintainerID: tt.fields.MaintainerID,
+				Key: tt.fields.key,
 			}
 			got, err := queryRequest.Decode(tt.args.bytes)
 			if (err != nil) != tt.wantErr {
@@ -104,12 +107,12 @@ func Test_queryRequest_Decode(t *testing.T) {
 }
 
 func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryRequest{testMaintainerID})
+	encodedQuery, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryRequest{testKey})
 	require.NoError(t, err)
-	encodedQuery1, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryRequest{testMaintainerID1})
+	encodedQuery1, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryRequest{testKey1})
 	require.NoError(t, err)
 	type fields struct {
-		MaintainerID *baseIDs.MaintainerID
+		key *key.Key
 	}
 	tests := []struct {
 		name    string
@@ -117,13 +120,13 @@ func Test_queryRequest_Encode(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{"+ve", fields{testMaintainerID}, encodedQuery, false},
-		{"+ve with nil", fields{testMaintainerID1}, encodedQuery1, false},
+		{"+ve", fields{testKey}, encodedQuery, false},
+		{"+ve with nil", fields{testKey1}, encodedQuery1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := &QueryRequest{
-				MaintainerID: tt.fields.MaintainerID,
+				Key: tt.fields.key,
 			}
 			got, err := queryRequest.Encode()
 			if (err != nil) != tt.wantErr {
@@ -141,7 +144,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.MaintainerID})
 	viper.Set(constants.MaintainerID.GetName(), testMaintainerID.AsString())
 	type fields struct {
-		MaintainerID *baseIDs.MaintainerID
+		key *key.Key
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -154,12 +157,12 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testMaintainerID}, args{cliCommand, client.Context{}}, &QueryRequest{testMaintainerID}, false},
+		{"+ve", fields{testKey}, args{cliCommand, client.Context{}}, &QueryRequest{testKey}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			qu := &QueryRequest{
-				MaintainerID: tt.fields.MaintainerID,
+				Key: tt.fields.key,
 			}
 			got, err := qu.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -175,20 +178,20 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 
 func Test_queryRequest_Validate(t *testing.T) {
 	type fields struct {
-		MaintainerID *baseIDs.MaintainerID
+		key *key.Key
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testMaintainerID}, false},
-		{"+ve with nil", fields{testMaintainerID1}, false},
+		{"+ve", fields{testKey}, false},
+		{"+ve with nil", fields{testKey1}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			queryRequest := &QueryRequest{
-				MaintainerID: tt.fields.MaintainerID,
+				Key: tt.fields.key,
 			}
 			if err := queryRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

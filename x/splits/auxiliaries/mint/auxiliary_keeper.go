@@ -5,6 +5,8 @@ package mint
 
 import (
 	"context"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"reflect"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/utilities"
@@ -16,11 +18,18 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
-	auxiliaryRequest := auxiliaryRequestFromInterface(request)
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRequest helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	if err := AuxiliaryRequest.Validate(); err != nil {
+		return nil, err
+	}
+
+	auxiliaryRequest, ok := AuxiliaryRequest.(auxiliaryRequest)
+	if !ok {
+		return nil, errorConstants.InvalidRequest.Wrapf("invalid request type: %s", reflect.TypeOf(AuxiliaryRequest).String())
+	}
 
 	if _, err := utilities.AddSplits(auxiliaryKeeper.mapper.NewCollection(context), auxiliaryRequest.OwnerID, auxiliaryRequest.AssetID, auxiliaryRequest.Value); err != nil {
-		return newAuxiliaryResponse(), err
+		return nil, err
 	}
 
 	return newAuxiliaryResponse(), nil

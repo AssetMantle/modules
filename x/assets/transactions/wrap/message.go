@@ -4,7 +4,9 @@
 package wrap
 
 import (
+	"github.com/AssetMantle/modules/x/assets/constants"
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
+	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -17,15 +19,25 @@ import (
 var _ helpers.Message = (*Message)(nil)
 
 func (message *Message) Type() string { return Transaction.GetName() }
+func (message *Message) GetFromAddress() sdkTypes.AccAddress {
+	from, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil {
+		panic(err)
+	}
+	return from
+}
 func (message *Message) ValidateBasic() error {
 	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
-		return err
+		return errorConstants.InvalidMessage.Wrapf("invalid from address %s", err.Error())
 	}
 	if err := message.FromID.ValidateBasic(); err != nil {
-		return err
+		return errorConstants.InvalidMessage.Wrapf("invalid from id %s", err.Error())
 	}
 	if err := message.Coins.Validate(); err != nil {
-		return err
+		return errorConstants.InvalidMessage.Wrapf("invalid coins %s", err.Error())
+	}
+	if message.Coins.Len() > constants.MaxListLength {
+		return errorConstants.InvalidMessage.Wrapf("number of coins in message: %d exceeds maximum allowed: %d", message.Coins.Len(), constants.MaxListLength)
 	}
 	return nil
 }

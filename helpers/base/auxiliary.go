@@ -20,6 +20,15 @@ func (auxiliary auxiliary) Initialize(mapper helpers.Mapper, parameterManager he
 	return auxiliary
 }
 func NewAuxiliary(name string, keeperPrototype func() helpers.AuxiliaryKeeper) helpers.Auxiliary {
+	if name == "" {
+		panic("empty name")
+	}
+
+	if keeperPrototype == nil {
+		panic("nil keeper prototype")
+
+	}
+
 	return auxiliary{
 		name:            name,
 		keeperPrototype: keeperPrototype,

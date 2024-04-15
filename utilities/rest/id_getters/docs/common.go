@@ -50,15 +50,15 @@ func read(context client.Context, responseWriter http.ResponseWriter, httpReques
 
 	req := transactionRequest.(request)
 
-	immutableMetaProperties, _ := baseLists.PrototypePropertyList().FromMetaPropertiesString(req.ImmutableMetaProperties)
+	immutableMetaProperties, _ := baseLists.NewPropertyList().FromMetaPropertiesString(req.ImmutableMetaProperties)
 
-	immutableProperties, _ := baseLists.PrototypePropertyList().FromMetaPropertiesString(req.ImmutableProperties)
+	immutableProperties, _ := baseLists.NewPropertyList().FromMetaPropertiesString(req.ImmutableProperties)
 
 	immutableProperties = immutableProperties.ScrubData()
 
-	mutableMetaProperties, _ := baseLists.PrototypePropertyList().FromMetaPropertiesString(req.MutableMetaProperties)
+	mutableMetaProperties, _ := baseLists.NewPropertyList().FromMetaPropertiesString(req.MutableMetaProperties)
 
-	mutableProperties, _ := baseLists.PrototypePropertyList().FromMetaPropertiesString(req.MutableProperties)
+	mutableProperties, _ := baseLists.NewPropertyList().FromMetaPropertiesString(req.MutableProperties)
 
 	mutableProperties = mutableProperties.ScrubData()
 
