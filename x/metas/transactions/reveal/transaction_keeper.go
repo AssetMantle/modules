@@ -5,9 +5,9 @@ package reveal
 
 import (
 	"context"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 
 	"github.com/AssetMantle/schema/go/data"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
 

@@ -5,8 +5,8 @@ package purge
 
 import (
 	"context"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 
 	"github.com/AssetMantle/modules/helpers"

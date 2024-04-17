@@ -5,9 +5,9 @@ package base
 
 import (
 	"fmt"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"net/http"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/lists"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"

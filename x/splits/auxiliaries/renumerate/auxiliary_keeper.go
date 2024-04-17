@@ -5,9 +5,8 @@ package renumerate
 
 import (
 	"context"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/utilities"

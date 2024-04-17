@@ -5,7 +5,7 @@ package mint
 
 import (
 	"context"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"reflect"
 
 	"github.com/AssetMantle/modules/helpers"

@@ -4,7 +4,7 @@
 package utilities
 
 import (
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/types/base"

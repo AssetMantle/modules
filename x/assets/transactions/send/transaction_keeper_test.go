@@ -6,6 +6,7 @@ package send
 import (
 	"context"
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/mapper"
@@ -17,8 +18,6 @@ import (
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	"github.com/AssetMantle/schema/go/errors"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -187,7 +186,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		args    args
 		setup   func()
 		want    *TransactionResponse
-		wantErr errors.Error
+		wantErr helpers.Error
 	}{
 		{"sendOne",
 			args{fromAddress, assetID, 1},

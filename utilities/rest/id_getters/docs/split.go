@@ -1,10 +1,10 @@
 package docs
 
 import (
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"net/http"
 
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"

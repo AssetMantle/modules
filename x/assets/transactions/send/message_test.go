@@ -4,9 +4,8 @@
 package send
 
 import (
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/documents/base"
-	"github.com/AssetMantle/schema/go/errors"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"reflect"
 	"testing"
@@ -35,7 +34,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name    string
 		message *Message
-		wantErr errors.Error
+		wantErr helpers.Error
 	}{
 		{
 			"valid message",

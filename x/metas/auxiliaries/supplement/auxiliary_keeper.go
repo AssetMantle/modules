@@ -5,7 +5,7 @@ package supplement
 
 import (
 	"context"
-	"github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"reflect"
 
 	"github.com/AssetMantle/schema/go/data/base"

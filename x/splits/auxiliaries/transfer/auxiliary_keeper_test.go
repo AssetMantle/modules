@@ -6,6 +6,7 @@ package transfer
 import (
 	"context"
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/splits/constants"
 	"github.com/AssetMantle/modules/x/splits/key"
@@ -17,8 +18,6 @@ import (
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/documents"
 	"github.com/AssetMantle/schema/go/documents/base"
-	"github.com/AssetMantle/schema/go/errors"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
@@ -135,7 +134,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		setup   func()
 		request helpers.AuxiliaryRequest
 		want    helpers.AuxiliaryResponse
-		wantErr errors.Error
+		wantErr helpers.Error
 	}{
 		{
 			"valid request",

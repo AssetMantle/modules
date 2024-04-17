@@ -4,7 +4,7 @@
 package transfer
 
 import (
-	"github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 

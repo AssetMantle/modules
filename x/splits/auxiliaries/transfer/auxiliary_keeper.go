@@ -5,10 +5,10 @@ package transfer
 
 import (
 	"context"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"reflect"
 
 	"github.com/AssetMantle/schema/go/data"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
 
 	"github.com/AssetMantle/modules/helpers"

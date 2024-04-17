@@ -6,9 +6,9 @@ package base
 import (
 	"encoding/json"
 	"fmt"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"math/rand"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"

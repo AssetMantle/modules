@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/asaskevich/govalidator"
@@ -71,7 +70,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 
 	value, ok := sdkTypes.NewIntFromString(transactionRequest.Value)
 	if !ok {
-		return nil, errorConstants.IncorrectFormat.Wrapf("send value %s is not a valid integer", transactionRequest.Value)
+		return nil, constants.IncorrectFormat.Wrapf("send value %s is not a valid integer", transactionRequest.Value)
 	}
 
 	fromID, err := baseIDs.PrototypeIdentityID().FromString(transactionRequest.FromID)

@@ -6,12 +6,12 @@ package base
 import (
 	"context"
 	"encoding/json"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/utilities/rest/queuing"
 	"net/http"
 	"reflect"
 
 	"github.com/AssetMantle/modules/helpers"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"

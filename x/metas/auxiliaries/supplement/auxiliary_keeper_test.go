@@ -5,13 +5,12 @@ package supplement
 
 import (
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/metas/constants"
 	"github.com/AssetMantle/modules/x/metas/mapper"
 	"github.com/AssetMantle/modules/x/metas/record"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	dataConstants "github.com/AssetMantle/schema/go/data/constants"
-	"github.com/AssetMantle/schema/go/errors"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/properties"
@@ -96,7 +95,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		setup   func()
 		request helpers.AuxiliaryRequest
 		want    helpers.AuxiliaryResponse
-		wantErr errors.Error
+		wantErr helpers.Error
 	}{
 		{
 			"valid request",

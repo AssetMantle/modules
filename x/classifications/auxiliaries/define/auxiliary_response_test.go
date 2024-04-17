@@ -4,11 +4,11 @@
 package define
 
 import (
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"reflect"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
