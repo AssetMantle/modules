@@ -13,6 +13,14 @@ import (
 
 var _ helpers.Key = (*Key)(nil)
 
+func (key *Key) ValidateBasic() error {
+	if key.ClassificationID != nil {
+		if err := key.ClassificationID.ValidateBasic(); err != nil {
+			return errorConstants.InvalidKey.Wrapf(err.Error())
+		}
+	}
+	return nil
+}
 func (key *Key) GenerateStorePrefixBytes() []byte {
 	return []byte{}
 }
