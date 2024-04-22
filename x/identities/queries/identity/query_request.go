@@ -8,7 +8,6 @@ import (
 
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -30,8 +29,11 @@ var _ helpers.QueryRequest = (*QueryRequest)(nil)
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
 // @Router /identities/identities/{identityID} [get]
 func (queryRequest *QueryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(queryRequest)
-	return err
+	if err := queryRequest.Key.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf(err.Error())
+	}
+
+	return nil
 }
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
 	if identityID, err := baseIDs.PrototypeIdentityID().FromString(cliCommand.ReadString(constants.IdentityID)); err != nil {
