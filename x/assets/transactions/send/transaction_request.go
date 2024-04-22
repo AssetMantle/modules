@@ -9,7 +9,6 @@ import (
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -21,10 +20,10 @@ import (
 
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
-	FromID  string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
-	ToID    string       `json:"toID" valid:"required~required field toID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field toID"`
-	AssetID string       `json:"assetID" valid:"required~required field assetID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field assetID"`
-	Value   string       `json:"value" valid:"required~required field value missing, matches(^[0-9.]+$)~invalid field value"`
+	FromID  string       `json:"fromID"`
+	ToID    string       `json:"toID"`
+	AssetID string       `json:"assetID"`
+	Value   string       `json:"value"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -40,8 +39,13 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /assets/send [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(transactionRequest)
-	return err
+	if msg, err := transactionRequest.MakeMsg(); err != nil {
+		return err
+	} else if err := msg.(helpers.Message).ValidateBasic(); err != nil {
+		return err
+	}
+
+	return nil
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(

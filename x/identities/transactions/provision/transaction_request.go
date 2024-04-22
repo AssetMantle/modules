@@ -9,7 +9,6 @@ import (
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -21,8 +20,8 @@ import (
 
 type transactionRequest struct {
 	BaseReq    rest.BaseReq `json:"baseReq"`
-	To         string       `json:"to" valid:"required~required field to missing, matches(^[a-z0-9]+$)~invalid field to"`
-	IdentityID string       `json:"identityID" valid:"required~required field identityID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field identityID"`
+	To         string       `json:"to"`
+	IdentityID string       `json:"identityID"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -38,8 +37,13 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/provision [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(transactionRequest)
-	return err
+	if msg, err := transactionRequest.MakeMsg(); err != nil {
+		return err
+	} else if err := msg.(helpers.Message).ValidateBasic(); err != nil {
+		return err
+	}
+
+	return nil
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(

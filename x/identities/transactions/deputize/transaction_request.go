@@ -10,7 +10,6 @@ import (
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/AssetMantle/schema/go/lists/base"
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -22,10 +21,10 @@ import (
 
 type transactionRequest struct {
 	BaseReq              rest.BaseReq `json:"baseReq"`
-	FromID               string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
-	ToID                 string       `json:"toID" valid:"required~required field toID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field toID"`
-	ClassificationID     string       `json:"classificationID" valid:"required~required field classificationID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field classificationID"`
-	MaintainedProperties string       `json:"maintainedProperties" valid:"required~required field maintainedProperties missing, matches(^.*$)~invalid field maintainedProperties"`
+	FromID               string       `json:"fromID"`
+	ToID                 string       `json:"toID"`
+	ClassificationID     string       `json:"classificationID"`
+	MaintainedProperties string       `json:"maintainedProperties"`
 	CanIssueIdentity     bool         `json:"canIssueIdentity"`
 	CanQuashIdentity     bool         `json:"canQuashIdentity"`
 	CanAddMaintainer     bool         `json:"canAddMaintainer"`
@@ -46,8 +45,9 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/deputize [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(transactionRequest)
-	if err != nil {
+	if msg, err := transactionRequest.MakeMsg(); err != nil {
+		return err
+	} else if err := msg.(helpers.Message).ValidateBasic(); err != nil {
 		return err
 	}
 

@@ -10,7 +10,6 @@ import (
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseTypes "github.com/AssetMantle/schema/go/types/base"
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -22,12 +21,12 @@ import (
 
 type transactionRequest struct {
 	BaseReq      rest.BaseReq `json:"baseReq"`
-	FromID       string       `json:"fromID" valid:"required~required field fromID missing, matches(^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$)~invalid field fromID"`
-	MakerAssetID string       `json:"makerAssetID" valid:"required~required field makerAssetID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field makerAssetID"`
-	TakerAssetID string       `json:"takerAssetID" valid:"required~required field takerAssetID missing, matches(^(COI|AI)\|((?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4}|[A-Za-z0-9]{32}))$)~invalid field takerAssetID"`
-	MakerSplit   string       `json:"makerSplit" valid:"required~required field makerSplit missing, matches(^[0-9.]+$)~invalid field makerSplit"`
-	TakerSplit   string       `json:"takerSplit" valid:"required~required field takerSplit missing, matches(^[0-9.]+$)~invalid field takerSplit"`
-	ExpiryHeight int64        `json:"expiryHeight" valid:"required~required field expiryHeight missing, matches(^[0-9]+$)~invalid field expiryHeight"`
+	FromID       string       `json:"fromID"`
+	MakerAssetID string       `json:"makerAssetID"`
+	TakerAssetID string       `json:"takerAssetID"`
+	MakerSplit   string       `json:"makerSplit"`
+	TakerSplit   string       `json:"takerSplit"`
+	ExpiryHeight int64        `json:"expiryHeight"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -43,8 +42,13 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /orders/make [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(transactionRequest)
-	return err
+	if msg, err := transactionRequest.MakeMsg(); err != nil {
+		return err
+	} else if err := msg.(helpers.Message).ValidateBasic(); err != nil {
+		return err
+	}
+
+	return nil
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(

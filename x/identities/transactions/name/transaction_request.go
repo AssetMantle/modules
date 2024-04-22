@@ -8,7 +8,6 @@ import (
 
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -20,7 +19,7 @@ import (
 
 type transactionRequest struct {
 	BaseReq rest.BaseReq `json:"baseReq"`
-	Name    string       `json:"name" valid:"required~required field name missing, matches(^.*$)~invalid field name"`
+	Name    string       `json:"name"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -36,8 +35,9 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/name [post]
 func (transactionRequest transactionRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(transactionRequest)
-	if err != nil {
+	if msg, err := transactionRequest.MakeMsg(); err != nil {
+		return err
+	} else if err := msg.(helpers.Message).ValidateBasic(); err != nil {
 		return err
 	}
 
