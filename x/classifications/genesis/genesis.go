@@ -35,11 +35,11 @@ func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager)
 		}
 
 		if !isPresent {
-			return errorConstants.IncorrectFormat.Wrapf("expected parameter %s not found", parameter.GetMetaProperty().GetKey().AsString())
+			return errorConstants.EntityNotFound.Wrapf("expected parameter %s not found", parameter.GetMetaProperty().GetKey().AsString())
 		}
 
 		if err := parameterManager.ValidateParameter(parameter); err != nil {
-			return err
+			return errorConstants.InvalidParameter.Wrapf("parameter %s: %s", parameter.GetMetaProperty().GetKey().AsString(), err.Error())
 		}
 	}
 
