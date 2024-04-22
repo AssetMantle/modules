@@ -21,4 +21,5 @@ var (
 	MetaDataError       = base.NewError(projectRoute, 109, "meta data error")
 	NotAuthorized       = base.NewError(projectRoute, 110, "not authorized")
 	UninitializedUsage  = base.NewError(projectRoute, 111, "uninitialized usage")
+	InvalidKey          = base.NewError(projectRoute, 112, "invalid key")
 )
