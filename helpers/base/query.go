@@ -4,7 +4,7 @@
 package base
 
 import (
-	errorConstants "github.com/AssetMantle/modules/helpers/constants"
+	"fmt"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -35,7 +35,7 @@ var _ helpers.Query = (*query)(nil)
 
 func (query query) RegisterService(configurator sdkModuleTypes.Configurator) {
 	if query.queryKeeper == nil {
-		panic(errorConstants.UninitializedUsage.Wrapf("query keeper for query %s not initialized", query.name))
+		panic(fmt.Errorf("query keeper for query %s not initialized", query.name))
 	}
 	query.serviceRegistrar(configurator.QueryServer(), query.queryKeeper)
 }

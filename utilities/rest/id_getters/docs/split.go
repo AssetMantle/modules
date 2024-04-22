@@ -1,26 +1,25 @@
 package docs
 
 import (
-	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	"net/http"
-
+	"fmt"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
+	"net/http"
 )
 
 func splitIDHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		transactionRequest := Prototype()
 		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
-			panic(errorConstants.IncorrectFormat)
+			panic(fmt.Errorf("failed to read request"))
 		}
 
 		if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
-			panic(errorConstants.IncorrectFormat)
+			panic(fmt.Errorf("failed to validate request"))
 		}
 
 		req := transactionRequest.(request)
