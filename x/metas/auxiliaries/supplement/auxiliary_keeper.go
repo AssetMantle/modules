@@ -5,9 +5,7 @@ package supplement
 
 import (
 	"context"
-	"github.com/AssetMantle/modules/helpers/constants"
-	"reflect"
-
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/data/base"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -27,7 +25,7 @@ var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRequest helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	auxiliaryRequest, ok := AuxiliaryRequest.(auxiliaryRequest)
 	if !ok {
-		return nil, constants.InvalidRequest.Wrapf("invalid request type: %s", reflect.TypeOf(AuxiliaryRequest).String())
+		return nil, errorConstants.InvalidRequest.Wrapf("invalid request type %T", AuxiliaryRequest)
 	}
 
 	if err := auxiliaryRequest.Validate(); err != nil {

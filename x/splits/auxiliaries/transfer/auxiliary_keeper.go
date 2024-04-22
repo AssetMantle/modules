@@ -6,8 +6,6 @@ package transfer
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	"reflect"
-
 	"github.com/AssetMantle/schema/go/data"
 	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
 
@@ -23,13 +21,13 @@ type auxiliaryKeeper struct {
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRequest helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
-	if err := AuxiliaryRequest.Validate(); err != nil {
-		return nil, err
-	}
-
 	auxiliaryRequest, ok := AuxiliaryRequest.(auxiliaryRequest)
 	if !ok {
-		return nil, errorConstants.InvalidRequest.Wrapf("invalid request type: %s", reflect.TypeOf(AuxiliaryRequest).String())
+		return nil, errorConstants.InvalidRequest.Wrapf("invalid request type %T", AuxiliaryRequest)
+	}
+
+	if err := auxiliaryRequest.Validate(); err != nil {
+		return nil, err
 	}
 
 	if !auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.TransferEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
