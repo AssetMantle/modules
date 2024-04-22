@@ -4,11 +4,10 @@
 package conform
 
 import (
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/qualified"
-	"github.com/asaskevich/govalidator"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {
@@ -20,17 +19,19 @@ type auxiliaryRequest struct {
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(auxiliaryRequest)
-	return err
-}
-
-func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := request.(type) {
-	case auxiliaryRequest:
-		return value
-	default:
-		return auxiliaryRequest{}
+	if err := auxiliaryRequest.ClassificationID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid classification id: %s", err.Error())
 	}
+
+	if err := auxiliaryRequest.Immutables.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid immutables: %s", err.Error())
+	}
+
+	if err := auxiliaryRequest.Mutables.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid mutables: %s", err.Error())
+	}
+
+	return nil
 }
 
 func NewAuxiliaryRequest(classificationID ids.ClassificationID, immutables qualified.Immutables, mutables qualified.Mutables) helpers.AuxiliaryRequest {

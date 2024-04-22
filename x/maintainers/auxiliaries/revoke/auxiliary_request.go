@@ -4,31 +4,33 @@
 package revoke
 
 import (
-	"github.com/AssetMantle/schema/go/ids"
-	"github.com/asaskevich/govalidator"
-
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/schema/go/ids"
 )
 
 type auxiliaryRequest struct {
-	FromID                     ids.IdentityID       `json:"fromID" valid:"required~required field fromID missing"`
-	ToID                       ids.IdentityID       `json:"toID" valid:"required~required field toID missing"`
-	MaintainedClassificationID ids.ClassificationID `json:"maintainedClassificationID" valid:"required~required field maintainedClassificationID missing"`
+	FromID                     ids.IdentityID
+	ToID                       ids.IdentityID
+	MaintainedClassificationID ids.ClassificationID
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(auxiliaryRequest)
-	return err
-}
-func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := request.(type) {
-	case auxiliaryRequest:
-		return value
-	default:
-		return auxiliaryRequest{}
+	if err := auxiliaryRequest.FromID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid from id: %s", err.Error())
 	}
+
+	if err := auxiliaryRequest.ToID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid to id: %s", err.Error())
+	}
+
+	if err := auxiliaryRequest.MaintainedClassificationID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid maintained classification id: %s", err.Error())
+	}
+
+	return nil
 }
 
 func NewAuxiliaryRequest(fromID ids.IdentityID, toID ids.IdentityID, maintainedClassificationID ids.ClassificationID) helpers.AuxiliaryRequest {

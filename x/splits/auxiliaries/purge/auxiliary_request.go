@@ -4,8 +4,8 @@
 package purge
 
 import (
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
-	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -20,17 +20,19 @@ type auxiliaryRequest struct {
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(auxiliaryRequest)
-	return err
-}
-
-func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := request.(type) {
-	case auxiliaryRequest:
-		return value
-	default:
-		return auxiliaryRequest{}
+	if err := auxiliaryRequest.OwnerID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("owner id is invalid: %s", err.Error())
 	}
+
+	if err := auxiliaryRequest.AssetID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("asset id is invalid: %s", err.Error())
+	}
+
+	if auxiliaryRequest.Supply.IsNegative() {
+		return constants.InvalidRequest.Wrapf("supply cannot be negative")
+	}
+
+	return nil
 }
 
 func NewAuxiliaryRequest(ownerID ids.IdentityID, assetID ids.AssetID, supply sdkTypes.Int) helpers.AuxiliaryRequest {

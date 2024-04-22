@@ -21,11 +21,11 @@ var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
 	if err := auxiliaryRequest.OwnerID.ValidateBasic(); err != nil {
-		return errorConstants.InvalidRequest.Wrapf("invalid owner ID: %s", err)
+		return errorConstants.InvalidRequest.Wrapf("invalid owner id: %s", err)
 	}
 
 	if err := auxiliaryRequest.AssetID.ValidateBasic(); err != nil {
-		return errorConstants.InvalidRequest.Wrapf("invalid asset ID: %s", err)
+		return errorConstants.InvalidRequest.Wrapf("invalid asset id: %s", err)
 	}
 
 	if auxiliaryRequest.Value.LTE(sdkTypes.ZeroInt()) {

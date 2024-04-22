@@ -4,33 +4,34 @@
 package maintain
 
 import (
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/qualified"
-	"github.com/asaskevich/govalidator"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {
-	MaintainedClassificationID ids.ClassificationID `json:"maintainedClassificationID" valid:"required~required field maintainedClassificationID missing"`
-	ids.IdentityID             `json:"identityID" valid:"required~required field identityID missing"`
-	MaintainedMutables         qualified.Mutables `json:"maintainedMutables" valid:"required~required field maintainedProperties missing"`
+	MaintainedClassificationID ids.ClassificationID
+	ids.IdentityID
+	MaintainedMutables qualified.Mutables
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(auxiliaryRequest)
-	return err
-}
-
-func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := request.(type) {
-	case auxiliaryRequest:
-		return value
-	default:
-		return auxiliaryRequest{}
+	if err := auxiliaryRequest.MaintainedClassificationID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid maintained classification id %s", err.Error())
 	}
+
+	if err := auxiliaryRequest.IdentityID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid identity id %s", err.Error())
+	}
+
+	if err := auxiliaryRequest.MaintainedMutables.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid maintained mutables %s", err.Error())
+	}
+
+	return nil
 }
 
 func NewAuxiliaryRequest(maintainedClassificationID ids.ClassificationID, identityID ids.IdentityID, maintainedMutables qualified.Mutables) helpers.AuxiliaryRequest {

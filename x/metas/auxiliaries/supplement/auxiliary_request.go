@@ -17,10 +17,12 @@ var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
 	for _, property := range auxiliaryRequest.PropertyList {
-		if property != nil {
-			if err := property.ValidateBasic(); err != nil {
-				return constants.InvalidRequest.Wrapf("invalid property %s: %s", property.GetKey().AsString(), err.Error())
-			}
+		if property == nil {
+			return constants.InvalidRequest.Wrapf("property cannot be nil")
+		}
+
+		if err := property.ValidateBasic(); err != nil {
+			return constants.InvalidRequest.Wrapf("invalid property %s: %s", property.GetKey().AsString(), err.Error())
 		}
 	}
 

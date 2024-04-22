@@ -4,8 +4,8 @@
 package burn
 
 import (
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
-	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -19,17 +19,15 @@ type auxiliaryRequest struct {
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(auxiliaryRequest)
-	return err
-}
-
-func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := request.(type) {
-	case auxiliaryRequest:
-		return value
-	default:
-		return auxiliaryRequest{}
+	if err := auxiliaryRequest.classificationID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid classification id: %s", err.Error())
 	}
+
+	if auxiliaryRequest.bondAmount.IsNegative() {
+		return constants.InvalidRequest.Wrapf("bond amount cannot be negative")
+	}
+
+	return nil
 }
 
 func NewAuxiliaryRequest(classificationID ids.ClassificationID, bondAmount sdkTypes.Int) helpers.AuxiliaryRequest {
