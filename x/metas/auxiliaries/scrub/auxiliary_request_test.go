@@ -23,7 +23,4 @@ func Test_Scrub_Request(t *testing.T) {
 
 	require.Equal(t, auxiliaryRequest{PropertyList: metaPropertyList}, testAuxiliaryRequest)
 	require.Equal(t, nil, testAuxiliaryRequest.Validate())
-	require.Equal(t, testAuxiliaryRequest, auxiliaryRequestFromInterface(testAuxiliaryRequest))
-	require.Equal(t, auxiliaryRequest{}, auxiliaryRequestFromInterface(nil))
-
 }

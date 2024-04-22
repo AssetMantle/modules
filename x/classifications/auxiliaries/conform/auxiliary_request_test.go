@@ -43,30 +43,6 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 	}
 }
 
-func Test_auxiliaryRequestFromInterface(t *testing.T) {
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
-	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	type args struct {
-		request helpers.AuxiliaryRequest
-	}
-	tests := []struct {
-		name string
-		args args
-		want auxiliaryRequest
-	}{
-		{"+ve", args{NewAuxiliaryRequest(classificationID, immutables, mutables)}, auxiliaryRequest{classificationID, immutables, mutables}},
-		{"+ve with nil", args{}, auxiliaryRequest{}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := auxiliaryRequestFromInterface(tt.args.request); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("auxiliaryRequestFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_auxiliaryRequest_Validate(t *testing.T) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
