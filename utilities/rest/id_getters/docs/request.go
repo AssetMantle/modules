@@ -4,12 +4,6 @@
 package docs
 
 import (
-	"encoding/json"
-
-	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -34,37 +28,16 @@ type request struct {
 	Coins                   string       `json:"coins" valid:"optional"`
 }
 
-var _ helpers.TransactionRequest = &request{}
-
-func (request request) FromCLI(command helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (request) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (request request) FromJSON(message json.RawMessage) (helpers.TransactionRequest, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (request request) MakeMsg() (sdkTypes.Msg, error) {
-	// TODO implement me
-	panic("implement me")
-}
+var _ helpers.Request = &request{}
 
 func (request request) Validate() error {
-	_, err := govalidator.ValidateStruct(request)
-	return err
+	return nil
 }
 
 func (request request) GetBaseReq() rest.BaseReq {
 	return request.BaseReq
 }
 
-func Prototype() helpers.TransactionRequest {
+func Prototype() helpers.Request {
 	return request{}
 }
