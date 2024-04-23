@@ -23,12 +23,16 @@ func (auxiliaryRequest auxiliaryRequest) Validate() error {
 		return errorConstants.InvalidRequest.Wrapf("invalid classification id: %s", err.Error())
 	}
 
-	if err := auxiliaryRequest.Immutables.ValidateBasic(); err != nil {
-		return errorConstants.InvalidRequest.Wrapf("invalid immutables: %s", err.Error())
+	if auxiliaryRequest.Immutables != nil {
+		if err := auxiliaryRequest.Immutables.ValidateBasic(); err != nil {
+			return errorConstants.InvalidRequest.Wrapf("invalid immutables: %s", err.Error())
+		}
 	}
 
-	if err := auxiliaryRequest.Mutables.ValidateBasic(); err != nil {
-		return errorConstants.InvalidRequest.Wrapf("invalid mutables: %s", err.Error())
+	if auxiliaryRequest.Mutables != nil {
+		if err := auxiliaryRequest.Mutables.ValidateBasic(); err != nil {
+			return errorConstants.InvalidRequest.Wrapf("invalid mutables: %s", err.Error())
+		}
 	}
 
 	return nil
