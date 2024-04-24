@@ -4,38 +4,49 @@
 package deputize
 
 import (
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/lists"
-	"github.com/asaskevich/govalidator"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {
-	FromIdentityID             ids.IdentityID       `json:"fromIdentityID" valid:"required~required field fromIdentityID missing"`
-	ToIdentityID               ids.IdentityID       `json:"toIdentityID" valid:"required~required field toIdentityID missing"`
-	MaintainedClassificationID ids.ClassificationID `json:"maintainedClassificationID" valid:"required~required field maintainedClassificationID missing"`
-	MaintainedProperties       lists.PropertyList   `json:"maintainedProperties" valid:"required~required field maintainedProperties missing"`
-	CanAddMaintainer           bool                 `json:"canAddMaintainer" valid:"required~required field canAddMaintainer missing"`
-	CanRemoveMaintainer        bool                 `json:"canRemoveMaintainer" valid:"required~required field canRemoveMaintainer missing"`
-	CanMutateMaintainer        bool                 `json:"canMutateMaintainer" valid:"required~required field canMutateMaintainer missing"`
-	PermissionIDs              []ids.StringID       `json:"permissionIDs" valid:"required~required field permissionIDs missing"`
+	FromIdentityID             ids.IdentityID
+	ToIdentityID               ids.IdentityID
+	MaintainedClassificationID ids.ClassificationID
+	MaintainedProperties       lists.PropertyList
+	CanAddMaintainer           bool
+	CanRemoveMaintainer        bool
+	CanMutateMaintainer        bool
+	PermissionIDs              []ids.StringID
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(auxiliaryRequest)
-	return err
-}
-
-func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := request.(type) {
-	case auxiliaryRequest:
-		return value
-	default:
-		return auxiliaryRequest{}
+	if err := auxiliaryRequest.FromIdentityID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid from identity id: %s", err.Error())
 	}
+
+	if err := auxiliaryRequest.ToIdentityID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid to identity id: %s", err.Error())
+	}
+
+	if err := auxiliaryRequest.MaintainedClassificationID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid maintained classification id: %s", err.Error())
+	}
+
+	if err := auxiliaryRequest.MaintainedProperties.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid maintained properties: %s", err.Error())
+	}
+
+	for _, permissionID := range auxiliaryRequest.PermissionIDs {
+		if err := permissionID.ValidateBasic(); err != nil {
+			return constants.InvalidRequest.Wrapf("invalid permission id: %s", err.Error())
+		}
+	}
+
+	return nil
 }
 
 func NewAuxiliaryRequest(fromIdentityID ids.IdentityID, toIdentityID ids.IdentityID, maintainedClassificationID ids.ClassificationID, maintainedProperties lists.PropertyList, canAddMaintainer bool, canRemoveMaintainer bool, canMutateMaintainer bool, permissionIDs ...ids.StringID) helpers.AuxiliaryRequest {

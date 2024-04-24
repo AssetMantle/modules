@@ -4,8 +4,8 @@
 package define
 
 import (
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/qualified"
-	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -13,24 +13,26 @@ import (
 
 type auxiliaryRequest struct {
 	sdkTypes.AccAddress
-	qualified.Immutables `json:"immutables" valid:"required~required field immutableProperties missing"`
-	qualified.Mutables   `json:"mutables" valid:"required~required field mutableProperties missing"`
+	qualified.Immutables
+	qualified.Mutables
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(auxiliaryRequest)
-	return err
-}
-
-func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := request.(type) {
-	case auxiliaryRequest:
-		return value
-	default:
-		return auxiliaryRequest{}
+	if auxiliaryRequest.AccAddress.Empty() {
+		return constants.InvalidRequest.Wrapf("address cannot be empty")
 	}
+
+	if err := auxiliaryRequest.Immutables.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid immutables: %s", err.Error())
+	}
+
+	if err := auxiliaryRequest.Mutables.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid mutables: %s", err.Error())
+	}
+
+	return nil
 }
 
 func NewAuxiliaryRequest(accAddress sdkTypes.AccAddress, immutables qualified.Immutables, mutables qualified.Mutables) helpers.AuxiliaryRequest {

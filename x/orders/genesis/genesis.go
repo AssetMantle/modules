@@ -2,8 +2,8 @@ package genesis
 
 import (
 	"context"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/lists"
 	"github.com/AssetMantle/schema/go/lists/base"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
@@ -34,11 +34,11 @@ func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager)
 		}
 
 		if !isPresent {
-			return errorConstants.IncorrectFormat.Wrapf("expected parameter %s not found", parameter.GetMetaProperty().GetKey().AsString())
+			return errorConstants.EntityNotFound.Wrapf("expected parameter %s not found", parameter.GetMetaProperty().GetKey().AsString())
 		}
 
 		if err := parameterManager.ValidateParameter(parameter); err != nil {
-			return err
+			return errorConstants.InvalidParameter.Wrapf("parameter %s: %s", parameter.GetMetaProperty().GetKey().AsString(), err.Error())
 		}
 	}
 

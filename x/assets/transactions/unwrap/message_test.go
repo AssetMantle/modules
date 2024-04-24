@@ -5,8 +5,7 @@ package unwrap
 
 import (
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/schema/go/errors"
-	"github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -30,7 +29,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name    string
 		message *Message
-		wantErr errors.Error
+		wantErr helpers.Error
 	}{
 		{
 			"valid message",

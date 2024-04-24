@@ -4,9 +4,9 @@
 package max_provision_address_count
 
 import (
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	"github.com/AssetMantle/schema/go/data/constants"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
 	"github.com/AssetMantle/schema/go/properties/base"
 	constantProperties "github.com/AssetMantle/schema/go/properties/constants"

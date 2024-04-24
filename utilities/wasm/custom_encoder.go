@@ -5,9 +5,9 @@ package wasm
 
 import (
 	"encoding/json"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"strings"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 

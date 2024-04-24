@@ -5,6 +5,7 @@ package scrub
 
 import (
 	"context"
+	"github.com/AssetMantle/modules/helpers/constants"
 
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -20,8 +21,15 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
-func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
-	auxiliaryRequest := auxiliaryRequestFromInterface(request)
+func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRequest helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	auxiliaryRequest, ok := AuxiliaryRequest.(auxiliaryRequest)
+	if !ok {
+		return nil, constants.InvalidRequest.Wrapf("invalid request type %T", AuxiliaryRequest)
+	}
+
+	if err := auxiliaryRequest.Validate(); err != nil {
+		return nil, err
+	}
 
 	scrubbedPropertyList := make([]properties.Property, len(auxiliaryRequest.PropertyList.Get()))
 	metas := auxiliaryKeeper.mapper.NewCollection(context)

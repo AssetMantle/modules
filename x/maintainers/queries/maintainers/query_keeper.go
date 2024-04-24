@@ -20,6 +20,9 @@ func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest hel
 	return queryResponse, err
 }
 func (queryKeeper queryKeeper) Handle(context context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
+	if err := queryRequest.Validate(); err != nil {
+		return nil, err
+	}
 	return newQueryResponse(queryKeeper.mapper.NewCollection(context).FetchPaginated(queryRequest.Key, queryRequest.Limit)), nil
 }
 

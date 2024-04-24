@@ -5,12 +5,12 @@ package revoke
 
 import (
 	"context"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/revoke"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 )
 
 type transactionKeeper struct {

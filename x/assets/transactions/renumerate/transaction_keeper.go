@@ -5,6 +5,7 @@ package renumerate
 
 import (
 	"context"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/constants"
@@ -13,10 +14,8 @@ import (
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
-	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
 	"github.com/AssetMantle/schema/go/data"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/properties"
 	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
 )
@@ -78,7 +77,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.MetaDataError.Wrapf("asset supply is negative")
 	}
 
-	if _, err := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, mint.NewAuxiliaryRequest(message.FromID, message.AssetID, supply)); err != nil {
+	if _, err := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, supply)); err != nil {
 		return nil, err
 	}
 

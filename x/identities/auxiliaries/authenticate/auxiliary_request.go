@@ -4,32 +4,30 @@
 package authenticate
 
 import (
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
-	"github.com/asaskevich/govalidator"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {
-	Address        sdkTypes.AccAddress `json:"address" valid:"required~required field address missing, matches(^[a-z0-9]*$)~field address is invalid"`
-	ids.IdentityID `json:"identityID" valid:"required~required field identityID missing"`
+	Address sdkTypes.AccAddress
+	ids.IdentityID
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(auxiliaryRequest)
-	return err
-}
-
-func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := request.(type) {
-	case auxiliaryRequest:
-		return value
-	default:
-		return auxiliaryRequest{}
+	if auxiliaryRequest.Address.Empty() {
+		return constants.InvalidRequest.Wrapf("address cannot be empty")
 	}
+
+	if err := auxiliaryRequest.IdentityID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid identity id: %s", err.Error())
+	}
+
+	return nil
 }
 
 func NewAuxiliaryRequest(address sdkTypes.AccAddress, identityID ids.IdentityID) helpers.AuxiliaryRequest {

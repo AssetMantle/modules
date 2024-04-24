@@ -4,34 +4,42 @@
 package super
 
 import (
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/qualified"
-	"github.com/asaskevich/govalidator"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryRequest struct {
-	MaintainedClassificationID ids.ClassificationID `json:"maintainedClassificationID" valid:"required~required field maintainedClassificationID missing"`
-	ToIdentityID               ids.IdentityID       `json:"toIdentityID" valid:"required~required field identityID missing"`
-	MaintainedMutables         qualified.Mutables   `json:"maintainedMutables" valid:"required~required field maintainedMutables missing"`
-	PermissionIDs              []ids.StringID       `json:"permissionIDs"`
+	MaintainedClassificationID ids.ClassificationID
+	ToIdentityID               ids.IdentityID
+	MaintainedMutables         qualified.Mutables
+	PermissionIDs              []ids.StringID
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(auxiliaryRequest)
-	return err
-}
-
-func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := request.(type) {
-	case auxiliaryRequest:
-		return value
-	default:
-		return auxiliaryRequest{}
+	if err := auxiliaryRequest.MaintainedClassificationID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid maintained classification id: %s", err.Error())
 	}
+
+	if err := auxiliaryRequest.ToIdentityID.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid to identity id: %s", err.Error())
+	}
+
+	if err := auxiliaryRequest.MaintainedMutables.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid maintained mutables: %s", err.Error())
+	}
+
+	for _, permissionID := range auxiliaryRequest.PermissionIDs {
+		if err := permissionID.ValidateBasic(); err != nil {
+			return constants.InvalidRequest.Wrapf("invalid permission id: %s", err.Error())
+		}
+	}
+
+	return nil
+
 }
 
 func NewAuxiliaryRequest(maintainedClassificationID ids.ClassificationID, toIdentityID ids.IdentityID, maintainedMutables qualified.Mutables, permissionIDs ...ids.StringID) helpers.AuxiliaryRequest {

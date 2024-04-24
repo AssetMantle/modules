@@ -4,6 +4,7 @@
 package name
 
 import (
+	"github.com/AssetMantle/modules/helpers/constants"
 	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
@@ -28,9 +29,15 @@ func (message *Message) ValidateBasic() error {
 	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
 		return err
 	}
+
+	if message.Name == nil || message.Name.AsString() == "" {
+		return constants.InvalidRequest.Wrapf("name cannot be empty")
+	}
+
 	if err := message.Name.ValidateBasic(); err != nil {
 		return err
 	}
+
 	return nil
 }
 func (message *Message) GetSigners() []sdkTypes.AccAddress {

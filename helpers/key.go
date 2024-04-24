@@ -5,6 +5,7 @@ package helpers
 
 // Key SHOULD be derivable from the object it is referencing and SHOULD not be totally arbitrary or sequential
 type Key interface {
+	ValidateBasic() error
 	GenerateStorePrefixBytes() []byte
 	GenerateStoreKeyBytes() []byte
 	GeneratePrefixedStoreKeyBytes() []byte

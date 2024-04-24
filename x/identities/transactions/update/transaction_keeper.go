@@ -5,6 +5,7 @@ package update
 
 import (
 	"context"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
@@ -13,7 +14,6 @@ import (
 	"github.com/AssetMantle/modules/x/identities/record"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
 	"github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
 )

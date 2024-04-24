@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"math/rand"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -153,7 +152,7 @@ func (module module) RegisterInvariants(invariantRegistry sdkTypes.InvariantRegi
 func (module module) Route() sdkTypes.Route {
 	return sdkTypes.NewRoute(module.Name(), func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
 		if module.transactions == nil {
-			panic(errorConstants.UninitializedUsage.Wrapf("transactions for module %s not initialized", module.Name()))
+			panic(fmt.Errorf("transactions for module %s not initialized", module.Name()))
 		}
 
 		if message, ok := msg.(helpers.Message); ok {
@@ -161,7 +160,7 @@ func (module module) Route() sdkTypes.Route {
 				return transaction.HandleMessage(sdkTypes.WrapSDKContext(context.WithEventManager(sdkTypes.NewEventManager())), message)
 			}
 		}
-		return nil, errorConstants.InvalidMessage.Wrapf("message type %T is not supported by module %s", msg, module.Name())
+		return nil, fmt.Errorf("message type %T is not supported by module %s", msg, module.Name())
 	})
 }
 func (module module) QuerierRoute() string {
@@ -170,7 +169,7 @@ func (module module) QuerierRoute() string {
 func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Querier {
 	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
 		if module.queries == nil {
-			panic(errorConstants.UninitializedUsage.Wrapf("queries for module %s not initialized", module.Name()))
+			panic(fmt.Errorf("queries for module %s not initialized", module.Name()))
 		}
 
 		if query := module.queries.GetQuery(path[0]); query != nil {
@@ -200,7 +199,7 @@ func (module module) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JS
 	genesisState := module.genesisPrototype().Decode(jsonCodec, rawMessage)
 
 	if module.mapper == nil || module.parameterManager == nil {
-		panic(errorConstants.UninitializedUsage.Wrapf("mapper or parameter manager for module %s not initialized", module.Name()))
+		panic(fmt.Errorf("mapper or parameter manager for module %s not initialized", module.Name()))
 	}
 
 	genesisState.Import(sdkTypes.WrapSDKContext(context), module.mapper, module.parameterManager)
@@ -209,7 +208,7 @@ func (module module) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JS
 }
 func (module module) ExportGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec) json.RawMessage {
 	if module.mapper == nil || module.parameterManager == nil {
-		panic(errorConstants.UninitializedUsage.Wrapf("mapper or parameter manager for module %s not initialized", module.Name()))
+		panic(fmt.Errorf("mapper or parameter manager for module %s not initialized", module.Name()))
 	}
 
 	return module.genesisPrototype().Export(sdkTypes.WrapSDKContext(context), module.mapper, module.parameterManager).Encode(jsonCodec)
@@ -235,7 +234,7 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 		return transaction.DecodeTransactionRequest(rawMessage)
 	}
 
-	return nil, errorConstants.InvalidMessage.Wrapf("transaction %s is not supported by module %s", transactionName, module.Name())
+	return nil, fmt.Errorf("transaction %s is not supported by module %s", transactionName, module.Name())
 }
 func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace paramsTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)

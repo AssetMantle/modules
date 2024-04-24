@@ -6,12 +6,9 @@ package base
 import (
 	"context"
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest/queuing"
-	"net/http"
-	"reflect"
-
+	"fmt"
 	"github.com/AssetMantle/modules/helpers"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/modules/utilities/rest/queuing"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
@@ -22,6 +19,8 @@ import (
 	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
+	"net/http"
+	"reflect"
 )
 
 type transaction struct {
@@ -40,12 +39,12 @@ var _ helpers.Transaction = (*transaction)(nil)
 func (transaction transaction) GetName() string { return transaction.name }
 func (transaction transaction) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
-		context, err := client.GetClientTxContext(command)
+		Context, err := client.GetClientTxContext(command)
 		if err != nil {
 			return err
 		}
 
-		transactionRequest, err := transaction.requestPrototype().FromCLI(transaction.cliCommand, context)
+		transactionRequest, err := transaction.requestPrototype().FromCLI(transaction.cliCommand, Context)
 		if err != nil {
 			return err
 		}
@@ -63,7 +62,7 @@ func (transaction transaction) Command() *cobra.Command {
 			return err
 		}
 
-		return tx.GenerateOrBroadcastTxCLI(context, command.Flags(), msg)
+		return tx.GenerateOrBroadcastTxCLI(Context, command.Flags(), msg)
 	}
 
 	return transaction.cliCommand.CreateCommand(runE)
@@ -81,7 +80,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
 			return
 		} else if reflect.TypeOf(transaction.requestPrototype()) != reflect.TypeOf(transactionRequest) {
-			rest.CheckBadRequestError(responseWriter, errorConstants.InvalidRequest.Wrapf("expected %s, got %s", reflect.TypeOf(transaction.requestPrototype()), reflect.TypeOf(transactionRequest)))
+			rest.CheckBadRequestError(responseWriter, fmt.Errorf("expected %s, got %s", reflect.TypeOf(transaction.requestPrototype()), reflect.TypeOf(transactionRequest)))
 			return
 		} else if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
 			return
@@ -89,7 +88,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 
 		baseReq := transactionRequest.GetBaseReq().Sanitize()
 		if !baseReq.ValidateBasic(responseWriter) {
-			rest.CheckBadRequestError(responseWriter, errorConstants.InvalidRequest.Wrapf("invalid base request"))
+			rest.CheckBadRequestError(responseWriter, fmt.Errorf("invalid base request"))
 		}
 
 		msg, err := transactionRequest.MakeMsg()
@@ -112,7 +111,7 @@ func (transaction transaction) RegisterInterfaces(interfaceRegistry codecTypes.I
 }
 func (transaction transaction) RegisterService(configurator sdkModuleTypes.Configurator) {
 	if transaction.keeper == nil {
-		panic(errorConstants.UninitializedUsage.Wrapf("keeper for transaction %s is not initialized", transaction.name))
+		panic(fmt.Errorf("keeper for transaction %s is not initialized", transaction.name))
 	}
 	transaction.serviceRegistrar(configurator.MsgServer(), transaction.keeper)
 }

@@ -23,9 +23,5 @@ func Test_Conform_Request(t *testing.T) {
 
 	require.Equal(t, auxiliaryRequest{classificationID, baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties)}, testAuxiliaryRequest)
 	require.Equal(t, nil, testAuxiliaryRequest.Validate())
-	require.Equal(t, testAuxiliaryRequest, auxiliaryRequestFromInterface(testAuxiliaryRequest))
-	require.Panics(t, func() {
-		auxiliaryRequestFromInterface(nil)
-	})
 
 }

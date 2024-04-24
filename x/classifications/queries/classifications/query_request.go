@@ -9,7 +9,6 @@ import (
 
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/asaskevich/govalidator"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
@@ -32,8 +31,19 @@ var _ helpers.QueryRequest = (*QueryRequest)(nil)
 // @Failure default  {object}  queryResponse "Message for an unexpected error response."
 // @Router /classifications/classifications/{classificationID} [get]
 func (queryRequest *QueryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(queryRequest)
-	return err
+	if err := queryRequest.Key.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf(err.Error())
+	}
+
+	if queryRequest.Limit > constants.PaginationLimit {
+		return constants.InvalidRequest.Wrapf("limit cannot be greater than %d", constants.PaginationLimit)
+	}
+
+	if queryRequest.Limit < 0 {
+		return constants.InvalidRequest.Wrapf("limit cannot be less than 0")
+	}
+
+	return nil
 }
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {
 	classificationID, err := baseIDs.PrototypeClassificationID().FromString(cliCommand.ReadString(constants.ClassificationID))

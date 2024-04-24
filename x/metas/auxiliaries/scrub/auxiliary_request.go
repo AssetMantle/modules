@@ -4,10 +4,9 @@
 package scrub
 
 import (
-	"github.com/AssetMantle/schema/go/lists"
-	"github.com/asaskevich/govalidator"
-
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/schema/go/lists"
 )
 
 type auxiliaryRequest struct {
@@ -17,17 +16,11 @@ type auxiliaryRequest struct {
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(auxiliaryRequest)
-	return err
-}
-
-func auxiliaryRequestFromInterface(request helpers.AuxiliaryRequest) auxiliaryRequest {
-	switch value := request.(type) {
-	case auxiliaryRequest:
-		return value
-	default:
-		return auxiliaryRequest{}
+	if err := auxiliaryRequest.PropertyList.ValidateBasic(); err != nil {
+		return constants.InvalidRequest.Wrapf("invalid property list: %s", err.Error())
 	}
+
+	return nil
 }
 
 func NewAuxiliaryRequest(propertyList lists.PropertyList) helpers.AuxiliaryRequest {

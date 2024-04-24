@@ -54,27 +54,6 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 	}
 }
 
-func Test_auxiliaryRequestFromInterface(t *testing.T) {
-	testOwnerID, testAssetID, testValue := createTestInput1()
-	type args struct {
-		request helpers.AuxiliaryRequest
-	}
-	tests := []struct {
-		name string
-		args args
-		want auxiliaryRequest
-	}{
-		{"+ve", args{NewAuxiliaryRequest(testOwnerID, testAssetID, testValue)}, auxiliaryRequest{testOwnerID, testAssetID, testValue}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := auxiliaryRequestFromInterface(tt.args.request); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("auxiliaryRequestFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_auxiliaryRequest_Validate(t *testing.T) {
 	testOwnerID, testAssetID, testValue := createTestInput1()
 	type fields struct {

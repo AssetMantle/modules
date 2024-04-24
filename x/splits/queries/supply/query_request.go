@@ -4,16 +4,13 @@
 package supply
 
 import (
-	"net/http"
-
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/asaskevich/govalidator"
-	"github.com/cosmos/cosmos-sdk/client"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/schema/go/ids"
+	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	"github.com/cosmos/cosmos-sdk/client"
+	"net/http"
 )
 
 var _ helpers.QueryRequest = (*QueryRequest)(nil)
@@ -29,8 +26,11 @@ var _ helpers.QueryRequest = (*QueryRequest)(nil)
 // @Failure default  {object}  queryRequest "Message for an unexpected error response."
 // @Router /balances/{identityID} [get]
 func (queryRequest *QueryRequest) Validate() error {
-	_, err := govalidator.ValidateStruct(queryRequest)
-	return err
+	if err := queryRequest.AssetID.ValidateBasic(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (*QueryRequest) FromCLI(cliCommand helpers.CLICommand, _ client.Context) (helpers.QueryRequest, error) {

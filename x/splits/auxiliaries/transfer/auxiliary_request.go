@@ -4,7 +4,7 @@
 package transfer
 
 import (
-	"github.com/AssetMantle/schema/go/errors/constants"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -22,15 +22,15 @@ var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
 	if err := auxiliaryRequest.FromID.ValidateBasic(); err != nil {
-		return constants.InvalidRequest.Wrapf("invalid from ID: %s", err)
+		return constants.InvalidRequest.Wrapf("invalid from id: %s", err)
 	}
 
 	if err := auxiliaryRequest.ToID.ValidateBasic(); err != nil {
-		return constants.InvalidRequest.Wrapf("invalid to ID: %s", err)
+		return constants.InvalidRequest.Wrapf("invalid to id: %s", err)
 	}
 
 	if err := auxiliaryRequest.AssetID.ValidateBasic(); err != nil {
-		return constants.InvalidRequest.Wrapf("invalid asset ID: %s", err)
+		return constants.InvalidRequest.Wrapf("invalid asset id: %s", err)
 	}
 
 	if auxiliaryRequest.Value.LTE(sdkTypes.ZeroInt()) {

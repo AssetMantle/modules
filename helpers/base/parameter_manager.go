@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/http"
 
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	"github.com/AssetMantle/schema/go/lists"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
@@ -51,15 +50,15 @@ func (parameterManager parameterManager) GetValidatableParameter(propertyID ids.
 	return nil
 }
 func (parameterManager parameterManager) ValidateParameter(parameter parameters.Parameter) error {
-	validator := parameterManager.GetValidatableParameter(parameter.GetMetaProperty().GetID())
-	if validator != nil {
+	if validator := parameterManager.GetValidatableParameter(parameter.GetMetaProperty().GetID()); validator != nil {
 		if err := parameter.ValidateBasic(); err != nil {
 			return err
 		}
 
 		return validator.GetValidator()(parameter.GetMetaProperty().GetData().Get().AsString())
 	}
-	return errorConstants.EntityNotFound.Wrapf("parameter with id %s not found", parameter.GetMetaProperty().GetID().AsString())
+
+	return fmt.Errorf("validator not found for parameter %s", parameter.GetMetaProperty().GetID().AsString())
 }
 func (parameterManager parameterManager) Fetch(context context.Context) helpers.ParameterManager {
 	for _, validatableParameter := range parameterManager.validatableParameters {

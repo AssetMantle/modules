@@ -4,7 +4,7 @@
 package key
 
 import (
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/go/ids"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 
@@ -13,6 +13,14 @@ import (
 
 var _ helpers.Key = (*Key)(nil)
 
+func (key *Key) ValidateBasic() error {
+	if key.IdentityID != nil {
+		if err := key.IdentityID.ValidateBasic(); err != nil {
+			return errorConstants.InvalidKey.Wrapf(err.Error())
+		}
+	}
+	return nil
+}
 func (key *Key) GenerateStorePrefixBytes() []byte {
 	return []byte{}
 }

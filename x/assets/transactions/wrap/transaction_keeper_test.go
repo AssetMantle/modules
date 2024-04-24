@@ -6,6 +6,7 @@ package wrap
 import (
 	"context"
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/key"
@@ -15,8 +16,6 @@ import (
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	"github.com/AssetMantle/schema/go/errors"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	baseLists "github.com/AssetMantle/schema/go/lists/base"
 	"github.com/AssetMantle/schema/go/parameters/base"
@@ -154,7 +153,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		args    args
 		setup   func()
 		want    *TransactionResponse
-		wantErr errors.Error
+		wantErr helpers.Error
 	}{
 		{"wrapOne",
 			args{genesisAddress, Denom, 1},

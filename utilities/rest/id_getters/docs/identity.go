@@ -1,11 +1,11 @@
 package docs
 
 import (
+	"fmt"
 	"net/http"
 
 	baseData "github.com/AssetMantle/schema/go/data/base"
 	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	errorConstants "github.com/AssetMantle/schema/go/errors/constants"
 	baseIDs "github.com/AssetMantle/schema/go/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -15,11 +15,11 @@ func nameIdentityIDHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		transactionRequest := Prototype()
 		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
-			panic(errorConstants.IncorrectFormat)
+			panic(fmt.Errorf("failed to read request"))
 		}
 
 		if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
-			panic(errorConstants.IncorrectFormat)
+			panic(fmt.Errorf("failed to validate request"))
 		}
 
 		rest.PostProcessResponse(responseWriter, context, newResponse(baseDocuments.NewNameIdentity(baseIDs.NewStringID(transactionRequest.(request).Name), baseData.PrototypeListData()).GetNameIdentityID().AsString(), nil))
