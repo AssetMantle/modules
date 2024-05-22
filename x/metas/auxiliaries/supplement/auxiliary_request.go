@@ -18,7 +18,7 @@ var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
 	for _, property := range auxiliaryRequest.PropertyList {
 		if property == nil {
-			return constants.InvalidRequest.Wrapf("property cannot be nil")
+			return constants.InvalidRequest.Wrapf("nil property found")
 		}
 
 		if err := property.ValidateBasic(); err != nil {

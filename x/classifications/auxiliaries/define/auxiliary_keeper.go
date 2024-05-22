@@ -62,22 +62,20 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 
 	bondAmount := minBondAmount
 
-	mutables := baseQualified.NewMutables(auxiliaryRequest.Mutables.GetMutablePropertyList())
-
 	if boundAmountProperty := auxiliaryRequest.Mutables.GetProperty(constantProperties.BondAmountProperty.GetID()); boundAmountProperty == nil {
 		// adding min bond amount as bond amount if not supplied
-		mutables = baseQualified.NewMutables(mutables.GetMutablePropertyList().Add(baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), minBondAmount)))
+		auxiliaryRequest.Mutables = baseQualified.NewMutables(auxiliaryRequest.Mutables.GetMutablePropertyList().Add(baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), minBondAmount)))
 	} else if !boundAmountProperty.Get().IsMeta() {
 		return nil, errorConstants.InvalidRequest.Wrapf("bound amount is not revealed")
 	} else if bondAmount = boundAmountProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData); bondAmount.Compare(minBondAmount) < 0 {
 		return nil, errorConstants.InvalidRequest.Wrapf("bound amount is less than min allowed %s", minBondAmount.Get().String())
 	}
 
-	if totalPropertyCount := sdkTypes.NewInt(int64(len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) + len(mutables.GetMutablePropertyList().Get()))); totalPropertyCount.GT(auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()) {
+	if totalPropertyCount := sdkTypes.NewInt(int64(len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) + len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()))); totalPropertyCount.GT(auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()) {
 		return nil, errorConstants.InvalidRequest.Wrapf("total property count %s exceeds maximum %s", totalPropertyCount.String(), auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get().String())
 	}
 
-	classificationID := baseIDs.NewClassificationID(auxiliaryRequest.Immutables, mutables)
+	classificationID := baseIDs.NewClassificationID(auxiliaryRequest.Immutables, auxiliaryRequest.Mutables)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(classificationID))
 	if classifications.GetMappable(key.NewKey(classificationID)) != nil {
 		return newAuxiliaryResponse(classificationID), errorConstants.EntityAlreadyExists.Wrapf("classification with ID %s already exists", classificationID.AsString())
@@ -87,7 +85,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 		return nil, err
 	}
 
-	classification := base.NewClassification(auxiliaryRequest.Immutables, mutables)
+	classification := base.NewClassification(auxiliaryRequest.Immutables, auxiliaryRequest.Mutables)
 
 	if err := classification.ValidateBasic(); err != nil {
 		return nil, err
