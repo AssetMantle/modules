@@ -1,0 +1,8 @@
+syntax = "proto3";
+package AssetMantle.modules.x.maintainers.key;
+
+import "AssetMantle/schema/ids/base/maintainer_id.proto";
+
+message Key {
+  AssetMantle.schema.ids.base.MaintainerID maintainer_i_d = 1;
+}

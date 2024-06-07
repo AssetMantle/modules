@@ -1,0 +1,12 @@
+syntax = "proto3";
+package AssetMantle.modules.x.orders.queries.orders;
+
+import "google/api/annotations.proto";
+import "AssetMantle/modules/x/orders/queries/orders/query_request.proto";
+import "AssetMantle/modules/x/orders/queries/orders/query_response.proto";
+
+service Query {
+  rpc Handle(QueryRequest) returns (QueryResponse) {
+    option (google.api.http).get = "/mantle/orders/v1beta1/orders";
+  }
+}

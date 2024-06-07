@@ -1,0 +1,12 @@
+syntax = "proto3";
+package AssetMantle.modules.x.identities.transactions.revoke;
+
+import "google/api/annotations.proto";
+import "AssetMantle/modules/x/identities/transactions/revoke/message.proto";
+import "AssetMantle/modules/x/identities/transactions/revoke/transaction_response.proto";
+
+service Msg {
+  rpc Handle(Message) returns (TransactionResponse) {
+    option (google.api.http).post = "/mantle/identities/revoke";
+  }
+}

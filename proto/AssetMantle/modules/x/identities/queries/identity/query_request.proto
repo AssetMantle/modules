@@ -1,0 +1,8 @@
+syntax = "proto3";
+package AssetMantle.modules.x.identities.queries.identity;
+
+import "AssetMantle/modules/x/identities/key/key.proto";
+
+message QueryRequest {
+  key.Key key = 1;
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+package AssetMantle.modules.x.identities.transactions.issue;
+
+import "AssetMantle/schema/ids/base/classification_id.proto";
+import "AssetMantle/schema/ids/base/identity_id.proto";
+import "AssetMantle/schema/lists/base/property_list.proto";
+
+message Message {
+  string from = 1;
+  AssetMantle.schema.ids.base.IdentityID from_i_d = 2;
+  AssetMantle.schema.ids.base.ClassificationID classification_i_d = 3;
+  AssetMantle.schema.lists.base.PropertyList immutable_meta_properties = 4;
+  AssetMantle.schema.lists.base.PropertyList immutable_properties = 5;
+  AssetMantle.schema.lists.base.PropertyList mutable_meta_properties = 6;
+  AssetMantle.schema.lists.base.PropertyList mutable_properties = 7;
+}

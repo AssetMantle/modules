@@ -1,0 +1,11 @@
+syntax = "proto3";
+package AssetMantle.modules.x.splits.queries.balances;
+
+import "AssetMantle/schema/ids/base/identity_id.proto";
+import "AssetMantle/modules/x/splits/key/key.proto";
+
+message QueryRequest {
+  key.Key key = 1;
+  int32 limit = 2;
+  AssetMantle.schema.ids.base.IdentityID identity_i_d = 3;
+}

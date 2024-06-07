@@ -1,0 +1,10 @@
+syntax = "proto3";
+package AssetMantle.modules.x.assets.queries.asset;
+
+import "gogoproto/gogo.proto";
+import "AssetMantle/modules/x/assets/record/record.proto";
+
+message QueryResponse {
+  option (gogoproto.goproto_getters) = false;
+  record.Record record = 1;
+}

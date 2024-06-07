@@ -1,0 +1,12 @@
+syntax = "proto3";
+package AssetMantle.modules.x.assets.queries.assets;
+
+import "AssetMantle/modules/x/assets/queries/assets/query_request.proto";
+import "AssetMantle/modules/x/assets/queries/assets/query_response.proto";
+import "google/api/annotations.proto";
+
+service Query {
+  rpc Handle(QueryRequest) returns (QueryResponse) {
+    option (google.api.http).get = "/mantle/assets/v1beta1/assets";
+  }
+}

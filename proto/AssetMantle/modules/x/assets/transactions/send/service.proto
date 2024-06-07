@@ -1,0 +1,12 @@
+syntax = "proto3";
+package AssetMantle.modules.x.assets.transactions.send;
+
+import "google/api/annotations.proto";
+import "AssetMantle/modules/x/assets/transactions/send/message.proto";
+import "AssetMantle/modules/x/assets/transactions/send/transaction_response.proto";
+
+service Msg {
+  rpc Handle(Message) returns (TransactionResponse) {
+    option (google.api.http).post = "/mantle/assets/send";
+  }
+}

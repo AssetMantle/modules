@@ -1,0 +1,12 @@
+syntax = "proto3";
+package AssetMantle.modules.x.identities.queries.identities;
+
+import "google/api/annotations.proto";
+import "AssetMantle/modules/x/identities/queries/identities/query_request.proto";
+import "AssetMantle/modules/x/identities/queries/identities/query_response.proto";
+
+service Query {
+  rpc Handle(QueryRequest) returns(QueryResponse){
+    option (google.api.http).get = "/mantle/identities/v1beta1/identities";
+  }
+}

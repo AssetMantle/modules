@@ -1,0 +1,12 @@
+syntax = "proto3";
+package AssetMantle.modules.x.orders.transactions.make;
+
+import "google/api/annotations.proto";
+import "AssetMantle/modules/x/orders/transactions/make/message.proto";
+import "AssetMantle/modules/x/orders/transactions/make/transaction_response.proto";
+
+service Msg {
+  rpc Handle(Message) returns (TransactionResponse) {
+    option (google.api.http).post = "/mantle/orders/make";
+  }
+}

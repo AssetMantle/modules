@@ -1,0 +1,9 @@
+syntax = "proto3";
+package AssetMantle.modules.x.metas.queries.metas;
+
+import "AssetMantle/modules/x/metas/key/key.proto";
+
+message QueryRequest {
+  key.Key key = 1;
+  int32 limit = 2;
+}

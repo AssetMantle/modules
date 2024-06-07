@@ -1,0 +1,15 @@
+syntax = "proto3";
+package AssetMantle.modules.x.assets.transactions.wrap;
+
+import "cosmos/base/v1beta1/coin.proto";
+import "gogoproto/gogo.proto";
+import "AssetMantle/schema/ids/base/identity_id.proto";
+
+message Message {
+  string from = 1;
+  AssetMantle.schema.ids.base.IdentityID from_i_d = 2;
+  repeated cosmos.base.v1beta1.Coin coins = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}

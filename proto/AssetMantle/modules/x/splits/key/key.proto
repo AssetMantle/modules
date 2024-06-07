@@ -1,0 +1,8 @@
+syntax = "proto3";
+package AssetMantle.modules.x.splits.key;
+
+import "AssetMantle/schema/ids/base/split_id.proto";
+
+message Key {
+  AssetMantle.schema.ids.base.SplitID split_i_d = 1;
+}

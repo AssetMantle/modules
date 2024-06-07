@@ -1,0 +1,10 @@
+syntax = "proto3";
+package AssetMantle.modules.x.classifications.queries.classifications;
+
+import "AssetMantle/modules/x/classifications/record/record.proto";
+import "gogoproto/gogo.proto";
+
+message QueryResponse {
+  option (gogoproto.goproto_getters) = false;
+  repeated record.Record list = 1;
+}

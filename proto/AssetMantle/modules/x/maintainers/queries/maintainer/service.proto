@@ -1,0 +1,12 @@
+syntax = "proto3";
+package AssetMantle.modules.x.maintainers.queries.maintainer;
+
+import "google/api/annotations.proto";
+import "AssetMantle/modules/x/maintainers/queries/maintainer/query_request.proto";
+import "AssetMantle/modules/x/maintainers/queries/maintainer/query_response.proto";
+
+service Query {
+  rpc Handle(QueryRequest) returns(QueryResponse){
+    option (google.api.http).get = "/mantle/maintainers/v1beta1/maintainer";
+  }
+}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+package AssetMantle.modules.x.identities.transactions.unprovision;
+
+import "google/api/annotations.proto";
+import "AssetMantle/modules/x/identities/transactions/unprovision/message.proto";
+import "AssetMantle/modules/x/identities/transactions/unprovision/transaction_response.proto";
+
+service Msg {
+  rpc Handle(Message) returns (TransactionResponse) {
+    option (google.api.http).post = "/mantle/identities/unprovision";
+  }
+}

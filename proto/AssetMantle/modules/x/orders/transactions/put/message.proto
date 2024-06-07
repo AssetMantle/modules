@@ -1,0 +1,16 @@
+syntax = "proto3";
+package AssetMantle.modules.x.orders.transactions.put;
+
+import "AssetMantle/schema/ids/base/asset_id.proto";
+import "AssetMantle/schema/ids/base/identity_id.proto";
+import "AssetMantle/schema/types/base/height.proto";
+
+message Message {
+  string from = 1;
+  AssetMantle.schema.ids.base.IdentityID from_i_d = 2;
+  AssetMantle.schema.ids.base.AssetID maker_asset_i_d = 3;
+  AssetMantle.schema.ids.base.AssetID taker_asset_i_d = 4;
+  string maker_split = 5;
+  string taker_split = 6;
+  AssetMantle.schema.types.base.Height expiry_height = 7;
+}

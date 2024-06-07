@@ -1,0 +1,4 @@
+syntax = "proto3";
+package AssetMantle.modules.x.orders.transactions.get;
+
+message TransactionResponse {}
