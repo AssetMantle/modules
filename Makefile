@@ -11,6 +11,8 @@ GOLANG_PROTOBUF_VERSION=1.28.0
 GOGO_PROTOBUF_VERSION=1.3.2
 GRPC_GATEWAY_VERSION=1.16.0
 
+export GO111MODULE = on
+
 #install all dependencies for buf
 install-buf-dependencies:
 	@go install github.com/cosmos/cosmos-proto/cmd/protoc-gen-go-pulsar@latest
@@ -28,12 +30,15 @@ install-buf-dependencies:
 	go get github.com/cosmos/cosmos-sdk@v0.45.9
 	rm -rf cosmos-proto protobuf
 
-export GO111MODULE = on
+protobuf-generate-go:
+	@cd proto; buf generate --template buf.gen.yaml
+	@cp -r github.com/AssetMantle/modules/* ./
+	@rm -rf github.com
 
 all: build test lintci
 
 # The below include contains the tools and runsim targets.
-include simulation/make/Makefile
+# include simulation/make/Makefile
 
 ########################################
 ### Build
