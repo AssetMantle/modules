@@ -1,8 +1,0 @@
-syntax = "proto3";
-package assetmantle.modules.classifications.queries.classification;
-
-import "classifications/key/key.proto";
-
-message QueryRequest {
-  key.Key key = 1;
-}

@@ -1,8 +1,0 @@
-syntax = "proto3";
-package assetmantle.modules.splits.queries.split;
-
-import "splits/key/key.proto";
-
-message QueryRequest {
-  key.Key key = 1;
-}
