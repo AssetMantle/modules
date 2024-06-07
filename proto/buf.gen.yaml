@@ -2,17 +2,17 @@ version: v1
 managed:
   enabled: true
   go_package_prefix:
-    default: github.com/AssetMantle/modules/x
+    default: github.com
     except:
       - buf.build/googleapis/googleapis
       - buf.build/cosmos/gogo-proto
       - buf.build/cosmos/cosmos-sdk
     override:
-      buf.build/assetmantle/schema: github.com/AssetMantle/schema/go
+      buf.build/assetmantle/schema: github.com
 plugins:
   - name: gocosmos
-    out: ../x
-    opt: plugins=grpc,Mgoogle/protobuf/duration.proto=github.com/gogo/protobuf/types,Mgoogle/protobuf/struct.proto=github.com/gogo/protobuf/types,Mgoogle/protobuf/timestamp.proto=github.com/gogo/protobuf/types,Mgoogle/protobuf/wrappers.proto=github.com/gogo/protobuf/types,Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types,Mcosmos/orm/v1alpha1/orm.proto=github.com/cosmos/cosmos-sdk/api/cosmos/orm/v1alpha1,paths=source_relative
+    out: ../
+    opt: plugins=grpc,Mgoogle/protobuf/duration.proto=github.com/gogo/protobuf/types,Mgoogle/protobuf/struct.proto=github.com/gogo/protobuf/types,Mgoogle/protobuf/timestamp.proto=github.com/gogo/protobuf/types,Mgoogle/protobuf/wrappers.proto=github.com/gogo/protobuf/types,Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types,Mcosmos/orm/v1alpha1/orm.proto=github.com/cosmos/cosmos-sdk/api/cosmos/orm/v1alpha1
   - name: grpc-gateway
-    out: ../x
-    opt: logtostderr=true,allow_colon_final_segments=true,paths=source_relative
+    out: ../
+    opt: logtostderr=true,allow_colon_final_segments=true
