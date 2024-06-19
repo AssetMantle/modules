@@ -6,8 +6,8 @@ package transfer
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/schema/go/data"
-	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/data"
+	propertyConstants "github.com/AssetMantle/schema/properties/constants"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/utilities"
