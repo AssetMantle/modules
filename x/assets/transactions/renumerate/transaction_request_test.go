@@ -6,13 +6,14 @@ package renumerate
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	"github.com/spf13/viper"
 
 	"github.com/AssetMantle/modules/helpers"
