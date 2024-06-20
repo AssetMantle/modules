@@ -15,9 +15,9 @@ import (
 	"github.com/AssetMantle/modules/x/orders/parameters/max_order_life"
 )
 
-func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
-	return []simulationTypes.ParamChange{
-		simulation.NewSimParamChange(constants.ModuleName,
+func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.LegacyParamChange {
+	return []simulationTypes.LegacyParamChange{
+		simulation.NewSimLegacyParamChange(constants.ModuleName,
 			string(max_order_life.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(math.MaxInt))

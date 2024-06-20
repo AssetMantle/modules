@@ -7,7 +7,7 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/AssetMantle/schema/go/data"
+	"github.com/AssetMantle/schema/data"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
@@ -16,10 +16,10 @@ import (
 	"github.com/AssetMantle/modules/x/identities/parameters/max_provision_address_count"
 )
 
-func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
+func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.LegacyParamChange {
 	currentMaxProvisionAddressCount := max_provision_address_count.Parameter.GetMetaProperty().GetData().Get().(data.NumberData).Get()
-	return []simulationTypes.ParamChange{
-		simulation.NewSimParamChange(constants.ModuleName,
+	return []simulationTypes.LegacyParamChange{
+		simulation.NewSimLegacyParamChange(constants.ModuleName,
 			string(max_provision_address_count.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(math.MaxInt))
@@ -29,7 +29,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 				return string(bytes)
 			},
 		),
-		simulation.NewSimParamChange(constants.ModuleName,
+		simulation.NewSimLegacyParamChange(constants.ModuleName,
 			string(max_provision_address_count.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(currentMaxProvisionAddressCount)
