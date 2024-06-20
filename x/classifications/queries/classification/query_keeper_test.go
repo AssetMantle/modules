@@ -5,20 +5,21 @@ package classification
 
 import (
 	"github.com/AssetMantle/modules/x/classifications/record"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"testing"
 
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/lists/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"github.com/cosmos/cosmos-sdk/simapp"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	"github.com/AssetMantle/schema/lists/base"
+	baseQualified "github.com/AssetMantle/schema/qualified/base"
+	tendermintDB "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/tendermint/libs/log"
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
@@ -36,9 +37,9 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
@@ -47,8 +48,8 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 	}, false, log.NewNopLogger())
 
 	Mapper := mapper.Prototype().Initialize(storeKey)
-	encodingConfig := simapp.MakeTestEncodingConfig()
-	appCodec := encodingConfig.Marshaler
+	encodingConfig := testutil.MakeTestEncodingConfig()
+	appCodec := encodingConfig.Codec
 	ParamsKeeper := paramsKeeper.NewKeeper(
 		appCodec,
 		legacyAmino,
