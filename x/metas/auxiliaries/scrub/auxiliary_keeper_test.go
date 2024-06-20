@@ -5,17 +5,18 @@ package scrub
 
 import (
 	"context"
+	"github.com/cosmos/cosmos-sdk/store"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"reflect"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/cosmos/cosmos-sdk/store"
+	tendermintDB "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/tendermint/libs/log"
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
@@ -34,8 +35,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := mapper.Prototype().Initialize(storeKey)
-	encodingConfig := simapp.MakeTestEncodingConfig()
-	appCodec := encodingConfig.Marshaler
+	encodingConfig := testutil.MakeTestEncodingConfig()
+	appCodec := encodingConfig.Codec
 	ParamsKeeper := paramsKeeper.NewKeeper(
 		appCodec,
 		legacyAmino,
@@ -46,9 +47,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 

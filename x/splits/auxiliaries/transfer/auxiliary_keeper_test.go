@@ -5,6 +5,9 @@ package transfer
 
 import (
 	"context"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	"github.com/cosmos/cosmos-sdk/types/module/testutil"
+
 	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/utilities/random"
@@ -15,24 +18,23 @@ import (
 	"github.com/AssetMantle/modules/x/splits/parameters"
 	"github.com/AssetMantle/modules/x/splits/parameters/transfer_enabled"
 	"github.com/AssetMantle/modules/x/splits/record"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/documents"
-	"github.com/AssetMantle/schema/go/documents/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/types"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
-	"github.com/cosmos/cosmos-sdk/simapp"
+	baseData "github.com/AssetMantle/schema/data/base"
+	"github.com/AssetMantle/schema/documents"
+	"github.com/AssetMantle/schema/documents/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	baseParameters "github.com/AssetMantle/schema/parameters/base"
+	baseProperties "github.com/AssetMantle/schema/properties/base"
+	"github.com/AssetMantle/schema/types"
+	baseTypes "github.com/AssetMantle/schema/types/base"
+	tendermintDB "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/mock"
-	"github.com/tendermint/tendermint/libs/log"
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-	tendermintDB "github.com/tendermint/tm-db"
 	"math/rand"
 	"reflect"
 	"testing"
@@ -99,11 +101,11 @@ var (
 	uninitializedCoinAsset   = base.NewCoinAsset("uninitialized")
 	uninitializedCoinAssetID = uninitializedCoinAsset.GetCoinAssetID()
 
-	encodingConfig = simapp.MakeTestEncodingConfig()
+	encodingConfig = testutil.MakeTestEncodingConfig()
 
 	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
 	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
-	ParamsKeeper             = paramsKeeper.NewKeeper(encodingConfig.Marshaler, encodingConfig.Amino, paramsStoreKey, paramsTransientStoreKeys)
+	ParamsKeeper             = paramsKeeper.NewKeeper(encodingConfig.Codec, encodingConfig.Amino, paramsStoreKey, paramsTransientStoreKeys)
 
 	moduleStoreKey  = sdkTypes.NewKVStoreKey(constants.ModuleName)
 	AuxiliaryKeeper = auxiliaryKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager}
@@ -111,9 +113,9 @@ var (
 	setContext = func() sdkTypes.Context {
 		memDB := tendermintDB.NewMemDB()
 		commitMultiStore := store.NewCommitMultiStore(memDB)
-		commitMultiStore.MountStoreWithDB(moduleStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-		commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-		commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
+		commitMultiStore.MountStoreWithDB(moduleStoreKey, storeTypes.StoreTypeIAVL, memDB)
+		commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
+		commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
 		_ = commitMultiStore.LoadLatestVersion()
 		return sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{ChainID: ChainID}, false, log.NewNopLogger())
 

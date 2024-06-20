@@ -12,18 +12,19 @@ import (
 	"github.com/AssetMantle/modules/x/splits/mappable"
 	"github.com/AssetMantle/modules/x/splits/mapper"
 	"github.com/AssetMantle/modules/x/splits/record"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/documents"
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/types"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	baseData "github.com/AssetMantle/schema/data/base"
+	"github.com/AssetMantle/schema/documents"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	"github.com/AssetMantle/schema/types"
+	baseTypes "github.com/AssetMantle/schema/types/base"
+	tendermintDB "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
-	"github.com/tendermint/tendermint/libs/log"
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-	tendermintDB "github.com/tendermint/tm-db"
 	"math/rand"
 	"reflect"
 	"testing"
@@ -62,7 +63,7 @@ var (
 	setContext = func() sdkTypes.Context {
 		memDB := tendermintDB.NewMemDB()
 		commitMultiStore := store.NewCommitMultiStore(memDB)
-		commitMultiStore.MountStoreWithDB(moduleStoreKey, sdkTypes.StoreTypeIAVL, memDB)
+		commitMultiStore.MountStoreWithDB(moduleStoreKey, storeTypes.StoreTypeIAVL, memDB)
 		_ = commitMultiStore.LoadLatestVersion()
 		return sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{ChainID: ChainID}, false, log.NewNopLogger())
 
