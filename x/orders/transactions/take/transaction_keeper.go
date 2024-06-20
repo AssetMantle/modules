@@ -7,14 +7,14 @@ import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/documents/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/properties"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/data"
+	baseData "github.com/AssetMantle/schema/data/base"
+	"github.com/AssetMantle/schema/documents/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/properties"
+	baseProperties "github.com/AssetMantle/schema/properties/base"
+	propertyConstants "github.com/AssetMantle/schema/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -65,7 +65,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("taker ID %s is not authorized to take private order with ID %s", message.FromID.AsString(), message.OrderID.AsString())
 	}
 	takerSplit, err := sdkTypes.NewDecFromStr(message.TakerSplit)
-	makerReceiveTakerSplit := order.GetMakerSplit().ToDec().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
+	makerReceiveTakerSplit := order.GetMakerSplit().ToLegacyDec().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
 	takerReceiveMakerSplit := takerSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(order.GetExchangeRate())
 
 	switch updatedMakerSplit := order.GetMakerSplit().Sub(takerReceiveMakerSplit.TruncateInt()); {
@@ -80,7 +80,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			return nil, errorConstants.InsufficientBalance.Wrapf("taker split %s is less than the required amount %s for order execution", message.TakerSplit, makerReceiveTakerSplit.String())
 		}
 
-		takerReceiveMakerSplit = order.GetMakerSplit().ToDec()
+		takerReceiveMakerSplit = order.GetMakerSplit().ToLegacyDec()
 
 		orders.Remove(record.NewRecord(order))
 	default:

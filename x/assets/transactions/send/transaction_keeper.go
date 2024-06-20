@@ -12,10 +12,10 @@ import (
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
-	"github.com/AssetMantle/schema/go/data"
-	"github.com/AssetMantle/schema/go/properties"
-	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	"github.com/AssetMantle/schema/data"
+	"github.com/AssetMantle/schema/properties"
+	propertyConstants "github.com/AssetMantle/schema/properties/constants"
+	baseTypes "github.com/AssetMantle/schema/types/base"
 )
 
 type transactionKeeper struct {

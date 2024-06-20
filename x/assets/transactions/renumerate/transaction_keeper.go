@@ -15,9 +15,9 @@ import (
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
-	"github.com/AssetMantle/schema/go/data"
-	"github.com/AssetMantle/schema/go/properties"
-	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/data"
+	"github.com/AssetMantle/schema/properties"
+	propertyConstants "github.com/AssetMantle/schema/properties/constants"
 )
 
 type transactionKeeper struct {

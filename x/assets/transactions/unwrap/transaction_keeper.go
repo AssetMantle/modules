@@ -8,9 +8,9 @@ import (
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/assets/constants"
 
-	"github.com/AssetMantle/schema/go/data/base"
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/data/base"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 

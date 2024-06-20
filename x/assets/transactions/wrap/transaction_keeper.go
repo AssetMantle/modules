@@ -12,9 +12,9 @@ import (
 	"github.com/AssetMantle/modules/x/assets/record"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
-	"github.com/AssetMantle/schema/go/data/base"
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/data/base"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 )

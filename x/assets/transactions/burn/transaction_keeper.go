@@ -7,10 +7,10 @@ import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 
-	"github.com/AssetMantle/schema/go/data"
-	"github.com/AssetMantle/schema/go/properties"
-	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	"github.com/AssetMantle/schema/data"
+	"github.com/AssetMantle/schema/properties"
+	propertyConstants "github.com/AssetMantle/schema/properties/constants"
+	baseTypes "github.com/AssetMantle/schema/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
