@@ -5,16 +5,17 @@ package base
 
 import (
 	"fmt"
+	"github.com/AssetMantle/modules/utilities/rest"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/gogo/protobuf/grpc"
+
+	abciTypes "github.com/cometbft/cometbft/abci/types"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
 	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 
 	"github.com/AssetMantle/modules/helpers"
 )
@@ -27,7 +28,7 @@ type query struct {
 	requestPrototype     func() helpers.QueryRequest
 	responsePrototype    func() helpers.QueryResponse
 	keeperPrototype      func() helpers.QueryKeeper
-	serviceRegistrar     func(grpc.Server, helpers.QueryKeeper)
+	serviceRegistrar     func(grpc.ServiceRegistrar, helpers.QueryKeeper)
 	grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error
 }
 
@@ -127,7 +128,7 @@ func (query query) query(queryRequest helpers.QueryRequest, context client.Conte
 	return context.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)
 }
 
-func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, serviceRegistrar func(grpc.Server, helpers.QueryKeeper), grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error, flagList ...helpers.CLIFlag) helpers.Query {
+func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, serviceRegistrar func(grpc.ServiceRegistrar, helpers.QueryKeeper), grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error, flagList ...helpers.CLIFlag) helpers.Query {
 	return query{
 		name:                 name,
 		cliCommand:           NewCLICommand(name, short, long, flagList),
