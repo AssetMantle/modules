@@ -1,7 +1,7 @@
 package constants
 
 import (
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
 )
 
 var (

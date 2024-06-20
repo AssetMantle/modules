@@ -1,7 +1,7 @@
 package utilities
 
 import (
-	"github.com/AssetMantle/schema/go/ids"
+	"github.com/AssetMantle/schema/ids"
 
 	"github.com/AssetMantle/modules/x/identities/constants"
 )
