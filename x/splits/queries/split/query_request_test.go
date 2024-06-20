@@ -5,16 +5,16 @@ package split
 
 import (
 	"github.com/AssetMantle/modules/x/splits/key"
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	"reflect"
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	baseData "github.com/AssetMantle/schema/data/base"
+	"github.com/AssetMantle/schema/ids"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	baseProperties "github.com/AssetMantle/schema/properties/base"
+	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
