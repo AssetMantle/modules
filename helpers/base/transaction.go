@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/utilities/rest"
 	"github.com/AssetMantle/modules/utilities/rest/queuing"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -15,10 +16,10 @@ import (
 	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/gogo/protobuf/grpc"
+
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
 	"net/http"
 	"reflect"
 )
@@ -30,7 +31,7 @@ type transaction struct {
 	requestPrototype     func() helpers.TransactionRequest
 	messagePrototype     func() helpers.Message
 	keeperPrototype      func() helpers.TransactionKeeper
-	serviceRegistrar     func(grpc.Server, helpers.TransactionKeeper)
+	serviceRegistrar     func(grpc.ServiceRegistrar, helpers.TransactionKeeper)
 	grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error
 }
 
@@ -133,7 +134,7 @@ func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameter
 	return transaction
 }
 
-func NewTransaction(name string, short string, long string, requestPrototype func() helpers.TransactionRequest, messagePrototype func() helpers.Message, keeperPrototype func() helpers.TransactionKeeper, serviceRegistrar func(grpc.Server, helpers.TransactionKeeper), grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error, flagList ...helpers.CLIFlag) helpers.Transaction {
+func NewTransaction(name string, short string, long string, requestPrototype func() helpers.TransactionRequest, messagePrototype func() helpers.Message, keeperPrototype func() helpers.TransactionKeeper, serviceRegistrar func(grpc.ServiceRegistrar, helpers.TransactionKeeper), grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error, flagList ...helpers.CLIFlag) helpers.Transaction {
 	return transaction{
 		name:                 name,
 		cliCommand:           NewCLICommand(name, short, long, flagList),
