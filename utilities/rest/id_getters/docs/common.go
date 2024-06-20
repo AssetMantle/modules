@@ -1,19 +1,20 @@
 package docs
 
 import (
+	"github.com/AssetMantle/modules/utilities/rest"
 	"net/http"
 
-	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/lists"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/qualified"
-	"github.com/AssetMantle/schema/go/qualified/base"
+	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
+	"github.com/AssetMantle/schema/ids"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	"github.com/AssetMantle/schema/lists"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/qualified"
+	"github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	"github.com/gorilla/mux"
 )
 

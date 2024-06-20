@@ -1,7 +1,7 @@
 package base
 
 import (
-	schemaCodec "github.com/AssetMantle/schema/go/codec"
+	schemaCodec "github.com/AssetMantle/schema/codec"
 	sdkClient "github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkCodecTypes "github.com/cosmos/cosmos-sdk/codec/types"

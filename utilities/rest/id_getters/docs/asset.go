@@ -1,11 +1,11 @@
 package docs
 
 import (
+	"github.com/AssetMantle/modules/utilities/rest"
 	"net/http"
 
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
 func assetClassificationHandler(context client.Context) http.HandlerFunc {

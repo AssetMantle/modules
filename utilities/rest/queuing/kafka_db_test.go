@@ -6,9 +6,9 @@ package queuing
 import (
 	"testing"
 
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	dbm "github.com/cometbft/cometbft-db"
 	"github.com/stretchr/testify/require"
-	dbm "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/utilities/random"
