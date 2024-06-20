@@ -6,7 +6,7 @@ package block
 import (
 	"context"
 
-	abciTypes "github.com/tendermint/tendermint/abci/types"
+	abciTypes "github.com/cometbft/cometbft/abci/types"
 
 	"github.com/AssetMantle/modules/helpers"
 )
