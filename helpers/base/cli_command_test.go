@@ -4,11 +4,12 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
