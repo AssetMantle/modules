@@ -6,10 +6,10 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/qualified"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	"github.com/AssetMantle/schema/data"
+	baseData "github.com/AssetMantle/schema/data/base"
+	"github.com/AssetMantle/schema/qualified"
+	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 

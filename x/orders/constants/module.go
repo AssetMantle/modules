@@ -4,7 +4,7 @@
 package constants
 
 import (
-	"github.com/AssetMantle/schema/go/documents/base"
+	"github.com/AssetMantle/schema/documents/base"
 
 	"github.com/AssetMantle/modules/utilities/name"
 )

@@ -7,9 +7,9 @@ import (
 	"math"
 	"math/rand"
 
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/properties"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	"github.com/AssetMantle/schema/properties"
+	baseProperties "github.com/AssetMantle/schema/properties/base"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/AssetMantle/modules/utilities/random"

@@ -5,15 +5,16 @@ package base
 
 import (
 	"fmt"
+	"github.com/AssetMantle/modules/utilities/rest"
 	"net/http"
 
-	"github.com/AssetMantle/schema/go/ids"
-	"github.com/AssetMantle/schema/go/lists"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/parameters"
+	"github.com/AssetMantle/schema/ids"
+	"github.com/AssetMantle/schema/lists"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/parameters"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"golang.org/x/net/context"
 

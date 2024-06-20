@@ -2,12 +2,13 @@ package docs
 
 import (
 	"fmt"
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/modules/utilities/rest"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	"github.com/AssetMantle/schema/ids"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	"net/http"
 )
 
