@@ -1,7 +1,7 @@
 package record
 
 import (
-	"github.com/AssetMantle/schema/go/documents"
+	"github.com/AssetMantle/schema/documents"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
