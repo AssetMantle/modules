@@ -5,11 +5,11 @@ package put
 
 import (
 	"github.com/AssetMantle/modules/helpers/constants"
-	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	typesSchema "github.com/AssetMantle/schema/go/types"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
+	"github.com/AssetMantle/schema/ids"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	typesSchema "github.com/AssetMantle/schema/types"
+	baseTypes "github.com/AssetMantle/schema/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
