@@ -7,9 +7,9 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/lists/base"
+	"github.com/AssetMantle/schema/data"
+	baseData "github.com/AssetMantle/schema/data/base"
+	"github.com/AssetMantle/schema/lists/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 

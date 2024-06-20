@@ -3,9 +3,9 @@ package helpers
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/go/lists"
+	"github.com/AssetMantle/schema/lists"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
-	"github.com/gogo/protobuf/proto"
+	"github.com/cosmos/gogoproto/proto"
 )
 
 type Genesis interface {
