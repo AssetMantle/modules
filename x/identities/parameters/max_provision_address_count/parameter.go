@@ -5,11 +5,11 @@ package max_provision_address_count
 
 import (
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/data/constants"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	"github.com/AssetMantle/schema/go/properties/base"
-	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+	baseData "github.com/AssetMantle/schema/data/base"
+	"github.com/AssetMantle/schema/data/constants"
+	baseParameters "github.com/AssetMantle/schema/parameters/base"
+	"github.com/AssetMantle/schema/properties/base"
+	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
