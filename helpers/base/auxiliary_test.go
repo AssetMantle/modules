@@ -5,7 +5,7 @@ package base
 
 import (
 	context2 "context"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/net/context"
@@ -49,7 +49,7 @@ func (dummyMapper dummyMapper) IteratePaginated(_ context2.Context, _ helpers.Ke
 func (dummyMapper dummyMapper) StoreDecoder(_ kv.Pair, _ kv.Pair) string {
 	return ""
 }
-func (dummyMapper dummyMapper) Initialize(_ *sdkTypes.KVStoreKey) helpers.Mapper {
+func (dummyMapper dummyMapper) Initialize(_ *storeTypes.KVStoreKey) helpers.Mapper {
 	return nil
 }
 func (dummyMapper dummyMapper) Get(_ string) (interface{}, error) {

@@ -7,16 +7,17 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	prefixStore "github.com/cosmos/cosmos-sdk/store/prefix"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
 	"github.com/AssetMantle/modules/helpers"
 )
 
 type mapper struct {
-	kvStoreKey      *sdkTypes.KVStoreKey
+	kvStoreKey      *storeTypes.KVStoreKey
 	recordPrototype func() helpers.Record
 }
 
@@ -25,7 +26,7 @@ var _ helpers.Mapper = (*mapper)(nil)
 func (mapper mapper) NewCollection(context context.Context) helpers.Collection {
 	return collection{}.Initialize(context, mapper)
 }
-func (mapper mapper) GetKVStoreKey() *sdkTypes.KVStoreKey {
+func (mapper mapper) GetKVStoreKey() *storeTypes.KVStoreKey {
 	return mapper.kvStoreKey
 }
 func (mapper mapper) Upsert(context context.Context, record helpers.Record) {
@@ -46,7 +47,7 @@ func (mapper mapper) FetchAll(context context.Context) []helpers.Record {
 	return records
 }
 func (mapper mapper) Iterate(context context.Context, key helpers.Key, accumulator func(helpers.Record) bool) {
-	kvStorePrefixIterator := prefixStore.NewStore(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey), key.GenerateStorePrefixBytes()).Iterator(key.GenerateStoreKeyBytes(), nil)
+	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(prefixStore.NewStore(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey), key.GenerateStorePrefixBytes()), key.GenerateStoreKeyBytes())
 
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
 		if accumulator(mapper.recordPrototype().ReadFromIterator(kvStorePrefixIterator)) {
@@ -82,7 +83,7 @@ func (mapper mapper) StoreDecoder(kvA kv.Pair, kvB kv.Pair) string {
 
 	panic(fmt.Errorf("invalid key prefix %X", kvA.Key[:1]))
 }
-func (mapper mapper) Initialize(kvStoreKey *sdkTypes.KVStoreKey) helpers.Mapper {
+func (mapper mapper) Initialize(kvStoreKey *storeTypes.KVStoreKey) helpers.Mapper {
 	mapper.kvStoreKey = kvStoreKey
 	return mapper
 }

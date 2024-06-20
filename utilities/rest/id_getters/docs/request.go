@@ -4,9 +4,8 @@
 package docs
 
 import (
-	"github.com/cosmos/cosmos-sdk/types/rest"
-
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/utilities/rest"
 )
 
 type request struct {

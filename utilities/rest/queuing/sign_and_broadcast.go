@@ -38,7 +38,7 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, context client.Context) (
 			return nil, err
 		}
 
-		keyBase, err := keyring.New(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass))
+		keyBase, err := keyring.New(sdkTypes.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), strings.NewReader(keys.DefaultKeyPass), context.Codec)
 		if err != nil {
 			return nil, err
 		}

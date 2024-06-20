@@ -6,7 +6,7 @@ package base
 import (
 	"context"
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/assert"
@@ -33,15 +33,15 @@ func (mr MockRecord) ReadFromIterator(sdkTypes.Iterator) helpers.Record {
 	return nil
 }
 
-func (mr MockRecord) Read(types.KVStore) helpers.Record {
+func (mr MockRecord) Read(storeTypes.KVStore) helpers.Record {
 	return nil
 }
 
-func (mr MockRecord) Write(types.KVStore) helpers.Record {
+func (mr MockRecord) Write(storeTypes.KVStore) helpers.Record {
 	return nil
 }
 
-func (mr MockRecord) Delete(types.KVStore) {
+func (mr MockRecord) Delete(storeTypes.KVStore) {
 }
 
 type MockMapper struct {
@@ -55,7 +55,7 @@ func (mm MockMapper) StoreDecoder(_ kv.Pair, _ kv.Pair) string {
 	return ""
 }
 
-func (mm MockMapper) Initialize(_ *sdkTypes.KVStoreKey) helpers.Mapper {
+func (mm MockMapper) Initialize(_ *storeTypes.KVStoreKey) helpers.Mapper {
 	return nil
 }
 

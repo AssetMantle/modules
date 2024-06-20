@@ -6,7 +6,7 @@ package helpers
 import (
 	"context"
 
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 )
 
@@ -22,5 +22,5 @@ type Mapper interface {
 	IteratePaginated(context.Context, Key, int32, func(Record) bool)
 
 	StoreDecoder(kv.Pair, kv.Pair) string
-	Initialize(*sdkTypes.KVStoreKey) Mapper
+	Initialize(*storeTypes.KVStoreKey) Mapper
 }
