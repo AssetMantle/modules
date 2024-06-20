@@ -7,8 +7,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/go/data"
-	"github.com/AssetMantle/schema/go/data/base"
+	"github.com/AssetMantle/schema/data"
+	"github.com/AssetMantle/schema/data/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
