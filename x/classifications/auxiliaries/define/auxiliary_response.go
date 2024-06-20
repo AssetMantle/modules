@@ -5,7 +5,7 @@ package define
 
 import (
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/schema/go/ids"
+	"github.com/AssetMantle/schema/ids"
 
 	"github.com/AssetMantle/modules/helpers"
 )
