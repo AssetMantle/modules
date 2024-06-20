@@ -4,10 +4,11 @@
 package queuing
 
 import (
+	"github.com/AssetMantle/modules/utilities/rest"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers/base"
