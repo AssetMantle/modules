@@ -7,12 +7,12 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/lists"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/types"
-	"github.com/AssetMantle/schema/go/types/base"
+	"github.com/AssetMantle/schema/ids"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	"github.com/AssetMantle/schema/lists"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/types"
+	"github.com/AssetMantle/schema/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
