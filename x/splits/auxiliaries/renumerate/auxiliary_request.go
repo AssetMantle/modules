@@ -6,7 +6,7 @@ package renumerate
 import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/schema/go/ids"
+	"github.com/AssetMantle/schema/ids"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 

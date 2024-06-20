@@ -5,7 +5,7 @@ package define
 
 import (
 	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/schema/go/qualified"
+	"github.com/AssetMantle/schema/qualified"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"

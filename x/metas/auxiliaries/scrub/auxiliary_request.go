@@ -6,7 +6,7 @@ package scrub
 import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/schema/go/lists"
+	"github.com/AssetMantle/schema/lists"
 )
 
 type auxiliaryRequest struct {

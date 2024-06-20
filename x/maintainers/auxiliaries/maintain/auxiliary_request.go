@@ -6,8 +6,8 @@ package maintain
 import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/schema/go/ids"
-	"github.com/AssetMantle/schema/go/qualified"
+	"github.com/AssetMantle/schema/ids"
+	"github.com/AssetMantle/schema/qualified"
 )
 
 type auxiliaryRequest struct {

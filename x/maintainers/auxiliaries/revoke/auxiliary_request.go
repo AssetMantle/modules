@@ -6,7 +6,7 @@ package revoke
 import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/schema/go/ids"
+	"github.com/AssetMantle/schema/ids"
 )
 
 type auxiliaryRequest struct {
