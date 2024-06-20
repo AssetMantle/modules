@@ -6,23 +6,24 @@ package utilities
 import (
 	"fmt"
 	"github.com/AssetMantle/modules/x/splits/record"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	"reflect"
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	baseData "github.com/AssetMantle/schema/data/base"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	"github.com/AssetMantle/schema/ids"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	baseProperties "github.com/AssetMantle/schema/properties/base"
+	baseQualified "github.com/AssetMantle/schema/qualified/base"
+	baseTypes "github.com/AssetMantle/schema/types/base"
+	tendermintDB "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/tendermint/libs/log"
-	protoTendermintTypes "github.com/tendermint/tendermint/proto/tendermint/types"
-	tendermintDB "github.com/tendermint/tm-db"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/mapper"
@@ -35,9 +36,9 @@ func createTestInput1(t *testing.T) (sdkTypes.Context, helpers.Mapper) {
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, sdkTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, sdkTypes.StoreTypeTransient, memDB)
+	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
 	err := commitMultiStore.LoadLatestVersion()
 	require.Nil(t, err)
 
