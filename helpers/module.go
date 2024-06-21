@@ -5,8 +5,9 @@ package helpers
 
 import (
 	"encoding/json"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
@@ -20,7 +21,7 @@ type Module interface {
 
 	DecodeModuleTransactionRequest(string, json.RawMessage) (sdkTypes.Msg, error)
 
-	Initialize(*sdkTypes.KVStoreKey, paramsTypes.Subspace, ...interface{}) Module
+	Initialize(*storeTypes.KVStoreKey, paramsTypes.Subspace, ...interface{}) Module
 
 	GetTransactions() Transactions
 }
