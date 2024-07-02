@@ -6,7 +6,7 @@ package helpers
 import (
 	"context"
 
-	abciTypes "github.com/tendermint/tendermint/abci/types"
+	abciTypes "github.com/cometbft/cometbft/abci/types"
 )
 
 type Block interface {

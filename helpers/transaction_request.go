@@ -5,11 +5,11 @@ package helpers
 
 import (
 	"encoding/json"
+	"github.com/AssetMantle/modules/utilities/rest"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
 type TransactionRequest interface {

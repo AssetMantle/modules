@@ -1,0 +1,12 @@
+syntax = "proto3";
+package AssetMantle.modules.x.metas.transactions.reveal;
+
+import "google/api/annotations.proto";
+import "AssetMantle/modules/x/metas/transactions/reveal/message.proto";
+import "AssetMantle/modules/x/metas/transactions/reveal/transaction_response.proto";
+
+service Msg {
+  rpc Handle(Message) returns (TransactionResponse) {
+    option (google.api.http).post = "/mantle/metas/reveal";
+  }
+}

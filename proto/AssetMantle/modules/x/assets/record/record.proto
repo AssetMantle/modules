@@ -1,0 +1,13 @@
+syntax = "proto3";
+package AssetMantle.modules.x.assets.record;
+
+import "AssetMantle/modules/x/assets/key/key.proto";
+import "AssetMantle/modules/x/assets/mappable/mappable.proto";
+import "gogoproto/gogo.proto";
+
+message Record {
+  option (gogoproto.goproto_getters) = false;
+
+  key.Key key = 1;
+  mappable.Mappable mappable = 2;
+}

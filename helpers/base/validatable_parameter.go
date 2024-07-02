@@ -1,8 +1,8 @@
 package base
 
 import (
-	"github.com/AssetMantle/schema/go/data"
-	"github.com/AssetMantle/schema/go/parameters"
+	"github.com/AssetMantle/schema/data"
+	"github.com/AssetMantle/schema/parameters"
 
 	"github.com/AssetMantle/modules/helpers"
 )

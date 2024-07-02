@@ -14,9 +14,9 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
-	"github.com/AssetMantle/schema/go/documents/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	"github.com/AssetMantle/schema/documents/base"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	baseQualified "github.com/AssetMantle/schema/qualified/base"
 )
 
 type transactionKeeper struct {

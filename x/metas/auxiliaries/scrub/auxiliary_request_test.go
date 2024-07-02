@@ -6,11 +6,11 @@ package scrub
 import (
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/lists/base"
-	"github.com/AssetMantle/schema/go/properties"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	baseData "github.com/AssetMantle/schema/data/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	"github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/properties"
+	baseProperties "github.com/AssetMantle/schema/properties/base"
 	"github.com/stretchr/testify/require"
 )
 

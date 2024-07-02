@@ -1,0 +1,8 @@
+syntax = "proto3";
+package AssetMantle.modules.x.orders.transactions.put;
+
+import "AssetMantle/schema/ids/base/order_id.proto";
+
+message TransactionResponse {
+  AssetMantle.schema.ids.base.OrderID order_i_d = 1;
+}

@@ -6,8 +6,8 @@ package block
 import (
 	"context"
 
-	"github.com/AssetMantle/schema/go/types/base"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
+	"github.com/AssetMantle/schema/types/base"
+	abciTypes "github.com/cometbft/cometbft/abci/types"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/orders/mappable"
@@ -96,7 +96,7 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 //
 //					rightOrderMakerSplit := rightOrder.GetMakerSplit()
 //
-//					rightOrderTakerSplitDemanded := rightOrderExchangeRate.MulTruncate(rightOrderMakerSplit.ToDec()).MulTruncate(sdkTypes.SmallestDec()).TruncateInt()
+//					rightOrderTakerSplitDemanded := rightOrderExchangeRate.MulTruncate(rightOrderMakerSplit.ToLegacyDec()).MulTruncate(sdkTypes.SmallestDec()).TruncateInt()
 //
 //					if leftOrderExchangeRate.MulTruncate(rightOrderExchangeRate).MulTruncate(sdkTypes.SmallestDec()).MulTruncate(sdkTypes.SmallestDec()).LTE(sdkTypes.OneDec()) {
 //						switch {
@@ -117,7 +117,7 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 //								return true
 //							}
 //						case leftOrderMakerSplit.LT(rightOrderTakerSplitDemanded):
-//							sendToLeftOrder := leftOrderMakerSplit.ToDec().QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(rightOrderExchangeRate)
+//							sendToLeftOrder := leftOrderMakerSplit.ToLegacyDec().QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(rightOrderExchangeRate)
 //							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), leftOrder.GetMakerID(), leftOrder.GetTakerAssetID(), sendToLeftOrder.TruncateInt())); err != nil {
 //								panic(err)
 //							}

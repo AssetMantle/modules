@@ -5,9 +5,9 @@ package utilities
 
 import (
 	"github.com/AssetMantle/modules/x/assets/constants"
-	"github.com/AssetMantle/schema/go/ids"
-	"github.com/AssetMantle/schema/go/lists"
-	"github.com/AssetMantle/schema/go/lists/base"
+	"github.com/AssetMantle/schema/ids"
+	"github.com/AssetMantle/schema/lists"
+	"github.com/AssetMantle/schema/lists/base"
 	"reflect"
 	"testing"
 )

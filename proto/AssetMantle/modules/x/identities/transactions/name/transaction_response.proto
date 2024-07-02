@@ -1,0 +1,8 @@
+syntax = "proto3";
+package AssetMantle.modules.x.identities.transactions.name;
+
+import "AssetMantle/schema/ids/base/identity_id.proto";
+
+message TransactionResponse {
+  AssetMantle.schema.ids.base.IdentityID name_identity_i_d = 1;
+}

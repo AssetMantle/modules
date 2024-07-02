@@ -1,8 +1,8 @@
 package utilities
 
 import (
-	"github.com/AssetMantle/schema/go/lists"
-	"github.com/AssetMantle/schema/go/lists/base"
+	"github.com/AssetMantle/schema/lists"
+	"github.com/AssetMantle/schema/lists/base"
 
 	"github.com/AssetMantle/modules/x/maintainers/constants"
 )

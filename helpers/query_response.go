@@ -3,7 +3,7 @@
 
 package helpers
 
-import "github.com/gogo/protobuf/proto"
+import "github.com/cosmos/gogoproto/proto"
 
 type QueryResponse interface {
 	proto.Message

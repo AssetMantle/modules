@@ -5,9 +5,9 @@ package name
 
 import (
 	"github.com/AssetMantle/modules/helpers/constants"
-	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
+	"github.com/AssetMantle/schema/ids"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"

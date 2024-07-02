@@ -1,0 +1,10 @@
+syntax = "proto3";
+package AssetMantle.modules.x.splits.queries.balances;
+
+import "gogoproto/gogo.proto";
+import "AssetMantle/modules/x/splits/record/record.proto";
+
+message QueryResponse {
+  option (gogoproto.goproto_getters) = false;
+  repeated record.Record list = 1;
+}

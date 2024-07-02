@@ -1,8 +1,0 @@
-syntax = "proto3";
-package assetmantle.modules.metas.mappable;
-
-import "data/base/any_data.proto";
-
-message Mappable {
-  assetmantle.schema.data.base.AnyData data = 1;
-}

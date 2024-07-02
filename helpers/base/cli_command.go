@@ -5,10 +5,11 @@ package base
 
 import (
 	"fmt"
+	"github.com/AssetMantle/modules/utilities/rest"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	"github.com/spf13/cobra"
 
 	"github.com/AssetMantle/modules/helpers"

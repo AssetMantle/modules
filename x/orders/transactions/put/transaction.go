@@ -7,8 +7,8 @@ import (
 	"context"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"google.golang.org/grpc"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
@@ -27,7 +27,7 @@ var Transaction = baseHelpers.NewTransaction(
 	messagePrototype,
 	keeperPrototype,
 
-	func(server grpc.Server, keeper helpers.TransactionKeeper) {
+	func(server grpc.ServiceRegistrar, keeper helpers.TransactionKeeper) {
 		RegisterMsgServer(server, keeper.(transactionKeeper))
 	},
 	func(clientCtx client.Context, mux *runtime.ServeMux) error {

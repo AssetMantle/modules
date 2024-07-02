@@ -2,13 +2,13 @@ package docs
 
 import (
 	"fmt"
+	"github.com/AssetMantle/modules/utilities/rest"
 	"net/http"
 
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseData "github.com/AssetMantle/schema/data/base"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
 func nameIdentityIDHandler(context client.Context) http.HandlerFunc {

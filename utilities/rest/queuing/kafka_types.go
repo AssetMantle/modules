@@ -4,11 +4,12 @@
 package queuing
 
 import (
+	"github.com/AssetMantle/modules/utilities/rest"
 	"github.com/Shopify/sarama"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
-	dbm "github.com/tendermint/tm-db"
+
+	dbm "github.com/cometbft/cometbft-db"
 )
 
 // TicketID : is a type that implements string

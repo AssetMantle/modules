@@ -4,9 +4,9 @@ import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	"github.com/AssetMantle/schema/go/lists"
-	"github.com/AssetMantle/schema/go/lists/base"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	"github.com/AssetMantle/schema/lists"
+	"github.com/AssetMantle/schema/lists/base"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"

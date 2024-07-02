@@ -5,14 +5,15 @@ package name
 
 import (
 	"encoding/json"
+	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"

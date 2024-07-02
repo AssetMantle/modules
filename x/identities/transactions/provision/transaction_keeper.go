@@ -7,8 +7,8 @@ import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 
-	"github.com/AssetMantle/schema/go/data"
-	"github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/data"
+	"github.com/AssetMantle/schema/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"

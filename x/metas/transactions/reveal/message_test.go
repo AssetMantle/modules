@@ -6,7 +6,7 @@ package reveal
 import (
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/go/data/base"
+	baseData "github.com/AssetMantle/schema/data/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )

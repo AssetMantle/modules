@@ -1,8 +1,0 @@
-syntax = "proto3";
-package assetmantle.modules.identities.transactions.define;
-
-import "ids/base/classification_id.proto";
-
-message TransactionResponse {
-  assetmantle.schema.ids.base.ClassificationID classification_i_d = 1;
-}

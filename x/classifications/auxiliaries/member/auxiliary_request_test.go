@@ -6,11 +6,11 @@ package member
 import (
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
+	baseData "github.com/AssetMantle/schema/data/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	baseProperties "github.com/AssetMantle/schema/properties/base"
+	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/stretchr/testify/require"
 )
 

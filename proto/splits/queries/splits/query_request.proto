@@ -1,9 +1,0 @@
-syntax = "proto3";
-package assetmantle.modules.splits.queries.splits;
-
-import "splits/key/key.proto";
-
-message QueryRequest {
-  key.Key key = 1;
-  int32 limit = 2;
-}

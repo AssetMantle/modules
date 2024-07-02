@@ -1,7 +1,7 @@
 package constants
 
 import (
-	"github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/schema/ids/base"
 )
 
 var CanAddMaintainerPermission = base.NewStringID("add")

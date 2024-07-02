@@ -1,0 +1,12 @@
+syntax = "proto3";
+package AssetMantle.modules.x.identities.transactions.revoke;
+
+import "AssetMantle/schema/ids/base/classification_id.proto";
+import "AssetMantle/schema/ids/base/identity_id.proto";
+
+message Message {
+  string from = 1;
+  AssetMantle.schema.ids.base.IdentityID from_i_d = 2;
+  AssetMantle.schema.ids.base.IdentityID to_i_d = 3;
+  AssetMantle.schema.ids.base.ClassificationID classification_i_d = 4;
+}

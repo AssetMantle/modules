@@ -1,9 +1,0 @@
-syntax = "proto3";
-package assetmantle.modules.maintainers.queries.maintainers;
-
-import "maintainers/key/key.proto";
-
-message QueryRequest {
-  key.Key key = 1;
-  int32 limit = 2;
-}

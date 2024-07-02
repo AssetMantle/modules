@@ -6,8 +6,8 @@ package meta
 import (
 	"net/http"
 
-	"github.com/AssetMantle/schema/go/ids"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
+	"github.com/AssetMantle/schema/ids"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/AssetMantle/modules/helpers"

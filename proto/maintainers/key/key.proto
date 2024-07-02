@@ -1,8 +1,0 @@
-syntax = "proto3";
-package assetmantle.modules.maintainers.key;
-
-import "ids/base/maintainer_id.proto";
-
-message Key {
-  assetmantle.schema.ids.base.MaintainerID maintainer_i_d = 1;
-}

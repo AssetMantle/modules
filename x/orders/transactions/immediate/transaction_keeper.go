@@ -7,15 +7,15 @@ import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	"github.com/AssetMantle/schema/go/documents/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	propertyConstants "github.com/AssetMantle/schema/go/properties/constants"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	"github.com/AssetMantle/schema/data"
+	baseData "github.com/AssetMantle/schema/data/base"
+	"github.com/AssetMantle/schema/documents/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	baseProperties "github.com/AssetMantle/schema/properties/base"
+	propertyConstants "github.com/AssetMantle/schema/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/qualified/base"
+	baseTypes "github.com/AssetMantle/schema/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -109,7 +109,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	accumulator := func(Record helpers.Record) bool {
 		executableOrder := mappable.GetOrder(Record.GetMappable())
 
-		executableOrderTakerSplitDemanded := executableOrder.GetExchangeRate().MulTruncate(executableOrder.GetMakerSplit().ToDec()).MulTruncate(sdkTypes.SmallestDec()).TruncateInt()
+		executableOrderTakerSplitDemanded := executableOrder.GetExchangeRate().MulTruncate(executableOrder.GetMakerSplit().ToLegacyDec()).MulTruncate(sdkTypes.SmallestDec()).TruncateInt()
 
 		if order.GetExchangeRate().MulTruncate(executableOrder.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec()).MulTruncate(sdkTypes.SmallestDec()).LTE(sdkTypes.OneDec()) {
 			switch {
@@ -128,7 +128,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 				orders.Remove(record.NewRecord(executableOrder))
 			case orderLeftOverMakerSplit.LT(executableOrderTakerSplitDemanded):
 				// sending to buyer
-				sendToBuyer := orderLeftOverMakerSplit.Quo(sdkTypes.OneInt()).ToDec().QuoTruncate(executableOrder.GetExchangeRate()).TruncateInt()
+				sendToBuyer := orderLeftOverMakerSplit.Quo(sdkTypes.OneInt()).ToLegacyDec().QuoTruncate(executableOrder.GetExchangeRate()).TruncateInt()
 				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), sendToBuyer)); err != nil {
 					panic(err)
 				}

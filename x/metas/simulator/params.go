@@ -16,9 +16,9 @@ import (
 	"github.com/AssetMantle/modules/x/metas/parameters/reveal_enabled"
 )
 
-func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
-	return []simulationTypes.ParamChange{
-		simulation.NewSimParamChange(constants.ModuleName,
+func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.LegacyParamChange {
+	return []simulationTypes.LegacyParamChange{
+		simulation.NewSimLegacyParamChange(constants.ModuleName,
 			string(reveal_enabled.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(strconv.FormatBool(random.GenerateRandomBool()))

@@ -5,7 +5,7 @@ package scrub
 
 import (
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/schema/go/lists"
+	"github.com/AssetMantle/schema/lists"
 
 	"github.com/AssetMantle/modules/helpers"
 )

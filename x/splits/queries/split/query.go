@@ -7,8 +7,8 @@ import (
 	"context"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/gogo/protobuf/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"google.golang.org/grpc"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
@@ -30,7 +30,7 @@ var Query = baseHelpers.NewQuery(
 	responsePrototype,
 	keeperPrototype,
 
-	func(server grpc.Server, QueryKeeper helpers.QueryKeeper) {
+	func(server grpc.ServiceRegistrar, QueryKeeper helpers.QueryKeeper) {
 		RegisterQueryServer(server, QueryKeeper.(queryKeeper))
 	},
 	func(clientContext client.Context, serveMux *runtime.ServeMux) error {

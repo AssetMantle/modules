@@ -4,12 +4,12 @@
 package unwrap_allowed_coins
 
 import (
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
-	"github.com/AssetMantle/schema/go/types/base"
+	baseData "github.com/AssetMantle/schema/data/base"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	baseParameters "github.com/AssetMantle/schema/parameters/base"
+	baseProperties "github.com/AssetMantle/schema/properties/base"
+	"github.com/AssetMantle/schema/types/base"
 	"testing"
 )
 

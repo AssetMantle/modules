@@ -3,12 +3,12 @@ package base
 import (
 	"fmt"
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/schema/go/data"
-	base4 "github.com/AssetMantle/schema/go/data/base"
-	base3 "github.com/AssetMantle/schema/go/ids/base"
-	"github.com/AssetMantle/schema/go/parameters"
-	"github.com/AssetMantle/schema/go/parameters/base"
-	base2 "github.com/AssetMantle/schema/go/properties/base"
+	"github.com/AssetMantle/schema/data"
+	base4 "github.com/AssetMantle/schema/data/base"
+	base3 "github.com/AssetMantle/schema/ids/base"
+	"github.com/AssetMantle/schema/parameters"
+	"github.com/AssetMantle/schema/parameters/base"
+	base2 "github.com/AssetMantle/schema/properties/base"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

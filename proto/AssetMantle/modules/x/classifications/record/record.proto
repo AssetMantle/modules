@@ -1,0 +1,13 @@
+syntax = "proto3";
+package AssetMantle.modules.x.classifications.record;
+
+import "AssetMantle/modules/x/classifications/key/key.proto";
+import "AssetMantle/modules/x/classifications/mappable/mappable.proto";
+import "gogoproto/gogo.proto";
+
+message Record {
+  option (gogoproto.goproto_getters) = false;
+
+  key.Key key = 1;
+  mappable.Mappable mappable = 2;
+}

@@ -5,11 +5,11 @@ package unwrap_allowed_coins
 
 import (
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/schema/go/data"
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	"github.com/AssetMantle/schema/go/properties/base"
-	constantProperties "github.com/AssetMantle/schema/go/properties/constants"
+	"github.com/AssetMantle/schema/data"
+	baseData "github.com/AssetMantle/schema/data/base"
+	baseParameters "github.com/AssetMantle/schema/parameters/base"
+	"github.com/AssetMantle/schema/properties/base"
+	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"

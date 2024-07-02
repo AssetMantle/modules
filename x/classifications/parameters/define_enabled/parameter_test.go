@@ -6,10 +6,10 @@ package define_enabled
 import (
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/go/data/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseParameters "github.com/AssetMantle/schema/go/parameters/base"
-	baseProperties "github.com/AssetMantle/schema/go/properties/base"
+	baseData "github.com/AssetMantle/schema/data/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	baseParameters "github.com/AssetMantle/schema/parameters/base"
+	baseProperties "github.com/AssetMantle/schema/properties/base"
 )
 
 func Test_validator(t *testing.T) {

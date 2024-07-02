@@ -1,0 +1,8 @@
+syntax = "proto3";
+package AssetMantle.modules.x.splits.queries.supply;
+
+import "AssetMantle/schema/ids/base/asset_id.proto";
+
+message QueryRequest {
+  AssetMantle.schema.ids.base.AssetID asset_i_d = 1;
+}

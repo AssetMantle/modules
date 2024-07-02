@@ -4,11 +4,12 @@
 package queuing
 
 import (
+	"github.com/AssetMantle/modules/utilities/rest"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	"github.com/pkg/errors"
 )
 

@@ -1,6 +1,7 @@
 package queuing
 
 import (
+	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"strconv"
 
@@ -8,7 +9,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
 
 	"github.com/AssetMantle/modules/utilities/random"
 )

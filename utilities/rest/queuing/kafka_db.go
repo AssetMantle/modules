@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"net/http"
 
+	dbm "github.com/cometbft/cometbft-db"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/gorilla/mux"
-	dbm "github.com/tendermint/tm-db"
 )
 
 // setTicketIDtoDB : initiates TicketID in Database

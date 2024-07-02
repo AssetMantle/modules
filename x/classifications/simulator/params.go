@@ -16,9 +16,9 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/parameters/max_property_count"
 )
 
-func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
-	return []simulationTypes.ParamChange{
-		simulation.NewSimParamChange(constants.ModuleName,
+func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.LegacyParamChange {
+	return []simulationTypes.LegacyParamChange{
+		simulation.NewSimLegacyParamChange(constants.ModuleName,
 			string(bond_rate.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(math.MaxInt))
@@ -28,7 +28,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.ParamChange {
 				return string(bytes)
 			},
 		),
-		simulation.NewSimParamChange(constants.ModuleName,
+		simulation.NewSimLegacyParamChange(constants.ModuleName,
 			string(max_property_count.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
 				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(1000) + 22)

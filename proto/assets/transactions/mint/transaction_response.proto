@@ -1,8 +1,0 @@
-syntax = "proto3";
-package assetmantle.modules.assets.transactions.mint;
-
-import "ids/base/asset_id.proto";
-
-message TransactionResponse {
-  assetmantle.schema.ids.base.AssetID asset_i_d = 1;
-}

@@ -6,18 +6,19 @@ package put
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
-	baseDocuments "github.com/AssetMantle/schema/go/documents/base"
-	baseIDs "github.com/AssetMantle/schema/go/ids/base"
-	baseLists "github.com/AssetMantle/schema/go/lists/base"
-	baseQualified "github.com/AssetMantle/schema/go/qualified/base"
-	"github.com/AssetMantle/schema/go/types/base"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	baseQualified "github.com/AssetMantle/schema/qualified/base"
+	"github.com/AssetMantle/schema/types/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 

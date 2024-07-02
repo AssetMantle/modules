@@ -4,9 +4,9 @@
 package mappable
 
 import (
-	codecUtilities "github.com/AssetMantle/schema/go/codec/utilities"
-	"github.com/AssetMantle/schema/go/types"
-	baseTypes "github.com/AssetMantle/schema/go/types/base"
+	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
+	"github.com/AssetMantle/schema/types"
+	baseTypes "github.com/AssetMantle/schema/types/base"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/AssetMantle/modules/helpers"
