@@ -5,10 +5,8 @@ package authenticate
 
 import (
 	"context"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
-	"github.com/cosmos/cosmos-sdk/types/module/testutil"
-
 	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/identities/constants"
@@ -24,6 +22,7 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -80,11 +79,11 @@ var (
 	testIdentity         = base.PrototypeNameIdentity().ProvisionAddress(provisionedAddress)
 	testIdentityID       = testIdentity.(documents.NameIdentity).GetNameIdentityID()
 
+	codec = baseHelpers.TestCodec()
+
 	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
 	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
-	ParamsKeeper             = paramsKeeper.NewKeeper(encodingConfig.Codec, encodingConfig.Amino, paramsStoreKey, paramsTransientStoreKeys)
-
-	encodingConfig = testutil.MakeTestEncodingConfig()
+	ParamsKeeper             = paramsKeeper.NewKeeper(codec, codec.GetLegacyAmino(), paramsStoreKey, paramsTransientStoreKeys)
 
 	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace(constants.ModuleName).WithKeyTable(parameters.Prototype().GetKeyTable()))
 

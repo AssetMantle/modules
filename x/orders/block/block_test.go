@@ -5,7 +5,6 @@ package block
 
 import (
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
-	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"testing"
 
 	tendermintDB "github.com/cometbft/cometbft-db"
@@ -42,10 +41,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Au
 	require.Nil(t, err)
 
 	Mapper := mapper.Prototype().Initialize(storeKey)
-	encodingConfig := testutil.MakeTestEncodingConfig()
-	appCodec := encodingConfig.Codec
+	codec := baseHelpers.TestCodec()
 	ParamsKeeper := paramsKeeper.NewKeeper(
-		appCodec,
+		codec,
 		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
