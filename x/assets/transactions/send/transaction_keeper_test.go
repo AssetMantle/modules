@@ -5,10 +5,8 @@ package send
 
 import (
 	"context"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
-	"github.com/cosmos/cosmos-sdk/types/module/testutil"
-
 	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/assets/constants"
@@ -35,6 +33,7 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -141,11 +140,11 @@ var (
 	transferAuxiliaryAuxiliary = new(MockAuxiliary)
 	_                          = transferAuxiliaryAuxiliary.On("GetKeeper").Return(transferAuxiliaryKeeper)
 
-	encodingConfig = testutil.MakeTestEncodingConfig()
+	codec = baseHelpers.TestCodec()
 
 	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
 	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
-	ParamsKeeper             = paramsKeeper.NewKeeper(encodingConfig.Codec, encodingConfig.Amino, paramsStoreKey, paramsTransientStoreKeys)
+	ParamsKeeper             = paramsKeeper.NewKeeper(codec, codec.GetLegacyAmino(), paramsStoreKey, paramsTransientStoreKeys)
 
 	setContext = func() sdkTypes.Context {
 		memDB := tendermintDB.NewMemDB()
