@@ -50,3 +50,9 @@ func CodecPrototype() helpers.Codec {
 	codec.legacyAmino = sdkCodec.NewLegacyAmino()
 	return codec
 }
+
+// TestCodec
+// Deprecated: Only for testing. Use CodecPrototype instead.
+func TestCodec() helpers.Codec {
+	return CodecPrototype().Initialize(NewModuleManager(auth.AppModule{}))
+}

@@ -6,7 +6,6 @@ package authorize
 import (
 	"context"
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
-	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"reflect"
 	"testing"
 
@@ -101,10 +100,9 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := mapper.Prototype().Initialize(storeKey)
 	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
-	encodingConfig := testutil.MakeTestEncodingConfig()
-	appCodec := encodingConfig.Codec
+	codec := baseHelpers.TestCodec()
 	ParamsKeeper := paramsKeeper.NewKeeper(
-		appCodec,
+		codec,
 		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,
