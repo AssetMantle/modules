@@ -16,10 +16,8 @@ import (
 type moduleManager struct {
 	basicModules       []helpers.BasicModule
 	orderInitGenesis   []string
-	orderExportGenesis []string
 	orderBeginBlockers []string
 	orderEndBlockers   []string
-	orderMigrations    []string
 }
 
 var _ helpers.ModuleManager = (*moduleManager)(nil)
