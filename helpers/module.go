@@ -13,9 +13,18 @@ import (
 )
 
 type Module interface {
+	BasicModule
+	sdkModuleTypes.AppModuleGenesis
 	sdkModuleTypes.EndBlockAppModule
 	sdkModuleTypes.BeginBlockAppModule
+
+	sdkModuleTypes.HasConsensusVersion
+	sdkModuleTypes.HasInvariants
+	sdkModuleTypes.HasServices
+
 	sdkModuleTypes.AppModuleSimulation
+	sdkModuleTypes.HasProposalContents
+	sdkModuleTypes.HasProposalMsgs
 
 	GetAuxiliary(string) Auxiliary
 
