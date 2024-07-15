@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/AssetMantle/modules/utilities/rest"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"reflect"
 	"testing"
 
@@ -16,7 +17,6 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/spf13/viper"
@@ -224,14 +224,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		Coins   string
 	}
 	type args struct {
-		legacyAmino *codec.LegacyAmino
+		legacyAmino *sdkCodec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), coins.String()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), coins.String()}, args{codec.GetLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
