@@ -23,7 +23,6 @@ type Module interface {
 	sdkModuleTypes.HasServices
 
 	sdkModuleTypes.AppModuleSimulation
-	sdkModuleTypes.HasProposalContents
 	sdkModuleTypes.HasProposalMsgs
 
 	GetAuxiliary(string) Auxiliary
