@@ -49,15 +49,6 @@ type module struct {
 
 var _ helpers.Module = (*module)(nil)
 
-func (module module) IsOnePerModuleType() {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (module module) IsAppModule() {
-	//TODO implement me
-	panic("implement me")
-}
 func (module module) Name() string {
 	return module.name
 }
@@ -104,7 +95,7 @@ func (module module) RegisterGRPCGatewayRoutes(context client.Context, serveMux 
 func (module module) GetTxCmd() *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
 		Use:                        module.name,
-		Short:                      "GetProperty root transaction command.",
+		Short:                      module.name + " root transaction command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -124,7 +115,7 @@ func (module module) GetTxCmd() *cobra.Command {
 func (module module) GetQueryCmd() *cobra.Command {
 	rootQueryCommand := &cobra.Command{
 		Use:                        module.name,
-		Short:                      "GetProperty root query command.",
+		Short:                      module.Name() + " root query command.",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -145,27 +136,24 @@ func (module module) GenerateGenesisState(simulationState *sdkModuleTypes.Simula
 	module.simulatorPrototype().RandomizedGenesisState(simulationState)
 }
 func (module module) ProposalMsgs(simulationState sdkModuleTypes.SimulationState) []simulationTypes.WeightedProposalMsg {
-	//TODO implement me
-	panic("implement me")
-}
-func (module module) ProposalContents(simulationState sdkModuleTypes.SimulationState) []simulationTypes.WeightedProposalContent {
-	return module.simulatorPrototype().WeightedProposalContentList(simulationState)
+	return module.simulatorPrototype().ProposalMessages(simulationState)
 }
 func (module module) RandomizedParams(r *rand.Rand) []simulationTypes.LegacyParamChange {
 	return module.simulatorPrototype().ParamChangeList(r)
 }
-func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDecoderRegistry) {
-	storeDecoderRegistry[module.name] = module.mapperPrototype().StoreDecoder
-}
 func (module module) WeightedOperations(simulationState sdkModuleTypes.SimulationState) []simulationTypes.WeightedOperation {
 	return module.simulatorPrototype().WeightedOperations(simulationState, module)
+}
+func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDecoderRegistry) {
+	storeDecoderRegistry[module.name] = module.mapperPrototype().StoreDecoder
 }
 func (module module) RegisterInvariants(invariantRegistry sdkTypes.InvariantRegistry) {
 	module.invariantsPrototype().Register(invariantRegistry)
 }
+func (module module) QuerierRoute() string {
+	return module.name
+}
 
-// TODO remove if unnecessary
-//
 //	func (module module) Route() sdkTypes.Route {
 //		return sdkTypes.NewRoute(module.Name(), func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
 //			if module.transactions == nil {
@@ -180,10 +168,7 @@ func (module module) RegisterInvariants(invariantRegistry sdkTypes.InvariantRegi
 //			return nil, fmt.Errorf("message type %T is not supported by module %s", msg, module.Name())
 //		})
 //	}
-func (module module) QuerierRoute() string {
-	return module.name
-}
-
+//
 //	func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Querier {
 //		return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
 //			if module.queries == nil {
