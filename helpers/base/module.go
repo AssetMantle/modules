@@ -153,39 +153,6 @@ func (module module) RegisterInvariants(invariantRegistry sdkTypes.InvariantRegi
 func (module module) QuerierRoute() string {
 	return module.name
 }
-
-//	func (module module) Route() sdkTypes.Route {
-//		return sdkTypes.NewRoute(module.Name(), func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
-//			if module.transactions == nil {
-//				panic(fmt.Errorf("transactions for module %s not initialized", module.Name()))
-//			}
-//
-//			if message, ok := msg.(helpers.Message); ok {
-//				if transaction := module.transactions.GetTransaction(message.Type()); transaction != nil {
-//					return transaction.HandleMessage(sdkTypes.WrapSDKContext(context.WithEventManager(sdkTypes.NewEventManager())), message)
-//				}
-//			}
-//			return nil, fmt.Errorf("message type %T is not supported by module %s", msg, module.Name())
-//		})
-//	}
-//
-//	func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Querier {
-//		return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
-//			if module.queries == nil {
-//				panic(fmt.Errorf("queries for module %s not initialized", module.Name()))
-//			}
-//
-//			if query := module.queries.GetQuery(path[0]); query != nil {
-//				return query.HandleQuery(sdkTypes.WrapSDKContext(context), requestQuery)
-//			}
-//
-//			if path[0] == "parameters" {
-//				return CodecPrototype().MarshalJSON(module.parameterManager.Fetch(sdkTypes.WrapSDKContext(context)).Get())
-//			}
-//
-//			return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
-//		}
-//	}
 func (module module) RegisterServices(configurator sdkModuleTypes.Configurator) {
 	for _, query := range module.queries.Get() {
 		query.RegisterService(configurator)
