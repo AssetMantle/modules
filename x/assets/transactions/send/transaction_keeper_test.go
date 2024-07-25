@@ -270,7 +270,8 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			},
 			nil,
 			errorConstants.MockError,
-		}, {
+		},
+		{
 			"transferAuxiliaryFailure",
 			args{fromAddress, transferAuxiliaryFailureAssetID, 1},
 			func() {
