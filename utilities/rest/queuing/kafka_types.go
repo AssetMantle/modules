@@ -23,8 +23,8 @@ type kafkaMsg struct {
 	KafkaCliCtx kafkaCliCtx  `json:"kafkaCliCtx"`
 }
 
-// NewKafkaMsgFromRest : makes a msg to send to kafka queue
-func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseReq, context client.Context) kafkaMsg {
+// newKafkaMsgFromRest : makes a msg to send to kafka queue
+func newKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRestRequest rest.CommonTransactionRequest, context client.Context) kafkaMsg {
 	kafkaCtx := kafkaCliCtx{
 		OutputFormat:  context.OutputFormat,
 		ChainID:       context.ChainID,
@@ -99,8 +99,8 @@ type kafkaState struct {
 	IsEnabled bool
 }
 
-// NewKafkaState : returns a kafka state
-func NewKafkaState(nodeList []string) *kafkaState {
+// newKafkaState : returns a kafka state
+func newKafkaState(nodeList []string) *kafkaState {
 	kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome)
 	admin := kafkaAdmin(nodeList)
 	producer := newProducer(nodeList)
