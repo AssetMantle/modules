@@ -40,36 +40,36 @@ var (
 	immutables                    = baseQualified.NewImmutables(immutableProperties)
 	mutables                      = baseQualified.NewMutables(mutableProperties)
 
-	testClassificationID = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
-	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
-	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
-	testBaseRequest      = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
-	expiresIn            = int64(60)
-	makerSplit           = types.NewInt(60)
-	takerSplit           = types.NewInt(60)
+	testClassificationID     = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
+	testFromID               = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
+	testOrderID              = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
+	commonTransactionRequest = rest.PrototypeCommonTransactionRequest()
+	expiresIn                = int64(60)
+	makerSplit               = types.NewInt(60)
+	takerSplit               = types.NewInt(60)
 )
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		baseReq               rest.BaseReq
-		fromID                string
-		orderID               string
-		takerSplit            string
-		makerSplit            string
-		expiresIn             int64
-		mutableMetaProperties string
-		mutableProperties     string
+		commonTransactionRequest rest.CommonTransactionRequest
+		fromID                   string
+		orderID                  string
+		takerSplit               string
+		makerSplit               string
+		expiresIn                int64
+		mutableMetaProperties    string
+		mutableProperties        string
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, transactionRequest{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}},
+		{"+ve", args{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, transactionRequest{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.orderID, tt.args.takerSplit, tt.args.makerSplit, tt.args.expiresIn, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.fromID, tt.args.orderID, tt.args.takerSplit, tt.args.makerSplit, tt.args.expiresIn, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -103,14 +103,14 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.MutableMetaProperties.GetName(), mutableMetaPropertiesString)
 	viper.Set(constants.MutableProperties.GetName(), mutablePropertiesString)
 	type fields struct {
-		BaseReq               rest.BaseReq
-		FromID                string
-		OrderID               string
-		TakerSplit            string
-		MakerSplit            string
-		ExpiresIn             int64
-		MutableMetaProperties string
-		MutableProperties     string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		OrderID                  string
+		TakerSplit               string
+		MakerSplit               string
+		ExpiresIn                int64
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -123,19 +123,19 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:               tt.fields.BaseReq,
-				FromID:                tt.fields.FromID,
-				OrderID:               tt.fields.OrderID,
-				TakerSplit:            tt.fields.TakerSplit,
-				MakerSplit:            tt.fields.MakerSplit,
-				ExpiresIn:             tt.fields.ExpiresIn,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				OrderID:                  tt.fields.OrderID,
+				TakerSplit:               tt.fields.TakerSplit,
+				MakerSplit:               tt.fields.MakerSplit,
+				ExpiresIn:                tt.fields.ExpiresIn,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -150,17 +150,17 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString))
+	jsonMessage, err := json.Marshal(newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString))
 	require.NoError(t, err)
 	type fields struct {
-		BaseReq               rest.BaseReq
-		FromID                string
-		OrderID               string
-		TakerSplit            string
-		MakerSplit            string
-		ExpiresIn             int64
-		MutableMetaProperties string
-		MutableProperties     string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		OrderID                  string
+		TakerSplit               string
+		MakerSplit               string
+		ExpiresIn                int64
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	type args struct {
 		rawMessage json.RawMessage
@@ -172,19 +172,19 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString), false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:               tt.fields.BaseReq,
-				FromID:                tt.fields.FromID,
-				OrderID:               tt.fields.OrderID,
-				TakerSplit:            tt.fields.TakerSplit,
-				MakerSplit:            tt.fields.MakerSplit,
-				ExpiresIn:             tt.fields.ExpiresIn,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				OrderID:                  tt.fields.OrderID,
+				TakerSplit:               tt.fields.TakerSplit,
+				MakerSplit:               tt.fields.MakerSplit,
+				ExpiresIn:                tt.fields.ExpiresIn,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
 			if (err != nil) != tt.wantErr {
@@ -200,36 +200,36 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		BaseReq               rest.BaseReq
-		FromID                string
-		OrderID               string
-		TakerSplit            string
-		MakerSplit            string
-		ExpiresIn             int64
-		MutableMetaProperties string
-		MutableProperties     string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		OrderID                  string
+		TakerSplit               string
+		MakerSplit               string
+		ExpiresIn                int64
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.BaseReq
+		want   rest.CommonTransactionRequest
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, testBaseRequest},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:               tt.fields.BaseReq,
-				FromID:                tt.fields.FromID,
-				OrderID:               tt.fields.OrderID,
-				TakerSplit:            tt.fields.TakerSplit,
-				MakerSplit:            tt.fields.MakerSplit,
-				ExpiresIn:             tt.fields.ExpiresIn,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				OrderID:                  tt.fields.OrderID,
+				TakerSplit:               tt.fields.TakerSplit,
+				MakerSplit:               tt.fields.MakerSplit,
+				ExpiresIn:                tt.fields.ExpiresIn,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
-			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
+			if got := transactionRequest.GetCommonTransactionRequest(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCommonTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -237,14 +237,14 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		BaseReq               rest.BaseReq
-		FromID                string
-		OrderID               string
-		TakerSplit            string
-		MakerSplit            string
-		ExpiresIn             int64
-		MutableMetaProperties string
-		MutableProperties     string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		OrderID                  string
+		TakerSplit               string
+		MakerSplit               string
+		ExpiresIn                int64
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	tests := []struct {
 		name    string
@@ -252,19 +252,19 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, NewMessage(fromAccAddress, testFromID, testOrderID, takerSplit, makerSplit, base.NewHeight(60), mutableMetaProperties, mutableProperties), false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, NewMessage(fromAccAddress, testFromID, testOrderID, takerSplit, makerSplit, base.NewHeight(60), mutableMetaProperties, mutableProperties), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:               tt.fields.BaseReq,
-				FromID:                tt.fields.FromID,
-				OrderID:               tt.fields.OrderID,
-				TakerSplit:            tt.fields.TakerSplit,
-				MakerSplit:            tt.fields.MakerSplit,
-				ExpiresIn:             tt.fields.ExpiresIn,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				OrderID:                  tt.fields.OrderID,
+				TakerSplit:               tt.fields.TakerSplit,
+				MakerSplit:               tt.fields.MakerSplit,
+				ExpiresIn:                tt.fields.ExpiresIn,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -280,14 +280,14 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
-		BaseReq               rest.BaseReq
-		FromID                string
-		OrderID               string
-		TakerSplit            string
-		MakerSplit            string
-		ExpiresIn             int64
-		MutableMetaProperties string
-		MutableProperties     string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		OrderID                  string
+		TakerSplit               string
+		MakerSplit               string
+		ExpiresIn                int64
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -297,19 +297,19 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := transactionRequest{
-				BaseReq:               tt.fields.BaseReq,
-				FromID:                tt.fields.FromID,
-				OrderID:               tt.fields.OrderID,
-				TakerSplit:            tt.fields.TakerSplit,
-				MakerSplit:            tt.fields.MakerSplit,
-				ExpiresIn:             tt.fields.ExpiresIn,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				OrderID:                  tt.fields.OrderID,
+				TakerSplit:               tt.fields.TakerSplit,
+				MakerSplit:               tt.fields.MakerSplit,
+				ExpiresIn:                tt.fields.ExpiresIn,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -318,33 +318,33 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		BaseReq               rest.BaseReq
-		FromID                string
-		OrderID               string
-		TakerSplit            string
-		MakerSplit            string
-		ExpiresIn             int64
-		MutableMetaProperties string
-		MutableProperties     string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		OrderID                  string
+		TakerSplit               string
+		MakerSplit               string
+		ExpiresIn                int64
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:               tt.fields.BaseReq,
-				FromID:                tt.fields.FromID,
-				OrderID:               tt.fields.OrderID,
-				TakerSplit:            tt.fields.TakerSplit,
-				MakerSplit:            tt.fields.MakerSplit,
-				ExpiresIn:             tt.fields.ExpiresIn,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				OrderID:                  tt.fields.OrderID,
+				TakerSplit:               tt.fields.TakerSplit,
+				MakerSplit:               tt.fields.MakerSplit,
+				ExpiresIn:                tt.fields.ExpiresIn,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

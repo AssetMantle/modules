@@ -10,8 +10,6 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -24,15 +22,15 @@ func Test_Reveal_Request(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	data := "S|newData"
-	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
-	testTransactionRequest := newTransactionRequest(testBaseReq, data)
+	commonTransactionRequest := rest.PrototypeCommonTransactionRequest()
+	testTransactionRequest := newTransactionRequest(commonTransactionRequest, data)
 
-	require.Equal(t, transactionRequest{BaseReq: testBaseReq, Data: data}, testTransactionRequest)
+	require.Equal(t, transactionRequest{CommonTransactionRequest: commonTransactionRequest, Data: data}, testTransactionRequest)
 	require.Equal(t, nil, testTransactionRequest.Validate())
 
 	requestFromCLI, err := transactionRequest{}.FromCLI(cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()))
 	require.Equal(t, nil, err)
-	require.Equal(t, transactionRequest{BaseReq: rest.BaseReq{From: client.Context{}.WithCodec(baseHelpers.CodecPrototype()).GetFromAddress().String(), ChainID: client.Context{}.WithCodec(baseHelpers.CodecPrototype()).ChainID, Simulate: client.Context{}.WithCodec(baseHelpers.CodecPrototype()).Simulate}, Data: ""}, requestFromCLI)
+	require.Equal(t, transactionRequest{CommonTransactionRequest: rest.PrototypeCommonTransactionRequest(), Data: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
 	transactionRequestUnmarshalled, err := transactionRequest{}.FromJSON(jsonMessage)
@@ -43,15 +41,15 @@ func Test_Reveal_Request(t *testing.T) {
 	require.Equal(t, nil, randomUnmarshall)
 	require.NotNil(t, err)
 
-	require.Equal(t, testBaseReq, testTransactionRequest.GetBaseReq())
+	require.Equal(t, commonTransactionRequest, testTransactionRequest.GetCommonTransactionRequest())
 
 	require.Nil(t, err)
 
-	msg2, err := newTransactionRequest(rest.BaseReq{From: "randomFromAddress", ChainID: "test"}, data).MakeMsg()
+	msg2, err := newTransactionRequest(rest.PrototypeCommonTransactionRequest(), data).MakeMsg()
 	require.NotNil(t, err)
 	require.Nil(t, msg2)
 
-	msg2, err = newTransactionRequest(rest.BaseReq{From: fromAddress, ChainID: "test"}, "randomString").MakeMsg()
+	msg2, err = newTransactionRequest(rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress), "randomString").MakeMsg()
 	require.NotNil(t, err)
 	require.Nil(t, msg2)
 

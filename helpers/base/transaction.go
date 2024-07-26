@@ -87,9 +87,9 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 			return
 		}
 
-		baseReq := transactionRequest.GetBaseReq().Sanitize()
-		if !baseReq.ValidateBasic(responseWriter) {
-			rest.CheckBadRequestError(responseWriter, fmt.Errorf("invalid base request"))
+		commonTransactionRequest := transactionRequest.GetCommonTransactionRequest().Sanitize()
+		if !commonTransactionRequest.ValidateBasic(responseWriter) {
+			rest.CheckBadRequestError(responseWriter, fmt.Errorf("invalid base request "))
 		}
 
 		msg, err := transactionRequest.MakeMsg()
@@ -98,7 +98,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 			return
 		}
 
-		if rest.CheckInternalServerError(responseWriter, queuing.QueueOrBroadcastTransaction(context.WithOutput(responseWriter), baseReq, msg)) {
+		if rest.CheckInternalServerError(responseWriter, queuing.QueueOrBroadcastTransaction(context.WithOutput(responseWriter), commonTransactionRequest, msg)) {
 			return
 		}
 	}

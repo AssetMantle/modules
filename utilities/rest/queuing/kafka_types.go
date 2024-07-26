@@ -17,14 +17,14 @@ type TicketID string
 
 // kafkaMsg : is a store that can be stored in kafka queues
 type kafkaMsg struct {
-	Msg         sdk.Msg      `json:"msg"`
-	TicketID    TicketID     `json:"TicketID"`
-	BaseRequest rest.BaseReq `json:"base_req"`
-	KafkaCliCtx kafkaCliCtx  `json:"kafkaCliCtx"`
+	Msg                      sdk.Msg                       `json:"msg"`
+	TicketID                 TicketID                      `json:"TicketID"`
+	CommonTransactionRequest rest.CommonTransactionRequest `json:"commonTransactionRequest"`
+	KafkaCliCtx              kafkaCliCtx
 }
 
 // newKafkaMsgFromRest : makes a msg to send to kafka queue
-func newKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRestRequest rest.CommonTransactionRequest, context client.Context) kafkaMsg {
+func newKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, commonTransactionRequest rest.CommonTransactionRequest, context client.Context) kafkaMsg {
 	kafkaCtx := kafkaCliCtx{
 		OutputFormat:  context.OutputFormat,
 		ChainID:       context.ChainID,
@@ -43,10 +43,10 @@ func newKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRestRequest rest.Co
 
 	// TODO return pointer
 	return kafkaMsg{
-		Msg:         msg,
-		TicketID:    ticketID,
-		BaseRequest: baseRequest,
-		KafkaCliCtx: kafkaCtx,
+		Msg:                      msg,
+		TicketID:                 ticketID,
+		CommonTransactionRequest: commonTransactionRequest,
+		KafkaCliCtx:              kafkaCtx,
 	}
 }
 

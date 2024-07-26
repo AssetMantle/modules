@@ -7,13 +7,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/AssetMantle/modules/utilities/rest"
-	"reflect"
-	"testing"
-
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
+	"reflect"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
@@ -26,7 +26,7 @@ import (
 )
 
 var (
-	testBaseRequest               = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
+	commonTransactionRequest      = rest.PrototypeCommonTransactionRequest()
 	immutableMetaPropertiesString = "testImmutableMeta1:S|immutableMeta"
 	immutableMetaProperties1      = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("testImmutableMeta1"), baseData.NewStringData("immutableMeta")))
 	immutablePropertiesString     = "testImmutable1:S|immutable"
@@ -39,23 +39,23 @@ var (
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		baseReq                 rest.BaseReq
-		fromID                  string
-		immutableMetaProperties string
-		immutableProperties     string
-		mutableMetaProperties   string
-		mutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		fromID                   string
+		immutableMetaProperties  string
+		immutableProperties      string
+		mutableMetaProperties    string
+		mutableProperties        string
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, transactionRequest{testBaseRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}},
+		{"+ve", args{commonTransactionRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, transactionRequest{commonTransactionRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.immutableMetaProperties, tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.fromID, tt.args.immutableMetaProperties, tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -87,12 +87,12 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.MutableProperties.GetName(), mutablePropertiesString)
 	viper.Set(constants.FromIdentityID.GetName(), fromID.AsString())
 	type fields struct {
-		BaseReq                 rest.BaseReq
-		FromID                  string
-		ImmutableMetaProperties string
-		ImmutableProperties     string
-		MutableMetaProperties   string
-		MutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		ImmutableMetaProperties  string
+		ImmutableProperties      string
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -105,17 +105,17 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, client.Context{}.WithCodec(base.CodecPrototype())}, transactionRequest{testBaseRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{commonTransactionRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, client.Context{}.WithCodec(base.CodecPrototype())}, transactionRequest{commonTransactionRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:                 tt.fields.BaseReq,
-				FromID:                  tt.fields.FromID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:      tt.fields.ImmutableProperties,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -131,12 +131,12 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
 	type fields struct {
-		BaseReq                 rest.BaseReq
-		FromID                  string
-		ImmutableMetaProperties string
-		ImmutableProperties     string
-		MutableMetaProperties   string
-		MutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		ImmutableMetaProperties  string
+		ImmutableProperties      string
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	type args struct {
 		rawMessage json.RawMessage
@@ -148,17 +148,17 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{types.MustSortJSON(base.CodecPrototype().MustMarshalJSON(&Message{fromAccAddress.String(), fromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}))}, newTransactionRequest(testBaseRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
+		{"+ve", fields{commonTransactionRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{types.MustSortJSON(base.CodecPrototype().MustMarshalJSON(&Message{fromAccAddress.String(), fromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}))}, newTransactionRequest(commonTransactionRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:                 tt.fields.BaseReq,
-				FromID:                  tt.fields.FromID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:      tt.fields.ImmutableProperties,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
 			if (err != nil) != tt.wantErr {
@@ -174,32 +174,32 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		BaseReq                 rest.BaseReq
-		FromID                  string
-		ImmutableMetaProperties string
-		ImmutableProperties     string
-		MutableMetaProperties   string
-		MutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		ImmutableMetaProperties  string
+		ImmutableProperties      string
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.BaseReq
+		want   rest.CommonTransactionRequest
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, testBaseRequest},
+		{"+ve", fields{commonTransactionRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:                 tt.fields.BaseReq,
-				FromID:                  tt.fields.FromID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:      tt.fields.ImmutableProperties,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
-			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
+			if got := transactionRequest.GetCommonTransactionRequest(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCommonTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -207,12 +207,12 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		BaseReq                 rest.BaseReq
-		FromID                  string
-		ImmutableMetaProperties string
-		ImmutableProperties     string
-		MutableMetaProperties   string
-		MutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		ImmutableMetaProperties  string
+		ImmutableProperties      string
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	tests := []struct {
 		name    string
@@ -220,17 +220,17 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, NewMessage(fromAccAddress, fromID, immutableMetaProperties1, immutableProperties1.ScrubData(), mutableMetaProperties1, mutableProperties1.ScrubData()), false},
+		{"+ve", fields{commonTransactionRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, NewMessage(fromAccAddress, fromID, immutableMetaProperties1, immutableProperties1.ScrubData(), mutableMetaProperties1, mutableProperties1.ScrubData()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:                 tt.fields.BaseReq,
-				FromID:                  tt.fields.FromID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:      tt.fields.ImmutableProperties,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -246,12 +246,12 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
-		BaseReq                 rest.BaseReq
-		FromID                  string
-		ImmutableMetaProperties string
-		ImmutableProperties     string
-		MutableMetaProperties   string
-		MutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		ImmutableMetaProperties  string
+		ImmutableProperties      string
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -261,17 +261,17 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{commonTransactionRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := transactionRequest{
-				BaseReq:                 tt.fields.BaseReq,
-				FromID:                  tt.fields.FromID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:      tt.fields.ImmutableProperties,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -280,29 +280,29 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		BaseReq                 rest.BaseReq
-		FromID                  string
-		ImmutableMetaProperties string
-		ImmutableProperties     string
-		MutableMetaProperties   string
-		MutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		ImmutableMetaProperties  string
+		ImmutableProperties      string
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{commonTransactionRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:                 tt.fields.BaseReq,
-				FromID:                  tt.fields.FromID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:      tt.fields.ImmutableProperties,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

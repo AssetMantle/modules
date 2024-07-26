@@ -6,7 +6,6 @@ package unprovision
 import (
 	"encoding/json"
 	"github.com/AssetMantle/modules/utilities/rest"
-
 	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -19,9 +18,9 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq    rest.BaseReq `json:"baseReq"`
-	To         string       `json:"to"`
-	IdentityID string       `json:"identityID"`
+	CommonTransactionRequest rest.CommonTransactionRequest `json:"CommonTransactionRequest"`
+	To                       string                        `json:"to"`
+	IdentityID               string                        `json:"identityID"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -47,7 +46,7 @@ func (transactionRequest transactionRequest) Validate() error {
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
-		cliCommand.ReadBaseReq(context),
+		cliCommand.ReadCommonTransactionRequest(context),
 		cliCommand.ReadString(constants.To),
 		cliCommand.ReadString(constants.IdentityID),
 	), nil
@@ -59,11 +58,11 @@ func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
-	return transactionRequest.BaseReq
+func (transactionRequest transactionRequest) GetCommonTransactionRequest() rest.CommonTransactionRequest {
+	return transactionRequest.CommonTransactionRequest
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetCommonTransactionRequest().GetFrom())
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +89,10 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, to string, identityID string) helpers.TransactionRequest {
+func newTransactionRequest(commonTransactionRequest rest.CommonTransactionRequest, to string, identityID string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:    baseReq,
-		To:         to,
-		IdentityID: identityID,
+		CommonTransactionRequest: commonTransactionRequest,
+		To:                       to,
+		IdentityID:               identityID,
 	}
 }

@@ -28,12 +28,12 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, context client.Context) (
 	for i, kafkaMsg := range kafkaMsgList {
 		context := cliCtxFromKafkaMsg(kafkaMsg, context)
 
-		gasAdj, err := parseGasAdjustment(kafkaMsg.BaseRequest.GasAdjustment)
+		gasAdj, err := parseGasAdjustment(kafkaMsg.CommonTransactionRequest.GetGasAdjustment())
 		if err != nil {
 			return nil, err
 		}
 
-		gasSetting, err := flags.ParseGasSetting(kafkaMsg.BaseRequest.Gas)
+		gasSetting, err := flags.ParseGasSetting(kafkaMsg.CommonTransactionRequest.GetGas())
 		if err != nil {
 			return nil, err
 		}
@@ -48,12 +48,12 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, context client.Context) (
 			return nil, err
 		}
 
-		kafkaMsg.BaseRequest.AccountNumber = accountNumber
+		kafkaMsg.CommonTransactionRequest = kafkaMsg.CommonTransactionRequest.SetAccountNumber(accountNumber)
 
 		var count = uint64(0)
 
 		for j := 0; j < i; j++ {
-			if accountNumber == kafkaMsgList[j].BaseRequest.AccountNumber {
+			if accountNumber == kafkaMsgList[j].CommonTransactionRequest.GetAccountNumber() {
 				count++
 			}
 		}
@@ -61,20 +61,20 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, context client.Context) (
 		sequence += count
 
 		txFactory := tx.Factory{}.
-			WithAccountNumber(kafkaMsg.BaseRequest.AccountNumber).
-			WithSequence(kafkaMsg.BaseRequest.Sequence).
+			WithAccountNumber(kafkaMsg.CommonTransactionRequest.GetAccountNumber()).
+			WithSequence(kafkaMsg.CommonTransactionRequest.GetSequence()).
 			WithGas(gasSetting.Gas).
 			WithGasAdjustment(gasAdj).
-			WithMemo(kafkaMsg.BaseRequest.Memo).
-			WithChainID(kafkaMsg.BaseRequest.ChainID).
-			WithSimulateAndExecute(kafkaMsg.BaseRequest.Simulate).
+			WithMemo(kafkaMsg.CommonTransactionRequest.GetMemo()).
+			WithChainID(kafkaMsg.CommonTransactionRequest.GetChainID()).
+			WithSimulateAndExecute(kafkaMsg.CommonTransactionRequest.IsSimulated()).
 			WithTxConfig(context.TxConfig).
-			WithTimeoutHeight(kafkaMsg.BaseRequest.TimeoutHeight).
-			WithFees(kafkaMsg.BaseRequest.Fees.String()).
-			WithGasPrices(kafkaMsg.BaseRequest.GasPrices.String()).
+			WithTimeoutHeight(kafkaMsg.CommonTransactionRequest.GetTimeoutHeight()).
+			WithFees(kafkaMsg.CommonTransactionRequest.GetFees().String()).
+			WithGasPrices(kafkaMsg.CommonTransactionRequest.GetGasPrices().String()).
 			WithKeybase(keyBase)
 
-		if kafkaMsg.BaseRequest.Simulate || gasSetting.Simulate {
+		if kafkaMsg.CommonTransactionRequest.IsSimulated() || gasSetting.Simulate {
 			if gasAdj < 0 {
 				return nil, errors.New("Error invalid gas adjustment")
 			}
@@ -87,7 +87,7 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, context client.Context) (
 
 			txFactory = txFactory.WithGas(adjusted)
 
-			if kafkaMsg.BaseRequest.Simulate {
+			if kafkaMsg.CommonTransactionRequest.IsSimulated() {
 				val, _ := simulationResponse(context.LegacyAmino, txFactory.Gas())
 				return val, nil
 			}

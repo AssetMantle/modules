@@ -21,7 +21,7 @@ import (
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, sdkTypes.AccAddress, rest.BaseReq) {
+func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, sdkTypes.AccAddress, rest.CommonTransactionRequest) {
 	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.Name})
@@ -30,27 +30,27 @@ func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
+	commonTransactionRequest := rest.PrototypeCommonTransactionRequest()
 
-	return legacyAmino, cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), fromAddress, fromAccAddress, testBaseReq
+	return legacyAmino, cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), fromAddress, fromAccAddress, commonTransactionRequest
 }
 
 func Test_newTransactionRequest(t *testing.T) {
-	_, _, _, _, _, testBaseReq := CreateTestInputForRequest(t)
+	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 	type args struct {
-		baseReq rest.BaseReq
-		nubID   string
+		commonTransactionRequest rest.CommonTransactionRequest
+		nubID                    string
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseReq, "nubID"}, transactionRequest{testBaseReq, "nubID"}},
+		{"+ve", args{commonTransactionRequest, "nubID"}, transactionRequest{commonTransactionRequest, "nubID"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.nubID); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.nubID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -74,11 +74,11 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	_, cliCommand, context, _, _, testBaseReq := CreateTestInputForRequest(t)
+	_, cliCommand, context, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
-		BaseReq rest.BaseReq
-		NubID   string
+		commonTransactionRequest rest.CommonTransactionRequest
+		NubID                    string
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -91,13 +91,13 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{cliCommand.ReadBaseReq(context), cliCommand.ReadString(constants.Name)}, false},
+		{"+ve", fields{commonTransactionRequest, "nubID"}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{cliCommand.ReadCommonTransactionRequest(context), cliCommand.ReadString(constants.Name)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				Name:    tt.fields.NubID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				Name:                     tt.fields.NubID,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -112,11 +112,11 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	_, _, _, _, fromAccAddress, testBaseReq := CreateTestInputForRequest(t)
+	_, _, _, _, fromAccAddress, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
-		BaseReq rest.BaseReq
-		NubID   string
+		commonTransactionRequest rest.CommonTransactionRequest
+		NubID                    string
 	}
 	type args struct {
 		rawMessage json.RawMessage
@@ -128,13 +128,13 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, args{sdkTypes.MustSortJSON(baseHelpers.CodecPrototype().MustMarshalJSON(&Message{fromAccAddress.String(), baseIDs.NewStringID("nubID").(*baseIDs.StringID)}))}, transactionRequest{testBaseReq, "nubID"}, false},
+		{"+ve", fields{commonTransactionRequest, "nubID"}, args{sdkTypes.MustSortJSON(baseHelpers.CodecPrototype().MustMarshalJSON(&Message{fromAccAddress.String(), baseIDs.NewStringID("nubID").(*baseIDs.StringID)}))}, transactionRequest{commonTransactionRequest, "nubID"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				Name:    tt.fields.NubID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				Name:                     tt.fields.NubID,
 			}
 			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
 			if (err != nil) != tt.wantErr {
@@ -149,38 +149,38 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 }
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
-	_, _, _, _, _, testBaseReq := CreateTestInputForRequest(t)
+	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
-		BaseReq rest.BaseReq
-		NubID   string
+		commonTransactionRequest rest.CommonTransactionRequest
+		NubID                    string
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.BaseReq
+		want   rest.CommonTransactionRequest
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, testBaseReq},
+		{"+ve", fields{commonTransactionRequest, "nubID"}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				Name:    tt.fields.NubID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				Name:                     tt.fields.NubID,
 			}
-			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
+			if got := transactionRequest.GetCommonTransactionRequest(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCommonTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
-	_, _, _, _, fromAccAddress, testBaseReq := CreateTestInputForRequest(t)
+	_, _, _, _, fromAccAddress, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
-		BaseReq rest.BaseReq
-		NubID   string
+		commonTransactionRequest rest.CommonTransactionRequest
+		NubID                    string
 	}
 	tests := []struct {
 		name    string
@@ -188,13 +188,13 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, &Message{fromAccAddress.String(), baseIDs.NewStringID("nubID").(*baseIDs.StringID)}, false},
+		{"+ve", fields{commonTransactionRequest, "nubID"}, &Message{fromAccAddress.String(), baseIDs.NewStringID("nubID").(*baseIDs.StringID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				Name:    tt.fields.NubID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				Name:                     tt.fields.NubID,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -209,11 +209,11 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 }
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	_, _, _, _, _, testBaseReq := CreateTestInputForRequest(t)
+	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
-		BaseReq rest.BaseReq
-		NubID   string
+		commonTransactionRequest rest.CommonTransactionRequest
+		NubID                    string
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -223,13 +223,13 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{commonTransactionRequest, "nubID"}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				Name:    tt.fields.NubID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				Name:                     tt.fields.NubID,
 			}
 			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -237,24 +237,24 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 }
 
 func Test_transactionRequest_Validate(t *testing.T) {
-	_, _, _, _, _, testBaseReq := CreateTestInputForRequest(t)
+	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
-		BaseReq rest.BaseReq
-		NubID   string
+		commonTransactionRequest rest.CommonTransactionRequest
+		NubID                    string
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, "nubID"}, false},
+		{"+ve", fields{commonTransactionRequest, "nubID"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				Name:    tt.fields.NubID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				Name:                     tt.fields.NubID,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

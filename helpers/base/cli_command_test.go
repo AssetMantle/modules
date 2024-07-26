@@ -103,11 +103,11 @@ func Test_cliCommand_ReadBaseReq(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   rest.BaseReq
+		want   rest.CommonTransactionRequest
 	}{
 
-		{"+ve", fields{"", "", "", testCliFlagList}, args{client.Context{ChainID: "chainID"}}, rest.BaseReq{ChainID: "chainID"}},
-		{"-ve for nil", fields{"", "", "", nil}, args{client.Context{ChainID: ""}}, rest.BaseReq{ChainID: ""}},
+		{"+ve", fields{"", "", "", testCliFlagList}, args{client.Context{ChainID: "chainID"}}, rest.PrototypeCommonTransactionRequest()},
+		{"-ve for nil", fields{"", "", "", nil}, args{client.Context{ChainID: ""}}, rest.PrototypeCommonTransactionRequest()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -117,8 +117,8 @@ func Test_cliCommand_ReadBaseReq(t *testing.T) {
 				long:        tt.fields.long,
 				cliFlagList: tt.fields.cliFlagList,
 			}
-			if got := cliCommand.ReadBaseReq(tt.args.context); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ReadBaseReq() = %v, want %v", got, tt.want)
+			if got := cliCommand.ReadCommonTransactionRequest(tt.args.context); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ReadCommonTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
 	}

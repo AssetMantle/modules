@@ -6,7 +6,6 @@ package take
 import (
 	"encoding/json"
 	"github.com/AssetMantle/modules/utilities/rest"
-
 	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -19,10 +18,10 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq    rest.BaseReq `json:"baseReq"`
-	FromID     string       `json:"fromID"`
-	TakerSplit string       `json:"takerSplit"`
-	OrderID    string       `json:"orderID"`
+	CommonTransactionRequest rest.CommonTransactionRequest `json:"CommonTransactionRequest"`
+	FromID                   string                        `json:"fromID"`
+	TakerSplit               string                        `json:"takerSplit"`
+	OrderID                  string                        `json:"orderID"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -48,7 +47,7 @@ func (transactionRequest transactionRequest) Validate() error {
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
-		cliCommand.ReadBaseReq(context),
+		cliCommand.ReadCommonTransactionRequest(context),
 		cliCommand.ReadString(constants.FromIdentityID),
 		cliCommand.ReadString(constants.TakerSplit),
 		cliCommand.ReadString(constants.OrderID),
@@ -61,11 +60,11 @@ func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
-	return transactionRequest.BaseReq
+func (transactionRequest transactionRequest) GetCommonTransactionRequest() rest.CommonTransactionRequest {
+	return transactionRequest.CommonTransactionRequest
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetCommonTransactionRequest().GetFrom())
 	if err != nil {
 		return nil, err
 	}
@@ -98,11 +97,11 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, takerSplit string, orderID string) helpers.TransactionRequest {
+func newTransactionRequest(commonTransactionRequest rest.CommonTransactionRequest, fromID string, takerSplit string, orderID string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:    baseReq,
-		FromID:     fromID,
-		TakerSplit: takerSplit,
-		OrderID:    orderID,
+		CommonTransactionRequest: commonTransactionRequest,
+		FromID:                   fromID,
+		TakerSplit:               takerSplit,
+		OrderID:                  orderID,
 	}
 }

@@ -13,16 +13,16 @@ import (
 	"github.com/AssetMantle/modules/utilities/random"
 )
 
-func QueueOrBroadcastTransaction(context client.Context, baseReq rest.BaseReq, msg sdkTypes.Msg) (err error) {
-	fromAddress, fromName, _, err := client.GetFromFields(context, context.Keyring, baseReq.From)
+func QueueOrBroadcastTransaction(context client.Context, commonTransactionRequest rest.CommonTransactionRequest, msg sdkTypes.Msg) (err error) {
+	fromAddress, fromName, _, err := client.GetFromFields(context, context.Keyring, commonTransactionRequest.GetFrom())
 	if err != nil {
 		return err
 	}
 
-	context = context.WithFromAddress(fromAddress).WithFromName(fromName).WithSkipConfirmation(true).WithGenerateOnly(baseReq.Simulate)
+	context = context.WithFromAddress(fromAddress).WithFromName(fromName).WithSkipConfirmation(true).WithGenerateOnly(commonTransactionRequest.IsSimulated())
 
 	if KafkaState.IsEnabled {
-		if err = context.PrintBytes(SendToKafka(NewKafkaMsgFromRest(msg, TicketID(random.GenerateUniqueIdentifier(reflect.TypeOf(msg).String())), baseReq, context), context.LegacyAmino)); err != nil {
+		if err = context.PrintBytes(SendToKafka(newKafkaMsgFromRest(msg, TicketID(random.GenerateUniqueIdentifier(reflect.TypeOf(msg).String())), commonTransactionRequest, context), context.LegacyAmino)); err != nil {
 			return err
 		} else {
 			return nil
@@ -30,30 +30,30 @@ func QueueOrBroadcastTransaction(context client.Context, baseReq rest.BaseReq, m
 	}
 
 	gasAdjustment := flags.DefaultGasAdjustment
-	if len(baseReq.GasAdjustment) != 0 {
-		if gasAdjustment, err = strconv.ParseFloat(baseReq.GasAdjustment, 64); err != nil {
+	if len(commonTransactionRequest.GetGasAdjustment()) != 0 {
+		if gasAdjustment, err = strconv.ParseFloat(commonTransactionRequest.GetGasAdjustment(), 64); err != nil {
 			return err
 		}
 	}
 
-	gasSetting, err := flags.ParseGasSetting(baseReq.Gas)
+	gasSetting, err := flags.ParseGasSetting(commonTransactionRequest.GetGas())
 	if err != nil {
 		return err
 	}
 
 	transactionFactory := tx.Factory{}.
-		WithFees(baseReq.Fees.String()).
-		WithGasPrices(baseReq.GasPrices.String()).
-		WithAccountNumber(baseReq.AccountNumber).
+		WithFees(commonTransactionRequest.GetFees().String()).
+		WithGasPrices(commonTransactionRequest.GetGasPrices().String()).
+		WithAccountNumber(commonTransactionRequest.GetAccountNumber()).
 		WithAccountRetriever(context.AccountRetriever).
-		WithSequence(baseReq.Sequence).
+		WithSequence(commonTransactionRequest.GetSequence()).
 		WithGas(gasSetting.Gas).
 		WithGasAdjustment(gasAdjustment).
-		WithMemo(baseReq.Memo).
-		WithChainID(baseReq.ChainID).
-		WithSimulateAndExecute(gasSetting.Simulate || baseReq.Simulate).
+		WithMemo(commonTransactionRequest.GetMemo()).
+		WithChainID(commonTransactionRequest.GetChainID()).
+		WithSimulateAndExecute(gasSetting.Simulate || commonTransactionRequest.IsSimulated()).
 		WithTxConfig(context.TxConfig).
-		WithTimeoutHeight(baseReq.TimeoutHeight).
+		WithTimeoutHeight(commonTransactionRequest.GetTimeoutHeight()).
 		WithKeybase(context.Keyring)
 
 	if context.GenerateOnly {

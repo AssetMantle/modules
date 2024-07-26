@@ -44,7 +44,7 @@ var (
 	testFromID                    = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
 	makerAssetID                  = baseDocuments.NewCoinAsset("MakerAssetID").GetCoinAssetID().(*baseIDs.AssetID)
 	takerAssetID                  = baseDocuments.NewCoinAsset("TakerAssetId").GetCoinAssetID().(*baseIDs.AssetID)
-	testBaseRequest               = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
+	commonTransactionRequest      = rest.PrototypeCommonTransactionRequest()
 	expiresIn                     = int64(60)
 	makerSplit                    = types.NewInt(60)
 	takerSplit                    = types.NewInt(60)
@@ -52,19 +52,19 @@ var (
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		baseReq                 rest.BaseReq
-		fromID                  string
-		classificationID        string
-		takerID                 string
-		makerAssetID            string
-		takerAssetID            string
-		expiresIn               int64
-		makerSplit              string
-		takerSplit              string
-		immutableMetaProperties string
-		immutableProperties     string
-		mutableMetaProperties   string
-		mutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		fromID                   string
+		classificationID         string
+		takerID                  string
+		makerAssetID             string
+		takerAssetID             string
+		expiresIn                int64
+		makerSplit               string
+		takerSplit               string
+		immutableMetaProperties  string
+		immutableProperties      string
+		mutableMetaProperties    string
+		mutableProperties        string
 	}
 	tests := []struct {
 		name string
@@ -72,11 +72,11 @@ func Test_newTransactionRequest(t *testing.T) {
 		want helpers.TransactionRequest
 	}{
 
-		{"+ve", args{testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString)},
+		{"+ve", args{commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.classificationID, tt.args.takerID, tt.args.makerAssetID, tt.args.takerAssetID, tt.args.expiresIn, tt.args.makerSplit, tt.args.takerSplit, tt.args.immutableMetaProperties, tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.fromID, tt.args.classificationID, tt.args.takerID, tt.args.makerAssetID, tt.args.takerAssetID, tt.args.expiresIn, tt.args.makerSplit, tt.args.takerSplit, tt.args.immutableMetaProperties, tt.args.immutableProperties, tt.args.mutableMetaProperties, tt.args.mutableProperties); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -116,19 +116,19 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.MutableMetaProperties.GetName(), mutableMetaPropertiesString)
 	viper.Set(constants.MutableProperties.GetName(), mutablePropertiesString)
 	type fields struct {
-		BaseReq                 rest.BaseReq
-		FromID                  string
-		ClassificationID        string
-		TakerID                 string
-		MakerAssetID            string
-		TakerAssetID            string
-		ExpiresIn               int64
-		MakerSplit              string
-		TakerSplit              string
-		ImmutableMetaProperties string
-		ImmutableProperties     string
-		MutableMetaProperties   string
-		MutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		ClassificationID         string
+		TakerID                  string
+		MakerAssetID             string
+		TakerAssetID             string
+		ExpiresIn                int64
+		MakerSplit               string
+		TakerSplit               string
+		ImmutableMetaProperties  string
+		ImmutableProperties      string
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -141,24 +141,24 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:                 tt.fields.BaseReq,
-				FromID:                  tt.fields.FromID,
-				ClassificationID:        tt.fields.ClassificationID,
-				TakerID:                 tt.fields.TakerID,
-				MakerAssetID:            tt.fields.MakerAssetID,
-				TakerAssetID:            tt.fields.TakerAssetID,
-				ExpiresIn:               tt.fields.ExpiresIn,
-				MakerSplit:              tt.fields.MakerSplit,
-				TakerSplit:              tt.fields.TakerSplit,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ClassificationID:         tt.fields.ClassificationID,
+				TakerID:                  tt.fields.TakerID,
+				MakerAssetID:             tt.fields.MakerAssetID,
+				TakerAssetID:             tt.fields.TakerAssetID,
+				ExpiresIn:                tt.fields.ExpiresIn,
+				MakerSplit:               tt.fields.MakerSplit,
+				TakerSplit:               tt.fields.TakerSplit,
+				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:      tt.fields.ImmutableProperties,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -173,22 +173,22 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString))
+	jsonMessage, err := json.Marshal(newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString))
 	require.NoError(t, err)
 	type fields struct {
-		BaseReq                 rest.BaseReq
-		FromID                  string
-		ClassificationID        string
-		TakerID                 string
-		MakerAssetID            string
-		TakerAssetID            string
-		ExpiresIn               int64
-		MakerSplit              string
-		TakerSplit              string
-		ImmutableMetaProperties string
-		ImmutableProperties     string
-		MutableMetaProperties   string
-		MutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		ClassificationID         string
+		TakerID                  string
+		MakerAssetID             string
+		TakerAssetID             string
+		ExpiresIn                int64
+		MakerSplit               string
+		TakerSplit               string
+		ImmutableMetaProperties  string
+		ImmutableProperties      string
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	type args struct {
 		rawMessage json.RawMessage
@@ -200,24 +200,24 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:                 tt.fields.BaseReq,
-				FromID:                  tt.fields.FromID,
-				ClassificationID:        tt.fields.ClassificationID,
-				TakerID:                 tt.fields.TakerID,
-				MakerAssetID:            tt.fields.MakerAssetID,
-				TakerAssetID:            tt.fields.TakerAssetID,
-				ExpiresIn:               tt.fields.ExpiresIn,
-				MakerSplit:              tt.fields.MakerSplit,
-				TakerSplit:              tt.fields.TakerSplit,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ClassificationID:         tt.fields.ClassificationID,
+				TakerID:                  tt.fields.TakerID,
+				MakerAssetID:             tt.fields.MakerAssetID,
+				TakerAssetID:             tt.fields.TakerAssetID,
+				ExpiresIn:                tt.fields.ExpiresIn,
+				MakerSplit:               tt.fields.MakerSplit,
+				TakerSplit:               tt.fields.TakerSplit,
+				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:      tt.fields.ImmutableProperties,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
 			if (err != nil) != tt.wantErr {
@@ -233,46 +233,46 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		BaseReq                 rest.BaseReq
-		FromID                  string
-		ClassificationID        string
-		TakerID                 string
-		MakerAssetID            string
-		TakerAssetID            string
-		ExpiresIn               int64
-		MakerSplit              string
-		TakerSplit              string
-		ImmutableMetaProperties string
-		ImmutableProperties     string
-		MutableMetaProperties   string
-		MutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		ClassificationID         string
+		TakerID                  string
+		MakerAssetID             string
+		TakerAssetID             string
+		ExpiresIn                int64
+		MakerSplit               string
+		TakerSplit               string
+		ImmutableMetaProperties  string
+		ImmutableProperties      string
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.BaseReq
+		want   rest.CommonTransactionRequest
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, testBaseRequest},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:                 tt.fields.BaseReq,
-				FromID:                  tt.fields.FromID,
-				ClassificationID:        tt.fields.ClassificationID,
-				TakerID:                 tt.fields.TakerID,
-				MakerAssetID:            tt.fields.MakerAssetID,
-				TakerAssetID:            tt.fields.TakerAssetID,
-				ExpiresIn:               tt.fields.ExpiresIn,
-				MakerSplit:              tt.fields.MakerSplit,
-				TakerSplit:              tt.fields.TakerSplit,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ClassificationID:         tt.fields.ClassificationID,
+				TakerID:                  tt.fields.TakerID,
+				MakerAssetID:             tt.fields.MakerAssetID,
+				TakerAssetID:             tt.fields.TakerAssetID,
+				ExpiresIn:                tt.fields.ExpiresIn,
+				MakerSplit:               tt.fields.MakerSplit,
+				TakerSplit:               tt.fields.TakerSplit,
+				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:      tt.fields.ImmutableProperties,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
-			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
+			if got := transactionRequest.GetCommonTransactionRequest(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCommonTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -280,19 +280,19 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		BaseReq                 rest.BaseReq
-		FromID                  string
-		ClassificationID        string
-		TakerID                 string
-		MakerAssetID            string
-		TakerAssetID            string
-		ExpiresIn               int64
-		MakerSplit              string
-		TakerSplit              string
-		ImmutableMetaProperties string
-		ImmutableProperties     string
-		MutableMetaProperties   string
-		MutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		ClassificationID         string
+		TakerID                  string
+		MakerAssetID             string
+		TakerAssetID             string
+		ExpiresIn                int64
+		MakerSplit               string
+		TakerSplit               string
+		ImmutableMetaProperties  string
+		ImmutableProperties      string
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	tests := []struct {
 		name    string
@@ -300,24 +300,24 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, NewMessage(fromAccAddress, testFromID, testClassificationID, testFromID, makerAssetID, takerAssetID, base.NewHeight(60), makerSplit, takerSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, NewMessage(fromAccAddress, testFromID, testClassificationID, testFromID, makerAssetID, takerAssetID, base.NewHeight(60), makerSplit, takerSplit, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:                 tt.fields.BaseReq,
-				FromID:                  tt.fields.FromID,
-				ClassificationID:        tt.fields.ClassificationID,
-				TakerID:                 tt.fields.TakerID,
-				MakerAssetID:            tt.fields.MakerAssetID,
-				TakerAssetID:            tt.fields.TakerAssetID,
-				ExpiresIn:               tt.fields.ExpiresIn,
-				MakerSplit:              tt.fields.MakerSplit,
-				TakerSplit:              tt.fields.TakerSplit,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ClassificationID:         tt.fields.ClassificationID,
+				TakerID:                  tt.fields.TakerID,
+				MakerAssetID:             tt.fields.MakerAssetID,
+				TakerAssetID:             tt.fields.TakerAssetID,
+				ExpiresIn:                tt.fields.ExpiresIn,
+				MakerSplit:               tt.fields.MakerSplit,
+				TakerSplit:               tt.fields.TakerSplit,
+				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:      tt.fields.ImmutableProperties,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -333,19 +333,19 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
-		BaseReq                 rest.BaseReq
-		FromID                  string
-		ClassificationID        string
-		TakerID                 string
-		MakerAssetID            string
-		TakerAssetID            string
-		ExpiresIn               int64
-		MakerSplit              string
-		TakerSplit              string
-		ImmutableMetaProperties string
-		ImmutableProperties     string
-		MutableMetaProperties   string
-		MutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		ClassificationID         string
+		TakerID                  string
+		MakerAssetID             string
+		TakerAssetID             string
+		ExpiresIn                int64
+		MakerSplit               string
+		TakerSplit               string
+		ImmutableMetaProperties  string
+		ImmutableProperties      string
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -355,24 +355,24 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := transactionRequest{
-				BaseReq:                 tt.fields.BaseReq,
-				FromID:                  tt.fields.FromID,
-				ClassificationID:        tt.fields.ClassificationID,
-				TakerID:                 tt.fields.TakerID,
-				MakerAssetID:            tt.fields.MakerAssetID,
-				TakerAssetID:            tt.fields.TakerAssetID,
-				ExpiresIn:               tt.fields.ExpiresIn,
-				MakerSplit:              tt.fields.MakerSplit,
-				TakerSplit:              tt.fields.TakerSplit,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ClassificationID:         tt.fields.ClassificationID,
+				TakerID:                  tt.fields.TakerID,
+				MakerAssetID:             tt.fields.MakerAssetID,
+				TakerAssetID:             tt.fields.TakerAssetID,
+				ExpiresIn:                tt.fields.ExpiresIn,
+				MakerSplit:               tt.fields.MakerSplit,
+				TakerSplit:               tt.fields.TakerSplit,
+				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:      tt.fields.ImmutableProperties,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -381,43 +381,43 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		BaseReq                 rest.BaseReq
-		FromID                  string
-		ClassificationID        string
-		TakerID                 string
-		MakerAssetID            string
-		TakerAssetID            string
-		ExpiresIn               int64
-		MakerSplit              string
-		TakerSplit              string
-		ImmutableMetaProperties string
-		ImmutableProperties     string
-		MutableMetaProperties   string
-		MutableProperties       string
+		commonTransactionRequest rest.CommonTransactionRequest
+		FromID                   string
+		ClassificationID         string
+		TakerID                  string
+		MakerAssetID             string
+		TakerAssetID             string
+		ExpiresIn                int64
+		MakerSplit               string
+		TakerSplit               string
+		ImmutableMetaProperties  string
+		ImmutableProperties      string
+		MutableMetaProperties    string
+		MutableProperties        string
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:                 tt.fields.BaseReq,
-				FromID:                  tt.fields.FromID,
-				ClassificationID:        tt.fields.ClassificationID,
-				TakerID:                 tt.fields.TakerID,
-				MakerAssetID:            tt.fields.MakerAssetID,
-				TakerAssetID:            tt.fields.TakerAssetID,
-				ExpiresIn:               tt.fields.ExpiresIn,
-				MakerSplit:              tt.fields.MakerSplit,
-				TakerSplit:              tt.fields.TakerSplit,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ClassificationID:         tt.fields.ClassificationID,
+				TakerID:                  tt.fields.TakerID,
+				MakerAssetID:             tt.fields.MakerAssetID,
+				TakerAssetID:             tt.fields.TakerAssetID,
+				ExpiresIn:                tt.fields.ExpiresIn,
+				MakerSplit:               tt.fields.MakerSplit,
+				TakerSplit:               tt.fields.TakerSplit,
+				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
+				ImmutableProperties:      tt.fields.ImmutableProperties,
+				MutableMetaProperties:    tt.fields.MutableMetaProperties,
+				MutableProperties:        tt.fields.MutableProperties,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

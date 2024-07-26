@@ -6,7 +6,6 @@ package mint
 import (
 	"encoding/json"
 	"github.com/AssetMantle/modules/utilities/rest"
-
 	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -20,14 +19,14 @@ import (
 )
 
 type transactionRequest struct {
-	BaseReq                 rest.BaseReq `json:"baseReq"`
-	FromID                  string       `json:"fromID"`
-	ToID                    string       `json:"toID"`
-	ClassificationID        string       `json:"classificationID"`
-	ImmutableMetaProperties string       `json:"immutableMetaProperties"`
-	ImmutableProperties     string       `json:"immutableProperties"`
-	MutableMetaProperties   string       `json:"mutableMetaProperties"`
-	MutableProperties       string       `json:"mutableProperties"`
+	rest.CommonTransactionRequest `json:"commonTransactionRequest"`
+	FromID                        string `json:"fromID"`
+	ToID                          string `json:"toID"`
+	ClassificationID              string `json:"classificationID"`
+	ImmutableMetaProperties       string `json:"immutableMetaProperties"`
+	ImmutableProperties           string `json:"immutableProperties"`
+	MutableMetaProperties         string `json:"mutableMetaProperties"`
+	MutableProperties             string `json:"mutableProperties"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -53,7 +52,7 @@ func (transactionRequest transactionRequest) Validate() error {
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
-		cliCommand.ReadBaseReq(context),
+		cliCommand.ReadCommonTransactionRequest(context),
 		cliCommand.ReadString(constants.FromIdentityID),
 		cliCommand.ReadString(constants.ToIdentityID),
 		cliCommand.ReadString(constants.ClassificationID),
@@ -70,11 +69,11 @@ func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
-	return transactionRequest.BaseReq
+func (transactionRequest transactionRequest) GetCommonTransactionRequest() rest.CommonTransactionRequest {
+	return transactionRequest.CommonTransactionRequest
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetCommonTransactionRequest().GetFrom())
 	if err != nil {
 		return nil, err
 	}
@@ -134,15 +133,15 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+func newTransactionRequest(commonTransactionRequest rest.CommonTransactionRequest, fromID string, toID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq:                 baseReq,
-		FromID:                  fromID,
-		ToID:                    toID,
-		ClassificationID:        classificationID,
-		ImmutableMetaProperties: immutableMetaProperties,
-		ImmutableProperties:     immutableProperties,
-		MutableMetaProperties:   mutableMetaProperties,
-		MutableProperties:       mutableProperties,
+		CommonTransactionRequest: commonTransactionRequest,
+		FromID:                   fromID,
+		ToID:                     toID,
+		ClassificationID:         classificationID,
+		ImmutableMetaProperties:  immutableMetaProperties,
+		ImmutableProperties:      immutableProperties,
+		MutableMetaProperties:    mutableMetaProperties,
+		MutableProperties:        mutableProperties,
 	}
 }

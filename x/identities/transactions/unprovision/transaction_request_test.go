@@ -25,7 +25,7 @@ import (
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-func createInputForMessage(t *testing.T) (*baseIDs.IdentityID, string, types.AccAddress, types.Msg, rest.BaseReq) {
+func createInputForMessage(t *testing.T) (*baseIDs.IdentityID, string, types.AccAddress, types.Msg, rest.CommonTransactionRequest) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -39,19 +39,19 @@ func createInputForMessage(t *testing.T) (*baseIDs.IdentityID, string, types.Acc
 	toAccAddress, err := types.AccAddressFromBech32(toAddress)
 	require.Nil(t, err)
 
-	testBaseReq := rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
+	commonTransactionRequest := rest.PrototypeCommonTransactionRequest()
 
 	testMessage := NewMessage(fromAccAddress, toAccAddress, testIdentityID)
 
-	return testIdentityID.(*baseIDs.IdentityID), toAddress, toAccAddress, testMessage, testBaseReq
+	return testIdentityID.(*baseIDs.IdentityID), toAddress, toAccAddress, testMessage, commonTransactionRequest
 }
 
 func Test_newTransactionRequest(t *testing.T) {
-	testIdentityID, toAddress, _, _, testBaseReq := createInputForMessage(t)
+	testIdentityID, toAddress, _, _, commonTransactionRequest := createInputForMessage(t)
 	type args struct {
-		baseReq    rest.BaseReq
-		to         string
-		identityID string
+		commonTransactionRequest rest.CommonTransactionRequest
+		to                       string
+		identityID               string
 	}
 	tests := []struct {
 		name string
@@ -59,11 +59,11 @@ func Test_newTransactionRequest(t *testing.T) {
 		want helpers.TransactionRequest
 	}{
 		{"+ve wit nil", args{}, transactionRequest{}},
-		{"+ve", args{testBaseReq, toAddress, testIdentityID.AsString()}, transactionRequest{testBaseReq, toAddress, testIdentityID.AsString()}},
+		{"+ve", args{commonTransactionRequest, toAddress, testIdentityID.AsString()}, transactionRequest{commonTransactionRequest, toAddress, testIdentityID.AsString()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.to, tt.args.identityID); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.to, tt.args.identityID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -89,11 +89,11 @@ func Test_requestPrototype(t *testing.T) {
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.To, constants.IdentityID})
 
-	testIdentityID, toAddress, _, _, testBaseReq := createInputForMessage(t)
+	testIdentityID, toAddress, _, _, commonTransactionRequest := createInputForMessage(t)
 	type fields struct {
-		BaseReq    rest.BaseReq
-		To         string
-		IdentityID string
+		commonTransactionRequest rest.CommonTransactionRequest
+		To                       string
+		IdentityID               string
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -106,14 +106,14 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{cliCommand.ReadBaseReq(client.Context{}.WithCodec(baseHelpers.CodecPrototype())), cliCommand.ReadString(constants.To), cliCommand.ReadString(constants.IdentityID)}, false},
+		{"+ve", fields{commonTransactionRequest, toAddress, testIdentityID.AsString()}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{cliCommand.ReadCommonTransactionRequest(client.Context{}.WithCodec(baseHelpers.CodecPrototype())), cliCommand.ReadString(constants.To), cliCommand.ReadString(constants.IdentityID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:    tt.fields.BaseReq,
-				To:         tt.fields.To,
-				IdentityID: tt.fields.IdentityID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				To:                       tt.fields.To,
+				IdentityID:               tt.fields.IdentityID,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -128,11 +128,11 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
-	testIdentityID, toAddress, toAccAddress, _, testBaseReq := createInputForMessage(t)
+	testIdentityID, toAddress, toAccAddress, _, commonTransactionRequest := createInputForMessage(t)
 	type fields struct {
-		BaseReq    rest.BaseReq
-		To         string
-		IdentityID string
+		commonTransactionRequest rest.CommonTransactionRequest
+		To                       string
+		IdentityID               string
 	}
 	type args struct {
 		rawMessage json.RawMessage
@@ -144,14 +144,14 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, args{types.MustSortJSON(baseHelpers.CodecPrototype().MustMarshalJSON(&Message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c").String(), toAccAddress.String(), testIdentityID}))}, transactionRequest{testBaseReq, toAddress, testIdentityID.AsString()}, false},
+		{"+ve", fields{commonTransactionRequest, toAddress, testIdentityID.AsString()}, args{types.MustSortJSON(baseHelpers.CodecPrototype().MustMarshalJSON(&Message{types.AccAddress("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c").String(), toAccAddress.String(), testIdentityID}))}, transactionRequest{commonTransactionRequest, toAddress, testIdentityID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:    tt.fields.BaseReq,
-				To:         tt.fields.To,
-				IdentityID: tt.fields.IdentityID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				To:                       tt.fields.To,
+				IdentityID:               tt.fields.IdentityID,
 			}
 			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
 			if (err != nil) != tt.wantErr {
@@ -166,42 +166,42 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 }
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
-	testIdentityID, toAddress, _, _, testBaseReq := createInputForMessage(t)
+	testIdentityID, toAddress, _, _, commonTransactionRequest := createInputForMessage(t)
 	type fields struct {
-		BaseReq    rest.BaseReq
-		To         string
-		IdentityID string
+		commonTransactionRequest rest.CommonTransactionRequest
+		To                       string
+		IdentityID               string
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.BaseReq
+		want   rest.CommonTransactionRequest
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, testBaseReq},
+		{"+ve", fields{commonTransactionRequest, toAddress, testIdentityID.AsString()}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:    tt.fields.BaseReq,
-				To:         tt.fields.To,
-				IdentityID: tt.fields.IdentityID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				To:                       tt.fields.To,
+				IdentityID:               tt.fields.IdentityID,
 			}
-			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
+			if got := transactionRequest.GetCommonTransactionRequest(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCommonTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
-	testIdentityID, toAddress, toAccAddress, _, testBaseReq := createInputForMessage(t)
+	testIdentityID, toAddress, toAccAddress, _, commonTransactionRequest := createInputForMessage(t)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := types.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 	type fields struct {
-		BaseReq    rest.BaseReq
-		To         string
-		IdentityID string
+		commonTransactionRequest rest.CommonTransactionRequest
+		To                       string
+		IdentityID               string
 	}
 	tests := []struct {
 		name    string
@@ -209,14 +209,14 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, &Message{fromAccAddress.String(), toAccAddress.String(), testIdentityID}, false},
+		{"+ve", fields{commonTransactionRequest, toAddress, testIdentityID.AsString()}, &Message{fromAccAddress.String(), toAccAddress.String(), testIdentityID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:    tt.fields.BaseReq,
-				To:         tt.fields.To,
-				IdentityID: tt.fields.IdentityID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				To:                       tt.fields.To,
+				IdentityID:               tt.fields.IdentityID,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -231,11 +231,11 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 }
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	testIdentityID, toAddress, _, _, testBaseReq := createInputForMessage(t)
+	testIdentityID, toAddress, _, _, commonTransactionRequest := createInputForMessage(t)
 	type fields struct {
-		BaseReq    rest.BaseReq
-		To         string
-		IdentityID string
+		commonTransactionRequest rest.CommonTransactionRequest
+		To                       string
+		IdentityID               string
 	}
 	type args struct {
 		legacyAmino *codec.LegacyAmino
@@ -246,14 +246,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		args   args
 	}{
 		{"+ve wit nil", fields{}, args{codec.NewLegacyAmino()}},
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{commonTransactionRequest, toAddress, testIdentityID.AsString()}, args{codec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := transactionRequest{
-				BaseReq:    tt.fields.BaseReq,
-				To:         tt.fields.To,
-				IdentityID: tt.fields.IdentityID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				To:                       tt.fields.To,
+				IdentityID:               tt.fields.IdentityID,
 			}
 			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
@@ -261,11 +261,11 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 }
 
 func Test_transactionRequest_Validate(t *testing.T) {
-	testIdentityID, toAddress, _, _, testBaseReq := createInputForMessage(t)
+	testIdentityID, toAddress, _, _, commonTransactionRequest := createInputForMessage(t)
 	type fields struct {
-		BaseReq    rest.BaseReq
-		To         string
-		IdentityID string
+		commonTransactionRequest rest.CommonTransactionRequest
+		To                       string
+		IdentityID               string
 	}
 	tests := []struct {
 		name    string
@@ -273,14 +273,14 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve wit nil", fields{}, true},
-		{"+ve", fields{testBaseReq, toAddress, testIdentityID.AsString()}, false},
+		{"+ve", fields{commonTransactionRequest, toAddress, testIdentityID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:    tt.fields.BaseReq,
-				To:         tt.fields.To,
-				IdentityID: tt.fields.IdentityID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				To:                       tt.fields.To,
+				IdentityID:               tt.fields.IdentityID,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
