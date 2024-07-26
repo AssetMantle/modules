@@ -10,7 +10,7 @@ import (
 )
 
 func InitializeKafka(nodeList []string, context client.Context) {
-	KafkaState = *NewKafkaState(nodeList)
+	KafkaState = *newKafkaState(nodeList)
 	if KafkaState.IsEnabled {
 		go func() {
 			for {
