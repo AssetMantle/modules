@@ -5,7 +5,9 @@ package helpers
 
 import (
 	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/gorilla/mux"
 
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
@@ -32,4 +34,6 @@ type Module interface {
 	Initialize(*storeTypes.KVStoreKey, paramsTypes.Subspace, ...interface{}) Module
 
 	GetTransactions() Transactions
+
+	RegisterRESTRoutes(client.Context, *mux.Router)
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 )
@@ -77,6 +78,13 @@ func (moduleManager moduleManager) GetBasicManager() sdkModuleTypes.BasicManager
 }
 func (moduleManager moduleManager) ExportGenesisForModules(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, moduleNames []string) map[string]json.RawMessage {
 	return moduleManager.getModuleManager().ExportGenesisForModules(context, jsonCodec, moduleNames)
+}
+func (moduleManager moduleManager) RegisterRESTRoutes(context client.Context, router *mux.Router) {
+	for _, basicModule := range moduleManager.basicModules {
+		if module, ok := basicModule.(helpers.Module); ok {
+			module.RegisterRESTRoutes(context, router)
+		}
+	}
 }
 func (moduleManager moduleManager) RegisterGRPCGatewayRoutes(context client.Context, serverMux *runtime.ServeMux) {
 	for _, basicModule := range moduleManager.basicModules {
