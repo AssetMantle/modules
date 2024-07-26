@@ -6,7 +6,6 @@ package base
 import (
 	"fmt"
 	"github.com/AssetMantle/modules/utilities/rest"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 
@@ -85,12 +84,8 @@ func (cliCommand cliCommand) ReadString(cliFlag helpers.CLIFlag) string {
 	panic(fmt.Errorf("uregistered flag %v type %T", cliFlag.GetName(), cliFlag.GetValue()))
 }
 
-func (cliCommand cliCommand) ReadBaseReq(context client.Context) rest.BaseReq {
-	return rest.BaseReq{
-		From:     context.GetFromAddress().String(),
-		ChainID:  context.ChainID,
-		Simulate: context.Simulate,
-	}
+func (cliCommand cliCommand) ReadCommonTransactionRequest(context client.Context) rest.CommonTransactionRequest {
+	return rest.NewCommonTransactionRequestFromContext(context)
 }
 func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, args []string) error) *cobra.Command {
 	command := &cobra.Command{

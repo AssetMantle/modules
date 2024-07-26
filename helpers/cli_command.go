@@ -15,7 +15,8 @@ type CLICommand interface {
 	ReadInt(CLIFlag) int
 	ReadBool(CLIFlag) bool
 	ReadString(CLIFlag) string
-	ReadBaseReq(client.Context) rest.BaseReq
+	//TODO see if it can be replaced with NewCommonTransactionRequestFromContext
+	ReadCommonTransactionRequest(client.Context) rest.CommonTransactionRequest
 
 	CreateCommand(func(command *cobra.Command, args []string) error) *cobra.Command
 }
