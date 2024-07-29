@@ -34,6 +34,7 @@ func (codec codec) Initialize(moduleManager helpers.ModuleManager) helpers.Codec
 	std.RegisterLegacyAminoCodec(codec.legacyAmino)
 	std.RegisterInterfaces(codec.interfaceRegistry)
 	helpers.RegisterLegacyAminoCodec(codec.legacyAmino)
+	RegisterLegacyAminoCodec(codec.legacyAmino)
 	schemaCodec.RegisterLegacyAminoCodec(codec.legacyAmino)
 	docs.RegisterLegacyAminoCodec(codec.legacyAmino)
 	moduleManager.RegisterLegacyAminoCodec(codec.legacyAmino)
