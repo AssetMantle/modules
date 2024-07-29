@@ -5,7 +5,6 @@ package make
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
 	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -20,19 +19,19 @@ import (
 )
 
 type transactionRequest struct {
-	rest.CommonTransactionRequest `json:"commonTransactionRequest"`
-	FromID                        string `json:"fromID"`
-	ClassificationID              string `json:"classificationID"`
-	TakerID                       string `json:"takerID"`
-	MakerAssetID                  string `json:"makerAssetID"`
-	TakerAssetID                  string `json:"takerAssetID"`
-	ExpiresIn                     int64  `json:"expiresIn"`
-	MakerSplit                    string `json:"makerSplit"`
-	TakerSplit                    string `json:"takerSplit"`
-	ImmutableMetaProperties       string `json:"immutableMetaProperties"`
-	ImmutableProperties           string `json:"immutableProperties"`
-	MutableMetaProperties         string `json:"mutableMetaProperties"`
-	MutableProperties             string `json:"mutableProperties"`
+	helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
+	FromID                           string `json:"fromID"`
+	ClassificationID                 string `json:"classificationID"`
+	TakerID                          string `json:"takerID"`
+	MakerAssetID                     string `json:"makerAssetID"`
+	TakerAssetID                     string `json:"takerAssetID"`
+	ExpiresIn                        int64  `json:"expiresIn"`
+	MakerSplit                       string `json:"makerSplit"`
+	TakerSplit                       string `json:"takerSplit"`
+	ImmutableMetaProperties          string `json:"immutableMetaProperties"`
+	ImmutableProperties              string `json:"immutableProperties"`
+	MutableMetaProperties            string `json:"mutableMetaProperties"`
+	MutableProperties                string `json:"mutableProperties"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -80,7 +79,7 @@ func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetCommonTransactionRequest() rest.CommonTransactionRequest {
+func (transactionRequest transactionRequest) GetCommonTransactionRequest() helpers.CommonTransactionRequest {
 	return transactionRequest.CommonTransactionRequest
 }
 
@@ -170,7 +169,7 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(commonTransactionRequest rest.CommonTransactionRequest, fromID string, classificationID string, takerID string, makerAssetID string, takerAssetID string, expiresIn int64, makerSplit, takerSplit string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+func newTransactionRequest(commonTransactionRequest helpers.CommonTransactionRequest, fromID string, classificationID string, takerID string, makerAssetID string, takerAssetID string, expiresIn int64, makerSplit, takerSplit string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
 		CommonTransactionRequest: commonTransactionRequest,
 		FromID:                   fromID,

@@ -5,7 +5,6 @@ package name
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -21,7 +20,7 @@ import (
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, sdkTypes.AccAddress, rest.CommonTransactionRequest) {
+func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, sdkTypes.AccAddress, helpers.CommonTransactionRequest) {
 	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.Name})
@@ -30,15 +29,14 @@ func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest()
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest()
 
 	return legacyAmino, cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), fromAddress, fromAccAddress, commonTransactionRequest
 }
-
 func Test_newTransactionRequest(t *testing.T) {
 	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 	type args struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		nubID                    string
 	}
 	tests := []struct {
@@ -77,7 +75,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	_, cliCommand, context, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		NubID                    string
 	}
 	type args struct {
@@ -115,7 +113,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	_, _, _, _, fromAccAddress, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		NubID                    string
 	}
 	type args struct {
@@ -152,13 +150,13 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		NubID                    string
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.CommonTransactionRequest
+		want   helpers.CommonTransactionRequest
 	}{
 		{"+ve", fields{commonTransactionRequest, "nubID"}, commonTransactionRequest},
 	}
@@ -179,7 +177,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	_, _, _, _, fromAccAddress, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		NubID                    string
 	}
 	tests := []struct {
@@ -212,7 +210,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		NubID                    string
 	}
 	type args struct {
@@ -240,7 +238,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		NubID                    string
 	}
 	tests := []struct {

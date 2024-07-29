@@ -5,7 +5,6 @@ package deputize
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -22,9 +21,9 @@ func Test_newTransactionRequest(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress).SetFrom(fromAddress)
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress).SetFrom(fromAddress)
 	type args struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		fromID                   string
 		toID                     string
 		classificationID         string
@@ -71,7 +70,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ToIdentityID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMintAsset, constants.CanBurnAsset, constants.CanRenumerateAsset, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ToID                     string
 		ClassificationID         string
@@ -94,9 +93,9 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve",
-			fields{commonTransactionRequest: rest.PrototypeCommonTransactionRequest(), FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
+			fields{commonTransactionRequest: baseHelpers.PrototypeCommonTransactionRequest(), FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
 			args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())},
-			transactionRequest{CommonTransactionRequest: rest.PrototypeCommonTransactionRequest(), FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
+			transactionRequest{CommonTransactionRequest: baseHelpers.PrototypeCommonTransactionRequest(), FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
 			false,
 		}}
 	for _, tt := range tests {
@@ -125,10 +124,10 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	jsonMessage, _ := json.Marshal(newTransactionRequest(commonTransactionRequest, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false))
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ToID                     string
 		ClassificationID         string
@@ -181,9 +180,9 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ToID                     string
 		ClassificationID         string
@@ -197,7 +196,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.CommonTransactionRequest
+		want   helpers.CommonTransactionRequest
 	}{
 		{"+ve", fields{commonTransactionRequest, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false}, commonTransactionRequest},
 	}
@@ -226,9 +225,9 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
 
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest()
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest()
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ToID                     string
 		ClassificationID         string
@@ -272,9 +271,9 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ToID                     string
 		ClassificationID         string
@@ -318,9 +317,9 @@ func Test_transactionRequest_Validate(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ToID                     string
 		ClassificationID         string

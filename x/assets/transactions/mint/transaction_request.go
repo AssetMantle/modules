@@ -5,7 +5,6 @@ package mint
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
 	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -19,14 +18,14 @@ import (
 )
 
 type transactionRequest struct {
-	rest.CommonTransactionRequest `json:"commonTransactionRequest"`
-	FromID                        string `json:"fromID"`
-	ToID                          string `json:"toID"`
-	ClassificationID              string `json:"classificationID"`
-	ImmutableMetaProperties       string `json:"immutableMetaProperties"`
-	ImmutableProperties           string `json:"immutableProperties"`
-	MutableMetaProperties         string `json:"mutableMetaProperties"`
-	MutableProperties             string `json:"mutableProperties"`
+	helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
+	FromID                           string `json:"fromID"`
+	ToID                             string `json:"toID"`
+	ClassificationID                 string `json:"classificationID"`
+	ImmutableMetaProperties          string `json:"immutableMetaProperties"`
+	ImmutableProperties              string `json:"immutableProperties"`
+	MutableMetaProperties            string `json:"mutableMetaProperties"`
+	MutableProperties                string `json:"mutableProperties"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -69,7 +68,7 @@ func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetCommonTransactionRequest() rest.CommonTransactionRequest {
+func (transactionRequest transactionRequest) GetCommonTransactionRequest() helpers.CommonTransactionRequest {
 	return transactionRequest.CommonTransactionRequest
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
@@ -133,7 +132,7 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(commonTransactionRequest rest.CommonTransactionRequest, fromID string, toID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+func newTransactionRequest(commonTransactionRequest helpers.CommonTransactionRequest, fromID string, toID string, classificationID string, immutableMetaProperties string, immutableProperties string, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
 		CommonTransactionRequest: commonTransactionRequest,
 		FromID:                   fromID,

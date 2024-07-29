@@ -5,7 +5,6 @@ package put
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
 	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -19,13 +18,13 @@ import (
 )
 
 type transactionRequest struct {
-	rest.CommonTransactionRequest `json:"commonTransactionRequest"`
-	FromID                        string `json:"fromID"`
-	MakerAssetID                  string `json:"makerAssetID"`
-	TakerAssetID                  string `json:"takerAssetID"`
-	MakerSplit                    string `json:"makerSplit"`
-	TakerSplit                    string `json:"takerSplit"`
-	ExpiryHeight                  int64  `json:"expiryHeight"`
+	helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
+	FromID                           string `json:"fromID"`
+	MakerAssetID                     string `json:"makerAssetID"`
+	TakerAssetID                     string `json:"takerAssetID"`
+	MakerSplit                       string `json:"makerSplit"`
+	TakerSplit                       string `json:"takerSplit"`
+	ExpiryHeight                     int64  `json:"expiryHeight"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -67,7 +66,7 @@ func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetCommonTransactionRequest() rest.CommonTransactionRequest {
+func (transactionRequest transactionRequest) GetCommonTransactionRequest() helpers.CommonTransactionRequest {
 	return transactionRequest.CommonTransactionRequest
 }
 
@@ -119,7 +118,7 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(commonTransactionRequest rest.CommonTransactionRequest, fromID string, makerAssetID string, takerAssetID string, makerSplit, takerSplit string, expiryHeight int64) helpers.TransactionRequest {
+func newTransactionRequest(commonTransactionRequest helpers.CommonTransactionRequest, fromID string, makerAssetID string, takerAssetID string, makerSplit, takerSplit string, expiryHeight int64) helpers.TransactionRequest {
 	return transactionRequest{
 		CommonTransactionRequest: commonTransactionRequest,
 		FromID:                   fromID,

@@ -6,7 +6,6 @@ package revoke
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -26,14 +25,14 @@ import (
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-func createTestInput(t *testing.T) (rest.CommonTransactionRequest, string, *baseIDs.IdentityID, *baseIDs.IdentityID, *baseIDs.ClassificationID) {
+func createTestInput(t *testing.T) (helpers.CommonTransactionRequest, string, *baseIDs.IdentityID, *baseIDs.IdentityID, *baseIDs.ClassificationID) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	testToID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	testToAddress := "cosmos1vx8knpllrj7n963p9ttd80w47kpacrhuts497x"
 	return commonTransactionRequest, testToAddress, testFromID.(*baseIDs.IdentityID), testToID.(*baseIDs.IdentityID), testClassificationID.(*baseIDs.ClassificationID)
 }
@@ -41,7 +40,7 @@ func createTestInput(t *testing.T) (rest.CommonTransactionRequest, string, *base
 func Test_newTransactionRequest(t *testing.T) {
 	commonTransactionRequest, _, testFromID, testToID, testClassificationID := createTestInput(t)
 	type args struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		fromID                   string
 		toID                     string
 		classificationID         string
@@ -84,7 +83,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 
 	commonTransactionRequest, _, testFromID, testToID, testClassificationID := createTestInput(t)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ToID                     string
 		ClassificationID         string
@@ -127,7 +126,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ToID                     string
 		ClassificationID         string
@@ -167,7 +166,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	commonTransactionRequest, _, testFromID, testToID, testClassificationID := createTestInput(t)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ToID                     string
 		ClassificationID         string
@@ -175,7 +174,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.CommonTransactionRequest
+		want   helpers.CommonTransactionRequest
 	}{
 		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, commonTransactionRequest},
 	}
@@ -199,7 +198,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	testFromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAccAddress)
 	require.Nil(t, err)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ToID                     string
 		ClassificationID         string
@@ -236,7 +235,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	commonTransactionRequest, _, testFromID, testToID, testClassificationID := createTestInput(t)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ToID                     string
 		ClassificationID         string
@@ -268,7 +267,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 func Test_transactionRequest_Validate(t *testing.T) {
 	commonTransactionRequest, _, testFromID, testToID, testClassificationID := createTestInput(t)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ToID                     string
 		ClassificationID         string

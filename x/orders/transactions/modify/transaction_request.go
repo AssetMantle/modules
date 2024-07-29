@@ -5,7 +5,6 @@ package modify
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
 	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -20,14 +19,14 @@ import (
 )
 
 type transactionRequest struct {
-	rest.CommonTransactionRequest `json:"commonTransactionRequest"`
-	FromID                        string `json:"fromID"`
-	OrderID                       string `json:"orderID"`
-	TakerSplit                    string `json:"takerSplit"`
-	MakerSplit                    string `json:"makerSplit"`
-	ExpiresIn                     int64  `json:"expiresIn"`
-	MutableMetaProperties         string `json:"mutableMetaProperties"`
-	MutableProperties             string `json:"mutableProperties"`
+	helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
+	FromID                           string `json:"fromID"`
+	OrderID                          string `json:"orderID"`
+	TakerSplit                       string `json:"takerSplit"`
+	MakerSplit                       string `json:"makerSplit"`
+	ExpiresIn                        int64  `json:"expiresIn"`
+	MutableMetaProperties            string `json:"mutableMetaProperties"`
+	MutableProperties                string `json:"mutableProperties"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -70,7 +69,7 @@ func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetCommonTransactionRequest() rest.CommonTransactionRequest {
+func (transactionRequest transactionRequest) GetCommonTransactionRequest() helpers.CommonTransactionRequest {
 	return transactionRequest.CommonTransactionRequest
 }
 
@@ -129,7 +128,7 @@ func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
 
-func newTransactionRequest(commonTransactionRequest rest.CommonTransactionRequest, fromID string, orderID string, takerSplit string, makerSplit string, expiresIn int64, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
+func newTransactionRequest(commonTransactionRequest helpers.CommonTransactionRequest, fromID string, orderID string, takerSplit string, makerSplit string, expiresIn int64, mutableMetaProperties string, mutableProperties string) helpers.TransactionRequest {
 	return transactionRequest{
 		CommonTransactionRequest: commonTransactionRequest,
 		FromID:                   fromID,

@@ -5,7 +5,6 @@ package reveal
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
 	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/data/base"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -17,8 +16,8 @@ import (
 )
 
 type transactionRequest struct {
-	rest.CommonTransactionRequest `json:"commonTransactionRequest"`
-	Data                          string `json:"data"`
+	helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
+	Data                             string `json:"data"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -55,7 +54,7 @@ func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetCommonTransactionRequest() rest.CommonTransactionRequest {
+func (transactionRequest transactionRequest) GetCommonTransactionRequest() helpers.CommonTransactionRequest {
 	return transactionRequest.CommonTransactionRequest
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
@@ -80,7 +79,7 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(commonTransactionRequest rest.CommonTransactionRequest, data string) helpers.TransactionRequest {
+func newTransactionRequest(commonTransactionRequest helpers.CommonTransactionRequest, data string) helpers.TransactionRequest {
 	return transactionRequest{
 		CommonTransactionRequest: commonTransactionRequest,
 		Data:                     data,

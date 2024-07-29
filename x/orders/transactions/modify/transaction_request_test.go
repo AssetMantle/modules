@@ -6,7 +6,6 @@ package modify
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -43,7 +42,7 @@ var (
 	testClassificationID     = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
 	testFromID               = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
 	testOrderID              = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
-	commonTransactionRequest = rest.PrototypeCommonTransactionRequest()
+	commonTransactionRequest = baseHelpers.PrototypeCommonTransactionRequest()
 	expiresIn                = int64(60)
 	makerSplit               = types.NewInt(60)
 	takerSplit               = types.NewInt(60)
@@ -51,7 +50,7 @@ var (
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		fromID                   string
 		orderID                  string
 		takerSplit               string
@@ -103,7 +102,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.MutableMetaProperties.GetName(), mutableMetaPropertiesString)
 	viper.Set(constants.MutableProperties.GetName(), mutablePropertiesString)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		OrderID                  string
 		TakerSplit               string
@@ -153,7 +152,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	jsonMessage, err := json.Marshal(newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString))
 	require.NoError(t, err)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		OrderID                  string
 		TakerSplit               string
@@ -200,7 +199,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		OrderID                  string
 		TakerSplit               string
@@ -212,7 +211,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.CommonTransactionRequest
+		want   helpers.CommonTransactionRequest
 	}{
 		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString(), takerSplit.String(), makerSplit.String(), expiresIn, mutableMetaPropertiesString, mutablePropertiesString}, commonTransactionRequest},
 	}
@@ -237,7 +236,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		OrderID                  string
 		TakerSplit               string
@@ -280,7 +279,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		OrderID                  string
 		TakerSplit               string
@@ -318,7 +317,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		OrderID                  string
 		TakerSplit               string

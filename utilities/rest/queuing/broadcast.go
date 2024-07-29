@@ -1,7 +1,7 @@
 package queuing
 
 import (
-	"github.com/AssetMantle/modules/utilities/rest"
+	"github.com/AssetMantle/modules/helpers"
 	"reflect"
 	"strconv"
 
@@ -13,7 +13,7 @@ import (
 	"github.com/AssetMantle/modules/utilities/random"
 )
 
-func QueueOrBroadcastTransaction(context client.Context, commonTransactionRequest rest.CommonTransactionRequest, msg sdkTypes.Msg) (err error) {
+func QueueOrBroadcastTransaction(context client.Context, commonTransactionRequest helpers.CommonTransactionRequest, msg sdkTypes.Msg) (err error) {
 	fromAddress, fromName, _, err := client.GetFromFields(context, context.Keyring, commonTransactionRequest.GetFrom())
 	if err != nil {
 		return err

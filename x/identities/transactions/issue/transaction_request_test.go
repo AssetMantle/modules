@@ -6,7 +6,6 @@ package issue
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -27,7 +26,7 @@ import (
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-func createTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, string, string, string, lists.PropertyList, lists.PropertyList, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, rest.CommonTransactionRequest) {
+func createTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, string, string, string, lists.PropertyList, lists.PropertyList, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, helpers.CommonTransactionRequest) {
 	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.To, constants.ClassificationID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
@@ -61,7 +60,7 @@ func createTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 	toAccAddress, err = sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest()
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest()
 
 	return legacyAmino, cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, toAddress, toAccAddress, commonTransactionRequest
 }
@@ -69,7 +68,7 @@ func createTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 func Test_newTransactionRequest(t *testing.T) {
 	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
 	type args struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		to                       string
 		fromID                   string
 		classificationID         string
@@ -115,7 +114,7 @@ func Test_requestPrototype(t *testing.T) {
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	_, cliCommand, context, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		To                       string
 		FromID                   string
 		ClassificationID         string
@@ -167,7 +166,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	jsonMessage1, err := json.Marshal(newTransactionRequest(commonTransactionRequest, "", "", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString))
 	require.Equal(t, nil, err)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		To                       string
 		FromID                   string
 		ClassificationID         string
@@ -216,7 +215,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		To                       string
 		FromID                   string
 		ClassificationID         string
@@ -228,7 +227,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.CommonTransactionRequest
+		want   helpers.CommonTransactionRequest
 	}{
 
 		{"+ve", fields{commonTransactionRequest, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, commonTransactionRequest},
@@ -258,7 +257,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		To                       string
 		FromID                   string
 		ClassificationID         string
@@ -301,7 +300,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		To                       string
 		FromID                   string
 		ClassificationID         string
@@ -338,10 +337,10 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
-	commonTransactionRequest1 := rest.PrototypeCommonTransactionRequest()
+	commonTransactionRequest1 := baseHelpers.PrototypeCommonTransactionRequest()
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		To                       string
 		FromID                   string
 		ClassificationID         string

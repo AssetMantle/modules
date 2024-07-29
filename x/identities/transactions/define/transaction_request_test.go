@@ -5,7 +5,6 @@ package define
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -31,9 +30,9 @@ func Test_newTransactionRequest(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	type args struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		fromID                   string
 		immutableMetaProperties  string
 		immutableProperties      string
@@ -78,9 +77,9 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ImmutableMetaProperties  string
 		ImmutableProperties      string
@@ -129,11 +128,11 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	jsonMessage, _ := json.Marshal(transactionRequest{commonTransactionRequest, "fromID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString})
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ImmutableMetaProperties  string
 		ImmutableProperties      string
@@ -180,9 +179,9 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ImmutableMetaProperties  string
 		ImmutableProperties      string
@@ -192,7 +191,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.CommonTransactionRequest
+		want   helpers.CommonTransactionRequest
 	}{
 		{"+ve", fields{commonTransactionRequest: commonTransactionRequest, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, commonTransactionRequest},
 	}
@@ -232,12 +231,12 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest()
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest()
 
 	testIdentity := baseIDs.NewIdentityID(baseIDs.NewClassificationID(baseQualified.NewImmutables(immutableProperties), baseQualified.NewMutables(mutableProperties)), baseQualified.NewImmutables(immutableProperties))
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ImmutableMetaProperties  string
 		ImmutableProperties      string
@@ -281,9 +280,9 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ImmutableMetaProperties  string
 		ImmutableProperties      string
@@ -321,9 +320,9 @@ func Test_transactionRequest_Validate(t *testing.T) {
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ImmutableMetaProperties  string
 		ImmutableProperties      string

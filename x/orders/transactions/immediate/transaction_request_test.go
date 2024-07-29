@@ -6,7 +6,6 @@ package immediate
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -44,7 +43,7 @@ var (
 	testFromID                    = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
 	makerAssetID                  = baseDocuments.NewCoinAsset("MakerAssetID").GetCoinAssetID().(*baseIDs.AssetID)
 	takerAssetID                  = baseDocuments.NewCoinAsset("TakerAssetId").GetCoinAssetID().(*baseIDs.AssetID)
-	commonTransactionRequest      = rest.PrototypeCommonTransactionRequest()
+	commonTransactionRequest      = baseHelpers.PrototypeCommonTransactionRequest()
 	expiresIn                     = int64(60)
 	makerSplit                    = types.NewInt(60)
 	takerSplit                    = types.NewInt(60)
@@ -52,7 +51,7 @@ var (
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		fromID                   string
 		classificationID         string
 		takerID                  string
@@ -116,7 +115,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.MutableMetaProperties.GetName(), mutableMetaPropertiesString)
 	viper.Set(constants.MutableProperties.GetName(), mutablePropertiesString)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ClassificationID         string
 		TakerID                  string
@@ -176,7 +175,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	jsonMessage, err := json.Marshal(newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString))
 	require.NoError(t, err)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ClassificationID         string
 		TakerID                  string
@@ -233,7 +232,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ClassificationID         string
 		TakerID                  string
@@ -250,7 +249,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.CommonTransactionRequest
+		want   helpers.CommonTransactionRequest
 	}{
 		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testClassificationID.AsString(), testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), expiresIn, makerSplit.String(), takerSplit.String(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, commonTransactionRequest},
 	}
@@ -280,7 +279,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ClassificationID         string
 		TakerID                  string
@@ -333,7 +332,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ClassificationID         string
 		TakerID                  string
@@ -381,7 +380,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		ClassificationID         string
 		TakerID                  string

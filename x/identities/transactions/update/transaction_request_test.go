@@ -5,7 +5,6 @@ package update
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -26,7 +25,7 @@ import (
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, string, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, rest.CommonTransactionRequest) {
+func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, string, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, helpers.CommonTransactionRequest) {
 	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.IdentityID, constants.MutableMetaProperties, constants.MutableProperties})
@@ -42,7 +41,7 @@ func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, clie
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	commonTransactionRequest := rest.PrototypeCommonTransactionRequest()
+	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest()
 
 	return legacyAmino, cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, commonTransactionRequest
 }
@@ -50,7 +49,7 @@ func createTestInput(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, clie
 func Test_newTransactionRequest(t *testing.T) {
 	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, commonTransactionRequest := createTestInput(t)
 	type args struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		fromID                   string
 		identityID               string
 		mutableMetaProperties    string
@@ -92,7 +91,7 @@ func Test_requestPrototype(t *testing.T) {
 func Test_transactionRequest_FromCLI(t *testing.T) {
 	_, cliCommand, context, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, commonTransactionRequest := createTestInput(t)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		IdentityID               string
 		MutableMetaProperties    string
@@ -137,7 +136,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	jsonMessage, _ := json.Marshal(transactionRequest{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString})
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		IdentityID               string
 		MutableMetaProperties    string
@@ -180,7 +179,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, commonTransactionRequest := createTestInput(t)
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		IdentityID               string
 		MutableMetaProperties    string
@@ -189,9 +188,9 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.CommonTransactionRequest
+		want   helpers.CommonTransactionRequest
 	}{
-		{"+ve", fields{}, rest.PrototypeCommonTransactionRequest()},
+		{"+ve", fields{}, baseHelpers.PrototypeCommonTransactionRequest()},
 		{"+ve", fields{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
@@ -217,7 +216,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		IdentityID               string
 		MutableMetaProperties    string
@@ -256,7 +255,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, commonTransactionRequest := createTestInput(t)
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		IdentityID               string
 		MutableMetaProperties    string
@@ -290,7 +289,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, commonTransactionRequest := createTestInput(t)
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		IdentityID               string
 		MutableMetaProperties    string

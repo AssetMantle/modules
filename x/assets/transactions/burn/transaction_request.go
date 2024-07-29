@@ -5,7 +5,6 @@ package burn
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
 	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -18,9 +17,9 @@ import (
 )
 
 type transactionRequest struct {
-	rest.CommonTransactionRequest `json:"commonTransactionRequest"`
-	FromID                        string `json:"fromID"`
-	AssetID                       string `json:"assetID"`
+	helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
+	FromID                           string `json:"fromID"`
+	AssetID                          string `json:"assetID"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -58,7 +57,7 @@ func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetCommonTransactionRequest() rest.CommonTransactionRequest {
+func (transactionRequest transactionRequest) GetCommonTransactionRequest() helpers.CommonTransactionRequest {
 	return transactionRequest.CommonTransactionRequest
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
@@ -89,7 +88,7 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(commonTransactionRequest rest.CommonTransactionRequest, fromID string, assetID string) helpers.TransactionRequest {
+func newTransactionRequest(commonTransactionRequest helpers.CommonTransactionRequest, fromID string, assetID string) helpers.TransactionRequest {
 	return transactionRequest{
 		CommonTransactionRequest: commonTransactionRequest,
 		FromID:                   fromID,

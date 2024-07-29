@@ -6,7 +6,6 @@ package cancel
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -37,12 +36,12 @@ var (
 	testFromID               = baseIDs.NewIdentityID(testClassificationID, immutables)
 	testOrderID              = baseIDs.NewOrderID(testClassificationID, immutables)
 	testOrderID1             = baseIDs.PrototypeOrderID()
-	commonTransactionRequest = rest.PrototypeCommonTransactionRequest()
+	commonTransactionRequest = baseHelpers.PrototypeCommonTransactionRequest()
 )
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		fromID                   string
 		orderID                  string
 	}
@@ -85,7 +84,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.FromIdentityID.GetName(), testFromID.AsString())
 	viper.Set(constants.OrderID.GetName(), testOrderID.AsString())
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		OrderID                  string
 	}
@@ -128,7 +127,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 	require.NoError(t, err)
 
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		OrderID                  string
 	}
@@ -166,14 +165,14 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		OrderID                  string
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.CommonTransactionRequest
+		want   helpers.CommonTransactionRequest
 	}{
 		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, commonTransactionRequest},
 		{"+ve with nil", fields{commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString()}, commonTransactionRequest},
@@ -194,7 +193,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		OrderID                  string
 	}
@@ -227,7 +226,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		OrderID                  string
 	}
@@ -256,7 +255,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		OrderID                  string
 	}

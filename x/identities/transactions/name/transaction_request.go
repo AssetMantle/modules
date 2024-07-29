@@ -5,7 +5,6 @@ package name
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
 	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -17,8 +16,8 @@ import (
 )
 
 type transactionRequest struct {
-	rest.CommonTransactionRequest `json:"commonTransactionRequest"`
-	Name                          string `json:"name"`
+	helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
+	Name                             string `json:"name"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -29,7 +28,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Accept text/plain
 // @Produce json
 // @Tags Identities
-// @Param body  transactionRequest true "A transaction to name a base identity."
+// @Param body  transactionRequest true "A transaction to name a baseHelpers identity."
 // @Success 200 {object} transactionResponse   "Message for a successful response."
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/name [post]
@@ -55,7 +54,7 @@ func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetCommonTransactionRequest() rest.CommonTransactionRequest {
+func (transactionRequest transactionRequest) GetCommonTransactionRequest() helpers.CommonTransactionRequest {
 	return transactionRequest.CommonTransactionRequest
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
@@ -75,7 +74,7 @@ func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmin
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(commonTransactionRequest rest.CommonTransactionRequest, name string) helpers.TransactionRequest {
+func newTransactionRequest(commonTransactionRequest helpers.CommonTransactionRequest, name string) helpers.TransactionRequest {
 	return transactionRequest{
 		CommonTransactionRequest: commonTransactionRequest,
 		Name:                     name,

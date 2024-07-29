@@ -6,7 +6,6 @@ package renumerate
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -17,17 +16,17 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var (
-	commonTransactionRequest = rest.PrototypeCommonTransactionRequest()
+	commonTransactionRequest = baseHelpers.PrototypeCommonTransactionRequest()
 )
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		fromID                   string
 		assetID                  string
 	}
@@ -64,12 +63,12 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID, constants.FromIdentityID})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID, constants.FromIdentityID})
 
 	viper.Set(constants.AssetID.GetName(), testAssetID.AsString())
 	viper.Set(constants.FromIdentityID.GetName(), fromID.AsString())
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		AssetID                  string
 	}
@@ -84,7 +83,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, fromID.AsString(), testAssetID.AsString()}, args{cliCommand, client.Context{}.WithCodec(base.CodecPrototype())}, newTransactionRequest(commonTransactionRequest, fromID.AsString(), testAssetID.AsString()), false},
+		{"+ve", fields{commonTransactionRequest, fromID.AsString(), testAssetID.AsString()}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(commonTransactionRequest, fromID.AsString(), testAssetID.AsString()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -107,7 +106,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 
 func Test_transactionRequest_FromJSON(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		AssetID                  string
 	}
@@ -121,7 +120,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, fromID.AsString(), testAssetID.AsString()}, args{types.MustSortJSON(base.CodecPrototype().MustMarshalJSON(&Message{fromAccAddress.String(), fromID, testAssetID}))}, newTransactionRequest(commonTransactionRequest, fromID.AsString(), testAssetID.AsString()), false},
+		{"+ve", fields{commonTransactionRequest, fromID.AsString(), testAssetID.AsString()}, args{types.MustSortJSON(baseHelpers.CodecPrototype().MustMarshalJSON(&Message{fromAccAddress.String(), fromID, testAssetID}))}, newTransactionRequest(commonTransactionRequest, fromID.AsString(), testAssetID.AsString()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -144,14 +143,14 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		AssetID                  string
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.CommonTransactionRequest
+		want   helpers.CommonTransactionRequest
 	}{
 		{"+ve", fields{commonTransactionRequest, fromID.AsString(), testAssetID.AsString()}, commonTransactionRequest},
 	}
@@ -171,7 +170,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		AssetID                  string
 	}
@@ -204,7 +203,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 func Test_transactionRequest_RegisterCodec(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		AssetID                  string
 	}
@@ -232,7 +231,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		commonTransactionRequest rest.CommonTransactionRequest
+		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
 		AssetID                  string
 	}
