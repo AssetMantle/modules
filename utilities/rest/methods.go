@@ -2,7 +2,6 @@ package rest
 
 import (
 	"encoding/json"
-	clientUtils "github.com/AssetMantle/modules/utilities/client"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"io"
@@ -41,10 +40,7 @@ func CheckBadRequestError(responseWriter http.ResponseWriter, err error) bool {
 }
 
 func ParseQueryHeightOrReturnBadRequest(responseWriter http.ResponseWriter, clientContext client.Context, request *http.Request) (client.Context, bool) {
-	clientContext, ok := clientUtils.ParseQueryHeightOrReturnBadRequest(responseWriter, clientContext, request)
-	if !ok {
-		return clientContext, false
-	}
+	// TODO correct
 	return clientContext, true
 }
 
