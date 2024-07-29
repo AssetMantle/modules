@@ -116,16 +116,21 @@ var (
 
 	supplementAuxiliaryKeeper = new(MockAuxiliaryKeeper)
 
-	supplementAuxiliaryFailureAsset   = randomAssetGenerator(baseProperties.NewMetaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(0))).ScrubData(), nil)
+	supplementAuxiliaryFailureAsset = randomAssetGenerator(
+		baseProperties.NewMetaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(0))),
+		nil,
+	)
 	supplementAuxiliaryFailureAssetID = baseIDs.NewAssetID(supplementAuxiliaryFailureAsset.GetClassificationID(), supplementAuxiliaryFailureAsset.GetImmutables()).(*baseIDs.AssetID)
-	_                                 = supplementAuxiliaryKeeper.On("Help", mock.Anything, supplement.NewAuxiliaryRequest(supplementAuxiliaryFailureAsset.GetProperty(constantProperties.LockHeightProperty.GetID()))).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
-	mesaLockAsset                     = randomAssetGenerator(baseProperties.NewMesaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))), nil)
-	mesaLockAssetID                   = baseIDs.NewAssetID(mesaLockAsset.GetClassificationID(), mesaLockAsset.GetImmutables()).(*baseIDs.AssetID)
-	_                                 = supplementAuxiliaryKeeper.On("Help", mock.Anything, supplement.NewAuxiliaryRequest(mesaLockAsset.GetProperty(constantProperties.LockHeightProperty.GetID()))).Return(supplement.NewAuxiliaryResponse(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))), nil)
-	unrevealedLockAsset               = randomAssetGenerator(baseProperties.NewMesaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(2))), nil)
-	unrevealedLockAssetID             = baseIDs.NewAssetID(unrevealedLockAsset.GetClassificationID(), unrevealedLockAsset.GetImmutables()).(*baseIDs.AssetID)
-	_                                 = supplementAuxiliaryKeeper.On("Help", mock.Anything, supplement.NewAuxiliaryRequest(unrevealedLockAsset.GetProperty(constantProperties.LockHeightProperty.GetID()))).Return(supplement.NewAuxiliaryResponse(baseLists.NewPropertyList()), nil)
-	_                                 = supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	_                                 = supplementAuxiliaryKeeper.On("Help", mock.Anything, supplement.NewAuxiliaryRequest(supplementAuxiliaryFailureAsset.GetProperty(constantProperties.LockHeightProperty.GetID()))).Return(supplement.NewAuxiliaryResponse(baseLists.NewPropertyList()), errorConstants.MockError)
+
+	mesaLockAsset   = randomAssetGenerator(baseProperties.NewMesaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))), nil)
+	mesaLockAssetID = baseIDs.NewAssetID(mesaLockAsset.GetClassificationID(), mesaLockAsset.GetImmutables()).(*baseIDs.AssetID)
+	_               = supplementAuxiliaryKeeper.On("Help", mock.Anything, supplement.NewAuxiliaryRequest(mesaLockAsset.GetProperty(constantProperties.LockHeightProperty.GetID()))).Return(supplement.NewAuxiliaryResponse(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(1))))), nil)
+
+	unrevealedLockAsset   = randomAssetGenerator(baseProperties.NewMesaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(2))), nil)
+	unrevealedLockAssetID = baseIDs.NewAssetID(unrevealedLockAsset.GetClassificationID(), unrevealedLockAsset.GetImmutables()).(*baseIDs.AssetID)
+	_                     = supplementAuxiliaryKeeper.On("Help", mock.Anything, supplement.NewAuxiliaryRequest(unrevealedLockAsset.GetProperty(constantProperties.LockHeightProperty.GetID()))).Return(supplement.NewAuxiliaryResponse(baseLists.NewPropertyList()), nil)
+	_                     = supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(baseLists.NewPropertyList()), nil)
 
 	supplementAuxiliaryAuxiliary = new(MockAuxiliary)
 	_                            = supplementAuxiliaryAuxiliary.On("GetKeeper").Return(supplementAuxiliaryKeeper)
@@ -258,7 +263,6 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			"sendAssetWithUnrevealedLock",
 			args{fromAddress, unrevealedLockAssetID, 1},
 			func() {
-
 			},
 			nil,
 			errorConstants.MetaDataError,
@@ -267,6 +271,9 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			"supplementAuxiliaryFailure",
 			args{fromAddress, supplementAuxiliaryFailureAssetID, 1},
 			func() {
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, supplement.NewAuxiliaryRequest(
+					supplementAuxiliaryFailureAsset.GetProperty(constantProperties.LockHeightProperty.GetID())),
+				).Return(supplement.NewAuxiliaryResponse(baseLists.NewPropertyList()), errorConstants.MockError)
 			},
 			nil,
 			errorConstants.MockError,
