@@ -117,7 +117,7 @@ var (
 	supplementAuxiliaryKeeper = new(MockAuxiliaryKeeper)
 
 	supplementAuxiliaryFailureAsset = randomAssetGenerator(
-		baseProperties.NewMetaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(0))),
+		baseProperties.NewMesaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(0))),
 		nil,
 	)
 	supplementAuxiliaryFailureAssetID = baseIDs.NewAssetID(supplementAuxiliaryFailureAsset.GetClassificationID(), supplementAuxiliaryFailureAsset.GetImmutables()).(*baseIDs.AssetID)
@@ -269,11 +269,9 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		},
 		{
 			"supplementAuxiliaryFailure",
-			args{fromAddress, supplementAuxiliaryFailureAssetID, 1},
+			args{fromAddress, supplementAuxiliaryFailureAssetID, 0},
 			func() {
-				supplementAuxiliaryKeeper.On("Help", mock.Anything, supplement.NewAuxiliaryRequest(
-					supplementAuxiliaryFailureAsset.GetProperty(constantProperties.LockHeightProperty.GetID())),
-				).Return(supplement.NewAuxiliaryResponse(baseLists.NewPropertyList()), errorConstants.MockError)
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 			},
 			nil,
 			errorConstants.MockError,

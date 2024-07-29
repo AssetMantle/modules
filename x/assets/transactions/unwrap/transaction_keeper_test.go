@@ -92,6 +92,7 @@ var (
 	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
 
 	burnAuxiliaryKeeper       = new(MockAuxiliaryKeeper)
+	newCollectionFaliure      = "notfound"
 	burnAuxiliaryFailureDenom = "burn"
 	_                         = burnAuxiliaryKeeper.On("Help", mock.Anything, burn.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseDocuments.NewCoinAsset(burnAuxiliaryFailureDenom).GetCoinAssetID(), sdkTypes.OneInt())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 	_                         = burnAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
@@ -224,6 +225,16 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			},
 			nil,
 			errorConstants.NotAuthorized,
+		},
+		{
+			"EntityNotFound",
+			args{genesisAddress, burnAuxiliaryFailureDenom, 1},
+			func() {
+				TransactionKeeper.parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(burnAuxiliaryFailureDenom))))))
+				parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(newCollectionFaliure), baseData.NewStringData(burnAuxiliaryFailureDenom))))))
+			},
+			nil,
+			errorConstants.EntityNotFound,
 		},
 		{
 			"burnAuxiliaryFailure",

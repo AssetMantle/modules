@@ -60,6 +60,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	supply := asset.GetSupply()
 
+	// TODO: Clarify why supply property can't be meta
 	if supplyProperty := asset.GetProperty(propertyConstants.SupplyProperty.GetID()); supplyProperty != nil && !supplyProperty.IsMeta() {
 		auxiliaryResponse, err := transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(supplyProperty))
 		if err != nil {
@@ -67,6 +68,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		}
 
 		if supplyProperty = supplement.GetMetaPropertiesFromResponse(auxiliaryResponse).GetProperty(propertyConstants.SupplyProperty.GetID()); supplyProperty != nil && supplyProperty.IsMeta() {
+			//TODO: This type casting will panic if the property is not a meta property
 			supply = supplyProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
 		} else {
 			return nil, errorConstants.MetaDataError.Wrapf("supply property is not revealed")
