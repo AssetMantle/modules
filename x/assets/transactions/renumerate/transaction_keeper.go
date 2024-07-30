@@ -60,7 +60,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	supply := asset.GetSupply()
 
-	// TODO: Clarify why supply property can't be meta
+	// TODO: Clarify why supply property can't be meta,
+	// The first if statement is to check if the supply property is not meta and the second if statement is to check if the supply property is meta
 	if supplyProperty := asset.GetProperty(propertyConstants.SupplyProperty.GetID()); supplyProperty != nil && !supplyProperty.IsMeta() {
 		auxiliaryResponse, err := transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(supplyProperty))
 		if err != nil {
