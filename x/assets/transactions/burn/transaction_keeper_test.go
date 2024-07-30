@@ -5,198 +5,450 @@ package burn
 
 import (
 	"context"
-	"fmt"
-	"github.com/AssetMantle/modules/x/assets/record"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/x/assets/constants"
+	recordassets "github.com/AssetMantle/modules/x/assets/record"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	"github.com/AssetMantle/schema/ids"
+	"github.com/AssetMantle/schema/parameters/base"
+	constantProperties "github.com/AssetMantle/schema/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/qualified/base"
+	base2 "github.com/AssetMantle/schema/types/base"
+	"github.com/cometbft/cometbft/crypto/ed25519"
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	govTypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/stretchr/testify/mock"
 	"reflect"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/data/base"
-	"github.com/AssetMantle/schema/documents/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
-	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	tendermintDB "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/assets/mapper"
 	"github.com/AssetMantle/modules/x/assets/parameters"
-	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
+)
+
+type MockAuxiliary struct {
+	mock.Mock
+}
+
+var _ helpers.Auxiliary = (*MockAuxiliary)(nil)
+
+func (mockAuxiliary *MockAuxiliary) GetName() string { panic(mockAuxiliary) }
+func (mockAuxiliary *MockAuxiliary) GetKeeper() helpers.AuxiliaryKeeper {
+	args := mockAuxiliary.Called()
+	return args.Get(0).(helpers.AuxiliaryKeeper)
+}
+func (mockAuxiliary *MockAuxiliary) Initialize(_ helpers.Mapper, _ helpers.ParameterManager, _ ...interface{}) helpers.Auxiliary {
+	panic(mockAuxiliary)
+}
+
+type MockAuxiliaryKeeper struct {
+	mock.Mock
+}
+
+var _ helpers.AuxiliaryKeeper = (*MockAuxiliaryKeeper)(nil)
+
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	args := mockAuxiliaryKeeper.Called(context, request)
+	return args.Get(0).(helpers.AuxiliaryResponse), args.Error(1)
+}
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(m2 helpers.Mapper, manager helpers.ParameterManager, i []interface{}) helpers.Keeper {
+	args := mockAuxiliaryKeeper.Called(m2, manager, i)
+	return args.Get(0).(helpers.Keeper)
+}
+
+const (
+	TestMinterModuleName = "testMinter"
+	Denom                = "stake"
+	ChainID              = "testChain"
+	GenesisSupply        = 1000000000000
 )
 
 var (
-	authenticateAuxiliary helpers.Auxiliary
-	authorizeAuxiliary    helpers.Auxiliary
-	purgeAuxiliary        helpers.Auxiliary
-	supplementAuxiliary   helpers.Auxiliary
-	unbondAuxiliary       helpers.Auxiliary
+	moduleStoreKey                  = sdkTypes.NewKVStoreKey(constants.ModuleName)
+	immutableMesaProperties         = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList))
+	supplymutableMesaPropertiesList = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList)
+	mutableMesaPropertiesList       = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList)
+	mutableMetaPropertiesList       = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
+	propList                        = baseQualified.NewMutables(mutableMetaPropertiesList).GetMutablePropertyList().Add(
+		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
+		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
+	)
+
+	propListburnHeightMetamutables = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
+	propListburnHeightMeta         = baseQualified.NewMutables(propListburnHeightMetamutables).GetMutablePropertyList().Add(
+		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
+		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
+		baseProperties.NewMetaProperty(constantProperties.BurnHeightProperty.GetKey(), baseData.NewHeightData(base2.NewHeight(20))),
+	)
+
+	propListsupplyMetamutables = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
+	propListsupplyMeta         = baseQualified.NewMutables(propListsupplyMetamutables).GetMutablePropertyList().Add(
+		baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
+	)
+
+	supplyPropertyMesaProp = baseQualified.NewMutables(supplymutableMesaPropertiesList).GetMutablePropertyList().Add(
+		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(34))),
+	)
+
+	burnHeightMesaProp = baseQualified.NewMutables(mutableMesaPropertiesList).GetMutablePropertyList().Add(
+		baseProperties.NewMesaProperty(constantProperties.BurnHeightProperty.GetKey(), baseData.NewHeightData(base2.NewHeight(13))),
+		baseProperties.NewMesaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(34))),
+	)
+	burnHeightMesaPropMutables = baseQualified.NewMutables(burnHeightMesaProp)
+	burnHeightMesaAsset        = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutableMesaProperties, burnHeightMesaPropMutables), immutableMesaProperties, burnHeightMesaPropMutables)
+	burnHeightMesaAssetID      = baseIDs.NewAssetID(burnHeightMesaAsset.GetClassificationID(), burnHeightMesaAsset.GetImmutables()).(*baseIDs.AssetID)
+
+	supplyPropertyMesaPropMutables = baseQualified.NewMutables(supplyPropertyMesaProp)
+	supplyPropertyMesaAsset        = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutableMesaProperties, supplyPropertyMesaPropMutables), immutableMesaProperties, supplyPropertyMesaPropMutables)
+	supplyPropertyMesaAssetID      = baseIDs.NewAssetID(supplyPropertyMesaAsset.GetClassificationID(), supplyPropertyMesaAsset.GetImmutables()).(*baseIDs.AssetID)
+
+	newMutables = baseQualified.NewMutables(propList)
+	asset       = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, newMutables), immutables, newMutables)
+	assetID     = baseIDs.NewAssetID(asset.GetClassificationID(), asset.GetImmutables()).(*baseIDs.AssetID)
+
+	authenticateAuxiliaryKeeper = new(MockAuxiliaryKeeper)
+	authenticateAuxiliary       = new(MockAuxiliary)
+	_                           = authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
+
+	authorizeAuxiliaryKeeper = new(MockAuxiliaryKeeper)
+	authorizeAuxiliary       = new(MockAuxiliary)
+	_                        = authorizeAuxiliary.On("GetKeeper").Return(authorizeAuxiliaryKeeper)
+
+	purgeAuxiliaryKeeper = new(MockAuxiliaryKeeper)
+	purgeAuxiliary       = new(MockAuxiliary)
+	_                    = purgeAuxiliary.On("GetKeeper").Return(purgeAuxiliaryKeeper)
+
+	supplementAuxiliaryKeeper = new(MockAuxiliaryKeeper)
+
+	supplementAuxiliary = new(MockAuxiliary)
+	_                   = supplementAuxiliary.On("GetKeeper").Return(supplementAuxiliaryKeeper)
+
+	unbondAuxiliaryKeeper = new(MockAuxiliaryKeeper)
+	unbondAuxiliary       = new(MockAuxiliary)
+	_                     = unbondAuxiliary.On("GetKeeper").Return(unbondAuxiliaryKeeper)
+
+	codec = baseHelpers.TestCodec()
+
+	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
+	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
+	ParamsKeeper             = paramsKeeper.NewKeeper(codec, codec.GetLegacyAmino(), paramsStoreKey, paramsTransientStoreKeys)
+
+	authStoreKey             = sdkTypes.NewKVStoreKey(authTypes.StoreKey)
+	moduleAccountPermissions = map[string][]string{TestMinterModuleName: {authTypes.Minter}, constants.ModuleName: nil}
+	AuthKeeper               = authKeeper.NewAccountKeeper(codec, authStoreKey, authTypes.ProtoBaseAccount, moduleAccountPermissions, sdkTypes.GetConfig().GetBech32AccountAddrPrefix(), authTypes.NewModuleAddress(govTypes.ModuleName).String())
+
+	bankStoreKey         = sdkTypes.NewKVStoreKey(bankTypes.StoreKey)
+	blacklistedAddresses = map[string]bool{authTypes.NewModuleAddress(TestMinterModuleName).String(): false, authTypes.NewModuleAddress(constants.ModuleName).String(): false}
+	BankKeeper           = bankKeeper.NewBaseKeeper(codec, bankStoreKey, AuthKeeper, blacklistedAddresses, authTypes.NewModuleAddress(govTypes.ModuleName).String())
+
+	coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom, sdkTypes.NewInt(GenesisSupply)))
+	_          = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
+
+	genesisAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
+	_              = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
+
+	Context = setContext()
+
+	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace(constants.ModuleName).WithKeyTable(parameters.Prototype().GetKeyTable())).
+				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom)))))).
+				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))))
+
+	TransactionKeeper = transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager, authenticateAuxiliary, authorizeAuxiliary, purgeAuxiliary, supplementAuxiliary, unbondAuxiliary}
 )
 
-type TestKeepers struct {
-	BurnKeeper helpers.TransactionKeeper
-}
-
-func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
-
-	storeKey := sdkTypes.NewKVStoreKey("test")
-	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := mapper.Prototype().Initialize(storeKey)
-	codec := baseHelpers.TestCodec()
-	ParamsKeeper := paramsKeeper.NewKeeper(
-		codec,
-		legacyAmino,
-		paramsStoreKey,
-		paramsTransientStoreKeys,
-	)
-	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
-
+func setContext() sdkTypes.Context {
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)
-	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(moduleStoreKey, storeTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(authStoreKey, storeTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(bankStoreKey, storeTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
-
-	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
-		ChainID: "test",
-	}, false, log.NewNopLogger())
-
-	authenticateAuxiliary = renumerate.Auxiliary.Initialize(Mapper, parameterManager)
-	authorizeAuxiliary = renumerate.Auxiliary.Initialize(Mapper, parameterManager)
-	purgeAuxiliary = renumerate.Auxiliary.Initialize(Mapper, parameterManager)
-	supplementAuxiliary = renumerate.Auxiliary.Initialize(Mapper, parameterManager)
-	unbondAuxiliary = renumerate.Auxiliary.Initialize(Mapper, parameterManager)
-
-	keepers := TestKeepers{
-		BurnKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.TransactionKeeper),
-	}
-
-	return Context, keepers, Mapper, parameterManager
+	_ = commitMultiStore.LoadLatestVersion()
+	return sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{ChainID: ChainID}, false, log.NewNopLogger())
 }
 
-func Test_keeperPrototype(t *testing.T) {
-	tests := []struct {
-		name string
-		want helpers.TransactionKeeper
-	}{
-		{"+ve", transactionKeeper{}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_transactionKeeper_Initialize(t *testing.T) {
-	_, _, Mapper, parameterManager := createTestInput(t)
-	type fields struct {
-		mapper                helpers.Mapper
-		parameterManager      helpers.ParameterManager
-		authenticateAuxiliary helpers.Auxiliary
-		authorizeAuxiliary    helpers.Auxiliary
-		purgeAuxiliary        helpers.Auxiliary
-		supplementAuxiliary   helpers.Auxiliary
-		unbondAuxiliary       helpers.Auxiliary
-	}
+func TestTransactionKeeperTransact(t *testing.T) {
 	type args struct {
-		mapper      helpers.Mapper
-		in1         helpers.ParameterManager
-		auxiliaries []interface{}
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.Keeper
-	}{
-		{"+ve", fields{Mapper, parameterManager, authenticateAuxiliary, authorizeAuxiliary, purgeAuxiliary, supplementAuxiliary, unbondAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, parameterManager, authenticateAuxiliary, authorizeAuxiliary, supplementAuxiliary, nil, nil}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionKeeper := transactionKeeper{
-				tt.fields.mapper,
-				tt.fields.parameterManager,
-				tt.fields.authenticateAuxiliary,
-				tt.fields.authorizeAuxiliary,
-				tt.fields.purgeAuxiliary,
-				tt.fields.supplementAuxiliary,
-				tt.fields.unbondAuxiliary,
-			}
-			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.in1, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("Initialize() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_transactionKeeper_Transact1(t *testing.T) {
-	Context, keepers, Mapper, parameterManager := createTestInput(t)
-	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
-	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
-	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	testAssetID := baseIDs.NewAssetID(classificationID, immutables)
-	testAsset := base.NewAsset(classificationID, immutables, mutables)
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-	fromID := baseIDs.NewIdentityID(classificationID, immutables)
-	keepers.BurnKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(testAsset))
-	type fields struct {
-		mapper                helpers.Mapper
-		parameterManager      helpers.ParameterManager
-		authenticateAuxiliary helpers.Auxiliary
-		authorizeAuxiliary    helpers.Auxiliary
-		purgeAuxiliary        helpers.Auxiliary
-		supplementAuxiliary   helpers.Auxiliary
-		unbondAuxiliary       helpers.Auxiliary
-	}
-	type args struct {
-		context context.Context
-		message helpers.Message
+		from    sdkTypes.AccAddress
+		fromID  ids.IdentityID
+		assetID ids.AssetID
+		value   int
 	}
 	tests := []struct {
 		name    string
-		fields  fields
 		args    args
-		want    helpers.TransactionResponse
-		wantErr bool
+		setup   func()
+		want    *TransactionResponse
+		wantErr helpers.Error
 	}{
-		{"+ve", fields{Mapper, parameterManager, authenticateAuxiliary, authorizeAuxiliary, purgeAuxiliary, supplementAuxiliary, unbondAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, fromID, testAssetID).(*Message)}, newTransactionResponse(), false},
-		{"+ve", fields{Mapper, parameterManager, authenticateAuxiliary, authorizeAuxiliary, purgeAuxiliary, supplementAuxiliary, unbondAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, fromID, baseIDs.PrototypeAssetID()).(*Message)}, newTransactionResponse(), false},
+		{
+			name: "burnDisabledSuccess",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: assetID,
+			},
+			setup: func() {
+				parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(false)))))
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			want:    nil,
+			wantErr: errorConstants.NotAuthorized,
+		},
+		{
+			name: "burnAssetSuccess",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: assetID,
+			},
+			setup: func() {
+				parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true)))))
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(asset))
+				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				purgeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				unbondAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			want:    newTransactionResponse(),
+			wantErr: nil,
+		},
+		{
+			name: "burnAssetNotAuthenticated",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: assetID,
+			},
+			setup: func() {
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
+			},
+			want:    nil,
+			wantErr: errorConstants.MockError,
+		},
+		{
+			name: "burnAssetNotAuthorized",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: assetID,
+			},
+			setup: func() {
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(asset))
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(genesisAddress, baseIDs.PrototypeIdentityID())).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.NotAuthorized).Once()
+			},
+			want:    nil,
+			wantErr: errorConstants.NotAuthorized,
+		},
+		{
+			name: "burnAssetEntityNotFound",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: baseIDs.PrototypeAssetID(),
+			},
+			setup: func() {
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(asset))
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(genesisAddress, baseIDs.PrototypeIdentityID())).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			want:    nil,
+			wantErr: errorConstants.EntityNotFound,
+		},
+		{
+			name: "bondAmountSupplementAuxiliaryFailure",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: burnHeightMesaAssetID,
+			},
+			setup: func() {
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(burnHeightMesaAsset))
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
+
+			},
+			want:    nil,
+			wantErr: errorConstants.MockError,
+		},
+		{
+			name: "bondHeightMetaDataAuxiliaryResponse",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: burnHeightMesaAssetID,
+			},
+			setup: func() {
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(burnHeightMesaAsset))
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(propListburnHeightMeta), nil).Once()
+
+			},
+			want:    nil,
+			wantErr: errorConstants.NotAuthorized,
+		},
+		{
+			name: "burnAmountSupplementMetaDataError",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: burnHeightMesaAssetID,
+			},
+			setup: func() {
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(burnHeightMesaAsset))
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(mutableMetaPropertiesList), nil).Once()
+
+			},
+			want:    nil,
+			wantErr: errorConstants.MetaDataError,
+		},
+		{
+			name: "SupplementAuxiliaryFailure",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: supplyPropertyMesaAssetID,
+			},
+			setup: func() {
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(supplyPropertyMesaAsset))
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
+
+			},
+			want:    nil,
+			wantErr: errorConstants.MockError,
+		},
+		{
+			name: "supplyMetaDataSuccess",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: supplyPropertyMesaAssetID,
+			},
+			setup: func() {
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(supplyPropertyMesaAsset))
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(propListsupplyMeta), nil).Once()
+				purgeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+
+			},
+			want:    nil,
+			wantErr: errorConstants.MetaDataError,
+		},
+		{
+			name: "supplyMetaDataError",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: supplyPropertyMesaAssetID,
+			},
+			setup: func() {
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(supplyPropertyMesaAsset))
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(mutableMetaPropertiesList), nil).Once()
+
+			},
+			want:    nil,
+			wantErr: errorConstants.MetaDataError,
+		},
+		{
+			name: "PurgeAuxiliaryFailure",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: assetID,
+			},
+			setup: func() {
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(asset))
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				purgeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
+			},
+			want:    nil,
+			wantErr: errorConstants.MockError,
+		},
+		//{
+		//	name: "noRevealedBondAmountFailure",
+		//	args: args{
+		//		from:    genesisAddress,
+		//		fromID:  baseIDs.PrototypeIdentityID(),
+		//		assetID: burnHeightMesaAssetID,
+		//	},
+		//	setup: func() {
+		//		TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(burnHeightMesaAsset))
+		//		authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(genesisAddress, baseIDs.PrototypeIdentityID())).Return(new(helpers.AuxiliaryResponse), nil).Once()
+		//		purgeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+		//		supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+		//		authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+		//	},
+		//	want:    nil,
+		//	wantErr: errorConstants.MetaDataError,
+		//},
+		{
+			name: "unbondAuxiliaryFailure",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: assetID,
+			},
+			setup: func() {
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(asset))
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(genesisAddress, baseIDs.PrototypeIdentityID())).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				purgeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				unbondAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
+			},
+			want:    nil,
+			wantErr: errorConstants.MockError,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			transactionKeeper := transactionKeeper{
-				mapper:                tt.fields.mapper,
-				parameterManager:      tt.fields.parameterManager,
-				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
-				authorizeAuxiliary:    tt.fields.authorizeAuxiliary,
-				purgeAuxiliary:        tt.fields.purgeAuxiliary,
-				supplementAuxiliary:   tt.fields.supplementAuxiliary,
-				unbondAuxiliary:       tt.fields.unbondAuxiliary,
+			tt.setup()
+
+			got, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context),
+				NewMessage(tt.args.from,
+					tt.args.fromID,
+					tt.args.assetID).(helpers.Message))
+
+			if (err != nil) && !tt.wantErr.Is(err) {
+				t.Errorf("unexpected error: %v", err)
 			}
-			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() got = %v, want %v", got, tt.want)
+				t.Error("unexpected response")
 			}
 		})
 	}
 }
+
+//sdkTypes.NewInt(10)
