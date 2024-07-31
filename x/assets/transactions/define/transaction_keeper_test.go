@@ -11,8 +11,6 @@ import (
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/schema/ids"
 	"github.com/AssetMantle/schema/lists"
-	"github.com/AssetMantle/schema/parameters/base"
-	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cometbft/cometbft/crypto/ed25519"
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -26,10 +24,8 @@ import (
 	"math/rand"
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/data/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
-	baseProperties "github.com/AssetMantle/schema/properties/base"
 	tendermintDB "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -42,7 +38,6 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	dataHelper "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/assets/mapper"
-	"github.com/AssetMantle/modules/x/assets/parameters"
 	permissionHelper "github.com/AssetMantle/modules/x/assets/utilities"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 )
@@ -130,12 +125,6 @@ var (
 	genesisAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
 	_              = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
 
-	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace(constants.ModuleName).WithKeyTable(parameters.Prototype().GetKeyTable())).
-				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom)))))).
-				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
-				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
-				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
-				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))))
 	TransactionKeeper = transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey),
 		defineAuxiliary,
 		superAuxiliary,
@@ -173,7 +162,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		wantErr helpers.Error
 	}{
 		{
-			name: "Positive Case",
+			name: "DefineTransactionKeeperSuccess",
 			args: args{
 				from:               genesisAddress,
 				fromID:             baseIDs.PrototypeIdentityID(),
@@ -188,7 +177,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: nil,
 		},
 		{
-			name: "Authentication Failure",
+			name: "AuthenticationFailure",
 			args: args{
 				from:               authenticateAuxiliaryFailureAddress,
 				fromID:             baseIDs.PrototypeIdentityID(),
@@ -203,7 +192,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "Define Auxiliary Failure",
+			name: "DefineAuxiliaryFailure",
 			args: args{
 				from:               defineAuxiliaryKeeperFailureAddress,
 				fromID:             baseIDs.PrototypeIdentityID(),
@@ -219,7 +208,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "Super Auxiliary Failure",
+			name: "SuperAuxiliaryFailure",
 			args: args{
 				from:               genesisAddress,
 				fromID:             baseIDs.PrototypeIdentityID(),
