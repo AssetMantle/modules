@@ -6,7 +6,6 @@ package renumerate
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	dataHelper "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	recordassets "github.com/AssetMantle/modules/x/assets/record"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
@@ -23,7 +22,6 @@ import (
 	govTypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/mock"
-	"math/rand"
 	"reflect"
 	"testing"
 
@@ -32,7 +30,6 @@ import (
 	"github.com/AssetMantle/modules/x/assets/mapper"
 	"github.com/AssetMantle/modules/x/assets/parameters"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
-	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
@@ -86,16 +83,9 @@ const (
 var (
 	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
 
-	propListsupplyMetamutables = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
-	propListsupplyMeta         = baseQualified.NewMutables(propListsupplyMetamutables).GetMutablePropertyList().Add(
-		//baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
-		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
-	)
-
 	propList = baseQualified.NewMutables(mutableMetaProperties).GetMutablePropertyList().Add(
 		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
 	)
-
 	newMutables    = baseQualified.NewMutables(propList)
 	testNewAsset   = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, newMutables), immutables, newMutables)
 	testNewAssetID = baseIDs.NewAssetID(testNewAsset.GetClassificationID(), testNewAsset.GetImmutables()).(*baseIDs.AssetID)
@@ -109,24 +99,16 @@ var (
 
 	authorizeAuxiliaryKeeper                  = new(MockAuxiliaryKeeper)
 	authorizeAuxiliaryFailureClassificationID = baseIDs.NewIdentityID(testNewAsset.GetClassificationID(), immutables)
-	//_                                         = authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
-	authorizeAuxiliary = new(MockAuxiliary)
-	_                  = authorizeAuxiliary.On("GetKeeper").Return(authorizeAuxiliaryKeeper)
+	authorizeAuxiliary                        = new(MockAuxiliary)
+	_                                         = authorizeAuxiliary.On("GetKeeper").Return(authorizeAuxiliaryKeeper)
 
-	renumerateAuxiliaryKeeper  = new(MockAuxiliaryKeeper)
-	renumerateAuxiliaryAssetID = baseIDs.NewStringID("renumerateFailureAsset")
-	_                          = renumerateAuxiliaryKeeper.On("Help", mock.Anything, renumerate.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAssetID(), sdkTypes.NewInt(1000))).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
-	//_                          = renumerateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	renumerateAuxiliaryKeeper = new(MockAuxiliaryKeeper)
+	renumerateAuxiliary       = new(MockAuxiliary)
+	_                         = renumerateAuxiliary.On("GetKeeper").Return(renumerateAuxiliaryKeeper)
 
-	renumerateAuxiliary = new(MockAuxiliary)
-	_                   = renumerateAuxiliary.On("GetKeeper").Return(renumerateAuxiliaryKeeper)
-
-	supplementAuxiliaryKeeper          = new(MockAuxiliaryKeeper)
-	supplementAuxiliaryMutablesFailure = dataHelper.GenerateRandomMetaPropertyListWithoutData(rand.New(rand.NewSource(99)))
-	//_                                  = supplementAuxiliaryKeeper.On("Help", mock.Anything, supplement.NewAuxiliaryRequest()).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
-	//_                                  = supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-	supplementAuxiliary = new(MockAuxiliary)
-	_                   = supplementAuxiliary.On("GetKeeper").Return(supplementAuxiliaryKeeper)
+	supplementAuxiliaryKeeper = new(MockAuxiliaryKeeper)
+	supplementAuxiliary       = new(MockAuxiliary)
+	_                         = supplementAuxiliary.On("GetKeeper").Return(supplementAuxiliaryKeeper)
 
 	codec = baseHelpers.TestCodec()
 
@@ -193,7 +175,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		wantErr helpers.Error
 	}{
 		{
-			name: "Success Case",
+			name: "RenumerateTransactionKeeperSuccess",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
@@ -209,7 +191,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: nil,
 		},
 		{
-			name: "Renumerate Property Disabled",
+			name: "RenumeratePropertyDisabled",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
@@ -217,14 +199,13 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				denom:   Denom,
 			},
 			setup: func() {
-				//authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(false)))))
 			},
 			want:    nil,
 			wantErr: errorConstants.NotAuthorized,
 		},
 		{
-			name: "Authentication Failure",
+			name: "AuthenticationFailure",
 			args: args{
 				from:    authenticateAuxiliaryFailureAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
@@ -238,7 +219,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "Entity Not Found Failure",
+			name: "EntityNotFoundFailure",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
@@ -252,7 +233,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.EntityNotFound,
 		},
 		{
-			name: "Authorize Auxiliary Failure",
+			name: "AuthorizeAuxiliaryFailure",
 			args: args{
 				from:    genesisAddress,
 				fromID:  authorizeAuxiliaryFailureClassificationID,
@@ -266,37 +247,21 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "Supplement Auxiliary Failure",
+			name: "SupplementAuxiliaryFailure",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
 				assetID: testNewAssetID,
 			},
 			setup: func() {
-				//TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(testNewAsset))
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
 			},
 			want:    nil,
 			wantErr: errorConstants.MockError,
 		},
-		//{
-		//	name: "Supplement Auxiliary Metadata Failure",
-		//	args: args{
-		//		from:    genesisAddress,
-		//		fromID:  baseIDs.PrototypeIdentityID(),
-		//		assetID: testNewAssetID,
-		//	},
-		//	setup: func() {
-		//		renumerateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
-		//		authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
-		//		supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(propListsupplyMeta)).Once()
-		//	},
-		//	want:    nil,
-		//	wantErr: errorConstants.MetaDataError,
-		//},
 		{
-			name: "Renumerate Auxiliary Failure",
+			name: "RenumerateAuxiliaryFailure",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
