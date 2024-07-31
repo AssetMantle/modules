@@ -89,12 +89,11 @@ var (
 	authenticateAuxiliary               = new(MockAuxiliary)
 	_                                   = authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
 
-	deputizeAuxiliaryKeeper         = new(MockAuxiliaryKeeper)
-	deputizeAuxiliaryFailureAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
-	_                               = deputizeAuxiliaryKeeper.On("Help", mock.Anything, deputize.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), baseIDs.PrototypeClassificationID(), baseLists.NewPropertyList(), true, true, true, permissionHelper.SetModulePermissions(false, true, true)...)).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
-	_                               = deputizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-	deputizeAuxiliary               = new(MockAuxiliary)
-	_                               = deputizeAuxiliary.On("GetKeeper").Return(deputizeAuxiliaryKeeper)
+	deputizeAuxiliaryKeeper = new(MockAuxiliaryKeeper)
+	_                       = deputizeAuxiliaryKeeper.On("Help", mock.Anything, deputize.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), baseIDs.PrototypeClassificationID(), baseLists.NewPropertyList(), true, true, true, permissionHelper.SetModulePermissions(false, true, true)...)).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
+	_                       = deputizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	deputizeAuxiliary       = new(MockAuxiliary)
+	_                       = deputizeAuxiliary.On("GetKeeper").Return(deputizeAuxiliaryKeeper)
 
 	codec = baseHelpers.TestCodec()
 
@@ -161,7 +160,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		wantErr helpers.Error
 	}{
 		{
-			name: "Successful Transaction",
+			name: "DeputizeTransactionKeeperSuccess",
 			args: args{
 				from:                genesisAddress,
 				fromID:              baseIDs.PrototypeIdentityID(),
@@ -179,7 +178,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: nil,
 		},
 		{
-			name: "Authentication Failure",
+			name: "AuthenticationFailure",
 			args: args{
 				from:                authenticateAuxiliaryFailureAddress,
 				fromID:              baseIDs.PrototypeIdentityID(),
@@ -197,7 +196,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "Deputize Failure",
+			name: "DeputizeAuxiliaryFailure",
 			args: args{
 				from:                genesisAddress,
 				fromID:              baseIDs.PrototypeIdentityID(),
