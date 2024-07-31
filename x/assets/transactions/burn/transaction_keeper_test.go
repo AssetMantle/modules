@@ -83,47 +83,52 @@ const (
 )
 
 var (
-	moduleStoreKey                  = sdkTypes.NewKVStoreKey(constants.ModuleName)
-	immutableMesaProperties         = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList))
-	supplymutableMesaPropertiesList = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList)
-	mutableMesaPropertiesList       = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList)
-	mutableMetaPropertiesList       = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
-	propList                        = baseQualified.NewMutables(mutableMetaPropertiesList).GetMutablePropertyList().Add(
-		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
-		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
-	)
+	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
 
-	propListburnHeightMetamutables = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
-	propListburnHeightMeta         = baseQualified.NewMutables(propListburnHeightMetamutables).GetMutablePropertyList().Add(
+	//Mesa Property List variables
+	immutablesMesaMock = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList))
+
+	//Burn Height Asset - Mesa
+	burnHeightMesaPropList = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList)
+	burnHeightMesaMutables = baseQualified.NewMutables(burnHeightMesaPropList).GetMutablePropertyList().Add(
+		baseProperties.NewMesaProperty(constantProperties.BurnHeightProperty.GetKey(), baseData.NewHeightData(base2.NewHeight(13))),
+		baseProperties.NewMesaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(34))),
+	)
+	burnHeightAssetMesaMutables = baseQualified.NewMutables(burnHeightMesaMutables)
+	burnHeightMesaAsset         = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutablesMesaMock, burnHeightAssetMesaMutables), immutablesMesaMock, burnHeightAssetMesaMutables)
+	burnHeightMesaAssetID       = baseIDs.NewAssetID(burnHeightMesaAsset.GetClassificationID(), burnHeightMesaAsset.GetImmutables()).(*baseIDs.AssetID)
+
+	//Supply Asset - Mesa
+	supplyMesaPropList = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList)
+	supplyMesaMutables = baseQualified.NewMutables(supplyMesaPropList).GetMutablePropertyList().Add(
+		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(34))),
+	)
+	supplyAssetMesaMutables = baseQualified.NewMutables(supplyMesaMutables)
+	supplyMesaAsset         = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutablesMesaMock, supplyAssetMesaMutables), immutablesMesaMock, supplyAssetMesaMutables)
+	supplyMesaAssetID       = baseIDs.NewAssetID(supplyMesaAsset.GetClassificationID(), supplyMesaAsset.GetImmutables()).(*baseIDs.AssetID)
+
+	//Meta Property List variables
+	burnHeightMetaPropList = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
+	burnHeightMetaMutables = baseQualified.NewMutables(burnHeightMetaPropList).GetMutablePropertyList().Add(
 		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
 		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
 		baseProperties.NewMetaProperty(constantProperties.BurnHeightProperty.GetKey(), baseData.NewHeightData(base2.NewHeight(20))),
 	)
 
-	propListsupplyMetamutables = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
-	propListsupplyMeta         = baseQualified.NewMutables(propListsupplyMetamutables).GetMutablePropertyList().Add(
+	supplyMetaPropList = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
+	supplyMetaMutables = baseQualified.NewMutables(supplyMetaPropList).GetMutablePropertyList().Add(
 		baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
 	)
 
-	supplyPropertyMesaProp = baseQualified.NewMutables(supplymutableMesaPropertiesList).GetMutablePropertyList().Add(
-		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(34))),
+	//Burn Enabled Asset - Meta
+	mutableMetaMock        = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
+	BurnEnableMetaMutables = baseQualified.NewMutables(mutableMetaMock).GetMutablePropertyList().Add(
+		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
+		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
 	)
-
-	burnHeightMesaProp = baseQualified.NewMutables(mutableMesaPropertiesList).GetMutablePropertyList().Add(
-		baseProperties.NewMesaProperty(constantProperties.BurnHeightProperty.GetKey(), baseData.NewHeightData(base2.NewHeight(13))),
-		baseProperties.NewMesaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(34))),
-	)
-	burnHeightMesaPropMutables = baseQualified.NewMutables(burnHeightMesaProp)
-	burnHeightMesaAsset        = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutableMesaProperties, burnHeightMesaPropMutables), immutableMesaProperties, burnHeightMesaPropMutables)
-	burnHeightMesaAssetID      = baseIDs.NewAssetID(burnHeightMesaAsset.GetClassificationID(), burnHeightMesaAsset.GetImmutables()).(*baseIDs.AssetID)
-
-	supplyPropertyMesaPropMutables = baseQualified.NewMutables(supplyPropertyMesaProp)
-	supplyPropertyMesaAsset        = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutableMesaProperties, supplyPropertyMesaPropMutables), immutableMesaProperties, supplyPropertyMesaPropMutables)
-	supplyPropertyMesaAssetID      = baseIDs.NewAssetID(supplyPropertyMesaAsset.GetClassificationID(), supplyPropertyMesaAsset.GetImmutables()).(*baseIDs.AssetID)
-
-	newMutables = baseQualified.NewMutables(propList)
-	asset       = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, newMutables), immutables, newMutables)
-	assetID     = baseIDs.NewAssetID(asset.GetClassificationID(), asset.GetImmutables()).(*baseIDs.AssetID)
+	BurnEnabledAssetMetaMutable = baseQualified.NewMutables(BurnEnableMetaMutables)
+	asset                       = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, BurnEnabledAssetMetaMutable), immutables, BurnEnabledAssetMetaMutable)
+	assetID                     = baseIDs.NewAssetID(asset.GetClassificationID(), asset.GetImmutables()).(*baseIDs.AssetID)
 
 	authenticateAuxiliaryKeeper = new(MockAuxiliaryKeeper)
 	authenticateAuxiliary       = new(MockAuxiliary)
@@ -138,9 +143,8 @@ var (
 	_                    = purgeAuxiliary.On("GetKeeper").Return(purgeAuxiliaryKeeper)
 
 	supplementAuxiliaryKeeper = new(MockAuxiliaryKeeper)
-
-	supplementAuxiliary = new(MockAuxiliary)
-	_                   = supplementAuxiliary.On("GetKeeper").Return(supplementAuxiliaryKeeper)
+	supplementAuxiliary       = new(MockAuxiliary)
+	_                         = supplementAuxiliary.On("GetKeeper").Return(supplementAuxiliaryKeeper)
 
 	unbondAuxiliaryKeeper = new(MockAuxiliaryKeeper)
 	unbondAuxiliary       = new(MockAuxiliary)
@@ -205,7 +209,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		wantErr helpers.Error
 	}{
 		{
-			name: "burnDisabledSuccess",
+			name: "BurnPropertyDisabled",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
@@ -219,7 +223,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.NotAuthorized,
 		},
 		{
-			name: "burnAssetSuccess",
+			name: "BurnTransactionKeeperSuccess",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
@@ -236,7 +240,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: nil,
 		},
 		{
-			name: "burnAssetNotAuthenticated",
+			name: "AuthenticationFailure",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
@@ -249,7 +253,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "burnAssetNotAuthorized",
+			name: "AuthorizationFailure",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
@@ -264,7 +268,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.NotAuthorized,
 		},
 		{
-			name: "burnAssetEntityNotFound",
+			name: "BurnAssetEntityNotFound",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
@@ -278,7 +282,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.EntityNotFound,
 		},
 		{
-			name: "bondAmountSupplementAuxiliaryFailure",
+			name: "BurnHeightSupplementAuxiliaryFailure",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
@@ -295,7 +299,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "bondHeightMetaDataAuxiliaryResponse",
+			name: "BurnHeightMetaDataError",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
@@ -305,14 +309,14 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(burnHeightMesaAsset))
 				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
-				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(propListburnHeightMeta), nil).Once()
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(burnHeightMetaMutables), nil).Once()
 
 			},
 			want:    nil,
 			wantErr: errorConstants.NotAuthorized,
 		},
 		{
-			name: "burnAmountSupplementMetaDataError",
+			name: "BurnHeightPropertyNotRevealed",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
@@ -322,21 +326,21 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(burnHeightMesaAsset))
 				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
-				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(mutableMetaPropertiesList), nil).Once()
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(mutableMetaMock), nil).Once()
 
 			},
 			want:    nil,
 			wantErr: errorConstants.MetaDataError,
 		},
 		{
-			name: "SupplementAuxiliaryFailure",
+			name: "SupplyPropertySupplementAuxiliaryFailure",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
-				assetID: supplyPropertyMesaAssetID,
+				assetID: supplyMesaAssetID,
 			},
 			setup: func() {
-				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(supplyPropertyMesaAsset))
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(supplyMesaAsset))
 				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
@@ -346,17 +350,17 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "supplyMetaDataSuccess",
+			name: "SupplyMetaPropertyAuxiliaryResponseSuccess",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
-				assetID: supplyPropertyMesaAssetID,
+				assetID: supplyMesaAssetID,
 			},
 			setup: func() {
-				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(supplyPropertyMesaAsset))
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(supplyMesaAsset))
 				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
-				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(propListsupplyMeta), nil).Once()
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(supplyMetaMutables), nil).Once()
 				purgeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 
 			},
@@ -364,17 +368,17 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MetaDataError,
 		},
 		{
-			name: "supplyMetaDataError",
+			name: "AssetsWithoutSupplyCannotBeBurnedMetaError",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),
-				assetID: supplyPropertyMesaAssetID,
+				assetID: supplyMesaAssetID,
 			},
 			setup: func() {
-				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(supplyPropertyMesaAsset))
+				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(supplyMesaAsset))
 				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
-				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(mutableMetaPropertiesList), nil).Once()
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(mutableMetaMock), nil).Once()
 
 			},
 			want:    nil,
