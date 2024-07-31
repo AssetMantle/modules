@@ -160,7 +160,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		wantErr helpers.Error
 	}{
 		{
-			name: "Positive Case",
+			name: "RevokeTransactionKeeperSuccess",
 			args: args{
 				from:             genesisAddress,
 				fromID:           baseIDs.PrototypeIdentityID(),
@@ -173,7 +173,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: nil,
 		},
 		{
-			name: "Authentication Failure",
+			name: "AuthenticationFailure",
 			args: args{
 				from:             authenticateAuxiliaryFailureAddress,
 				fromID:           baseIDs.PrototypeIdentityID(),
@@ -186,7 +186,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "Revoke Auxiliary Failure",
+			name: "RevokeAuxiliaryFailure",
 			args: args{
 				from:             revokeAuxiliaryFailureAddress,
 				fromID:           revokeAuxiliaryKeeperFailureID,
