@@ -83,7 +83,6 @@ var (
 	randomMetaPropertyGenerator = func() properties.MetaProperty {
 		return baseProperties.NewMetaProperty(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewStringData(random.GenerateUniqueIdentifier()))
 	}
-
 	randomAssetGenerator = func(withImmutable, withMutable properties.Property) documents.Asset {
 		immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(withImmutable, randomMetaPropertyGenerator(), randomMetaPropertyGenerator(), randomMetaPropertyGenerator()))
 		mutables := baseQualified.NewMutables(baseLists.NewPropertyList(withMutable, randomMetaPropertyGenerator(), randomMetaPropertyGenerator(), randomMetaPropertyGenerator()))
@@ -110,12 +109,10 @@ var (
 	authenticateAuxiliaryFailureAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
 	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(authenticateAuxiliaryFailureAddress, baseIDs.PrototypeIdentityID())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	authenticateAuxiliary               = new(MockAuxiliary)
+	_                                   = authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
 
-	authenticateAuxiliary = new(MockAuxiliary)
-	_                     = authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
-
-	supplementAuxiliaryKeeper = new(MockAuxiliaryKeeper)
-
+	supplementAuxiliaryKeeper       = new(MockAuxiliaryKeeper)
 	supplementAuxiliaryFailureAsset = randomAssetGenerator(
 		baseProperties.NewMesaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(0))),
 		nil,
@@ -133,15 +130,13 @@ var (
 	supplementAuxiliaryAuxiliary = new(MockAuxiliary)
 	_                            = supplementAuxiliaryAuxiliary.On("GetKeeper").Return(supplementAuxiliaryKeeper)
 
-	transferAuxiliaryKeeper = new(MockAuxiliaryKeeper)
-
+	transferAuxiliaryKeeper         = new(MockAuxiliaryKeeper)
 	transferAuxiliaryFailureAsset   = randomAssetGenerator(baseProperties.NewMetaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(0))), nil)
 	transferAuxiliaryFailureAssetID = baseIDs.NewAssetID(transferAuxiliaryFailureAsset.GetClassificationID(), transferAuxiliaryFailureAsset.GetImmutables()).(*baseIDs.AssetID)
 	_                               = transferAuxiliaryKeeper.On("Help", mock.Anything, transfer.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), transferAuxiliaryFailureAssetID, sdkTypes.NewInt(1))).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 	_                               = transferAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-
-	transferAuxiliaryAuxiliary = new(MockAuxiliary)
-	_                          = transferAuxiliaryAuxiliary.On("GetKeeper").Return(transferAuxiliaryKeeper)
+	transferAuxiliaryAuxiliary      = new(MockAuxiliary)
+	_                               = transferAuxiliaryAuxiliary.On("GetKeeper").Return(transferAuxiliaryKeeper)
 
 	codec = baseHelpers.TestCodec()
 
