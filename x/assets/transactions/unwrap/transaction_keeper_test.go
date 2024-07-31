@@ -86,22 +86,21 @@ const (
 var (
 	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
 
+	newCollectionFaliure = "notfound"
+
 	authenticateAuxiliaryKeeper         = new(MockAuxiliaryKeeper)
 	authenticateAuxiliaryFailureAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
 	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(authenticateAuxiliaryFailureAddress, baseIDs.PrototypeIdentityID())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	authenticateAuxiliary               = new(MockAuxiliary)
+	_                                   = authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
 
-	burnAuxiliaryKeeper       = new(MockAuxiliaryKeeper)
-	newCollectionFaliure      = "notfound"
 	burnAuxiliaryFailureDenom = "burn"
+	burnAuxiliaryKeeper       = new(MockAuxiliaryKeeper)
 	_                         = burnAuxiliaryKeeper.On("Help", mock.Anything, burn.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseDocuments.NewCoinAsset(burnAuxiliaryFailureDenom).GetCoinAssetID(), sdkTypes.OneInt())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 	_                         = burnAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-
-	authenticateAuxiliary = new(MockAuxiliary)
-	_                     = authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
-
-	burnAuxiliary = new(MockAuxiliary)
-	_             = burnAuxiliary.On("GetKeeper").Return(burnAuxiliaryKeeper)
+	burnAuxiliary             = new(MockAuxiliary)
+	_                         = burnAuxiliary.On("GetKeeper").Return(burnAuxiliaryKeeper)
 
 	codec = baseHelpers.TestCodec()
 
