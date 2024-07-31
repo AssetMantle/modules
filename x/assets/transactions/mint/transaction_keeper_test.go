@@ -84,10 +84,10 @@ const (
 var (
 	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
 
+	//Asset - Meta
 	newMutables = baseQualified.NewMutables(baseLists.NewPropertyList())
-
-	asset   = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, newMutables), immutables, newMutables)
-	assetID = baseIDs.NewAssetID(asset.GetClassificationID(), asset.GetImmutables()).(*baseIDs.AssetID)
+	asset       = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, newMutables), immutables, newMutables)
+	assetID     = baseIDs.NewAssetID(asset.GetClassificationID(), asset.GetImmutables()).(*baseIDs.AssetID)
 
 	authenticateAuxiliaryKeeper         = new(MockAuxiliaryKeeper)
 	authenticateAuxiliaryFailureAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
@@ -95,20 +95,23 @@ var (
 	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
 	authenticateAuxiliary               = new(MockAuxiliary)
 	_                                   = authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
-	authorizeAuxiliaryKeeper            = new(MockAuxiliaryKeeper)
-	authorizeAuxiliary                  = new(MockAuxiliary)
-	_                                   = authorizeAuxiliary.On("GetKeeper").Return(authorizeAuxiliaryKeeper)
-	mintAuxiliaryKeeper                 = new(MockAuxiliaryKeeper)
-	mintAuxiliaryFailureID              = baseIDs.NewIdentityID(baseIDs.NewClassificationID(baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetID().GetKey(), baseData.NewNumberData(sdkTypes.NewInt(1)))))), baseQualified.NewImmutables(baseLists.NewPropertyList()))
-	mintAuxiliary                       = new(MockAuxiliary)
-	_                                   = mintAuxiliary.On("GetKeeper").Return(mintAuxiliaryKeeper)
-	bondAuxiliaryKeeper                 = new(MockAuxiliaryKeeper)
-	bondAuxiliaryFailureAddress         = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
-	bondAuxiliary                       = new(MockAuxiliary)
-	_                                   = bondAuxiliary.On("GetKeeper").Return(bondAuxiliaryKeeper)
-	conformAuxiliaryKeeper              = new(MockAuxiliaryKeeper)
-	conformAuxiliary                    = new(MockAuxiliary)
-	_                                   = conformAuxiliary.On("GetKeeper").Return(conformAuxiliaryKeeper)
+
+	authorizeAuxiliaryKeeper = new(MockAuxiliaryKeeper)
+	authorizeAuxiliary       = new(MockAuxiliary)
+	_                        = authorizeAuxiliary.On("GetKeeper").Return(authorizeAuxiliaryKeeper)
+
+	mintAuxiliaryKeeper = new(MockAuxiliaryKeeper)
+	mintAuxiliary       = new(MockAuxiliary)
+	_                   = mintAuxiliary.On("GetKeeper").Return(mintAuxiliaryKeeper)
+
+	bondAuxiliaryKeeper         = new(MockAuxiliaryKeeper)
+	bondAuxiliaryFailureAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
+	bondAuxiliary               = new(MockAuxiliary)
+	_                           = bondAuxiliary.On("GetKeeper").Return(bondAuxiliaryKeeper)
+
+	conformAuxiliaryKeeper = new(MockAuxiliaryKeeper)
+	conformAuxiliary       = new(MockAuxiliary)
+	_                      = conformAuxiliary.On("GetKeeper").Return(conformAuxiliaryKeeper)
 
 	codec                    = baseHelpers.TestCodec()
 	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
@@ -133,9 +136,8 @@ var (
 	coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom, sdkTypes.NewInt(GenesisSupply)))
 	_          = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
 
-	genesisAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
-	_              = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
-	//parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+	genesisAddress   = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
+	_                = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
 	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace(constants.ModuleName).WithKeyTable(parameters.Prototype().GetKeyTable())).
 				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom)))))).
 				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
@@ -184,7 +186,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		wantErr helpers.Error
 	}{
 		{
-			name: "success",
+			name: "MintTransactionKeeperSuccess",
 			args: args{
 				from:             bondAuxiliaryFailureAddress,
 				toID:             baseIDs.PrototypeIdentityID(),
@@ -202,7 +204,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: nil,
 		},
 		{
-			name: "minting not enabled",
+			name: "MintPropertyNotEnabled",
 			args: args{
 				from:             genesisAddress,
 				toID:             baseIDs.PrototypeIdentityID(),
@@ -216,7 +218,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.NotAuthorized,
 		},
 		{
-			name: "authorization failure",
+			name: "AuthorizationFailure",
 			args: args{
 				from:             genesisAddress,
 				toID:             baseIDs.PrototypeIdentityID(),
@@ -231,7 +233,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "authentication failure",
+			name: "AuthenticationFailure",
 			args: args{
 				from:             authenticateAuxiliaryFailureAddress,
 				toID:             baseIDs.PrototypeIdentityID(),
@@ -245,7 +247,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "asset already exists",
+			name: "EntityAlreadyExistsError",
 			args: args{
 				from:             genesisAddress,
 				toID:             baseIDs.PrototypeIdentityID(),
@@ -266,7 +268,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.EntityAlreadyExists,
 		},
 		{
-			name: "conform auxiliary failure",
+			name: "ConformAuxiliaryFailure",
 			args: args{
 				from:             genesisAddress,
 				toID:             baseIDs.PrototypeIdentityID(),
@@ -282,7 +284,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "asset supply negative",
+			name: "AssetSupplyNegativeIncorrectFormatError",
 			args: args{
 				from:             genesisAddress,
 				toID:             baseIDs.PrototypeIdentityID(),
@@ -298,7 +300,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.IncorrectFormat,
 		},
 		{
-			name: "mint auxiliary failure",
+			name: "MintAuxiliaryFailure",
 			args: args{
 				from:             genesisAddress,
 				toID:             baseIDs.PrototypeIdentityID(),
@@ -315,7 +317,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "bond auxiliary failure",
+			name: "BondAuxiliaryFailure",
 			args: args{
 				from:             bondAuxiliaryFailureAddress,
 				toID:             baseIDs.PrototypeIdentityID(),
@@ -333,7 +335,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "no bond amount property",
+			name: "BondAmountPropertyMetaDataError",
 			args: args{
 				from:             genesisAddress,
 				toID:             baseIDs.PrototypeIdentityID(),
