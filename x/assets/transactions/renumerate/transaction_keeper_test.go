@@ -65,12 +65,12 @@ type MockAuxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*MockAuxiliaryKeeper)(nil)
 
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
-	args := mockAuxiliaryKeeper.Called(context, request)
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, auxiliaryRequest helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	args := mockAuxiliaryKeeper.Called(context, auxiliaryRequest)
 	return args.Get(0).(helpers.AuxiliaryResponse), args.Error(1)
 }
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(m2 helpers.Mapper, manager helpers.ParameterManager, i []interface{}) helpers.Keeper {
-	args := mockAuxiliaryKeeper.Called(m2, manager, i)
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, i []interface{}) helpers.Keeper {
+	args := mockAuxiliaryKeeper.Called(mapper, parameterManager, i)
 	return args.Get(0).(helpers.Keeper)
 }
 
@@ -84,11 +84,14 @@ const (
 var (
 	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
 
-	SupplyNotRevealedProperty = baseMetaProp.NewMetaProperty(baseIDs.NewStringID("supply"), baseData.NewBooleanData(false))
-	NegativeSupplyProperty    = baseMetaProp.NewMetaProperty(constantProperties.SupplyProperty.GetID().GetKey(), baseData.NewNumberData(sdkTypes.NewInt(-1)))
+	randomInteger         int64 = 100
+	randomNegativeInteger int64 = -1
+
+	SupplyNotRevealedProperty = baseMetaProp.NewMesaProperty(constantProperties.SupplyProperty.GetID().GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomNegativeInteger)))
+	NegativeSupplyProperty    = baseMetaProp.NewMetaProperty(constantProperties.SupplyProperty.GetID().GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomNegativeInteger)))
 
 	propList = baseQualified.NewMutables(mutableMetaProperties).GetMutablePropertyList().Add(
-		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
+		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
 	)
 	newMutables    = baseQualified.NewMutables(propList)
 	testNewAsset   = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, newMutables), immutables, newMutables)
@@ -264,7 +267,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			wantErr: errorConstants.MockError,
 		},
 		{
-			name: "SuupplyNotRevealedError",
+			name: "SupplyNotRevealedError",
 			args: args{
 				from:    genesisAddress,
 				fromID:  baseIDs.PrototypeIdentityID(),

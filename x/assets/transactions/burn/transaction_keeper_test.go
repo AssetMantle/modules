@@ -15,7 +15,7 @@ import (
 	"github.com/AssetMantle/schema/parameters/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	base2 "github.com/AssetMantle/schema/types/base"
+	baseType "github.com/AssetMantle/schema/types/base"
 	"github.com/cometbft/cometbft/crypto/ed25519"
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -25,6 +25,7 @@ import (
 	govTypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/mock"
+	"math/rand"
 	"reflect"
 	"testing"
 
@@ -41,6 +42,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	baseProp "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/assets/mapper"
 	"github.com/AssetMantle/modules/x/assets/parameters"
 )
@@ -66,12 +68,12 @@ type MockAuxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*MockAuxiliaryKeeper)(nil)
 
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
-	args := mockAuxiliaryKeeper.Called(context, request)
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, auxiliaryRequest helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	args := mockAuxiliaryKeeper.Called(context, auxiliaryRequest)
 	return args.Get(0).(helpers.AuxiliaryResponse), args.Error(1)
 }
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(m2 helpers.Mapper, manager helpers.ParameterManager, i []interface{}) helpers.Keeper {
-	args := mockAuxiliaryKeeper.Called(m2, manager, i)
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, i []interface{}) helpers.Keeper {
+	args := mockAuxiliaryKeeper.Called(mapper, parameterManager, i)
 	return args.Get(0).(helpers.Keeper)
 }
 
@@ -85,41 +87,44 @@ const (
 var (
 	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
 
-	immutablesMesaMock = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList))
+	randomInteger int64 = 100
+	randomSeed    int64 = 99
 
-	burnHeightMesaPropList = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList)
+	immutablesMesaMock = baseQualified.NewImmutables(baseProp.GenerateRandomPropertyList(rand.New(rand.NewSource(randomSeed))))
+
+	burnHeightMesaPropList = baseProp.GenerateRandomPropertyList(rand.New(rand.NewSource(randomSeed)))
 	burnHeightMesaMutables = baseQualified.NewMutables(burnHeightMesaPropList).GetMutablePropertyList().Add(
-		baseProperties.NewMesaProperty(constantProperties.BurnHeightProperty.GetKey(), baseData.NewHeightData(base2.NewHeight(13))),
-		baseProperties.NewMesaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(34))),
+		baseProperties.NewMesaProperty(constantProperties.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseType.NewHeight(randomInteger))),
+		baseProperties.NewMesaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
 	)
 	burnHeightAssetMesaMutables = baseQualified.NewMutables(burnHeightMesaMutables)
 	burnHeightMesaAsset         = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutablesMesaMock, burnHeightAssetMesaMutables), immutablesMesaMock, burnHeightAssetMesaMutables)
 	burnHeightMesaAssetID       = baseIDs.NewAssetID(burnHeightMesaAsset.GetClassificationID(), burnHeightMesaAsset.GetImmutables()).(*baseIDs.AssetID)
 
-	supplyMesaPropList = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList)
+	supplyMesaPropList = baseProp.GenerateRandomPropertyList(rand.New(rand.NewSource(randomSeed)))
 	supplyMesaMutables = baseQualified.NewMutables(supplyMesaPropList).GetMutablePropertyList().Add(
-		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(34))),
+		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
 	)
 	supplyAssetMesaMutables = baseQualified.NewMutables(supplyMesaMutables)
 	supplyMesaAsset         = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutablesMesaMock, supplyAssetMesaMutables), immutablesMesaMock, supplyAssetMesaMutables)
 	supplyMesaAssetID       = baseIDs.NewAssetID(supplyMesaAsset.GetClassificationID(), supplyMesaAsset.GetImmutables()).(*baseIDs.AssetID)
 
-	burnHeightMetaPropList = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
+	burnHeightMetaPropList = baseProp.GenerateRandomPropertyList(rand.New(rand.NewSource(randomSeed)))
 	burnHeightMetaMutables = baseQualified.NewMutables(burnHeightMetaPropList).GetMutablePropertyList().Add(
-		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
-		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
-		baseProperties.NewMetaProperty(constantProperties.BurnHeightProperty.GetKey(), baseData.NewHeightData(base2.NewHeight(20))),
+		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
+		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
+		baseProperties.NewMetaProperty(constantProperties.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseType.NewHeight(randomInteger))),
 	)
 
-	supplyMetaPropList = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
+	supplyMetaPropList = baseProp.GenerateRandomPropertyList(rand.New(rand.NewSource(randomSeed)))
 	supplyMetaMutables = baseQualified.NewMutables(supplyMetaPropList).GetMutablePropertyList().Add(
-		baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
+		baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
 	)
 
-	mutableMetaMock        = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
+	mutableMetaMock        = baseProp.GenerateRandomPropertyList(rand.New(rand.NewSource(randomSeed)))
 	BurnEnableMetaMutables = baseQualified.NewMutables(mutableMetaMock).GetMutablePropertyList().Add(
-		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
-		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
+		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
+		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
 	)
 	BurnEnabledAssetMetaMutable = baseQualified.NewMutables(BurnEnableMetaMutables)
 	asset                       = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, BurnEnabledAssetMetaMutable), immutables, BurnEnabledAssetMetaMutable)

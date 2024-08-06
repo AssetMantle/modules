@@ -8,6 +8,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
+	baseProp "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mapper"
@@ -39,6 +40,7 @@ import (
 	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/mock"
+	"math/rand"
 	"reflect"
 	"testing"
 )
@@ -64,12 +66,12 @@ type MockAuxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*MockAuxiliaryKeeper)(nil)
 
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
-	args := mockAuxiliaryKeeper.Called(context, request)
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, auxiliaryRequest helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	args := mockAuxiliaryKeeper.Called(context, auxiliaryRequest)
 	return args.Get(0).(helpers.AuxiliaryResponse), args.Error(1)
 }
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(m2 helpers.Mapper, manager helpers.ParameterManager, i []interface{}) helpers.Keeper {
-	args := mockAuxiliaryKeeper.Called(m2, manager, i)
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, i []interface{}) helpers.Keeper {
+	args := mockAuxiliaryKeeper.Called(mapper, parameterManager, i)
 	return args.Get(0).(helpers.Keeper)
 }
 
@@ -81,7 +83,11 @@ const (
 )
 
 var (
-	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
+	moduleStoreKey               = sdkTypes.NewKVStoreKey(constants.ModuleName)
+	randomSeed             int64 = 99
+	randomInt              int64 = 1
+	randomMetaProperty           = baseProp.GenerateRandomMetaProperty(rand.New(rand.NewSource(randomSeed)))
+	randomBondMetaProperty       = baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewNumberData(sdkTypes.NewInt(randomInt)))
 
 	newMutables = baseQualified.NewMutables(baseLists.NewPropertyList())
 	asset       = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, newMutables), immutables, newMutables)
@@ -250,15 +256,15 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				from:             genesisAddress,
 				toID:             baseIDs.PrototypeIdentityID(),
 				classificationID: baseIDs.PrototypeClassificationID(),
-				immutableProps:   baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("prop1"), baseData.NewStringData("val1"))),
+				immutableProps:   baseLists.NewPropertyList(randomMetaProperty),
 				mutableProps:     baseLists.NewPropertyList(),
 			},
 			setup: func(t *testing.T) {
-				assetID := baseIDs.NewAssetID(baseIDs.PrototypeClassificationID(), baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("prop1"), baseData.NewStringData("val1")))))
+				assetID := baseIDs.NewAssetID(baseIDs.PrototypeClassificationID(), baseQualified.NewImmutables(baseLists.NewPropertyList(randomMetaProperty)))
 				assets := TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Fetch(key.NewKey(assetID))
 				assets.Add(record.NewRecord(
 					baseDocuments.NewOrder(baseIDs.PrototypeClassificationID(),
-						baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("prop1"), baseData.NewStringData("val1")))),
+						baseQualified.NewImmutables(baseLists.NewPropertyList(randomMetaProperty)),
 						baseQualified.NewMutables(baseLists.NewPropertyList()))))
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 
@@ -339,7 +345,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				toID:             baseIDs.PrototypeIdentityID(),
 				classificationID: baseIDs.PrototypeClassificationID(),
 				immutableProps:   baseLists.NewPropertyList(),
-				mutableProps:     baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("prop1"), baseData.NewNumberData(sdkTypes.NewInt(1)))),
+				mutableProps:     baseLists.NewPropertyList(randomBondMetaProperty),
 			},
 			setup: func(t *testing.T) {
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()

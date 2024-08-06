@@ -64,12 +64,12 @@ type MockAuxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*MockAuxiliaryKeeper)(nil)
 
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
-	args := mockAuxiliaryKeeper.Called(context, request)
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, auxiliaryRequest helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	args := mockAuxiliaryKeeper.Called(context, auxiliaryRequest)
 	return args.Get(0).(helpers.AuxiliaryResponse), args.Error(1)
 }
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(m2 helpers.Mapper, manager helpers.ParameterManager, i []interface{}) helpers.Keeper {
-	args := mockAuxiliaryKeeper.Called(m2, manager, i)
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, i []interface{}) helpers.Keeper {
+	args := mockAuxiliaryKeeper.Called(mapper, parameterManager, i)
 	return args.Get(0).(helpers.Keeper)
 }
 
