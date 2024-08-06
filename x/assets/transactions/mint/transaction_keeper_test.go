@@ -43,7 +43,6 @@ import (
 	"testing"
 )
 
-// start
 type MockAuxiliary struct {
 	mock.Mock
 }
@@ -84,7 +83,6 @@ const (
 var (
 	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
 
-	//Asset - Meta
 	newMutables = baseQualified.NewMutables(baseLists.NewPropertyList())
 	asset       = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, newMutables), immutables, newMutables)
 	assetID     = baseIDs.NewAssetID(asset.GetClassificationID(), asset.GetImmutables()).(*baseIDs.AssetID)
@@ -356,7 +354,6 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			tt.setup(t)
-			//fmt.Print(tt.args.classificationID)
 			got, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(
 				tt.args.from,
 				baseIDs.PrototypeIdentityID(),

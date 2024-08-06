@@ -91,7 +91,7 @@ var (
 
 	revokeAuxiliaryKeeper          = new(MockAuxiliaryKeeper)
 	revokeAuxiliaryFailureAddress  = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
-	revokeAuxiliaryKeeperFailureID = baseIDs.NewIdentityID(baseIDs.NewClassificationID(immutables, mutables), immutables) //baseIDs.PrototypeIdentityID()
+	revokeAuxiliaryKeeperFailureID = baseIDs.NewIdentityID(baseIDs.NewClassificationID(immutables, mutables), immutables)
 	_                              = revokeAuxiliaryKeeper.On("Help", mock.Anything, revoke.NewAuxiliaryRequest(revokeAuxiliaryKeeperFailureID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeClassificationID())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 	_                              = revokeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(define.NewAuxiliaryResponse(baseIDs.PrototypeClassificationID()), nil)
 	revokeAuxiliary                = new(MockAuxiliary)

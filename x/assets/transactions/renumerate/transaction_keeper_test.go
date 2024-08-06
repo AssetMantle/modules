@@ -33,6 +33,7 @@ import (
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
+	baseMetaProp "github.com/AssetMantle/schema/properties/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	tendermintDB "github.com/cometbft/cometbft-db"
@@ -82,6 +83,9 @@ const (
 
 var (
 	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
+
+	SupplyNotRevealedProperty = baseMetaProp.NewMetaProperty(baseIDs.NewStringID("supply"), baseData.NewBooleanData(false))
+	NegativeSupplyProperty    = baseMetaProp.NewMetaProperty(constantProperties.SupplyProperty.GetID().GetKey(), baseData.NewNumberData(sdkTypes.NewInt(-1)))
 
 	propList = baseQualified.NewMutables(mutableMetaProperties).GetMutablePropertyList().Add(
 		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
@@ -227,7 +231,6 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				denom:   Denom,
 			},
 			setup: func() {
-				//authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 			},
 			want:    nil,
 			wantErr: errorConstants.EntityNotFound,
@@ -259,6 +262,36 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			},
 			want:    nil,
 			wantErr: errorConstants.MockError,
+		},
+		{
+			name: "SuupplyNotRevealedError",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: testNewAssetID,
+			},
+			setup: func() {
+				renumerateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
+				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(baseLists.NewPropertyList(SupplyNotRevealedProperty)), nil).Once()
+			},
+			want:    nil,
+			wantErr: errorConstants.MetaDataError,
+		},
+		{
+			name: "NegativeSupplyFailure",
+			args: args{
+				from:    genesisAddress,
+				fromID:  baseIDs.PrototypeIdentityID(),
+				assetID: testNewAssetID,
+			},
+			setup: func() {
+				renumerateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
+				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(supplement.NewAuxiliaryResponse(baseLists.NewPropertyList(NegativeSupplyProperty)), nil).Once()
+			},
+			want:    nil,
+			wantErr: errorConstants.MetaDataError,
 		},
 		{
 			name: "RenumerateAuxiliaryFailure",
