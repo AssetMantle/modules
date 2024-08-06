@@ -85,10 +85,8 @@ const (
 var (
 	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
 
-	//Mesa Property List variables
 	immutablesMesaMock = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList))
 
-	//Burn Height Asset - Mesa
 	burnHeightMesaPropList = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList)
 	burnHeightMesaMutables = baseQualified.NewMutables(burnHeightMesaPropList).GetMutablePropertyList().Add(
 		baseProperties.NewMesaProperty(constantProperties.BurnHeightProperty.GetKey(), baseData.NewHeightData(base2.NewHeight(13))),
@@ -98,7 +96,6 @@ var (
 	burnHeightMesaAsset         = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutablesMesaMock, burnHeightAssetMesaMutables), immutablesMesaMock, burnHeightAssetMesaMutables)
 	burnHeightMesaAssetID       = baseIDs.NewAssetID(burnHeightMesaAsset.GetClassificationID(), burnHeightMesaAsset.GetImmutables()).(*baseIDs.AssetID)
 
-	//Supply Asset - Mesa
 	supplyMesaPropList = baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("mockMesaProp"), baseData.NewListData())).(*baseLists.PropertyList)
 	supplyMesaMutables = baseQualified.NewMutables(supplyMesaPropList).GetMutablePropertyList().Add(
 		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(34))),
@@ -107,7 +104,6 @@ var (
 	supplyMesaAsset         = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutablesMesaMock, supplyAssetMesaMutables), immutablesMesaMock, supplyAssetMesaMutables)
 	supplyMesaAssetID       = baseIDs.NewAssetID(supplyMesaAsset.GetClassificationID(), supplyMesaAsset.GetImmutables()).(*baseIDs.AssetID)
 
-	//Meta Property List variables
 	burnHeightMetaPropList = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
 	burnHeightMetaMutables = baseQualified.NewMutables(burnHeightMetaPropList).GetMutablePropertyList().Add(
 		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
@@ -120,7 +116,6 @@ var (
 		baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
 	)
 
-	//Burn Enabled Asset - Meta
 	mutableMetaMock        = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())).(*baseLists.PropertyList)
 	BurnEnableMetaMutables = baseQualified.NewMutables(mutableMetaMock).GetMutablePropertyList().Add(
 		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100))),
@@ -400,23 +395,6 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			want:    nil,
 			wantErr: errorConstants.MockError,
 		},
-		//{
-		//	name: "noRevealedBondAmountFailure",
-		//	args: args{
-		//		from:    genesisAddress,
-		//		fromID:  baseIDs.PrototypeIdentityID(),
-		//		assetID: burnHeightMesaAssetID,
-		//	},
-		//	setup: func() {
-		//		TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(burnHeightMesaAsset))
-		//		authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(genesisAddress, baseIDs.PrototypeIdentityID())).Return(new(helpers.AuxiliaryResponse), nil).Once()
-		//		purgeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
-		//		supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
-		//		authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
-		//	},
-		//	want:    nil,
-		//	wantErr: errorConstants.MetaDataError,
-		//},
 		{
 			name: "unbondAuxiliaryFailure",
 			args: args{
@@ -454,5 +432,3 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		})
 	}
 }
-
-//sdkTypes.NewInt(10)
