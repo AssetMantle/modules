@@ -12,7 +12,7 @@ import (
 
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/spf13/viper"
@@ -238,14 +238,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		Value   string
 	}
 	type args struct {
-		legacyAmino *codec.LegacyAmino
+		legacyAmino *sdkCodec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), assetID.AsString(), testRate.String()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), assetID.AsString(), testRate.String()}, args{codec.GetLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

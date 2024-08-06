@@ -9,7 +9,6 @@ import (
 	"github.com/AssetMantle/modules/x/orders/mapper"
 	"github.com/AssetMantle/modules/x/orders/record"
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
-	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"reflect"
 	"testing"
 
@@ -50,10 +49,9 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := mapper.Prototype().Initialize(storeKey)
-	encodingConfig := testutil.MakeTestEncodingConfig()
-	appCodec := encodingConfig.Codec
+	codec := baseHelpers.TestCodec()
 	ParamsKeeper := paramsKeeper.NewKeeper(
-		appCodec,
+		codec,
 		legacyAmino,
 		paramsStoreKey,
 		paramsTransientStoreKeys,

@@ -5,7 +5,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
-	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -22,7 +21,7 @@ func Test_codec_Initialize(t *testing.T) {
 		ProtoCodec        *sdkCodec.ProtoCodec
 	}
 	type args struct {
-		moduleBasicManager sdkModuleTypes.BasicManager
+		moduleManager helpers.ModuleManager
 	}
 	tests := []struct {
 		name   string
@@ -39,7 +38,7 @@ func Test_codec_Initialize(t *testing.T) {
 				ProtoCodec:        sdkCodec.NewProtoCodec(types.NewInterfaceRegistry()),
 			},
 			args: args{
-				moduleBasicManager: sdkModuleTypes.BasicManager{},
+				moduleManager: NewModuleManager(),
 			},
 			want: codec{
 				interfaceRegistry: types.NewInterfaceRegistry(),
@@ -58,8 +57,8 @@ func Test_codec_Initialize(t *testing.T) {
 				legacyAmino:       tt.fields.legacyAmino,
 				ProtoCodec:        tt.fields.ProtoCodec,
 			}
-			Codec := codec.Initialize(tt.args.moduleBasicManager)
-			assert.Equalf(t, tt.want.GetProtoCodec(), Codec.GetProtoCodec(), "Initialize(%v)", tt.args.moduleBasicManager)
+			Codec := codec.Initialize(tt.args.moduleManager)
+			assert.Equalf(t, tt.want.GetProtoCodec(), Codec.GetProtoCodec(), "Initialize(%v)", tt.args.moduleManager)
 		})
 	}
 }

@@ -6,8 +6,10 @@ package base
 import (
 	"encoding/json"
 	"fmt"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	"math/rand"
 
+	abciTypes "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -18,7 +20,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
-	abciTypes "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/AssetMantle/modules/helpers"
 )
@@ -48,6 +49,15 @@ type module struct {
 
 var _ helpers.Module = (*module)(nil)
 
+func (module module) IsOnePerModuleType() {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (module module) IsAppModule() {
+	//TODO implement me
+	panic("implement me")
+}
 func (module module) Name() string {
 	return module.name
 }
@@ -134,10 +144,14 @@ func (module module) GetQueryCmd() *cobra.Command {
 func (module module) GenerateGenesisState(simulationState *sdkModuleTypes.SimulationState) {
 	module.simulatorPrototype().RandomizedGenesisState(simulationState)
 }
+func (module module) ProposalMsgs(simulationState sdkModuleTypes.SimulationState) []simulationTypes.WeightedProposalMsg {
+	//TODO implement me
+	panic("implement me")
+}
 func (module module) ProposalContents(simulationState sdkModuleTypes.SimulationState) []simulationTypes.WeightedProposalContent {
 	return module.simulatorPrototype().WeightedProposalContentList(simulationState)
 }
-func (module module) RandomizedParams(r *rand.Rand) []simulationTypes.ParamChange {
+func (module module) RandomizedParams(r *rand.Rand) []simulationTypes.LegacyParamChange {
 	return module.simulatorPrototype().ParamChangeList(r)
 }
 func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDecoderRegistry) {
@@ -149,40 +163,44 @@ func (module module) WeightedOperations(simulationState sdkModuleTypes.Simulatio
 func (module module) RegisterInvariants(invariantRegistry sdkTypes.InvariantRegistry) {
 	module.invariantsPrototype().Register(invariantRegistry)
 }
-func (module module) Route() sdkTypes.Route {
-	return sdkTypes.NewRoute(module.Name(), func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
-		if module.transactions == nil {
-			panic(fmt.Errorf("transactions for module %s not initialized", module.Name()))
-		}
 
-		if message, ok := msg.(helpers.Message); ok {
-			if transaction := module.transactions.GetTransaction(message.Type()); transaction != nil {
-				return transaction.HandleMessage(sdkTypes.WrapSDKContext(context.WithEventManager(sdkTypes.NewEventManager())), message)
-			}
-		}
-		return nil, fmt.Errorf("message type %T is not supported by module %s", msg, module.Name())
-	})
-}
+// TODO remove if unnecessary
+//
+//	func (module module) Route() sdkTypes.Route {
+//		return sdkTypes.NewRoute(module.Name(), func(context sdkTypes.Context, msg sdkTypes.Msg) (*sdkTypes.Result, error) {
+//			if module.transactions == nil {
+//				panic(fmt.Errorf("transactions for module %s not initialized", module.Name()))
+//			}
+//
+//			if message, ok := msg.(helpers.Message); ok {
+//				if transaction := module.transactions.GetTransaction(message.Type()); transaction != nil {
+//					return transaction.HandleMessage(sdkTypes.WrapSDKContext(context.WithEventManager(sdkTypes.NewEventManager())), message)
+//				}
+//			}
+//			return nil, fmt.Errorf("message type %T is not supported by module %s", msg, module.Name())
+//		})
+//	}
 func (module module) QuerierRoute() string {
 	return module.name
 }
-func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Querier {
-	return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
-		if module.queries == nil {
-			panic(fmt.Errorf("queries for module %s not initialized", module.Name()))
-		}
 
-		if query := module.queries.GetQuery(path[0]); query != nil {
-			return query.HandleQuery(sdkTypes.WrapSDKContext(context), requestQuery)
-		}
-
-		if path[0] == "parameters" {
-			return CodecPrototype().MarshalJSON(module.parameterManager.Fetch(sdkTypes.WrapSDKContext(context)).Get())
-		}
-
-		return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
-	}
-}
+//	func (module module) LegacyQuerierHandler(_ *sdkCodec.LegacyAmino) sdkTypes.Querier {
+//		return func(context sdkTypes.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
+//			if module.queries == nil {
+//				panic(fmt.Errorf("queries for module %s not initialized", module.Name()))
+//			}
+//
+//			if query := module.queries.GetQuery(path[0]); query != nil {
+//				return query.HandleQuery(sdkTypes.WrapSDKContext(context), requestQuery)
+//			}
+//
+//			if path[0] == "parameters" {
+//				return CodecPrototype().MarshalJSON(module.parameterManager.Fetch(sdkTypes.WrapSDKContext(context)).Get())
+//			}
+//
+//			return nil, fmt.Errorf("unknown query path, %v for module %v", path[0], module.Name())
+//		}
+//	}
 func (module module) RegisterServices(configurator sdkModuleTypes.Configurator) {
 	for _, query := range module.queries.Get() {
 		query.RegisterService(configurator)
@@ -236,7 +254,7 @@ func (module module) DecodeModuleTransactionRequest(transactionName string, rawM
 
 	return nil, fmt.Errorf("transaction %s is not supported by module %s", transactionName, module.Name())
 }
-func (module module) Initialize(kvStoreKey *sdkTypes.KVStoreKey, paramsSubspace paramsTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
+func (module module) Initialize(kvStoreKey *storeTypes.KVStoreKey, paramsSubspace paramsTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
 
 	module.genesis = module.genesisPrototype()

@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/spf13/viper"
@@ -220,14 +220,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		ClassificationID string
 	}
 	type args struct {
-		legacyAmino *codec.LegacyAmino
+		legacyAmino *sdkCodec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{testBaseRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString()}, args{sdkCodec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
