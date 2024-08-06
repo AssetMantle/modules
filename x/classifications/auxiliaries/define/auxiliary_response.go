@@ -16,7 +16,7 @@ type auxiliaryResponse struct {
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
 
-func newAuxiliaryResponse(classificationID ids.ClassificationID) helpers.AuxiliaryResponse {
+func NewAuxiliaryResponse(classificationID ids.ClassificationID) helpers.AuxiliaryResponse {
 	return auxiliaryResponse{
 		ClassificationID: classificationID,
 	}

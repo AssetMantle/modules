@@ -22,7 +22,7 @@ require (
 	google.golang.org/grpc v1.62.1
 )
 
-//replace github.com/AssetMantle/schema => ../schema
+replace github.com/AssetMantle/schema => ../schema
 
 require (
 	cloud.google.com/go v0.112.0 // indirect
