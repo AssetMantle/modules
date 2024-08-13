@@ -36,7 +36,7 @@ func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
 	if record.GetKey() == nil || len(record.GetKey().GeneratePrefixedStoreKeyBytes()) == 0 {
 		return Prototype()
 	}
-	Bytes := kvStore.Get(record.GetKey().GenerateStoreKeyBytes())
+	Bytes := kvStore.Get(record.GetKey().GeneratePrefixedStoreKeyBytes())
 	if Bytes == nil {
 		return Prototype()
 	}
@@ -51,7 +51,7 @@ func (record *Record) Write(kvStore sdkTypes.KVStore) helpers.Record {
 	return record
 }
 func (record *Record) Delete(kvStore sdkTypes.KVStore) {
-	kvStore.Delete(record.GetKey().GenerateStoreKeyBytes())
+	kvStore.Delete(record.GetKey().GeneratePrefixedStoreKeyBytes())
 }
 
 func RecordsFromInterface(records []helpers.Record) []*Record {
