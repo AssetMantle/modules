@@ -17,10 +17,10 @@ type TicketID string
 
 // kafkaMsg : is a store that can be stored in kafka queues
 type kafkaMsg struct {
-	Msg                      sdk.Msg                          `json:"msg"`
-	TicketID                 TicketID                         `json:"TicketID"`
-	CommonTransactionRequest helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
-	KafkaCliCtx              kafkaCliCtx
+	sdk.Msg                          `json:"msg"`
+	TicketID                         `json:"TicketID"`
+	helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
+	KafkaCliCtx                      kafkaCliCtx
 }
 
 // newKafkaMsgFromRest : makes a msg to send to kafka queue
