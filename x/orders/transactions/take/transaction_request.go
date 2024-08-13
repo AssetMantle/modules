@@ -17,10 +17,10 @@ import (
 )
 
 type transactionRequest struct {
-	CommonTransactionRequest helpers.CommonTransactionRequest `json:"CommonTransactionRequest"`
-	FromID                   string                           `json:"fromID"`
-	TakerSplit               string                           `json:"takerSplit"`
-	OrderID                  string                           `json:"orderID"`
+	helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
+	FromID                           string `json:"fromID"`
+	TakerSplit                       string `json:"takerSplit"`
+	OrderID                          string `json:"orderID"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)

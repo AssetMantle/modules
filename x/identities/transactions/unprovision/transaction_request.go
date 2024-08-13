@@ -17,9 +17,9 @@ import (
 )
 
 type transactionRequest struct {
-	CommonTransactionRequest helpers.CommonTransactionRequest `json:"CommonTransactionRequest"`
-	To                       string                           `json:"to"`
-	IdentityID               string                           `json:"identityID"`
+	helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
+	To                               string `json:"to"`
+	IdentityID                       string `json:"identityID"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
