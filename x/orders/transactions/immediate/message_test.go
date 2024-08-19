@@ -150,7 +150,7 @@ func Test_message_Type(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testClassificationID, testFromID, makerAssetID, takerAssetID, expiresInHeight, makerSplit, takerSplit, immutableMetaProperties.(*baseLists.PropertyList), immutableProperties.(*baseLists.PropertyList), mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testClassificationID, testFromID, makerAssetID, takerAssetID, expiresInHeight, makerSplit, takerSplit, immutableMetaProperties.(*baseLists.PropertyList), immutableProperties.(*baseLists.PropertyList), mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, Transaction.GetServicePath()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

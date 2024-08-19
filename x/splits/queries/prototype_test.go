@@ -15,13 +15,13 @@ import (
 
 func TestPrototype(t *testing.T) {
 	require.Panics(t, func() {
-		require.Equal(t, Prototype().GetQuery("splits").GetName(), baseHelpers.NewQueries(
+		require.Equal(t, Prototype().GetQuery("splits").GetServicePath(), baseHelpers.NewQueries(
 			split.Query,
 			balances.Query,
-		).GetQuery("splits").GetName())
-		require.Equal(t, Prototype().GetQuery("balances").GetName(), baseHelpers.NewQueries(
+		).GetQuery("splits").GetServicePath())
+		require.Equal(t, Prototype().GetQuery("balances").GetServicePath(), baseHelpers.NewQueries(
 			split.Query,
 			balances.Query,
-		).GetQuery("balances").GetName())
+		).GetQuery("balances").GetServicePath())
 	})
 }

@@ -37,7 +37,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	identity := mappable.GetIdentity(Mappable)
 
-	fromAddress := message.GetFromAddress()
+	fromAddress := message.GetSigners()[0]
 
 	toAddress, err := sdkTypes.AccAddressFromBech32(message.To)
 	if err != nil {

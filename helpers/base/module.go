@@ -76,22 +76,14 @@ func (module module) RegisterRESTRoutes(context client.Context, router *mux.Rout
 	router.HandleFunc("/"+module.Name()+"/parameters", module.parameterManagerPrototype().RESTQueryHandler(context)).Methods("GET")
 
 	for _, query := range module.queriesPrototype().Get() {
-		router.HandleFunc("/"+module.Name()+"/"+query.GetName(), query.RESTQueryHandler(context)).Methods("GET")
+		router.HandleFunc(query.GetServicePath(), query.RESTQueryHandler(context)).Methods("GET")
 	}
 
 	for _, transaction := range module.transactionsPrototype().Get() {
-		router.HandleFunc("/"+module.Name()+"/"+transaction.GetName(), transaction.RESTRequestHandler(context)).Methods("POST")
+		router.HandleFunc(transaction.GetServicePath(), transaction.RESTRequestHandler(context)).Methods("POST")
 	}
 }
-func (module module) RegisterGRPCGatewayRoutes(context client.Context, serveMux *runtime.ServeMux) {
-	for _, query := range module.queriesPrototype().Get() {
-		query.RegisterGRPCGatewayRoute(context, serveMux)
-	}
-
-	for _, transaction := range module.transactionsPrototype().Get() {
-		transaction.RegisterGRPCGatewayRoute(context, serveMux)
-	}
-}
+func (module module) RegisterGRPCGatewayRoutes(_ client.Context, _ *runtime.ServeMux) {}
 func (module module) GetTxCmd() *cobra.Command {
 	rootTransactionCommand := &cobra.Command{
 		Use:                        module.name,

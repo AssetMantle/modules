@@ -60,7 +60,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 //
 // 4. If the process completes successfully for all coins, it returns a new TransactionResponse object.
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.GetFromAddress(), message.FromID)); err != nil {
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.GetSigners()[0], message.FromID)); err != nil {
 		return nil, err
 	}
 
@@ -89,7 +89,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 			return nil, err
 		}
 
-		if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), constants.ModuleName, message.GetFromAddress(), sdkTypes.NewCoins(coin)); err != nil {
+		if err := transactionKeeper.bankKeeper.SendCoinsFromModuleToAccount(sdkTypes.UnwrapSDKContext(context), constants.ModuleName, message.GetSigners()[0], sdkTypes.NewCoins(coin)); err != nil {
 			return nil, err
 		}
 	}

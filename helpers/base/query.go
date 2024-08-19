@@ -6,13 +6,12 @@ package base
 import (
 	"fmt"
 	"github.com/AssetMantle/modules/utilities/rest"
-	"net/http"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
+	"net/http"
+	"strings"
 
 	abciTypes "github.com/cometbft/cometbft/abci/types"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -21,32 +20,27 @@ import (
 )
 
 type query struct {
-	name                 string
-	cliCommand           helpers.CLICommand
-	moduleName           string
-	queryKeeper          helpers.QueryKeeper
-	requestPrototype     func() helpers.QueryRequest
-	responsePrototype    func() helpers.QueryResponse
-	keeperPrototype      func() helpers.QueryKeeper
-	serviceRegistrar     func(grpc.ServiceRegistrar, helpers.QueryKeeper)
-	grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error
-	queryHandler         func(client.Context, helpers.QueryRequest) (helpers.QueryResponse, error)
+	serviceName       string
+	cliCommand        helpers.CLICommand
+	queryKeeper       helpers.QueryKeeper
+	requestPrototype  func() helpers.QueryRequest
+	responsePrototype func() helpers.QueryResponse
+	keeperPrototype   func() helpers.QueryKeeper
+	serviceRegistrar  func(grpc.ServiceRegistrar, helpers.QueryKeeper)
 }
 
 var _ helpers.Query = (*query)(nil)
 
 func (query query) RegisterService(configurator sdkModuleTypes.Configurator) {
 	if query.queryKeeper == nil {
-		panic(fmt.Errorf("query keeper for query %s not initialized", query.name))
+		panic(fmt.Errorf("query keeper for query %s not initialized", query.serviceName))
 	}
 	query.serviceRegistrar(configurator.QueryServer(), query.queryKeeper)
 }
-func (query query) RegisterGRPCGatewayRoute(context client.Context, serveMux *runtime.ServeMux) {
-	if err := query.grpcGatewayRegistrar(context, serveMux); err != nil {
-		panic(err)
-	}
+func (query query) GetServicePath() string {
+	splits := strings.Split(query.serviceName, ".")
+	return "/" + splits[3] + "/" + splits[5]
 }
-func (query query) GetName() string { return query.name }
 func (query query) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		clientContext, err := client.GetClientTxContext(command)
@@ -58,8 +52,8 @@ func (query query) Command() *cobra.Command {
 			return err
 		}
 
-		queryResponse, err := query.queryHandler(clientContext, queryRequest)
-		if err != nil {
+		queryResponse := query.responsePrototype()
+		if err := clientContext.Invoke(context.Background(), query.serviceName+"/Handle", queryRequest, queryResponse); err != nil {
 			return err
 		}
 
@@ -81,11 +75,11 @@ func (query query) HandleQuery(context context.Context, requestQuery abciTypes.R
 	return result.Encode()
 }
 
-func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
+func (query query) RESTQueryHandler(Context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 		responseWriter.Header().Set("Content-Type", "application/json")
 
-		clientContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, context, httpRequest)
+		clientContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, Context, httpRequest)
 		if !ok {
 			return
 		}
@@ -99,13 +93,13 @@ func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 		}
 
-		response, err := query.queryHandler(clientContext, queryRequest)
-		if err != nil {
+		queryResponse := query.responsePrototype()
+		if err := clientContext.Invoke(context.Background(), query.serviceName+"/Handle", queryRequest, queryResponse); err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		rest.PostProcessResponse(responseWriter, clientContext, response)
+		rest.PostProcessResponse(responseWriter, clientContext, queryResponse)
 	}
 }
 func (query query) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Query {
@@ -113,16 +107,14 @@ func (query query) Initialize(mapper helpers.Mapper, parameterManager helpers.Pa
 	return query
 }
 
-func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, serviceRegistrar func(grpc.ServiceRegistrar, helpers.QueryKeeper), grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error, queryHandler func(client.Context, helpers.QueryRequest) (helpers.QueryResponse, error), flagList ...helpers.CLIFlag) helpers.Query {
+func NewQuery(serviceName string, short string, long string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, serviceRegistrar func(grpc.ServiceRegistrar, helpers.QueryKeeper), flagList ...helpers.CLIFlag) helpers.Query {
+	splits := strings.Split(serviceName, ".")
 	return query{
-		name:                 name,
-		cliCommand:           NewCLICommand(name, short, long, flagList),
-		moduleName:           moduleName,
-		requestPrototype:     requestPrototype,
-		responsePrototype:    responsePrototype,
-		keeperPrototype:      keeperPrototype,
-		serviceRegistrar:     serviceRegistrar,
-		grpcGatewayRegistrar: grpcGatewayRegistrar,
-		queryHandler:         queryHandler,
+		serviceName:       serviceName,
+		cliCommand:        NewCLICommand(splits[5], short, long, flagList),
+		requestPrototype:  requestPrototype,
+		responsePrototype: responsePrototype,
+		keeperPrototype:   keeperPrototype,
+		serviceRegistrar:  serviceRegistrar,
 	}
 }

@@ -147,8 +147,8 @@ func Test_message_Type(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve with nil", fields{}, Transaction.GetName()},
-		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, Transaction.GetName()},
+		{"+ve with nil", fields{}, Transaction.GetServicePath()},
+		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, Transaction.GetServicePath()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

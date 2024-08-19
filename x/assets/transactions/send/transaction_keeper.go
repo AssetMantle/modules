@@ -65,7 +65,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 //
 // Note: The errorConstants and propertyConstants are used for error handling and property checking respectively.
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.GetFromAddress(), message.FromID)); err != nil {
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message.GetSigners()[0], message.FromID)); err != nil {
 		return nil, err
 	}
 

@@ -16,8 +16,8 @@ import (
 	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
+	"strings"
 
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 	"net/http"
@@ -25,19 +25,21 @@ import (
 )
 
 type transaction struct {
-	name                 string
-	cliCommand           helpers.CLICommand
-	keeper               helpers.TransactionKeeper
-	requestPrototype     func() helpers.TransactionRequest
-	messagePrototype     func() helpers.Message
-	keeperPrototype      func() helpers.TransactionKeeper
-	serviceRegistrar     func(grpc.ServiceRegistrar, helpers.TransactionKeeper)
-	grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error
+	serviceName      string
+	cliCommand       helpers.CLICommand
+	keeper           helpers.TransactionKeeper
+	requestPrototype func() helpers.TransactionRequest
+	messagePrototype func() helpers.Message
+	keeperPrototype  func() helpers.TransactionKeeper
+	serviceRegistrar func(grpc.ServiceRegistrar, helpers.TransactionKeeper)
 }
 
 var _ helpers.Transaction = (*transaction)(nil)
 
-func (transaction transaction) GetName() string { return transaction.name }
+func (transaction transaction) GetServicePath() string {
+	splits := strings.Split(transaction.serviceName, ".")
+	return "/" + splits[3] + "/" + splits[5]
+}
 func (transaction transaction) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
 		Context, err := client.GetClientTxContext(command)
@@ -104,7 +106,6 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 	}
 }
 func (transaction transaction) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
-	transaction.messagePrototype().RegisterLegacyAminoCodec(legacyAmino)
 	transaction.requestPrototype().RegisterLegacyAminoCodec(legacyAmino)
 }
 func (transaction transaction) RegisterInterfaces(interfaceRegistry codecTypes.InterfaceRegistry) {
@@ -112,14 +113,9 @@ func (transaction transaction) RegisterInterfaces(interfaceRegistry codecTypes.I
 }
 func (transaction transaction) RegisterService(configurator sdkModuleTypes.Configurator) {
 	if transaction.keeper == nil {
-		panic(fmt.Errorf("keeper for transaction %s is not initialized", transaction.name))
+		panic(fmt.Errorf("keeper for transaction %s is not initialized", transaction.serviceName))
 	}
 	transaction.serviceRegistrar(configurator.MsgServer(), transaction.keeper)
-}
-func (transaction transaction) RegisterGRPCGatewayRoute(context client.Context, serveMux *runtime.ServeMux) {
-	if err := transaction.grpcGatewayRegistrar(context, serveMux); err != nil {
-		panic(err)
-	}
 }
 func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {
 	transactionRequest, err := transaction.requestPrototype().FromJSON(rawMessage)
@@ -134,14 +130,14 @@ func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameter
 	return transaction
 }
 
-func NewTransaction(name string, short string, long string, requestPrototype func() helpers.TransactionRequest, messagePrototype func() helpers.Message, keeperPrototype func() helpers.TransactionKeeper, serviceRegistrar func(grpc.ServiceRegistrar, helpers.TransactionKeeper), grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error, flagList ...helpers.CLIFlag) helpers.Transaction {
+func NewTransaction(serviceName string, short string, long string, requestPrototype func() helpers.TransactionRequest, messagePrototype func() helpers.Message, keeperPrototype func() helpers.TransactionKeeper, serviceRegistrar func(grpc.ServiceRegistrar, helpers.TransactionKeeper), flagList ...helpers.CLIFlag) helpers.Transaction {
+	splits := strings.Split(serviceName, ".")
 	return transaction{
-		name:                 name,
-		cliCommand:           NewCLICommand(name, short, long, flagList),
-		requestPrototype:     requestPrototype,
-		messagePrototype:     messagePrototype,
-		keeperPrototype:      keeperPrototype,
-		serviceRegistrar:     serviceRegistrar,
-		grpcGatewayRegistrar: grpcGatewayRegistrar,
+		serviceName:      serviceName,
+		cliCommand:       NewCLICommand(splits[5], short, long, flagList),
+		requestPrototype: requestPrototype,
+		messagePrototype: messagePrototype,
+		keeperPrototype:  keeperPrototype,
+		serviceRegistrar: serviceRegistrar,
 	}
 }

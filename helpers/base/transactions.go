@@ -11,9 +11,9 @@ type transactions struct {
 
 var _ helpers.Transactions = (*transactions)(nil)
 
-func (transactions transactions) GetTransaction(name string) helpers.Transaction {
+func (transactions transactions) GetTransaction(servicePath string) helpers.Transaction {
 	for _, transaction := range transactions.transactionList {
-		if transaction.GetName() == name {
+		if transaction.GetServicePath() == servicePath {
 			return transaction
 		}
 	}

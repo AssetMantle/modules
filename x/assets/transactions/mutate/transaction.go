@@ -4,22 +4,15 @@
 package mutate
 
 import (
-	"context"
-
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/utilities/name"
 )
 
-type dummy struct{}
-
 var Transaction = baseHelpers.NewTransaction(
-	name.GetPackageName(dummy{}),
+	_Msg_serviceDesc.ServiceName,
 	"",
 	"",
 
@@ -29,9 +22,6 @@ var Transaction = baseHelpers.NewTransaction(
 
 	func(server grpc.ServiceRegistrar, keeper helpers.TransactionKeeper) {
 		RegisterMsgServer(server, keeper.(transactionKeeper))
-	},
-	func(clientCtx client.Context, mux *runtime.ServeMux) error {
-		return RegisterMsgHandlerClient(context.Background(), mux, NewMsgClient(clientCtx))
 	},
 
 	constants.AssetID,

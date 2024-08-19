@@ -141,7 +141,7 @@ func Test_message_Type(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID}, Transaction.GetName()},
+		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID}, Transaction.GetServicePath()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
