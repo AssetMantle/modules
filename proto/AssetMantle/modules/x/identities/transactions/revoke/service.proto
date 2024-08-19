@@ -2,7 +2,6 @@ syntax = "proto3";
 package AssetMantle.modules.x.identities.transactions.revoke;
 
 import "cosmos/msg/v1/msg.proto";
-import "google/api/annotations.proto";
 import "AssetMantle/modules/x/identities/transactions/revoke/message.proto";
 import "AssetMantle/modules/x/identities/transactions/revoke/transaction_response.proto";
 

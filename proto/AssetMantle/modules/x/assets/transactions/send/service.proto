@@ -2,7 +2,6 @@ syntax = "proto3";
 package AssetMantle.modules.x.assets.transactions.send;
 
 import "cosmos/msg/v1/msg.proto";
-import "google/api/annotations.proto";
 import "AssetMantle/modules/x/assets/transactions/send/message.proto";
 import "AssetMantle/modules/x/assets/transactions/send/transaction_response.proto";
 

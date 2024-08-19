@@ -2,7 +2,6 @@ syntax = "proto3";
 package AssetMantle.modules.x.assets.transactions.burn;
 
 import "cosmos/msg/v1/msg.proto";
-import "google/api/annotations.proto";
 import "AssetMantle/modules/x/assets/transactions/burn/message.proto";
 import "AssetMantle/modules/x/assets/transactions/burn/transaction_response.proto";
 

@@ -2,7 +2,6 @@ syntax = "proto3";
 package AssetMantle.modules.x.identities.transactions.deputize;
 
 import "cosmos/msg/v1/msg.proto";
-import "google/api/annotations.proto";
 import "AssetMantle/modules/x/identities/transactions/deputize/message.proto";
 import "AssetMantle/modules/x/identities/transactions/deputize/transaction_response.proto";
 
