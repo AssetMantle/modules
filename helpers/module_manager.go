@@ -31,9 +31,10 @@ type ModuleManager interface {
 	RegisterInterfaces(sdkCodecTypes.InterfaceRegistry)
 	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 
-	SetOrderBeginBlockers(...string)
-	SetOrderEndBlockers(...string)
-	SetOrderInitGenesis(...string)
+	SetOrderBeginBlockers(...string) ModuleManager
+	SetOrderEndBlockers(...string) ModuleManager
+	SetOrderInitGenesis(...string) ModuleManager
+	SetOrderExportGenesis(...string) ModuleManager
 
 	BeginBlock(sdkTypes.Context, abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock
 	EndBlock(sdkTypes.Context, abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock

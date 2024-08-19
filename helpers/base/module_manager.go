@@ -17,6 +17,7 @@ import (
 type moduleManager struct {
 	basicModules       []helpers.BasicModule
 	orderInitGenesis   []string
+	orderExportGenesis []string
 	orderBeginBlockers []string
 	orderEndBlockers   []string
 }
@@ -38,46 +39,59 @@ func (moduleManager moduleManager) AddQueryCommands(rootQueryCmd *cobra.Command)
 	}
 }
 func (moduleManager moduleManager) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, genesisData map[string]json.RawMessage) abciTypes.ResponseInitChain {
-	return moduleManager.getModuleManager().InitGenesis(context, jsonCodec, genesisData)
+	return moduleManager.getManager().InitGenesis(context, jsonCodec, genesisData)
 }
 func (moduleManager moduleManager) GetVersionMap() sdkModuleTypes.VersionMap {
-	return moduleManager.getModuleManager().GetVersionMap()
+	return moduleManager.getManager().GetVersionMap()
 }
 func (moduleManager moduleManager) RegisterServices(configurator sdkModuleTypes.Configurator) {
-	moduleManager.getModuleManager().RegisterServices(configurator)
+	moduleManager.getManager().RegisterServices(configurator)
 }
-func (moduleManager moduleManager) SetOrderBeginBlockers(moduleName ...string) {
-	sdkModuleManager := moduleManager.getModuleManager()
+func (moduleManager moduleManager) SetOrderBeginBlockers(moduleName ...string) helpers.ModuleManager {
+	sdkModuleManager := moduleManager.getManager()
 	sdkModuleManager.SetOrderBeginBlockers(moduleName...)
 	moduleManager.orderBeginBlockers = sdkModuleManager.OrderBeginBlockers
+
+	return moduleManager
 }
-func (moduleManager moduleManager) SetOrderEndBlockers(moduleName ...string) {
-	sdkModuleManager := moduleManager.getModuleManager()
+func (moduleManager moduleManager) SetOrderEndBlockers(moduleName ...string) helpers.ModuleManager {
+	sdkModuleManager := moduleManager.getManager()
 	sdkModuleManager.SetOrderEndBlockers(moduleName...)
 	moduleManager.orderEndBlockers = sdkModuleManager.OrderEndBlockers
+
+	return moduleManager
 }
-func (moduleManager moduleManager) SetOrderInitGenesis(moduleName ...string) {
-	sdkModuleManager := moduleManager.getModuleManager()
+func (moduleManager moduleManager) SetOrderInitGenesis(moduleName ...string) helpers.ModuleManager {
+	sdkModuleManager := moduleManager.getManager()
 	sdkModuleManager.SetOrderInitGenesis(moduleName...)
 	moduleManager.orderInitGenesis = sdkModuleManager.OrderInitGenesis
+
+	return moduleManager
+}
+func (moduleManager moduleManager) SetOrderExportGenesis(moduleName ...string) helpers.ModuleManager {
+	sdkModuleManager := moduleManager.getManager()
+	sdkModuleManager.SetOrderExportGenesis(moduleName...)
+	moduleManager.orderExportGenesis = sdkModuleManager.OrderExportGenesis
+
+	return moduleManager
 }
 func (moduleManager moduleManager) BeginBlock(context sdkTypes.Context, requestBeginBlock abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
-	return moduleManager.getModuleManager().BeginBlock(context, requestBeginBlock)
+	return moduleManager.getManager().BeginBlock(context, requestBeginBlock)
 }
 func (moduleManager moduleManager) EndBlock(context sdkTypes.Context, requestEndBlock abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
-	return moduleManager.getModuleManager().EndBlock(context, requestEndBlock)
+	return moduleManager.getManager().EndBlock(context, requestEndBlock)
 }
 func (moduleManager moduleManager) RunMigrations(context sdkTypes.Context, configurator sdkModuleTypes.Configurator, versionMap sdkModuleTypes.VersionMap) (sdkModuleTypes.VersionMap, error) {
-	return moduleManager.getModuleManager().RunMigrations(context, configurator, versionMap)
+	return moduleManager.getManager().RunMigrations(context, configurator, versionMap)
 }
 func (moduleManager moduleManager) RegisterInvariants(invariantRegistry sdkTypes.InvariantRegistry) {
-	moduleManager.getModuleManager().RegisterInvariants(invariantRegistry)
+	moduleManager.getManager().RegisterInvariants(invariantRegistry)
 }
 func (moduleManager moduleManager) GetBasicManager() sdkModuleTypes.BasicManager {
 	return sdkModuleTypes.NewBasicManager(moduleManager.getAppModulesBasic()...)
 }
 func (moduleManager moduleManager) ExportGenesisForModules(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, moduleNames []string) map[string]json.RawMessage {
-	return moduleManager.getModuleManager().ExportGenesisForModules(context, jsonCodec, moduleNames)
+	return moduleManager.getManager().ExportGenesisForModules(context, jsonCodec, moduleNames)
 }
 func (moduleManager moduleManager) RegisterRESTRoutes(context client.Context, router *mux.Router) {
 	for _, basicModule := range moduleManager.basicModules {
@@ -101,12 +115,28 @@ func (moduleManager moduleManager) RegisterInterfaces(interfaceRegistry types.In
 		basicModule.RegisterInterfaces(interfaceRegistry)
 	}
 }
-func (moduleManager moduleManager) getModuleManager() *sdkModuleTypes.Manager {
+func (moduleManager moduleManager) getManager() *sdkModuleTypes.Manager {
 	appModules := make([]sdkModuleTypes.AppModule, len(moduleManager.basicModules))
 	for i, basicModule := range moduleManager.basicModules {
 		appModules[i] = basicModule
 	}
-	return sdkModuleTypes.NewManager(appModules...)
+
+	manager := sdkModuleTypes.NewManager(appModules...)
+
+	if len(moduleManager.orderInitGenesis) > 0 {
+		manager.SetOrderInitGenesis(moduleManager.orderInitGenesis...)
+	}
+	if len(moduleManager.orderExportGenesis) > 0 {
+		manager.SetOrderExportGenesis(moduleManager.orderExportGenesis...)
+	}
+	if len(moduleManager.orderBeginBlockers) > 0 {
+		manager.SetOrderBeginBlockers(moduleManager.orderBeginBlockers...)
+	}
+	if len(moduleManager.orderEndBlockers) > 0 {
+		manager.SetOrderEndBlockers(moduleManager.orderEndBlockers...)
+	}
+
+	return manager
 }
 func (moduleManager moduleManager) getAppModulesBasic() []sdkModuleTypes.AppModuleBasic {
 	appModules := make([]sdkModuleTypes.AppModuleBasic, len(moduleManager.basicModules))
