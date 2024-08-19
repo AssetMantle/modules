@@ -30,6 +30,7 @@ type query struct {
 	keeperPrototype      func() helpers.QueryKeeper
 	serviceRegistrar     func(grpc.ServiceRegistrar, helpers.QueryKeeper)
 	grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error
+	queryHandler         func(client.Context, helpers.QueryRequest) (helpers.QueryResponse, error)
 }
 
 var _ helpers.Query = (*query)(nil)
@@ -52,23 +53,17 @@ func (query query) Command() *cobra.Command {
 		if err != nil {
 			return err
 		}
-
 		queryRequest, err := query.requestPrototype().FromCLI(query.cliCommand, clientContext)
 		if err != nil {
 			return err
 		}
 
-		responseBytes, _, err := query.query(queryRequest, clientContext)
+		queryResponse, err := query.queryHandler(clientContext, queryRequest)
 		if err != nil {
 			return err
 		}
 
-		response, err := query.responsePrototype().Decode(responseBytes)
-		if err != nil {
-			return err
-		}
-
-		return clientContext.PrintProto(response)
+		return clientContext.PrintProto(queryResponse)
 	}
 
 	return query.cliCommand.CreateCommand(runE)
@@ -104,13 +99,12 @@ func (query query) RESTQueryHandler(context client.Context) http.HandlerFunc {
 			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 		}
 
-		response, height, err := query.query(queryRequest, clientContext)
+		response, err := query.queryHandler(clientContext, queryRequest)
 		if err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		clientContext = clientContext.WithHeight(height)
 		rest.PostProcessResponse(responseWriter, clientContext, response)
 	}
 }
@@ -119,16 +113,7 @@ func (query query) Initialize(mapper helpers.Mapper, parameterManager helpers.Pa
 	return query
 }
 
-func (query query) query(queryRequest helpers.QueryRequest, context client.Context) ([]byte, int64, error) {
-	bytes, err := queryRequest.Encode()
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return context.QueryWithData("custom"+"/"+query.moduleName+"/"+query.name, bytes)
-}
-
-func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, serviceRegistrar func(grpc.ServiceRegistrar, helpers.QueryKeeper), grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error, flagList ...helpers.CLIFlag) helpers.Query {
+func NewQuery(name string, short string, long string, moduleName string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, serviceRegistrar func(grpc.ServiceRegistrar, helpers.QueryKeeper), grpcGatewayRegistrar func(client.Context, *runtime.ServeMux) error, queryHandler func(client.Context, helpers.QueryRequest) (helpers.QueryResponse, error), flagList ...helpers.CLIFlag) helpers.Query {
 	return query{
 		name:                 name,
 		cliCommand:           NewCLICommand(name, short, long, flagList),
@@ -138,5 +123,6 @@ func NewQuery(name string, short string, long string, moduleName string, request
 		keeperPrototype:      keeperPrototype,
 		serviceRegistrar:     serviceRegistrar,
 		grpcGatewayRegistrar: grpcGatewayRegistrar,
+		queryHandler:         queryHandler,
 	}
 }

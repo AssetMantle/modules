@@ -36,6 +36,9 @@ var Query = baseHelpers.NewQuery(
 	func(clientContext client.Context, serveMux *runtime.ServeMux) error {
 		return RegisterQueryHandlerClient(context.Background(), serveMux, NewQueryClient(clientContext))
 	},
+	func(clientContext client.Context, request helpers.QueryRequest) (helpers.QueryResponse, error) {
+		return NewQueryClient(clientContext).Handle(context.Background(), request.(*QueryRequest))
+	},
 
 	helperConstants.MaintainerID,
 )
