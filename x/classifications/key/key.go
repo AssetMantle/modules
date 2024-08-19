@@ -22,7 +22,7 @@ func (key *Key) ValidateBasic() error {
 	return nil
 }
 func (key *Key) GenerateStorePrefixBytes() []byte {
-	return []byte{}
+	return []byte{0x0}
 }
 func (key *Key) GenerateStoreKeyBytes() []byte {
 	return key.ClassificationID.Bytes()
