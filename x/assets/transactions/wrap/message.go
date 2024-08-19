@@ -18,14 +18,6 @@ import (
 
 var _ helpers.Message = (*Message)(nil)
 
-func (message *Message) Type() string { return Transaction.GetName() }
-func (message *Message) GetFromAddress() sdkTypes.AccAddress {
-	from, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic(err)
-	}
-	return from
-}
 func (message *Message) ValidateBasic() error {
 	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
 		return errorConstants.InvalidMessage.Wrapf("invalid from address %s", err.Error())
@@ -55,14 +47,6 @@ func (message *Message) RegisterInterface(interfaceRegistry types.InterfaceRegis
 	interfaceRegistry.RegisterImplementations((*sdkTypes.Msg)(nil), message)
 }
 
-func messageFromInterface(msg sdkTypes.Msg) *Message {
-	switch value := msg.(type) {
-	case *Message:
-		return value
-	default:
-		return &Message{}
-	}
-}
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
