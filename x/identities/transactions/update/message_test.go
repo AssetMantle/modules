@@ -15,7 +15,6 @@ import (
 	"github.com/AssetMantle/schema/properties"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -44,28 +43,6 @@ func createTestInputForMessage(t *testing.T) (types.AccAddress, *baseIDs.Identit
 	testMutableProperties := baseLists.NewPropertyList([]properties.Property{mesaProperty}...)
 
 	return testFrom, testFromID.(*baseIDs.IdentityID), testIdentityID.(*baseIDs.IdentityID), testMutableMetaProperties.(*baseLists.PropertyList), testMutableProperties.(*baseLists.PropertyList)
-}
-
-func Test_messageFromInterface(t *testing.T) {
-	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
-	type args struct {
-		msg types.Msg
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Message
-	}{
-		{"+ve with nil", args{}, &Message{}},
-		{"+ve", args{&Message{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}}, &Message{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := messageFromInterface(tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messageFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
 }
 
 func Test_messagePrototype(t *testing.T) {
@@ -106,61 +83,6 @@ func Test_message_GetSigners(t *testing.T) {
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_RegisterCodec(t *testing.T) {
-	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
-
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve with nil", fields{}, args{codec.NewLegacyAmino()}},
-		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			me := &Message{
-				From:                  tt.fields.From,
-				FromID:                tt.fields.FromID,
-				IdentityID:            tt.fields.IdentityID,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
-			}
-			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
-func Test_message_Type(t *testing.T) {
-	testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties := createTestInputForMessage(t)
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve with nil", fields{}, Transaction.GetServicePath()},
-		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, Transaction.GetServicePath()},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                  tt.fields.From,
-				FromID:                tt.fields.FromID,
-				IdentityID:            tt.fields.IdentityID,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
-			}
-			if got := message.Type(); got != tt.want {
-				t.Errorf("Type() = %v, want %v", got, tt.want)
 			}
 		})
 	}

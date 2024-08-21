@@ -12,7 +12,6 @@ import (
 
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -119,26 +118,6 @@ func TestMessage_ValidateBasic(t *testing.T) {
 	}
 }
 
-func Test_messageFromInterface(t *testing.T) {
-	type args struct {
-		msg types.Msg
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Message
-	}{
-		{"+ve", args{NewMessage(fromAccAddress, fromID, fromID, assetID, testRate)}, &Message{fromAccAddress.String(), fromID, fromID, assetID, testRate.String()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := messageFromInterface(tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messageFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_messagePrototype(t *testing.T) {
 	tests := []struct {
 		name string
@@ -181,69 +160,6 @@ func Test_message_GetSigners(t *testing.T) {
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_RegisterCodec(t *testing.T) {
-	type fields struct {
-		From    string
-		FromID  *baseIDs.IdentityID
-		ToID    *baseIDs.IdentityID
-		AssetID *baseIDs.AssetID
-		Value   types.Int
-	}
-	type args struct {
-		legacyAmino *sdkCodec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, fromID, assetID, testRate}, args{codec.GetLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			me := &Message{
-				From:    tt.fields.From,
-				FromID:  tt.fields.FromID,
-				ToID:    tt.fields.ToID,
-				AssetID: tt.fields.AssetID,
-				Value:   tt.fields.Value.String(),
-			}
-			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
-func Test_message_Type(t *testing.T) {
-	type fields struct {
-		From    string
-		FromID  *baseIDs.IdentityID
-		ToID    *baseIDs.IdentityID
-		AssetID *baseIDs.AssetID
-		Value   types.Int
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, fromID, assetID, testRate}, Transaction.GetServicePath()},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:    tt.fields.From,
-				FromID:  tt.fields.FromID,
-				ToID:    tt.fields.ToID,
-				AssetID: tt.fields.AssetID,
-				Value:   tt.fields.Value.String(),
-			}
-			if got := message.Type(); got != tt.want {
-				t.Errorf("Type() = %v, want %v", got, tt.want)
 			}
 		})
 	}

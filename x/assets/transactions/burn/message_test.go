@@ -13,7 +13,6 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -28,26 +27,6 @@ var (
 	fromAccAddress, _ = sdkTypes.AccAddressFromBech32(fromAddress)
 	fromID            = baseIDs.NewIdentityID(classificationID, immutables)
 )
-
-func Test_messageFromInterface(t *testing.T) {
-	type args struct {
-		msg sdkTypes.Msg
-	}
-	tests := []struct {
-		name string
-		args args
-		want helpers.Message
-	}{
-		{"+ve", args{NewMessage(fromAccAddress, fromID, testAssetID)}, NewMessage(fromAccAddress, fromID, testAssetID).(*Message)},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := messageFromInterface(tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messageFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func Test_messagePrototype(t *testing.T) {
 	tests := []struct {
@@ -87,62 +66,6 @@ func Test_message_GetSigners(t *testing.T) {
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_RegisterCodec(t *testing.T) {
-	type fields struct {
-		From    sdkTypes.AccAddress
-		FromID  ids.IdentityID
-		AssetID ids.AssetID
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID}, args{codec.NewLegacyAmino()}},
-		{"+ve", fields{}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			me := &Message{
-				From:    tt.fields.From.String(),
-				FromID:  tt.fields.FromID.(*baseIDs.IdentityID),
-				AssetID: tt.fields.AssetID.(*baseIDs.AssetID),
-			}
-			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
-func Test_message_Type(t *testing.T) {
-	type fields struct {
-		From    sdkTypes.AccAddress
-		FromID  ids.IdentityID
-		AssetID ids.AssetID
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID}, Transaction.GetServicePath()},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:    tt.fields.From.String(),
-				FromID:  tt.fields.FromID.(*baseIDs.IdentityID),
-				AssetID: tt.fields.AssetID.(*baseIDs.AssetID),
-			}
-			if got := message.Type(); got != tt.want {
-				t.Errorf("Type() = %v, want %v", got, tt.want)
 			}
 		})
 	}

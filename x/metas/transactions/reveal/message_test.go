@@ -22,12 +22,9 @@ func Test_Reveal_Message(t *testing.T) {
 
 	testMessage := NewMessage(fromAccAddress, newData).(*Message)
 	require.Equal(t, &Message{From: fromAccAddress.String(), Data: newData.ToAnyData().(*baseData.AnyData)}, testMessage)
-	require.Equal(t, Transaction.GetServicePath(), testMessage.Type())
 	require.Equal(t, nil, testMessage.ValidateBasic())
 	require.NotNil(t, (&Message{}).ValidateBasic())
 	require.Equal(t, []sdkTypes.AccAddress{fromAccAddress}, testMessage.GetSigners())
-	require.Equal(t, testMessage, messageFromInterface(testMessage))
-	require.Equal(t, &Message{}, messageFromInterface(nil))
 	require.Equal(t, &Message{}, messagePrototype())
 
 }

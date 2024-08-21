@@ -11,7 +11,6 @@ import (
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/schema/lists"
 	baseLists "github.com/AssetMantle/schema/lists/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -25,51 +24,6 @@ type fields struct {
 	ImmutableProperties     *baseLists.PropertyList
 	MutableMetaProperties   *baseLists.PropertyList
 	MutableProperties       *baseLists.PropertyList
-}
-
-func Test_messageFromInterface(t *testing.T) {
-	fromID, err := baseIDs.PrototypeIdentityID().FromString("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
-	testFromID := fromID.(*baseIDs.IdentityID)
-	require.NoError(t, err)
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	immutableMetaPropertiesInterface, err := baseLists.NewPropertyList().FromMetaPropertiesString("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, err)
-	immutableMetaProperties := immutableMetaPropertiesInterface.(*baseLists.PropertyList)
-
-	immutablePropertiesInterface, err := baseLists.NewPropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, err)
-	immutableProperties := immutablePropertiesInterface.(*baseLists.PropertyList)
-
-	mutableMetaPropertiesInterface, err := baseLists.NewPropertyList().FromMetaPropertiesString("defaultMutableMeta1:S|defaultMutableMeta1")
-	require.Equal(t, nil, err)
-	mutableMetaProperties := mutableMetaPropertiesInterface.(*baseLists.PropertyList)
-
-	mutablePropertiesInterface, err := baseLists.NewPropertyList().FromMetaPropertiesString("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, err)
-	mutableProperties := mutablePropertiesInterface.(*baseLists.PropertyList)
-
-	type args struct {
-		msg sdkTypes.Msg
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Message
-	}{
-
-		{"+ve", args{&Message{fromAccAddress.String(), testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}}, &Message{fromAccAddress.String(), testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}},
-		{"+ve with nil", args{nil}, &Message{}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := messageFromInterface(tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messageFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
 }
 
 func Test_messagePrototype(t *testing.T) {
@@ -133,105 +87,6 @@ func Test_message_GetSigners(t *testing.T) {
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_RegisterCodec(t *testing.T) {
-	fromID, err := baseIDs.PrototypeIdentityID().FromString("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
-	testFromID := fromID.(*baseIDs.IdentityID)
-	require.NoError(t, err)
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	immutableMetaPropertiesInterface, err := baseLists.NewPropertyList().FromMetaPropertiesString("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, err)
-	immutableMetaProperties := immutableMetaPropertiesInterface.(*baseLists.PropertyList)
-
-	immutablePropertiesInterface, err := baseLists.NewPropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, err)
-	immutableProperties := immutablePropertiesInterface.(*baseLists.PropertyList)
-
-	mutableMetaPropertiesInterface, err := baseLists.NewPropertyList().FromMetaPropertiesString("defaultMutableMeta1:S|defaultMutableMeta1")
-	require.Equal(t, nil, err)
-	mutableMetaProperties := mutableMetaPropertiesInterface.(*baseLists.PropertyList)
-
-	mutablePropertiesInterface, err := baseLists.NewPropertyList().FromMetaPropertiesString("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, err)
-	mutableProperties := mutablePropertiesInterface.(*baseLists.PropertyList)
-
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-
-		{"+ve", fields{fromAccAddress.String(), testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			me := &Message{
-				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
-			}
-			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
-func Test_message_Type(t *testing.T) {
-	fromID, err := baseIDs.PrototypeIdentityID().FromString("CBepOLnJFnKO9NEyZlSv7r80nKNZFFXRqHfnsObZ_KU=")
-	testFromID := fromID.(*baseIDs.IdentityID)
-	require.NoError(t, err)
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-
-	immutableMetaPropertiesInterface, err := baseLists.NewPropertyList().FromMetaPropertiesString("defaultImmutableMeta1:S|defaultImmutableMeta1")
-	require.Equal(t, nil, err)
-	immutableMetaProperties := immutableMetaPropertiesInterface.(*baseLists.PropertyList)
-
-	immutablePropertiesInterface, err := baseLists.NewPropertyList().FromMetaPropertiesString("defaultImmutable1:S|defaultImmutable1")
-	require.Equal(t, nil, err)
-	immutableProperties := immutablePropertiesInterface.(*baseLists.PropertyList)
-
-	mutableMetaPropertiesInterface, err := baseLists.NewPropertyList().FromMetaPropertiesString("defaultMutableMeta1:S|defaultMutableMeta1")
-	require.Equal(t, nil, err)
-	mutableMetaProperties := mutableMetaPropertiesInterface.(*baseLists.PropertyList)
-
-	mutablePropertiesInterface, err := baseLists.NewPropertyList().FromMetaPropertiesString("defaultMutable1:S|defaultMutable1")
-	require.Equal(t, nil, err)
-	mutableProperties := mutablePropertiesInterface.(*baseLists.PropertyList)
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-
-		{"+ve", fields{fromAccAddress.String(), testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, Transaction.GetServicePath()},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                    tt.fields.From,
-				FromID:                  tt.fields.FromID,
-				ImmutableMetaProperties: tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:     tt.fields.ImmutableProperties,
-				MutableMetaProperties:   tt.fields.MutableMetaProperties,
-				MutableProperties:       tt.fields.MutableProperties,
-			}
-			if got := message.Type(); got != tt.want {
-				t.Errorf("Type() = %v, want %v", got, tt.want)
 			}
 		})
 	}

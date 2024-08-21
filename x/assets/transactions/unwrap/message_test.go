@@ -9,7 +9,6 @@ import (
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cometbft/cometbft/crypto/ed25519"
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 	"reflect"
 	"testing"
@@ -143,25 +142,6 @@ func TestMessage_ValidateBasic(t *testing.T) {
 		})
 	}
 }
-func Test_messageFromInterface(t *testing.T) {
-	type args struct {
-		msg helpers.Message
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Message
-	}{
-		{"+ve", args{NewMessage(fromAccAddress, fromID, coins).(*Message)}, &Message{fromAccAddress.String(), fromID, coins}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := messageFromInterface(tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messageFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func Test_messagePrototype(t *testing.T) {
 	tests := []struct {
@@ -201,61 +181,6 @@ func Test_message_GetSigners(t *testing.T) {
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_RegisterCodec(t *testing.T) {
-	type fields struct {
-		From   string
-		FromID *baseIDs.IdentityID
-		Coins  types.Coins
-	}
-	type args struct {
-		legacyAmino *sdkCodec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, coins}, args{codec.GetLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			me := &Message{
-				From:   tt.fields.From,
-				FromID: tt.fields.FromID,
-				Coins:  tt.fields.Coins,
-			}
-			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
-func Test_message_Type(t *testing.T) {
-	type fields struct {
-		From   string
-		FromID *baseIDs.IdentityID
-		Coins  types.Coins
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, coins}, Transaction.GetServicePath()},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:   tt.fields.From,
-				FromID: tt.fields.FromID,
-				Coins:  tt.fields.Coins,
-			}
-			if got := message.Type(); got != tt.want {
-				t.Errorf("Type() = %v, want %v", got, tt.want)
 			}
 		})
 	}
