@@ -1,0 +1,8 @@
+syntax = "proto3";
+package AssetMantle.modules.x.splits.queries.parameters;
+
+import "AssetMantle/schema/lists/base/parameter_list.proto";
+
+message QueryResponse {
+  AssetMantle.schema.lists.base.ParameterList parameter_list = 1;
+}

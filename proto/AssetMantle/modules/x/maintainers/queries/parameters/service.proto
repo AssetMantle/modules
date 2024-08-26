@@ -1,0 +1,9 @@
+syntax = "proto3";
+package AssetMantle.modules.x.maintainers.queries.parameters;
+
+import "AssetMantle/modules/x/maintainers/queries/parameters/query_request.proto";
+import "AssetMantle/modules/x/maintainers/queries/parameters/query_response.proto";
+
+service Query {
+  rpc Handle(QueryRequest) returns (QueryResponse) {}
+}
