@@ -62,14 +62,7 @@ func (queryRequest *QueryRequest) Decode(bytes []byte) (helpers.QueryRequest, er
 func requestPrototype() helpers.QueryRequest {
 	return &QueryRequest{}
 }
-func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
-	switch value := request.(type) {
-	case *QueryRequest:
-		return value
-	default:
-		return &QueryRequest{}
-	}
-}
+
 func newQueryRequest(orderID ids.OrderID) helpers.QueryRequest {
 	return &QueryRequest{Key: key.NewKey(orderID).(*key.Key)}
 }

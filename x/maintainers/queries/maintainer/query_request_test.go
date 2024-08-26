@@ -61,7 +61,7 @@ func Test_queryRequestFromInterface(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := queryRequestFromInterface(tt.args.request); !reflect.DeepEqual(got, tt.want) {
+			if got := tt.args.request.(*QueryRequest); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("queryRequestFromInterface() = %v, want %v", got, tt.want)
 			}
 		})

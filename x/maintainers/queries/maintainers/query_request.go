@@ -86,15 +86,6 @@ func requestPrototype() helpers.QueryRequest {
 	return &QueryRequest{}
 }
 
-func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
-	switch value := request.(type) {
-	case *QueryRequest:
-		return value
-	default:
-		return &QueryRequest{}
-	}
-}
-
 func newQueryRequest(maintainerID ids.MaintainerID, limit int32) helpers.QueryRequest {
 	return &QueryRequest{Key: key.NewKey(maintainerID).(*key.Key), Limit: limit}
 }
