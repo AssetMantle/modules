@@ -7,6 +7,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/splits/queries/balances"
+	"github.com/AssetMantle/modules/x/splits/queries/parameters"
 	"github.com/AssetMantle/modules/x/splits/queries/split"
 	"github.com/AssetMantle/modules/x/splits/queries/splits"
 	"github.com/AssetMantle/modules/x/splits/queries/supply"
@@ -18,5 +19,6 @@ func Prototype() helpers.Queries {
 		split.Query,
 		splits.Query,
 		supply.Query,
+		parameters.Query,
 	)
 }
