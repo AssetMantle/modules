@@ -9,7 +9,6 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/metas/constants"
 	"github.com/AssetMantle/modules/x/metas/parameters/reveal_enabled"
 )
 
@@ -18,7 +17,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.ParameterManager
 	}{
-		{"+ve", baseHelpers.NewParameterManager(constants.ModuleName, reveal_enabled.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterManager(reveal_enabled.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
