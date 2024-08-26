@@ -73,8 +73,6 @@ func (module module) ValidateGenesis(jsonCodec sdkCodec.JSONCodec, _ client.TxEn
 	return genesisState.ValidateBasic(module.parameterManagerPrototype())
 }
 func (module module) RegisterRESTRoutes(context client.Context, router *mux.Router) {
-	router.HandleFunc("/"+module.Name()+"/parameters", module.parameterManagerPrototype().RESTQueryHandler(context)).Methods("GET")
-
 	for _, query := range module.queriesPrototype().Get() {
 		router.HandleFunc(query.GetServicePath(), query.RESTQueryHandler(context)).Methods("GET")
 	}

@@ -5,14 +5,10 @@ package base
 
 import (
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/rest"
-	"net/http"
-
 	"github.com/AssetMantle/schema/ids"
 	"github.com/AssetMantle/schema/lists"
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	"github.com/AssetMantle/schema/parameters"
-	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -22,7 +18,6 @@ import (
 )
 
 type parameterManager struct {
-	moduleName            string
 	validatableParameters []helpers.ValidatableParameter
 	paramsSubspace        paramsTypes.Subspace
 }
@@ -93,30 +88,13 @@ func (parameterManager parameterManager) ParamSetPairs() paramsTypes.ParamSetPai
 func (parameterManager parameterManager) GetKeyTable() paramsTypes.KeyTable {
 	return paramsTypes.NewKeyTable().RegisterParamSet(parameterManager)
 }
-func (parameterManager parameterManager) RESTQueryHandler(clientContext client.Context) http.HandlerFunc {
-	return func(responseWriter http.ResponseWriter, request *http.Request) {
-		clientContext, ok := rest.ParseQueryHeightOrReturnBadRequest(responseWriter, clientContext, request)
-		if !ok {
-			return
-		}
-
-		responseBytes, height, err := clientContext.QueryWithData(fmt.Sprintf("custom/%s/parameters", parameterManager.moduleName), nil)
-		if rest.CheckInternalServerError(responseWriter, err) {
-			return
-		}
-
-		clientContext = clientContext.WithHeight(height)
-		rest.PostProcessResponse(responseWriter, clientContext, responseBytes)
-	}
-}
 func (parameterManager parameterManager) Initialize(subspace paramsTypes.Subspace) helpers.ParameterManager {
 	parameterManager.paramsSubspace = subspace
 	return parameterManager
 }
 
-func NewParameterManager(moduleName string, validatableParameters ...helpers.ValidatableParameter) helpers.ParameterManager {
+func NewParameterManager(validatableParameters ...helpers.ValidatableParameter) helpers.ParameterManager {
 	return parameterManager{
-		moduleName:            moduleName,
 		validatableParameters: validatableParameters,
 	}
 }

@@ -5,12 +5,9 @@ package helpers
 
 import (
 	"context"
-	"net/http"
-
 	"github.com/AssetMantle/schema/ids"
 	"github.com/AssetMantle/schema/lists"
 	"github.com/AssetMantle/schema/parameters"
-	"github.com/cosmos/cosmos-sdk/client"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
@@ -24,6 +21,5 @@ type ParameterManager interface {
 	Set(context.Context, lists.ParameterList) ParameterManager
 
 	GetKeyTable() paramsTypes.KeyTable
-	RESTQueryHandler(client.Context) http.HandlerFunc
 	Initialize(paramsTypes.Subspace) ParameterManager
 }

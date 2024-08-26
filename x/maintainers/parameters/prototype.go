@@ -6,10 +6,9 @@ package parameters
 import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/maintainers/constants"
 	"github.com/AssetMantle/modules/x/maintainers/parameters/deputize_allowed"
 )
 
 func Prototype() helpers.ParameterManager {
-	return baseHelpers.NewParameterManager(constants.ModuleName, deputize_allowed.ValidatableParameter)
+	return baseHelpers.NewParameterManager(deputize_allowed.ValidatableParameter)
 }
