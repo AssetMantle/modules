@@ -3,6 +3,9 @@
 
 package helpers
 
-type Request interface {
-	Validate() error
+import "github.com/cosmos/gogoproto/proto"
+
+type GRPCRequest interface {
+	proto.Message
+	Request
 }
