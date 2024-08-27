@@ -13,7 +13,7 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -99,15 +99,15 @@ func Test_message_RegisterCodec(t *testing.T) {
 		AssetID ids.AssetID
 	}
 	type args struct {
-		legacyAmino *codec.LegacyAmino
+		legacyAmino *sdkCodec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID}, args{codec.NewLegacyAmino()}},
-		{"+ve", fields{}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{fromAccAddress, fromID, testAssetID}, args{sdkCodec.NewLegacyAmino()}},
+		{"+ve", fields{}, args{sdkCodec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

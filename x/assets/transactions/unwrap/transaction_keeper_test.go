@@ -67,12 +67,12 @@ type MockAuxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*MockAuxiliaryKeeper)(nil)
 
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
-	args := mockAuxiliaryKeeper.Called(context, request)
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, auxiliaryRequest helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
+	args := mockAuxiliaryKeeper.Called(context, auxiliaryRequest)
 	return args.Get(0).(helpers.AuxiliaryResponse), args.Error(1)
 }
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(m2 helpers.Mapper, manager helpers.ParameterManager, i []interface{}) helpers.Keeper {
-	args := mockAuxiliaryKeeper.Called(m2, manager, i)
+func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, i []interface{}) helpers.Keeper {
+	args := mockAuxiliaryKeeper.Called(mapper, parameterManager, i)
 	return args.Get(0).(helpers.Keeper)
 }
 
@@ -86,21 +86,21 @@ const (
 var (
 	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
 
+	newCollectionFaliure = "notfound"
+
 	authenticateAuxiliaryKeeper         = new(MockAuxiliaryKeeper)
 	authenticateAuxiliaryFailureAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
 	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(authenticateAuxiliaryFailureAddress, baseIDs.PrototypeIdentityID())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	authenticateAuxiliary               = new(MockAuxiliary)
+	_                                   = authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
 
-	burnAuxiliaryKeeper       = new(MockAuxiliaryKeeper)
 	burnAuxiliaryFailureDenom = "burn"
+	burnAuxiliaryKeeper       = new(MockAuxiliaryKeeper)
 	_                         = burnAuxiliaryKeeper.On("Help", mock.Anything, burn.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseDocuments.NewCoinAsset(burnAuxiliaryFailureDenom).GetCoinAssetID(), sdkTypes.OneInt())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 	_                         = burnAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-
-	authenticateAuxiliary = new(MockAuxiliary)
-	_                     = authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
-
-	burnAuxiliary = new(MockAuxiliary)
-	_             = burnAuxiliary.On("GetKeeper").Return(burnAuxiliaryKeeper)
+	burnAuxiliary             = new(MockAuxiliary)
+	_                         = burnAuxiliary.On("GetKeeper").Return(burnAuxiliaryKeeper)
 
 	codec = baseHelpers.TestCodec()
 
@@ -224,6 +224,16 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			},
 			nil,
 			errorConstants.NotAuthorized,
+		},
+		{
+			"EntityNotFound",
+			args{genesisAddress, burnAuxiliaryFailureDenom, 1},
+			func() {
+				TransactionKeeper.parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(burnAuxiliaryFailureDenom))))))
+				parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(newCollectionFaliure), baseData.NewStringData(burnAuxiliaryFailureDenom))))))
+			},
+			nil,
+			errorConstants.EntityNotFound,
 		},
 		{
 			"burnAuxiliaryFailure",

@@ -7,7 +7,7 @@ import (
 	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
-	"github.com/cosmos/cosmos-sdk/codec"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -46,7 +46,7 @@ func (message *Message) GetSigners() []sdkTypes.AccAddress {
 	}
 	return []sdkTypes.AccAddress{from}
 }
-func (*Message) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+func (*Message) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, Message{})
 }
 func (message *Message) RegisterInterface(interfaceRegistry types.InterfaceRegistry) {

@@ -37,8 +37,8 @@ func TestGetClassificationIDFromResponse(t *testing.T) {
 		want    ids.ClassificationID
 		wantErr bool
 	}{
-		{"+ve", args{newAuxiliaryResponse(classificationID)}, classificationID, false},
-		{"+ve", args{newAuxiliaryResponse(nil)}, nil, false},
+		{"+ve", args{NewAuxiliaryResponse(classificationID)}, classificationID, false},
+		{"+ve", args{NewAuxiliaryResponse(nil)}, nil, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -66,8 +66,8 @@ func Test_newAuxiliaryResponse(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newAuxiliaryResponse(tt.args.classificationID); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newAuxiliaryResponse() = %v, want %v", got, tt.want)
+			if got := NewAuxiliaryResponse(tt.args.classificationID); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewAuxiliaryResponse() = %v, want %v", got, tt.want)
 			}
 		})
 	}
