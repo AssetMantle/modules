@@ -10,49 +10,49 @@ import (
 	"strings"
 )
 
-type commonTransactionRequest struct {
+type CommonTransactionRequest struct {
 	From          string `json:"from"`
 	Memo          string `json:"memo"`
-	TimeoutHeight uint64 `json:"timeout_height"`
-	AccountNumber uint64 `json:"account_number"`
+	TimeoutHeight uint64 `json:"timeoutHeight"`
+	AccountNumber uint64 `json:"accountNumber"`
 	Sequence      uint64 `json:"sequence"`
-	ChainID       string `json:"chain_id"`
+	ChainID       string `json:"chainID"`
 	Gas           string `json:"gas"`
 	Fees          string `json:"fees"`
-	GasPrices     string `json:"gas_prices"`
+	GasPrices     string `json:"gasPrices"`
 	Simulate      bool   `json:"simulate"`
-	GasAdjustment string `json:"gas_adjustment"`
+	GasAdjustment string `json:"gasAdjustment"`
 }
 
-var _ helpers.CommonTransactionRequest = commonTransactionRequest{}
+var _ helpers.CommonTransactionRequest = CommonTransactionRequest{}
 
-func (commonTransactionRequest commonTransactionRequest) SetFrom(from string) helpers.CommonTransactionRequest {
+func (commonTransactionRequest CommonTransactionRequest) SetFrom(from string) helpers.CommonTransactionRequest {
 	commonTransactionRequest.From = from
 	return commonTransactionRequest
 }
-func (commonTransactionRequest commonTransactionRequest) SetAccountNumber(accountNumber uint64) helpers.CommonTransactionRequest {
+func (commonTransactionRequest CommonTransactionRequest) SetAccountNumber(accountNumber uint64) helpers.CommonTransactionRequest {
 	commonTransactionRequest.AccountNumber = accountNumber
 	return commonTransactionRequest
 }
-func (commonTransactionRequest commonTransactionRequest) GetAccountNumber() uint64 {
+func (commonTransactionRequest CommonTransactionRequest) GetAccountNumber() uint64 {
 	return commonTransactionRequest.AccountNumber
 }
-func (commonTransactionRequest commonTransactionRequest) GetGas() string {
+func (commonTransactionRequest CommonTransactionRequest) GetGas() string {
 	return commonTransactionRequest.Gas
 }
-func (commonTransactionRequest commonTransactionRequest) GetGasAdjustment() string {
+func (commonTransactionRequest CommonTransactionRequest) GetGasAdjustment() string {
 	return commonTransactionRequest.GasAdjustment
 }
-func (commonTransactionRequest commonTransactionRequest) GetMemo() string {
+func (commonTransactionRequest CommonTransactionRequest) GetMemo() string {
 	return commonTransactionRequest.Memo
 }
-func (commonTransactionRequest commonTransactionRequest) GetSequence() uint64 {
+func (commonTransactionRequest CommonTransactionRequest) GetSequence() uint64 {
 	return commonTransactionRequest.Sequence
 }
-func (commonTransactionRequest commonTransactionRequest) GetTimeoutHeight() uint64 {
+func (commonTransactionRequest CommonTransactionRequest) GetTimeoutHeight() uint64 {
 	return commonTransactionRequest.TimeoutHeight
 }
-func (commonTransactionRequest commonTransactionRequest) GetGasPrices() sdkTypes.DecCoins {
+func (commonTransactionRequest CommonTransactionRequest) GetGasPrices() sdkTypes.DecCoins {
 	decCoins, err := sdkTypes.ParseDecCoins(commonTransactionRequest.GasPrices)
 	if err != nil {
 		panic(err)
@@ -60,20 +60,20 @@ func (commonTransactionRequest commonTransactionRequest) GetGasPrices() sdkTypes
 
 	return decCoins
 }
-func (commonTransactionRequest commonTransactionRequest) IsSimulated() bool {
+func (commonTransactionRequest CommonTransactionRequest) IsSimulated() bool {
 	return commonTransactionRequest.Simulate
 }
-func (commonTransactionRequest commonTransactionRequest) GetFrom() string {
+func (commonTransactionRequest CommonTransactionRequest) GetFrom() string {
 	return commonTransactionRequest.From
 }
-func (commonTransactionRequest commonTransactionRequest) GetChainID() string {
+func (commonTransactionRequest CommonTransactionRequest) GetChainID() string {
 	return commonTransactionRequest.ChainID
 }
-func (commonTransactionRequest commonTransactionRequest) SetChainID(chainIDString string) helpers.CommonTransactionRequest {
+func (commonTransactionRequest CommonTransactionRequest) SetChainID(chainIDString string) helpers.CommonTransactionRequest {
 	commonTransactionRequest.ChainID = chainIDString
 	return commonTransactionRequest
 }
-func (commonTransactionRequest commonTransactionRequest) GetFees() sdkTypes.Coins {
+func (commonTransactionRequest CommonTransactionRequest) GetFees() sdkTypes.Coins {
 	coins, err := sdkTypes.ParseCoinsNormalized(commonTransactionRequest.Fees)
 	if err != nil {
 		panic(err)
@@ -81,7 +81,7 @@ func (commonTransactionRequest commonTransactionRequest) GetFees() sdkTypes.Coin
 
 	return coins
 }
-func (commonTransactionRequest commonTransactionRequest) Validate() error {
+func (commonTransactionRequest CommonTransactionRequest) Validate() error {
 	if _, err := sdkTypes.AccAddressFromBech32(commonTransactionRequest.From); err != nil || len(commonTransactionRequest.From) == 0 {
 		return fmt.Errorf("invalid from address: %s", commonTransactionRequest.From)
 	}
@@ -108,10 +108,10 @@ func (commonTransactionRequest commonTransactionRequest) Validate() error {
 
 	return nil
 }
-func (commonTransactionRequest commonTransactionRequest) Sanitize() helpers.CommonTransactionRequest {
+func (commonTransactionRequest CommonTransactionRequest) Sanitize() helpers.CommonTransactionRequest {
 	return NewCommonTransactionRequest(commonTransactionRequest.From, commonTransactionRequest.Memo, commonTransactionRequest.ChainID, commonTransactionRequest.Gas, commonTransactionRequest.GasAdjustment, commonTransactionRequest.AccountNumber, commonTransactionRequest.TimeoutHeight, commonTransactionRequest.Sequence, commonTransactionRequest.Fees, commonTransactionRequest.GasPrices, commonTransactionRequest.Simulate)
 }
-func (commonTransactionRequest commonTransactionRequest) ValidateBasic(responseWriter http.ResponseWriter) bool {
+func (commonTransactionRequest CommonTransactionRequest) ValidateBasic(responseWriter http.ResponseWriter) bool {
 	if err := commonTransactionRequest.Validate(); err != nil {
 		rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 		return false
@@ -121,7 +121,7 @@ func (commonTransactionRequest commonTransactionRequest) ValidateBasic(responseW
 }
 
 func NewCommonTransactionRequest(from, memo, chainID, gas, gasAdjustment string, accountNumber, sequence, timeOutHeight uint64, fees, gasPrices string, simulate bool) helpers.CommonTransactionRequest {
-	return commonTransactionRequest{
+	return CommonTransactionRequest{
 		From:          strings.TrimSpace(from),
 		Memo:          strings.TrimSpace(memo),
 		ChainID:       strings.TrimSpace(chainID),
@@ -136,11 +136,11 @@ func NewCommonTransactionRequest(from, memo, chainID, gas, gasAdjustment string,
 	}
 }
 func PrototypeCommonTransactionRequest() helpers.CommonTransactionRequest {
-	return &commonTransactionRequest{}
+	return &CommonTransactionRequest{}
 }
 
 func NewCommonTransactionRequestFromContext(context client.Context) helpers.CommonTransactionRequest {
-	return commonTransactionRequest{
+	return CommonTransactionRequest{
 		From:     context.FromAddress.String(),
 		ChainID:  context.ChainID,
 		Simulate: context.Simulate,
