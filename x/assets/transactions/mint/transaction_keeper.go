@@ -6,7 +6,6 @@ package mint
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	"github.com/AssetMantle/schema/data"
 	"github.com/AssetMantle/schema/documents/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -53,7 +52,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	fromAddress := message.GetFromAddress()
+	fromAddress := message.GetSigners()[0]
 
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err

@@ -6,10 +6,9 @@ package parameters
 import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/splits/constants"
 	"github.com/AssetMantle/modules/x/splits/parameters/transfer_enabled"
 )
 
 func Prototype() helpers.ParameterManager {
-	return baseHelpers.NewParameterManager(constants.ModuleName, transfer_enabled.ValidatableParameter)
+	return baseHelpers.NewParameterManager(transfer_enabled.ValidatableParameter)
 }

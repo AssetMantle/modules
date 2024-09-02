@@ -5,7 +5,11 @@ package define
 
 import (
 	"context"
+	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/x/classifications/constants"
+	"github.com/AssetMantle/modules/x/classifications/key"
+	"github.com/AssetMantle/modules/x/classifications/record"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents/base"
@@ -17,11 +21,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/constants"
-	"github.com/AssetMantle/modules/x/classifications/key"
-	"github.com/AssetMantle/modules/x/classifications/record"
 )
 
 type auxiliaryKeeper struct {

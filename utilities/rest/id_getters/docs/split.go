@@ -1,33 +1,34 @@
 package docs
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/AssetMantle/modules/utilities/rest"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
+	"io"
 	"net/http"
 )
 
 func splitIDHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		transactionRequest := Prototype()
-		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
-			panic(fmt.Errorf("failed to read request"))
+		body, err := io.ReadAll(httpRequest.Body)
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+			return
 		}
 
-		if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
-			panic(fmt.Errorf("failed to validate request"))
+		request := request{}
+		if err := json.Unmarshal(body, &request); err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+			return
 		}
 
-		req := transactionRequest.(request)
+		fromID, _ := baseIDs.PrototypeIdentityID().FromString(request.FromID)
 
-		fromID, _ := baseIDs.PrototypeIdentityID().FromString(req.FromID)
-
-		coins, _ := sdkTypes.ParseCoinsNormalized(req.Coins)
+		coins, _ := sdkTypes.ParseCoinsNormalized(request.Coins)
 
 		var coinID ids.AssetID
 		for _, coin := range coins {

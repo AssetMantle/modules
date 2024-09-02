@@ -5,9 +5,8 @@ package mutate
 
 import (
 	"context"
-	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/assets/record"
@@ -33,7 +32,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	fromAddress := message.GetFromAddress()
+	fromAddress := message.GetSigners()[0]
 
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err

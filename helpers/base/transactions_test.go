@@ -17,7 +17,7 @@ func TestNewTransactions(t *testing.T) {
 
 	// GetName
 	require.Equal(t, nil, Transactions1.GetTransaction(""))
-	require.Equal(t, "", Transactions2.GetTransaction("").GetName())
+	require.Equal(t, "", Transactions2.GetTransaction("").GetServicePath())
 
 	// GetAuxiliary
 	require.Equal(t, []helpers.Transaction(nil), Transactions1.Get())

@@ -4,8 +4,6 @@
 package simulator
 
 import (
-	"math/rand"
-
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
@@ -15,6 +13,7 @@ import (
 	baseTypes "github.com/AssetMantle/schema/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"math/rand"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"

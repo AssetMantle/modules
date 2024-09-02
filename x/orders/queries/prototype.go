@@ -8,11 +8,13 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/queries/order"
 	"github.com/AssetMantle/modules/x/orders/queries/orders"
+	"github.com/AssetMantle/modules/x/orders/queries/parameters"
 )
 
 func Prototype() helpers.Queries {
 	return baseHelpers.NewQueries(
 		order.Query,
 		orders.Query,
+		parameters.Query,
 	)
 }

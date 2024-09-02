@@ -4,9 +4,7 @@
 package helpers
 
 import (
-	"github.com/AssetMantle/modules/utilities/rest"
 	"github.com/cosmos/cosmos-sdk/client"
-
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +13,7 @@ type CLICommand interface {
 	ReadInt(CLIFlag) int
 	ReadBool(CLIFlag) bool
 	ReadString(CLIFlag) string
-	ReadBaseReq(client.Context) rest.BaseReq
+	ReadCommonTransactionRequest(client.Context) CommonTransactionRequest
 
 	CreateCommand(func(command *cobra.Command, args []string) error) *cobra.Command
 }

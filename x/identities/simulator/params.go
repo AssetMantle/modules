@@ -4,12 +4,11 @@
 package simulator
 
 import (
-	"math"
-	"math/rand"
-
 	"github.com/AssetMantle/schema/data"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"math"
+	"math/rand"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/identities/constants"

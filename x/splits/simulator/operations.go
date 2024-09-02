@@ -4,10 +4,9 @@
 package simulator
 
 import (
-	"math/rand"
-
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"math/rand"
 
 	"github.com/AssetMantle/modules/helpers"
 )

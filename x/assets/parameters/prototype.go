@@ -6,7 +6,6 @@ package parameters
 import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/parameters/burn_enabled"
 	"github.com/AssetMantle/modules/x/assets/parameters/mint_enabled"
 	"github.com/AssetMantle/modules/x/assets/parameters/renumerate_enabled"
@@ -15,5 +14,5 @@ import (
 )
 
 func Prototype() helpers.ParameterManager {
-	return baseHelpers.NewParameterManager(constants.ModuleName, burn_enabled.ValidatableParameter, mint_enabled.ValidatableParameter, renumerate_enabled.ValidatableParameter, unwrap_allowed_coins.ValidatableParameter, wrap_allowed_coins.ValidatableParameter)
+	return baseHelpers.NewParameterManager(burn_enabled.ValidatableParameter, mint_enabled.ValidatableParameter, renumerate_enabled.ValidatableParameter, unwrap_allowed_coins.ValidatableParameter, wrap_allowed_coins.ValidatableParameter)
 }

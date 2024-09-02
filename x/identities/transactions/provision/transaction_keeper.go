@@ -6,7 +6,6 @@ package provision
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	"github.com/AssetMantle/schema/data"
 	"github.com/AssetMantle/schema/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -43,7 +42,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("identity with ID %s has reached the maximum allowed number of provision-able addresses %d", message.IdentityID.AsString(), transactionKeeper.parameterManager.Fetch(context).GetParameter(constants.MaxProvisionAddressCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get())
 	}
 
-	fromAddress := message.GetFromAddress()
+	fromAddress := message.GetSigners()[0]
 
 	toAddress, err := sdkTypes.AccAddressFromBech32(message.To)
 	if err != nil {

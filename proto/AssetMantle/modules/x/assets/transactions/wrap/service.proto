@@ -1,12 +1,11 @@
 syntax = "proto3";
 package AssetMantle.modules.x.assets.transactions.wrap;
 
-import "google/api/annotations.proto";
+import "cosmos/msg/v1/msg.proto";
 import "AssetMantle/modules/x/assets/transactions/wrap/message.proto";
 import "AssetMantle/modules/x/assets/transactions/wrap/transaction_response.proto";
 
 service Msg {
-  rpc Handle(Message) returns (TransactionResponse) {
-    option (google.api.http).post = "/mantle/assets/wrap";
-  }
+  option (cosmos.msg.v1.service) = true;
+  rpc Handle(Message) returns (TransactionResponse) {}
 }

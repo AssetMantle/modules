@@ -5,7 +5,6 @@ package helpers
 
 import (
 	"context"
-
 	abciTypes "github.com/cometbft/cometbft/abci/types"
 )
 

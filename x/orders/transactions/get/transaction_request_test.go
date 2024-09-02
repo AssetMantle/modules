@@ -4,9 +4,7 @@
 package get
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -16,15 +14,12 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -33,17 +28,17 @@ var (
 	immutables        = baseQualified.NewImmutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables          = baseQualified.NewMutables(base.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 
-	testClassificationID = baseIDs.NewClassificationID(immutables, mutables)
-	testFromID           = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
-	testOrderID          = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
-	testBaseRequest      = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
-	takerSplit           = types.NewInt(60)
+	testClassificationID     = baseIDs.NewClassificationID(immutables, mutables)
+	testFromID               = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
+	testOrderID              = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
+	commonTransactionRequest = helpers.PrototypeCommonTransactionRequest()
+	takerSplit               = types.NewInt(60)
 )
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		baseReq rest.BaseReq
-		fromID  string
+		commonTransactionRequest helpers.CommonTransactionRequest
+		fromID                   string
 
 		orderID string
 	}
@@ -52,11 +47,11 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, transactionRequest{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}},
+		{"+ve", args{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, transactionRequest{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.fromID, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -85,8 +80,8 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.FromIdentityID.GetName(), testFromID.AsString())
 	viper.Set(constants.OrderID.GetName(), testOrderID.AsString())
 	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
 
 		OrderID string
 	}
@@ -101,14 +96,14 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
-				OrderID: tt.fields.OrderID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				OrderID:                  tt.fields.OrderID,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -122,68 +117,29 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 }
 
-func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.AsString(), testOrderID.AsString()))
-	require.NoError(t, err)
-	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		OrderID string
-	}
-	type args struct {
-		rawMessage json.RawMessage
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionRequest
-		wantErr bool
-	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, args{jsonMessage}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testOrderID.AsString()), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
-				OrderID: tt.fields.OrderID,
-			}
-			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromJSON() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
 
 		OrderID string
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.BaseReq
+		want   helpers.CommonTransactionRequest
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, testBaseRequest},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
-				OrderID: tt.fields.OrderID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				OrderID:                  tt.fields.OrderID,
 			}
-			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
+			if got := transactionRequest.GetCommonTransactionRequest(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCommonTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -191,8 +147,8 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
 
 		OrderID string
 	}
@@ -202,14 +158,14 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, NewMessage(fromAccAddress, testFromID, testOrderID), false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, NewMessage(fromAccAddress, testFromID, testOrderID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
-				OrderID: tt.fields.OrderID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				OrderID:                  tt.fields.OrderID,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -223,38 +179,10 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	}
 }
 
-func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
-		OrderID string
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
-				OrderID: tt.fields.OrderID,
-			}
-			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		BaseReq rest.BaseReq
-		FromID  string
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
 
 		OrderID string
 	}
@@ -263,14 +191,14 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testOrderID.AsString()}, false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
-				OrderID: tt.fields.OrderID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				OrderID:                  tt.fields.OrderID,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

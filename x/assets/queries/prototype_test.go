@@ -17,11 +17,11 @@ func TestPrototype(t *testing.T) {
 		getString string
 	}{
 
-		{"+ve", asset.Query.GetName(), "assets"},
+		{"+ve", asset.Query.GetServicePath(), "assets"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); !reflect.DeepEqual(got.GetQuery(tt.getString).GetName(), tt.want) {
+			if got := Prototype(); !reflect.DeepEqual(got.GetQuery(tt.getString).GetServicePath(), tt.want) {
 				t.Errorf("Prototype() = %v, want %v", got, tt.want)
 			}
 		})

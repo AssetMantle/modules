@@ -1,10 +1,11 @@
 package docs
 
 import (
+	"encoding/json"
 	"github.com/AssetMantle/modules/utilities/rest"
+	"io"
 	"net/http"
 
-	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/schema/lists"
@@ -12,15 +13,10 @@ import (
 	"github.com/AssetMantle/schema/qualified"
 	"github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/gorilla/mux"
 )
-
-func RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, request{})
-}
 
 func GetTotalWeight(immutables qualified.Immutables, mutables qualified.Mutables) sdkTypes.Int {
 	totalWeight := sdkTypes.ZeroInt()
@@ -40,31 +36,32 @@ func ReadAndProcess(context client.Context, responseWriter http.ResponseWriter, 
 }
 
 func read(context client.Context, responseWriter http.ResponseWriter, httpRequest *http.Request) (request, ids.ClassificationID, lists.PropertyList, lists.PropertyList, lists.PropertyList, lists.PropertyList) {
-	transactionRequest := Prototype()
-	if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
+	body, err := io.ReadAll(httpRequest.Body)
+	if err != nil {
+		rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
 		return request{}, nil, nil, nil, nil, nil
 	}
 
-	if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
-		return request{}, nil, nil, nil, nil, nil
+	request := request{}
+	if err := json.Unmarshal(body, &request); err != nil {
+		rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+		return request, nil, nil, nil, nil, nil
 	}
 
-	req := transactionRequest.(request)
+	immutableMetaProperties, _ := baseLists.NewPropertyList().FromMetaPropertiesString(request.ImmutableMetaProperties)
 
-	immutableMetaProperties, _ := baseLists.NewPropertyList().FromMetaPropertiesString(req.ImmutableMetaProperties)
-
-	immutableProperties, _ := baseLists.NewPropertyList().FromMetaPropertiesString(req.ImmutableProperties)
+	immutableProperties, _ := baseLists.NewPropertyList().FromMetaPropertiesString(request.ImmutableProperties)
 
 	immutableProperties = immutableProperties.ScrubData()
 
-	mutableMetaProperties, _ := baseLists.NewPropertyList().FromMetaPropertiesString(req.MutableMetaProperties)
+	mutableMetaProperties, _ := baseLists.NewPropertyList().FromMetaPropertiesString(request.MutableMetaProperties)
 
-	mutableProperties, _ := baseLists.NewPropertyList().FromMetaPropertiesString(req.MutableProperties)
+	mutableProperties, _ := baseLists.NewPropertyList().FromMetaPropertiesString(request.MutableProperties)
 
 	mutableProperties = mutableProperties.ScrubData()
 
-	classificationID, _ := baseIDs.PrototypeClassificationID().FromString(req.ClassificationID)
-	return req, classificationID.(ids.ClassificationID), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties
+	classificationID, _ := baseIDs.PrototypeClassificationID().FromString(request.ClassificationID)
+	return request, classificationID.(ids.ClassificationID), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties
 }
 
 func Process(immutableMetaPropertyList, immutablePropertyList, mutableMetaPropertyList, mutablePropertyList lists.PropertyList) (qualified.Immutables, qualified.Mutables) {

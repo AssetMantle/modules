@@ -1,10 +1,9 @@
 package base
 
 import (
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/data"
 	"github.com/AssetMantle/schema/parameters"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type validatableParameter struct {

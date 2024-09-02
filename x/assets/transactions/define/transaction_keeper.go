@@ -5,7 +5,6 @@ package define
 
 import (
 	"context"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/utilities"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
@@ -29,7 +28,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	fromAddress := message.GetFromAddress()
+	fromAddress := message.GetSigners()[0]
 
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err

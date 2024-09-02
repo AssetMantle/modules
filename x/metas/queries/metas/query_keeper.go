@@ -5,7 +5,6 @@ package metas
 
 import (
 	"context"
-
 	"github.com/AssetMantle/modules/helpers"
 )
 
@@ -16,7 +15,7 @@ type queryKeeper struct {
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest helpers.QueryRequest) (helpers.QueryResponse, error) {
-	queryResponse, err := queryKeeper.Handle(context, queryRequestFromInterface(queryRequest))
+	queryResponse, err := queryKeeper.Handle(context, queryRequest.(*QueryRequest))
 	return queryResponse, err
 }
 func (queryKeeper queryKeeper) Handle(context context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {

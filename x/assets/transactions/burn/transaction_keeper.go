@@ -6,7 +6,6 @@ package burn
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	"github.com/AssetMantle/schema/data"
 	"github.com/AssetMantle/schema/properties"
 	propertyConstants "github.com/AssetMantle/schema/properties/constants"

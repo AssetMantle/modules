@@ -4,9 +4,7 @@
 package put
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -16,15 +14,12 @@ import (
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/AssetMantle/schema/types/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -44,7 +39,7 @@ var (
 	testFromID                    = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
 	makerAssetID                  = baseDocuments.NewCoinAsset("makerAssetID").GetCoinAssetID().(*baseIDs.AssetID)
 	takerAssetID                  = baseDocuments.NewCoinAsset("takerAssetID").GetCoinAssetID().(*baseIDs.AssetID)
-	testBaseRequest               = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: sdkTypes.NewCoins()}
+	commonTransactionRequest      = helpers.PrototypeCommonTransactionRequest()
 	expiryHeight                  = int64(60)
 	makerSplit                    = sdkTypes.NewInt(60)
 	takerSplit                    = sdkTypes.NewInt(60)
@@ -52,24 +47,24 @@ var (
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		BaseReq      rest.BaseReq
-		FromID       string
-		MakerAssetID string
-		TakerAssetID string
-		MakerSplit   string
-		TakerSplit   string
-		ExpiryHeight int64
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
+		MakerAssetID             string
+		TakerAssetID             string
+		MakerSplit               string
+		TakerSplit               string
+		ExpiryHeight             int64
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, newTransactionRequest(testBaseRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight)},
+		{"+ve", args{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.BaseReq, tt.args.FromID, tt.args.MakerAssetID, tt.args.TakerAssetID, tt.args.MakerSplit, tt.args.TakerSplit, tt.args.ExpiryHeight); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.FromID, tt.args.MakerAssetID, tt.args.TakerAssetID, tt.args.MakerSplit, tt.args.TakerSplit, tt.args.ExpiryHeight); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -108,13 +103,13 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.MutableMetaProperties.GetName(), mutableMetaPropertiesString)
 	viper.Set(constants.MutableProperties.GetName(), mutablePropertiesString)
 	type fields struct {
-		BaseReq      rest.BaseReq
-		FromID       string
-		MakerAssetID string
-		TakerAssetID string
-		MakerSplit   string
-		TakerSplit   string
-		ExpiryHeight int64
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
+		MakerAssetID             string
+		TakerAssetID             string
+		MakerSplit               string
+		TakerSplit               string
+		ExpiryHeight             int64
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -127,13 +122,13 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(testBaseRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight), false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq: tt.fields.BaseReq,
-				FromID:  tt.fields.FromID,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -147,74 +142,27 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 }
 
-func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight))
-	require.NoError(t, err)
-	type fields struct {
-		BaseReq      rest.BaseReq
-		FromID       string
-		MakerAssetID string
-		TakerAssetID string
-		MakerSplit   string
-		TakerSplit   string
-		ExpiryHeight int64
-	}
-	type args struct {
-		rawMessage json.RawMessage
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionRequest
-		wantErr bool
-	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, args{jsonMessage}, newTransactionRequest(testBaseRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				tt.fields.BaseReq,
-				tt.fields.FromID,
-				tt.fields.MakerAssetID,
-				tt.fields.TakerAssetID,
-				tt.fields.MakerSplit,
-				tt.fields.TakerSplit,
-				tt.fields.ExpiryHeight,
-			}
-			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromJSON() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		BaseReq      rest.BaseReq
-		FromID       string
-		MakerAssetID string
-		TakerAssetID string
-		MakerSplit   string
-		TakerSplit   string
-		ExpiryHeight int64
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
+		MakerAssetID             string
+		TakerAssetID             string
+		MakerSplit               string
+		TakerSplit               string
+		ExpiryHeight             int64
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.BaseReq
+		want   helpers.CommonTransactionRequest
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, testBaseRequest},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				tt.fields.BaseReq,
+				tt.fields.commonTransactionRequest,
 				tt.fields.FromID,
 				tt.fields.MakerAssetID,
 				tt.fields.TakerAssetID,
@@ -222,8 +170,8 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 				tt.fields.TakerSplit,
 				tt.fields.ExpiryHeight,
 			}
-			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
+			if got := transactionRequest.GetCommonTransactionRequest(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCommonTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -231,13 +179,13 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		BaseReq      rest.BaseReq
-		FromID       string
-		MakerAssetID string
-		TakerAssetID string
-		MakerSplit   string
-		TakerSplit   string
-		ExpiryHeight int64
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
+		MakerAssetID             string
+		TakerAssetID             string
+		MakerSplit               string
+		TakerSplit               string
+		ExpiryHeight             int64
 	}
 	tests := []struct {
 		name    string
@@ -245,12 +193,12 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, NewMessage(fromAccAddress, testFromID, makerAssetID, takerAssetID, makerSplit, takerSplit, base.NewHeight(60)), false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, NewMessage(fromAccAddress, testFromID, makerAssetID, takerAssetID, makerSplit, takerSplit, base.NewHeight(60)), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				tt.fields.BaseReq,
+				tt.fields.commonTransactionRequest,
 				tt.fields.FromID,
 				tt.fields.MakerAssetID,
 				tt.fields.TakerAssetID,
@@ -270,63 +218,27 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	}
 }
 
-func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	type fields struct {
-		BaseReq      rest.BaseReq
-		FromID       string
-		MakerAssetID string
-		TakerAssetID string
-		MakerSplit   string
-		TakerSplit   string
-		ExpiryHeight int64
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
-				tt.fields.BaseReq,
-				tt.fields.FromID,
-				tt.fields.MakerAssetID,
-				tt.fields.TakerAssetID,
-				tt.fields.MakerSplit,
-				tt.fields.TakerSplit,
-				tt.fields.ExpiryHeight,
-			}
-			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		BaseReq      rest.BaseReq
-		FromID       string
-		MakerAssetID string
-		TakerAssetID string
-		MakerSplit   string
-		TakerSplit   string
-		ExpiryHeight int64
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
+		MakerAssetID             string
+		TakerAssetID             string
+		MakerSplit               string
+		TakerSplit               string
+		ExpiryHeight             int64
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				tt.fields.BaseReq,
+				tt.fields.commonTransactionRequest,
 				tt.fields.FromID,
 				tt.fields.MakerAssetID,
 				tt.fields.TakerAssetID,

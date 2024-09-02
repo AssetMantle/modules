@@ -14,7 +14,6 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -42,26 +41,6 @@ type fields struct {
 	CanAddMaintainer     bool
 	CanRemoveMaintainer  bool
 	CanMutateMaintainer  bool
-}
-
-func Test_messageFromInterface(t *testing.T) {
-	type args struct {
-		msg sdkTypes.Msg
-	}
-	tests := []struct {
-		name string
-		args args
-		want helpers.Message
-	}{
-		{"+ve", args{NewMessage(fromAccAddress, fromID, fromID, classificationID, mutableMetaProperties, true, true, true, true, true, true).(*Message)}, NewMessage(fromAccAddress, fromID, fromID, classificationID, mutableMetaProperties, true, true, true, true, true, true).(*Message)},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := messageFromInterface(tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messageFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
 }
 
 func Test_messagePrototype(t *testing.T) {
@@ -106,70 +85,6 @@ func Test_message_GetSigners(t *testing.T) {
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_RegisterCodec(t *testing.T) {
-
-	type args struct {
-		legacyAmino *sdkCodec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve with nil", fields{}, args{sdkCodec.NewLegacyAmino()}},
-		{"+ve", fields{fromAccAddress.String(), fromID, fromID, classificationID, mutableMetaProperties, true, true, true, true, true, true}, args{sdkCodec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			me := &Message{
-				From:                 tt.fields.From,
-				FromID:               tt.fields.FromID,
-				ToID:                 tt.fields.ToID,
-				ClassificationID:     tt.fields.ClassificationID,
-				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMintAsset:         tt.fields.CanMintAsset,
-				CanBurnAsset:         tt.fields.CanBurnAsset,
-				CanRenumerateAsset:   tt.fields.CanRenumerateAsset,
-				CanAddMaintainer:     tt.fields.CanAddMaintainer,
-				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
-				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
-			}
-			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
-func Test_message_Type(t *testing.T) {
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, fromID, classificationID, mutableMetaProperties, true, true, true, true, true, true}, Transaction.GetName()},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                 tt.fields.From,
-				FromID:               tt.fields.FromID,
-				ToID:                 tt.fields.ToID,
-				ClassificationID:     tt.fields.ClassificationID,
-				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMintAsset:         tt.fields.CanMintAsset,
-				CanBurnAsset:         tt.fields.CanBurnAsset,
-				CanRenumerateAsset:   tt.fields.CanRenumerateAsset,
-				CanAddMaintainer:     tt.fields.CanAddMaintainer,
-				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
-				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
-			}
-			if got := message.Type(); got != tt.want {
-				t.Errorf("Type() = %v, want %v", got, tt.want)
 			}
 		})
 	}

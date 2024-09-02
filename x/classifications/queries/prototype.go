@@ -8,11 +8,13 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/queries/classification"
 	"github.com/AssetMantle/modules/x/classifications/queries/classifications"
+	"github.com/AssetMantle/modules/x/classifications/queries/parameters"
 )
 
 func Prototype() helpers.Queries {
 	return baseHelpers.NewQueries(
 		classification.Query,
 		classifications.Query,
+		parameters.Query,
 	)
 }

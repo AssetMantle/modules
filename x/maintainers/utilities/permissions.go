@@ -1,10 +1,9 @@
 package utilities
 
 import (
+	"github.com/AssetMantle/modules/x/maintainers/constants"
 	"github.com/AssetMantle/schema/lists"
 	"github.com/AssetMantle/schema/lists/base"
-
-	"github.com/AssetMantle/modules/x/maintainers/constants"
 )
 
 func SetModulePermissions(canAddMaintainer bool, canMutateMaintainer bool, canRemoveMaintainer bool) lists.IDList {

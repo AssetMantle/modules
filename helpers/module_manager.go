@@ -8,6 +8,7 @@ import (
 	sdkCodecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 )
@@ -24,13 +25,16 @@ type ModuleManager interface {
 
 	RegisterServices(module.Configurator)
 	RegisterGRPCGatewayRoutes(client.Context, *runtime.ServeMux)
+	RegisterRESTRoutes(client.Context, *mux.Router)
+
 	RegisterInvariants(sdkTypes.InvariantRegistry)
 	RegisterInterfaces(sdkCodecTypes.InterfaceRegistry)
 	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 
-	SetOrderBeginBlockers(...string)
-	SetOrderEndBlockers(...string)
-	SetOrderInitGenesis(...string)
+	SetOrderBeginBlockers(...string) ModuleManager
+	SetOrderEndBlockers(...string) ModuleManager
+	SetOrderInitGenesis(...string) ModuleManager
+	SetOrderExportGenesis(...string) ModuleManager
 
 	BeginBlock(sdkTypes.Context, abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock
 	EndBlock(sdkTypes.Context, abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock

@@ -11,7 +11,6 @@ import (
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/schema/types"
 	"github.com/AssetMantle/schema/types/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -30,26 +29,6 @@ type fields struct {
 	MakerSplit   sdkTypes.Int
 	TakerSplit   sdkTypes.Int
 	ExpiryHeight *base.Height
-}
-
-func Test_messageFromInterface(t *testing.T) {
-	type args struct {
-		msg sdkTypes.Msg
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Message
-	}{
-		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), testFromID, makerAssetID, takerAssetID, makerSplit.String(), takerSplit.String(), expiresInHeight}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := messageFromInterface(tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messageFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
 }
 
 func Test_messagePrototype(t *testing.T) {
@@ -85,61 +64,6 @@ func Test_message_GetSigners(t *testing.T) {
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_RegisterCodec(t *testing.T) {
-
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, makerAssetID, takerAssetID, makerSplit, takerSplit, expiresInHeight}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			me := &Message{
-				tt.fields.From,
-				tt.fields.FromID,
-				tt.fields.MakerAssetID,
-				tt.fields.TakerAssetID,
-				tt.fields.MakerSplit.String(),
-				tt.fields.TakerSplit.String(),
-				tt.fields.ExpiryHeight,
-			}
-			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
-func Test_message_Type(t *testing.T) {
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, makerAssetID, takerAssetID, makerSplit, takerSplit, expiresInHeight}, Transaction.GetName()},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				tt.fields.From,
-				tt.fields.FromID,
-				tt.fields.MakerAssetID,
-				tt.fields.TakerAssetID,
-				tt.fields.MakerSplit.String(),
-				tt.fields.TakerSplit.String(),
-				tt.fields.ExpiryHeight,
-			}
-			if got := message.Type(); got != tt.want {
-				t.Errorf("Type() = %v, want %v", got, tt.want)
 			}
 		})
 	}

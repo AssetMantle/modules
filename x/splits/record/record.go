@@ -1,15 +1,14 @@
 package record
 
 import (
-	"github.com/AssetMantle/schema/ids"
-	baseIDs "github.com/AssetMantle/schema/ids/base"
-	"github.com/AssetMantle/schema/types"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/splits/key"
 	"github.com/AssetMantle/modules/x/splits/mappable"
+	"github.com/AssetMantle/schema/ids"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	"github.com/AssetMantle/schema/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 func (record *Record) GetKey() helpers.Key {

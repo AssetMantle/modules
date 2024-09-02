@@ -5,9 +5,8 @@ package renumerate
 
 import (
 	"context"
-	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mappable"
@@ -40,7 +39,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("renumerate is not enabled")
 	}
 
-	fromAddress := message.GetFromAddress()
+	fromAddress := message.GetSigners()[0]
 
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err

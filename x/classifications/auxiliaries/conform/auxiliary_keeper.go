@@ -5,12 +5,11 @@ package conform
 
 import (
 	"context"
-	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	baseIDs "github.com/AssetMantle/schema/ids/base"
-
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/classifications/key"
 	"github.com/AssetMantle/modules/x/classifications/mappable"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
 )
 
 type auxiliaryKeeper struct {

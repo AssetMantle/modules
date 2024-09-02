@@ -4,9 +4,7 @@
 package deputize
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/AssetMantle/modules/utilities/rest"
 	"reflect"
 	"testing"
 
@@ -16,15 +14,12 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -37,32 +32,32 @@ var (
 	testFromID               = baseIDs.NewIdentityID(testClassificationID, immutables)
 	maintainedPropertyString = "maintainedProperty:S|maintainedProperty"
 	maintainedProperties, _  = base.NewPropertyList().FromMetaPropertiesString(maintainedPropertyString)
-	testBaseRequest          = rest.BaseReq{From: fromAddress, ChainID: "test", Fees: types.NewCoins()}
+	commonTransactionRequest = helpers.PrototypeCommonTransactionRequest()
 )
 
 func Test_newTransactionRequest(t *testing.T) {
 	type args struct {
-		baseReq              rest.BaseReq
-		fromID               string
-		toID                 string
-		classificationID     string
-		maintainedProperties string
-		CanMakeOrder         bool `json:"canMakeOrder"`
-		CanCancelOrder       bool `json:"canCancelOrder"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
+		commonTransactionRequest helpers.CommonTransactionRequest
+		fromID                   string
+		toID                     string
+		classificationID         string
+		maintainedProperties     string
+		CanMakeOrder             bool `json:"canMakeOrder"`
+		CanCancelOrder           bool `json:"canCancelOrder"`
+		CanAddMaintainer         bool `json:"canAddMaintainer"`
+		CanRemoveMaintainer      bool `json:"canRemoveMaintainer"`
+		CanMutateMaintainer      bool `json:"canMutateMaintainer"`
 	}
 	tests := []struct {
 		name string
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true)},
+		{"+ve", args{commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.baseReq, tt.args.fromID, tt.args.toID, tt.args.classificationID, tt.args.maintainedProperties, tt.args.CanMakeOrder, tt.args.CanCancelOrder, tt.args.CanAddMaintainer, tt.args.CanRemoveMaintainer, tt.args.CanMutateMaintainer); !reflect.DeepEqual(got, tt.want) {
+			if got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.fromID, tt.args.toID, tt.args.classificationID, tt.args.maintainedProperties, tt.args.CanMakeOrder, tt.args.CanCancelOrder, tt.args.CanAddMaintainer, tt.args.CanRemoveMaintainer, tt.args.CanMutateMaintainer); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
@@ -99,16 +94,16 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	viper.Set(constants.CanRemoveMaintainer.GetName(), true)
 	viper.Set(constants.CanMutateMaintainer.GetName(), true)
 	type fields struct {
-		BaseReq              rest.BaseReq
-		FromID               string
-		ToID                 string
-		ClassificationID     string
-		MaintainedProperties string
-		CanMakeOrder         bool `json:"canMakeOrder"`
-		CanCancelOrder       bool `json:"canCancelOrder"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
+		ToID                     string
+		ClassificationID         string
+		MaintainedProperties     string
+		CanMakeOrder             bool `json:"canMakeOrder"`
+		CanCancelOrder           bool `json:"canCancelOrder"`
+		CanAddMaintainer         bool `json:"canAddMaintainer"`
+		CanRemoveMaintainer      bool `json:"canRemoveMaintainer"`
+		CanMutateMaintainer      bool `json:"canMutateMaintainer"`
 	}
 	type args struct {
 		cliCommand helpers.CLICommand
@@ -121,21 +116,21 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true), false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:              tt.fields.BaseReq,
-				FromID:               tt.fields.FromID,
-				ToID:                 tt.fields.ToID,
-				ClassificationID:     tt.fields.ClassificationID,
-				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMakeOrder:         tt.fields.CanMakeOrder,
-				CanCancelOrder:       tt.fields.CanCancelOrder,
-				CanAddMaintainer:     tt.fields.CanAddMaintainer,
-				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
-				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ToID:                     tt.fields.ToID,
+				ClassificationID:         tt.fields.ClassificationID,
+				MaintainedProperties:     tt.fields.MaintainedProperties,
+				CanMakeOrder:             tt.fields.CanMakeOrder,
+				CanCancelOrder:           tt.fields.CanCancelOrder,
+				CanAddMaintainer:         tt.fields.CanAddMaintainer,
+				CanRemoveMaintainer:      tt.fields.CanRemoveMaintainer,
+				CanMutateMaintainer:      tt.fields.CanMutateMaintainer,
 			}
 			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
 			if (err != nil) != tt.wantErr {
@@ -149,95 +144,42 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 }
 
-func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true))
-	require.NoError(t, err)
-	type fields struct {
-		BaseReq              rest.BaseReq
-		FromID               string
-		ToID                 string
-		ClassificationID     string
-		MaintainedProperties string
-		CanMakeOrder         bool `json:"canMakeOrder"`
-		CanCancelOrder       bool `json:"canCancelOrder"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
-	}
-	type args struct {
-		rawMessage json.RawMessage
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionRequest
-		wantErr bool
-	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, args{jsonMessage}, newTransactionRequest(testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				BaseReq:              tt.fields.BaseReq,
-				FromID:               tt.fields.FromID,
-				ToID:                 tt.fields.ToID,
-				ClassificationID:     tt.fields.ClassificationID,
-				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMakeOrder:         tt.fields.CanMakeOrder,
-				CanCancelOrder:       tt.fields.CanCancelOrder,
-				CanAddMaintainer:     tt.fields.CanAddMaintainer,
-				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
-				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
-			}
-			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromJSON() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
-		BaseReq              rest.BaseReq
-		FromID               string
-		ToID                 string
-		ClassificationID     string
-		MaintainedProperties string
-		CanMakeOrder         bool `json:"canMakeOrder"`
-		CanCancelOrder       bool `json:"canCancelOrder"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
+		ToID                     string
+		ClassificationID         string
+		MaintainedProperties     string
+		CanMakeOrder             bool `json:"canMakeOrder"`
+		CanCancelOrder           bool `json:"canCancelOrder"`
+		CanAddMaintainer         bool `json:"canAddMaintainer"`
+		CanRemoveMaintainer      bool `json:"canRemoveMaintainer"`
+		CanMutateMaintainer      bool `json:"canMutateMaintainer"`
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   rest.BaseReq
+		want   helpers.CommonTransactionRequest
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, testBaseRequest},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:              tt.fields.BaseReq,
-				FromID:               tt.fields.FromID,
-				ToID:                 tt.fields.ToID,
-				ClassificationID:     tt.fields.ClassificationID,
-				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMakeOrder:         tt.fields.CanMakeOrder,
-				CanCancelOrder:       tt.fields.CanCancelOrder,
-				CanAddMaintainer:     tt.fields.CanAddMaintainer,
-				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
-				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ToID:                     tt.fields.ToID,
+				ClassificationID:         tt.fields.ClassificationID,
+				MaintainedProperties:     tt.fields.MaintainedProperties,
+				CanMakeOrder:             tt.fields.CanMakeOrder,
+				CanCancelOrder:           tt.fields.CanCancelOrder,
+				CanAddMaintainer:         tt.fields.CanAddMaintainer,
+				CanRemoveMaintainer:      tt.fields.CanRemoveMaintainer,
+				CanMutateMaintainer:      tt.fields.CanMutateMaintainer,
 			}
-			if got := transactionRequest.GetBaseReq(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetBaseReq() = %v, want %v", got, tt.want)
+			if got := transactionRequest.GetCommonTransactionRequest(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetCommonTransactionRequest() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -245,16 +187,16 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
 	type fields struct {
-		BaseReq              rest.BaseReq
-		FromID               string
-		ToID                 string
-		ClassificationID     string
-		MaintainedProperties string
-		CanMakeOrder         bool `json:"canMakeOrder"`
-		CanCancelOrder       bool `json:"canCancelOrder"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
+		ToID                     string
+		ClassificationID         string
+		MaintainedProperties     string
+		CanMakeOrder             bool `json:"canMakeOrder"`
+		CanCancelOrder           bool `json:"canCancelOrder"`
+		CanAddMaintainer         bool `json:"canAddMaintainer"`
+		CanRemoveMaintainer      bool `json:"canRemoveMaintainer"`
+		CanMutateMaintainer      bool `json:"canMutateMaintainer"`
 	}
 	tests := []struct {
 		name    string
@@ -262,21 +204,21 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, NewMessage(fromAccAddress, testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true, true, true), false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, NewMessage(fromAccAddress, testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true, true, true), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:              tt.fields.BaseReq,
-				FromID:               tt.fields.FromID,
-				ToID:                 tt.fields.ToID,
-				ClassificationID:     tt.fields.ClassificationID,
-				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMakeOrder:         tt.fields.CanMakeOrder,
-				CanCancelOrder:       tt.fields.CanCancelOrder,
-				CanAddMaintainer:     tt.fields.CanAddMaintainer,
-				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
-				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ToID:                     tt.fields.ToID,
+				ClassificationID:         tt.fields.ClassificationID,
+				MaintainedProperties:     tt.fields.MaintainedProperties,
+				CanMakeOrder:             tt.fields.CanMakeOrder,
+				CanCancelOrder:           tt.fields.CanCancelOrder,
+				CanAddMaintainer:         tt.fields.CanAddMaintainer,
+				CanRemoveMaintainer:      tt.fields.CanRemoveMaintainer,
+				CanMutateMaintainer:      tt.fields.CanMutateMaintainer,
 			}
 			got, err := transactionRequest.MakeMsg()
 			if (err != nil) != tt.wantErr {
@@ -290,81 +232,39 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	}
 }
 
-func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	type fields struct {
-		BaseReq              rest.BaseReq
-		FromID               string
-		ToID                 string
-		ClassificationID     string
-		MaintainedProperties string
-		CanMakeOrder         bool `json:"canMakeOrder"`
-		CanCancelOrder       bool `json:"canCancelOrder"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
-				BaseReq:              tt.fields.BaseReq,
-				FromID:               tt.fields.FromID,
-				ToID:                 tt.fields.ToID,
-				ClassificationID:     tt.fields.ClassificationID,
-				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMakeOrder:         tt.fields.CanMakeOrder,
-				CanCancelOrder:       tt.fields.CanCancelOrder,
-				CanAddMaintainer:     tt.fields.CanAddMaintainer,
-				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
-				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
-			}
-			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
 func Test_transactionRequest_Validate(t *testing.T) {
 	type fields struct {
-		BaseReq              rest.BaseReq
-		FromID               string
-		ToID                 string
-		ClassificationID     string
-		MaintainedProperties string
-		CanMakeOrder         bool `json:"canMakeOrder"`
-		CanCancelOrder       bool `json:"canCancelOrder"`
-		CanAddMaintainer     bool `json:"canAddMaintainer"`
-		CanRemoveMaintainer  bool `json:"canRemoveMaintainer"`
-		CanMutateMaintainer  bool `json:"canMutateMaintainer"`
+		commonTransactionRequest helpers.CommonTransactionRequest
+		FromID                   string
+		ToID                     string
+		ClassificationID         string
+		MaintainedProperties     string
+		CanMakeOrder             bool `json:"canMakeOrder"`
+		CanCancelOrder           bool `json:"canCancelOrder"`
+		CanAddMaintainer         bool `json:"canAddMaintainer"`
+		CanRemoveMaintainer      bool `json:"canRemoveMaintainer"`
+		CanMutateMaintainer      bool `json:"canMutateMaintainer"`
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testBaseRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), maintainedPropertyString, true, true, true, true, true}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			transactionRequest := transactionRequest{
-				BaseReq:              tt.fields.BaseReq,
-				FromID:               tt.fields.FromID,
-				ToID:                 tt.fields.ToID,
-				ClassificationID:     tt.fields.ClassificationID,
-				MaintainedProperties: tt.fields.MaintainedProperties,
-				CanMakeOrder:         tt.fields.CanMakeOrder,
-				CanCancelOrder:       tt.fields.CanCancelOrder,
-				CanAddMaintainer:     tt.fields.CanAddMaintainer,
-				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
-				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
+				CommonTransactionRequest: tt.fields.commonTransactionRequest,
+				FromID:                   tt.fields.FromID,
+				ToID:                     tt.fields.ToID,
+				ClassificationID:         tt.fields.ClassificationID,
+				MaintainedProperties:     tt.fields.MaintainedProperties,
+				CanMakeOrder:             tt.fields.CanMakeOrder,
+				CanCancelOrder:           tt.fields.CanCancelOrder,
+				CanAddMaintainer:         tt.fields.CanAddMaintainer,
+				CanRemoveMaintainer:      tt.fields.CanRemoveMaintainer,
+				CanMutateMaintainer:      tt.fields.CanMutateMaintainer,
 			}
 			if err := transactionRequest.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)

@@ -6,7 +6,6 @@ package scrub
 import (
 	"context"
 	"github.com/AssetMantle/modules/helpers/constants"
-
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	"github.com/AssetMantle/schema/properties"

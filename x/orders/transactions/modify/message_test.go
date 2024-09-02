@@ -13,7 +13,6 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	"github.com/AssetMantle/schema/types"
 	"github.com/AssetMantle/schema/types/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -33,26 +32,6 @@ type fields struct {
 	ExpiresIn             *base.Height
 	MutableMetaProperties *baseLists.PropertyList
 	MutableProperties     *baseLists.PropertyList
-}
-
-func Test_messageFromInterface(t *testing.T) {
-	type args struct {
-		msg sdkTypes.Msg
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Message
-	}{
-		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), testFromID, testOrderID, takerSplit.String(), makerSplit.String(), expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := messageFromInterface(tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messageFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
 }
 
 func Test_messagePrototype(t *testing.T) {
@@ -94,63 +73,6 @@ func Test_message_GetSigners(t *testing.T) {
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_RegisterCodec(t *testing.T) {
-
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testOrderID, takerSplit, makerSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			me := &Message{
-				From:                  tt.fields.From,
-				FromID:                tt.fields.FromID,
-				OrderID:               tt.fields.OrderID,
-				MakerSplit:            tt.fields.MakerSplit.String(),
-				TakerSplit:            tt.fields.TakerSplit.String(),
-				ExpiresIn:             tt.fields.ExpiresIn,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
-			}
-			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
-func Test_message_Type(t *testing.T) {
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testOrderID, takerSplit, makerSplit, expiresInHeight, mutableMetaProperties.(*baseLists.PropertyList), mutableProperties.(*baseLists.PropertyList)}, Transaction.GetName()},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				From:                  tt.fields.From,
-				FromID:                tt.fields.FromID,
-				OrderID:               tt.fields.OrderID,
-				MakerSplit:            tt.fields.MakerSplit.String(),
-				TakerSplit:            tt.fields.TakerSplit.String(),
-				ExpiresIn:             tt.fields.ExpiresIn,
-				MutableMetaProperties: tt.fields.MutableMetaProperties,
-				MutableProperties:     tt.fields.MutableProperties,
-			}
-			if got := message.Type(); got != tt.want {
-				t.Errorf("Type() = %v, want %v", got, tt.want)
 			}
 		})
 	}

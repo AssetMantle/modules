@@ -4,10 +4,9 @@
 package define
 
 import (
+	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryResponse struct {

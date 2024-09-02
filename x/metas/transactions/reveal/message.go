@@ -4,26 +4,15 @@
 package reveal
 
 import (
-	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 var _ helpers.Message = (*Message)(nil)
 
-func (message *Message) Type() string { return Transaction.GetName() }
-func (message *Message) GetFromAddress() sdkTypes.AccAddress {
-	from, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic(err)
-	}
-	return from
-}
 func (message *Message) ValidateBasic() error {
 	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
 		return err
@@ -40,21 +29,10 @@ func (message *Message) GetSigners() []sdkTypes.AccAddress {
 	}
 	return []sdkTypes.AccAddress{from}
 }
-func (*Message) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, Message{})
-}
 func (message *Message) RegisterInterface(interfaceRegistry types.InterfaceRegistry) {
 	interfaceRegistry.RegisterImplementations((*sdkTypes.Msg)(nil), message)
 }
 
-func messageFromInterface(msg sdkTypes.Msg) *Message {
-	switch value := msg.(type) {
-	case *Message:
-		return value
-	default:
-		return &Message{}
-	}
-}
 func messagePrototype() helpers.Message {
 	return &Message{}
 }

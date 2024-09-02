@@ -11,9 +11,9 @@ type queries struct {
 
 var _ helpers.Queries = (*queries)(nil)
 
-func (queries queries) GetQuery(name string) helpers.Query {
+func (queries queries) GetQuery(servicePath string) helpers.Query {
 	for _, query := range queries.Get() {
-		if query.GetName() == name {
+		if query.GetServicePath() == servicePath {
 			return query
 		}
 	}

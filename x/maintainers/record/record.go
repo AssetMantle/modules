@@ -1,6 +1,10 @@
 package record
 
 import (
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/maintainers/key"
+	"github.com/AssetMantle/modules/x/maintainers/mappable"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
@@ -10,11 +14,6 @@ import (
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/maintainers/key"
-	"github.com/AssetMantle/modules/x/maintainers/mappable"
 )
 
 func (record *Record) GetKey() helpers.Key {

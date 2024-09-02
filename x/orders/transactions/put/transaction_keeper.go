@@ -6,7 +6,6 @@ package put
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	"github.com/AssetMantle/schema/data"
 	"github.com/AssetMantle/schema/documents/base"
 	propertyConstants "github.com/AssetMantle/schema/properties/constants"
@@ -41,7 +40,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("put orders not enabled")
 	}
 
-	fromAddress := message.GetFromAddress()
+	fromAddress := message.GetSigners()[0]
 
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
 		return nil, err

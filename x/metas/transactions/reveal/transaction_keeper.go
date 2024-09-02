@@ -6,7 +6,6 @@ package reveal
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	"github.com/AssetMantle/schema/data"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"

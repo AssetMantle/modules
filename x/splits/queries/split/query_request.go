@@ -11,7 +11,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/splits/key"
 )
@@ -50,27 +49,10 @@ func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRe
 		return newQueryRequest(splitID.(ids.SplitID)), nil
 	}
 }
-func (queryRequest *QueryRequest) Encode() ([]byte, error) {
-	return base.CodecPrototype().MarshalJSON(queryRequest)
-}
-func (queryRequest *QueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	if err := base.CodecPrototype().UnmarshalJSON(bytes, queryRequest); err != nil {
-		return nil, err
-	}
-
-	return queryRequest, nil
-}
 func requestPrototype() helpers.QueryRequest {
 	return &QueryRequest{}
 }
-func queryRequestFromInterface(request helpers.QueryRequest) *QueryRequest {
-	switch value := request.(type) {
-	case *QueryRequest:
-		return value
-	default:
-		return &QueryRequest{}
-	}
-}
+
 func newQueryRequest(splitID ids.SplitID) helpers.QueryRequest {
 	return &QueryRequest{Key: key.NewKey(splitID).(*key.Key)}
 }

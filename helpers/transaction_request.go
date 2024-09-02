@@ -4,20 +4,16 @@
 package helpers
 
 import (
-	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
-
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"net/http"
 )
 
 type TransactionRequest interface {
-	GetBaseReq() rest.BaseReq
+	GetCommonTransactionRequest() CommonTransactionRequest
 
 	FromCLI(CLICommand, client.Context) (TransactionRequest, error)
-	FromJSON(json.RawMessage) (TransactionRequest, error)
+	FromHTTPRequest(*http.Request) (TransactionRequest, error)
 	MakeMsg() (sdkTypes.Msg, error)
-	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 	Request
 }

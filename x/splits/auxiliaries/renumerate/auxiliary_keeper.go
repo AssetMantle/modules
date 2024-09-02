@@ -5,11 +5,10 @@ package renumerate
 
 import (
 	"context"
-	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/splits/utilities"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type auxiliaryKeeper struct {

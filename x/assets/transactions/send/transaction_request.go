@@ -5,25 +5,23 @@ package send
 
 import (
 	"encoding/json"
-	"github.com/AssetMantle/modules/utilities/rest"
-
-	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"io"
+	"net/http"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 type transactionRequest struct {
-	BaseReq rest.BaseReq `json:"baseReq"`
-	FromID  string       `json:"fromID"`
-	ToID    string       `json:"toID"`
-	AssetID string       `json:"assetID"`
-	Value   string       `json:"value"`
+	helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
+	FromID                           string `json:"fromID"`
+	ToID                             string `json:"toID"`
+	AssetID                          string `json:"assetID"`
+	Value                            string `json:"value"`
 }
 
 var _ helpers.TransactionRequest = (*transactionRequest)(nil)
@@ -49,25 +47,30 @@ func (transactionRequest transactionRequest) Validate() error {
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
-		cliCommand.ReadBaseReq(context),
+		cliCommand.ReadCommonTransactionRequest(context),
 		cliCommand.ReadString(constants.FromIdentityID),
 		cliCommand.ReadString(constants.ToIdentityID),
 		cliCommand.ReadString(constants.AssetID),
 		cliCommand.ReadString(constants.Value),
 	), nil
 }
-func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
-	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
+func (transactionRequest transactionRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.TransactionRequest, error) {
+	body, err := io.ReadAll(httpRequest.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(body, &transactionRequest); err != nil {
 		return nil, err
 	}
 
 	return transactionRequest, nil
 }
-func (transactionRequest transactionRequest) GetBaseReq() rest.BaseReq {
-	return transactionRequest.BaseReq
+func (transactionRequest transactionRequest) GetCommonTransactionRequest() helpers.CommonTransactionRequest {
+	return transactionRequest.CommonTransactionRequest
 }
 func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
-	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetBaseReq().From)
+	from, err := sdkTypes.AccAddressFromBech32(transactionRequest.GetCommonTransactionRequest().GetFrom())
 	if err != nil {
 		return nil, err
 	}
@@ -100,18 +103,15 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		value,
 	), nil
 }
-func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, transactionRequest{})
-}
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}
 }
-func newTransactionRequest(baseReq rest.BaseReq, fromID string, toID string, assetID string, value string) helpers.TransactionRequest {
+func newTransactionRequest(commonTransactionRequest helpers.CommonTransactionRequest, fromID string, toID string, assetID string, value string) helpers.TransactionRequest {
 	return transactionRequest{
-		BaseReq: baseReq,
-		FromID:  fromID,
-		ToID:    toID,
-		AssetID: assetID,
-		Value:   value,
+		CommonTransactionRequest: commonTransactionRequest,
+		FromID:                   fromID,
+		ToID:                     toID,
+		AssetID:                  assetID,
+		Value:                    value,
 	}
 }

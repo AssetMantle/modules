@@ -16,7 +16,7 @@ func TestKafkaTopicConsumer(t *testing.T) {
 	testConsumers := []string{"testConsumers"}
 
 	require.Panics(t, func() {
-		testKafkaState := NewKafkaState(testConsumers)
+		testKafkaState := newKafkaState(testConsumers)
 		partitionConsumer := testKafkaState.Consumers["Topic"]
 
 		var kafkaStore kafkaMsg

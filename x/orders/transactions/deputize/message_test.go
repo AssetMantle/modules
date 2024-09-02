@@ -12,7 +12,6 @@ import (
 	"github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -54,27 +53,6 @@ func CreateTestInputForMessage(t *testing.T) (*baseIDs.IdentityID, *baseIDs.Iden
 	testMessage := NewMessage(fromAccAddress, testFromID, testToID, testClassificationID, maintainedProperties, true, true, true, true, true)
 
 	return testFromID.(*baseIDs.IdentityID), testToID.(*baseIDs.IdentityID), testClassificationID.(*baseIDs.ClassificationID), fromAccAddress, maintainedProperties.(*base.PropertyList), testMessage
-}
-
-func Test_messageFromInterface(t *testing.T) {
-	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties, testMessage := CreateTestInputForMessage(t)
-	type args struct {
-		msg sdkTypes.Msg
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Message
-	}{
-		{"+ve", args{testMessage}, &Message{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, true, true, true, true, true}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := messageFromInterface(tt.args.msg); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messageFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
 }
 
 func Test_messagePrototype(t *testing.T) {
@@ -119,69 +97,6 @@ func Test_message_GetSigners(t *testing.T) {
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_message_RegisterCodec(t *testing.T) {
-	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties, _ := CreateTestInputForMessage(t)
-
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, true, true, true, true, true}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			me := &Message{
-				tt.fields.From,
-				tt.fields.FromID,
-				tt.fields.ToID,
-				tt.fields.ClassificationID,
-				tt.fields.MaintainedProperties,
-				tt.fields.CanMakeOrder,
-				tt.fields.CanCancelOrder,
-				tt.fields.CanAddMaintainer,
-				tt.fields.CanRemoveMaintainer,
-				tt.fields.CanMutateMaintainer,
-			}
-			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
-		})
-	}
-}
-
-func Test_message_Type(t *testing.T) {
-	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties, _ := CreateTestInputForMessage(t)
-
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, testToID, testClassificationID, maintainedProperties, true, true, true, true, true}, Transaction.GetName()},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			message := &Message{
-				tt.fields.From,
-				tt.fields.FromID,
-				tt.fields.ToID,
-				tt.fields.ClassificationID,
-				tt.fields.MaintainedProperties,
-				tt.fields.CanMakeOrder,
-				tt.fields.CanCancelOrder,
-				tt.fields.CanAddMaintainer,
-				tt.fields.CanRemoveMaintainer,
-				tt.fields.CanMutateMaintainer,
-			}
-			if got := message.Type(); got != tt.want {
-				t.Errorf("Type() = %v, want %v", got, tt.want)
 			}
 		})
 	}

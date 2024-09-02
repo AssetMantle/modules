@@ -5,7 +5,6 @@ package block
 
 import (
 	"context"
-
 	"github.com/AssetMantle/schema/types/base"
 	abciTypes "github.com/cometbft/cometbft/abci/types"
 

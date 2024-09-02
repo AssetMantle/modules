@@ -7,11 +7,9 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/data"
 	"github.com/AssetMantle/schema/data/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 func TestNewMappable(t *testing.T) {
@@ -47,30 +45,6 @@ func TestPrototype(t *testing.T) {
 			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Prototype() = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_mappable_RegisterCodec(t *testing.T) {
-	type fields struct {
-		Data data.Data
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{base.NewStringData("Data")}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ma := &Mappable{
-				Data: tt.fields.Data.ToAnyData().(*base.AnyData),
-			}
-			ma.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

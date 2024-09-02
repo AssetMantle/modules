@@ -6,11 +6,10 @@ package parameters
 import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/orders/constants"
 	"github.com/AssetMantle/modules/x/orders/parameters/max_order_life"
 	"github.com/AssetMantle/modules/x/orders/parameters/put_enabled"
 )
 
 func Prototype() helpers.ParameterManager {
-	return baseHelpers.NewParameterManager(constants.ModuleName, max_order_life.ValidatableParameter, put_enabled.ValidatableParameter)
+	return baseHelpers.NewParameterManager(max_order_life.ValidatableParameter, put_enabled.ValidatableParameter)
 }

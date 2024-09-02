@@ -1,12 +1,11 @@
 syntax = "proto3";
 package AssetMantle.modules.x.identities.transactions.quash;
 
-import "google/api/annotations.proto";
+import "cosmos/msg/v1/msg.proto";
 import "AssetMantle/modules/x/identities/transactions/quash/message.proto";
 import "AssetMantle/modules/x/identities/transactions/quash/transaction_response.proto";
 
 service Msg {
-  rpc Handle(Message) returns (TransactionResponse) {
-    option (google.api.http).post = "/mantle/identities/quash";
-  }
+  option (cosmos.msg.v1.service) = true;
+  rpc Handle(Message) returns (TransactionResponse) {}
 }

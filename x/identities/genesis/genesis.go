@@ -3,7 +3,6 @@ package genesis
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	"github.com/AssetMantle/schema/lists"
 	"github.com/AssetMantle/schema/lists/base"

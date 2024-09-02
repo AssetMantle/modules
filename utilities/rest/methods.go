@@ -2,10 +2,7 @@ package rest
 
 import (
 	"encoding/json"
-	clientUtils "github.com/AssetMantle/modules/utilities/client"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"io"
 	"net/http"
 )
 
@@ -14,21 +11,6 @@ func PostProcessResponse(responseWriter http.ResponseWriter, context client.Cont
 	responseWriter.WriteHeader(http.StatusOK)
 
 	_ = json.NewEncoder(responseWriter).Encode(response)
-}
-
-func ReadRESTReq(responseWriter http.ResponseWriter, httpRequest *http.Request, legacyAmino *codec.LegacyAmino, request interface{}) bool {
-	body, err := io.ReadAll(httpRequest.Body)
-	if err != nil {
-		responseWriter.WriteHeader(http.StatusBadRequest)
-		_, _ = responseWriter.Write([]byte(err.Error()))
-		return false
-	}
-	if err := legacyAmino.UnmarshalJSON(body, request); err != nil {
-		responseWriter.WriteHeader(http.StatusBadRequest)
-		_, _ = responseWriter.Write([]byte(err.Error()))
-		return false
-	}
-	return true
 }
 
 func CheckBadRequestError(responseWriter http.ResponseWriter, err error) bool {
@@ -41,10 +23,7 @@ func CheckBadRequestError(responseWriter http.ResponseWriter, err error) bool {
 }
 
 func ParseQueryHeightOrReturnBadRequest(responseWriter http.ResponseWriter, clientContext client.Context, request *http.Request) (client.Context, bool) {
-	clientContext, ok := clientUtils.ParseQueryHeightOrReturnBadRequest(responseWriter, clientContext, request)
-	if !ok {
-		return clientContext, false
-	}
+	// TODO correct
 	return clientContext, true
 }
 

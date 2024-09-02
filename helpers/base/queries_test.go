@@ -16,7 +16,7 @@ func TestQueries(t *testing.T) {
 	Queries2 := NewQueries()
 
 	// GetProperty
-	require.Equal(t, "", Queries1.GetQuery("").GetName())
+	require.Equal(t, "", Queries1.GetQuery("").GetServicePath())
 	require.Equal(t, nil, Queries2.GetQuery(""))
 
 	// GetAuxiliary

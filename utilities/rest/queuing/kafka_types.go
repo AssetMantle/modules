@@ -4,12 +4,11 @@
 package queuing
 
 import (
-	"github.com/AssetMantle/modules/utilities/rest"
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/Shopify/sarama"
+	dbm "github.com/cometbft/cometbft-db"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	dbm "github.com/cometbft/cometbft-db"
 )
 
 // TicketID : is a type that implements string
@@ -17,14 +16,14 @@ type TicketID string
 
 // kafkaMsg : is a store that can be stored in kafka queues
 type kafkaMsg struct {
-	Msg         sdk.Msg      `json:"msg"`
-	TicketID    TicketID     `json:"TicketID"`
-	BaseRequest rest.BaseReq `json:"base_req"`
-	KafkaCliCtx kafkaCliCtx  `json:"kafkaCliCtx"`
+	sdk.Msg                          `json:"msg"`
+	TicketID                         `json:"TicketID"`
+	helpers.CommonTransactionRequest `json:"commonTransactionRequest"`
+	KafkaCliCtx                      kafkaCliCtx
 }
 
-// NewKafkaMsgFromRest : makes a msg to send to kafka queue
-func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseReq, context client.Context) kafkaMsg {
+// newKafkaMsgFromRest : makes a msg to send to kafka queue
+func newKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, commonTransactionRequest helpers.CommonTransactionRequest, context client.Context) kafkaMsg {
 	kafkaCtx := kafkaCliCtx{
 		OutputFormat:  context.OutputFormat,
 		ChainID:       context.ChainID,
@@ -43,10 +42,10 @@ func NewKafkaMsgFromRest(msg sdk.Msg, ticketID TicketID, baseRequest rest.BaseRe
 
 	// TODO return pointer
 	return kafkaMsg{
-		Msg:         msg,
-		TicketID:    ticketID,
-		BaseRequest: baseRequest,
-		KafkaCliCtx: kafkaCtx,
+		Msg:                      msg,
+		TicketID:                 ticketID,
+		CommonTransactionRequest: commonTransactionRequest,
+		KafkaCliCtx:              kafkaCtx,
 	}
 }
 
@@ -99,8 +98,8 @@ type kafkaState struct {
 	IsEnabled bool
 }
 
-// NewKafkaState : returns a kafka state
-func NewKafkaState(nodeList []string) *kafkaState {
+// newKafkaState : returns a kafka state
+func newKafkaState(nodeList []string) *kafkaState {
 	kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome)
 	admin := kafkaAdmin(nodeList)
 	producer := newProducer(nodeList)

@@ -4,6 +4,7 @@
 package unwrap_allowed_coins
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -11,8 +12,6 @@ import (
 	"github.com/AssetMantle/schema/properties/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 var ID = constantProperties.UnwrapAllowedCoinsProperty.GetKey()

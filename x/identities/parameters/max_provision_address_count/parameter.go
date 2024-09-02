@@ -4,6 +4,7 @@
 package max_provision_address_count
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/data/constants"
@@ -11,8 +12,6 @@ import (
 	"github.com/AssetMantle/schema/properties/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 var ID = constantProperties.MaxProvisionAddressCountProperty.GetKey()

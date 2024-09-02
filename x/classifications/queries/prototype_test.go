@@ -14,8 +14,8 @@ import (
 
 func TestPrototype(t *testing.T) {
 	require.Panics(t, func() {
-		require.Equal(t, Prototype().GetQuery("classification").GetName(), baseHelpers.NewQueries(
+		require.Equal(t, Prototype().GetQuery("classification").GetServicePath(), baseHelpers.NewQueries(
 			classification.Query,
-		).GetQuery("classification").GetName())
+		).GetQuery("classification").GetServicePath())
 	})
 }
