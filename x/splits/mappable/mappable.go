@@ -5,19 +5,14 @@ package mappable
 
 import (
 	"github.com/AssetMantle/modules/helpers"
-	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/types"
 	baseTypes "github.com/AssetMantle/schema/types/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 var _ helpers.Mappable = (*Mappable)(nil)
 
 func (mappable *Mappable) ValidateBasic() error {
 	return mappable.Split.ValidateBasic()
-}
-func (*Mappable) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, Mappable{})
 }
 
 func NewMappable(split types.Split) helpers.Mappable {

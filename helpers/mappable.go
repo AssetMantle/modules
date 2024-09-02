@@ -9,6 +9,5 @@ import (
 
 type Mappable interface {
 	codec.ProtoMarshaler
-	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 	ValidateBasic() error
 }
