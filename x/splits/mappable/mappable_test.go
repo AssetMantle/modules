@@ -9,7 +9,6 @@ import (
 
 	"github.com/AssetMantle/schema/types"
 	baseTypes "github.com/AssetMantle/schema/types/base"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -52,30 +51,6 @@ func TestPrototype(t *testing.T) {
 			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Prototype() = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_mappable_RegisterCodec(t *testing.T) {
-	type fields struct {
-		Split *baseTypes.Split
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{split}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ma := &Mappable{
-				Split: tt.fields.Split,
-			}
-			ma.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

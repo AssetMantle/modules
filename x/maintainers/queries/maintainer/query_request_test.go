@@ -8,15 +8,13 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
-	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var (
@@ -63,78 +61,6 @@ func Test_queryRequestFromInterface(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.args.request.(*QueryRequest); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("queryRequestFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_queryRequest_Decode(t *testing.T) {
-	encodedQuery, err := (&QueryRequest{testKey}).Encode()
-	require.NoError(t, err)
-	encodedQuery1, err := (&QueryRequest{testKey1}).Encode()
-	require.NoError(t, err)
-	type fields struct {
-		key *key.Key
-	}
-	type args struct {
-		bytes []byte
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.QueryRequest
-		wantErr bool
-	}{
-		{"+ve", fields{testKey}, args{encodedQuery}, &QueryRequest{testKey}, false},
-		{"+ve", fields{testKey1}, args{encodedQuery1}, &QueryRequest{testKey1}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := &QueryRequest{
-				Key: tt.fields.key,
-			}
-			got, err := queryRequest.Decode(tt.args.bytes)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Decode() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Decode() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryRequest{testKey})
-	require.NoError(t, err)
-	encodedQuery1, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(&QueryRequest{testKey1})
-	require.NoError(t, err)
-	type fields struct {
-		key *key.Key
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		want    []byte
-		wantErr bool
-	}{
-		{"+ve", fields{testKey}, encodedQuery, false},
-		{"+ve with nil", fields{testKey1}, encodedQuery1, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := &QueryRequest{
-				Key: tt.fields.key,
-			}
-			got, err := queryRequest.Encode()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Encode() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Encode() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

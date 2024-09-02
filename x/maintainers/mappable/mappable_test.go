@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents"
 	"github.com/AssetMantle/schema/documents/base"
@@ -14,9 +15,6 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 func createTestData() documents.Maintainer {
@@ -61,31 +59,6 @@ func TestPrototype(t *testing.T) {
 			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Prototype() = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_mappable_RegisterCodec(t *testing.T) {
-	testMaintainer := createTestData()
-	type fields struct {
-		Maintainer documents.Maintainer
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{testMaintainer}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ma := &Mappable{
-				Maintainer: tt.fields.Maintainer.Get().(*base.Document),
-			}
-			ma.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

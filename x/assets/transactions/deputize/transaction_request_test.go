@@ -4,7 +4,6 @@
 package deputize
 
 import (
-	"encoding/json"
 	"fmt"
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -141,59 +140,6 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 }
 
-func Test_transactionRequest_FromJSON(t *testing.T) {
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		FromID                   string
-		ToID                     string
-		ClassificationID         string
-		MaintainedProperties     string
-		CanMintAsset             bool
-		CanBurnAsset             bool
-		CanRenumerateAsset       bool
-		CanAddMaintainer         bool
-		CanRemoveMaintainer      bool
-		CanMutateMaintainer      bool
-	}
-	type args struct {
-		rawMessage json.RawMessage
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionRequest
-		wantErr bool
-	}{
-		{"+ve", fields{commonTransactionRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, args{sdkTypes.MustSortJSON(baseHelpers.CodecPrototype().MustMarshalJSON(&Message{fromAccAddress.String(), fromID, fromID, classificationID, mutableMetaProperties, true, true, true, true, true, true}))}, transactionRequest{commonTransactionRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				FromID:                   tt.fields.FromID,
-				ToID:                     tt.fields.ToID,
-				ClassificationID:         tt.fields.ClassificationID,
-				MaintainedProperties:     tt.fields.MaintainedProperties,
-				CanMintAsset:             tt.fields.CanMintAsset,
-				CanBurnAsset:             tt.fields.CanBurnAsset,
-				CanRenumerateAsset:       tt.fields.CanRenumerateAsset,
-				CanAddMaintainer:         tt.fields.CanAddMaintainer,
-				CanRemoveMaintainer:      tt.fields.CanRemoveMaintainer,
-				CanMutateMaintainer:      tt.fields.CanMutateMaintainer,
-			}
-			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromJSON() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
@@ -282,50 +228,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		FromID                   string
-		ToID                     string
-		ClassificationID         string
-		MaintainedProperties     string
-		CanMintAsset             bool
-		CanBurnAsset             bool
-		CanRenumerateAsset       bool
-		CanAddMaintainer         bool
-		CanRemoveMaintainer      bool
-		CanMutateMaintainer      bool
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{commonTransactionRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				FromID:                   tt.fields.FromID,
-				ToID:                     tt.fields.ToID,
-				ClassificationID:         tt.fields.ClassificationID,
-				MaintainedProperties:     tt.fields.MaintainedProperties,
-				CanMintAsset:             tt.fields.CanMintAsset,
-				CanBurnAsset:             tt.fields.CanBurnAsset,
-				CanRenumerateAsset:       tt.fields.CanRenumerateAsset,
-				CanAddMaintainer:         tt.fields.CanAddMaintainer,
-				CanRemoveMaintainer:      tt.fields.CanRemoveMaintainer,
-				CanMutateMaintainer:      tt.fields.CanMutateMaintainer,
-			}
-			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

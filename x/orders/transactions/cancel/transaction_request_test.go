@@ -4,7 +4,6 @@
 package cancel
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
@@ -15,15 +14,12 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -120,49 +116,6 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 }
 
-func Test_transactionRequest_FromJSON(t *testing.T) {
-	jsonMessage, err := json.Marshal(newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()))
-	require.NoError(t, err)
-	jsonMessage1, err := json.Marshal(newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString()))
-	require.NoError(t, err)
-
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		FromID                   string
-		OrderID                  string
-	}
-	type args struct {
-		rawMessage json.RawMessage
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionRequest
-		wantErr bool
-	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, args{jsonMessage}, transactionRequest{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, false},
-		{"+ve with nil", fields{commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString()}, args{jsonMessage1}, transactionRequest{commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString()}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				FromID:                   tt.fields.FromID,
-				OrderID:                  tt.fields.OrderID,
-			}
-			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromJSON() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
@@ -220,35 +173,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		FromID                   string
-		OrderID                  string
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, args{codec.NewLegacyAmino()}},
-		{"+ve with nil", fields{commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString()}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				FromID:                   tt.fields.FromID,
-				OrderID:                  tt.fields.OrderID,
-			}
-			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

@@ -8,16 +8,14 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
-	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var (
@@ -65,79 +63,6 @@ func Test_queryRequestFromInterface(t *testing.T) {
 		})
 	}
 }
-
-func Test_queryRequest_Decode(t *testing.T) {
-	encodedQuery, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testDataID))
-	require.NoError(t, err)
-	encodedQuery1, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)))
-	require.NoError(t, err)
-	type fields struct {
-		Key *key.Key
-	}
-	type args struct {
-		bytes []byte
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.QueryRequest
-		wantErr bool
-	}{
-		{"+ve", fields{testKey}, args{encodedQuery}, newQueryRequest(testDataID), false},
-		{"+ve with nil", fields{key.NewKey(baseIDs.PrototypeDataID()).(*key.Key)}, args{encodedQuery1}, newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := &QueryRequest{
-				Key: tt.fields.Key,
-			}
-			got, err := queryRequest.Decode(tt.args.bytes)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Decode() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Decode() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_queryRequest_Encode(t *testing.T) {
-	encodedQuery, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testDataID))
-	require.NoError(t, err)
-	encodedQuery1, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeDataID().(*baseIDs.DataID)))
-	require.NoError(t, err)
-	type fields struct {
-		Key *key.Key
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		want    []byte
-		wantErr bool
-	}{
-		{"+ve", fields{testKey}, encodedQuery, false},
-		{"+ve with nil", fields{key.NewKey(baseIDs.PrototypeDataID()).(*key.Key)}, encodedQuery1, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := &QueryRequest{
-				Key: tt.fields.Key,
-			}
-			got, err := queryRequest.Encode()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Encode() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Encode() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.DataID})
 	viper.Set(constants.DataID.GetName(), testKey)

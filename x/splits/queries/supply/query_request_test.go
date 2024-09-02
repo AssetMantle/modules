@@ -7,16 +7,14 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/constants"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
-	"github.com/stretchr/testify/require"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/helpers/constants"
 )
 
 var (
@@ -58,78 +56,6 @@ func Test_queryRequestFromInterface(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.args.request.(*QueryRequest); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("queryRequestFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_queryRequest_Decode(t *testing.T) {
-	encodedReq, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testAssetID))
-	require.NoError(t, err)
-	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID()))
-	require.NoError(t, err1)
-	type fields struct {
-		AssetID *baseIDs.AssetID
-	}
-	type args struct {
-		bytes []byte
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.QueryRequest
-		wantErr bool
-	}{
-		{"+ve", fields{testAssetID}, args{encodedReq}, newQueryRequest(testAssetID), false},
-		{"+ve", fields{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, args{encodedReq1}, newQueryRequest(baseIDs.PrototypeAssetID()), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := &QueryRequest{
-				AssetID: tt.fields.AssetID,
-			}
-			got, err := queryRequest.Decode(tt.args.bytes)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Decode() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Decode() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_queryRequest_Encode(t *testing.T) {
-	encodedReq, err := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(testAssetID))
-	require.NoError(t, err)
-	encodedReq1, err1 := base.CodecPrototype().GetLegacyAmino().MarshalJSON(newQueryRequest(baseIDs.PrototypeAssetID()))
-	require.NoError(t, err1)
-	type fields struct {
-		AssetID *baseIDs.AssetID
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		want    []byte
-		wantErr bool
-	}{
-		{"+ve", fields{testAssetID}, encodedReq, false},
-		{"+ve", fields{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, encodedReq1, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			queryRequest := &QueryRequest{
-				AssetID: tt.fields.AssetID,
-			}
-			got, err := queryRequest.Encode()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Encode() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Encode() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

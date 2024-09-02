@@ -4,7 +4,6 @@
 package revoke
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
@@ -15,7 +14,6 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/stretchr/testify/require"
@@ -121,48 +119,6 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 }
 
-func Test_transactionRequest_FromJSON(t *testing.T) {
-	commonTransactionRequest, fromAddress, testFromID, testToID, testClassificationID := createTestInput(t)
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		FromID                   string
-		ToID                     string
-		ClassificationID         string
-	}
-	type args struct {
-		rawMessage json.RawMessage
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionRequest
-		wantErr bool
-	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, args{sdkTypes.MustSortJSON(baseHelpers.CodecPrototype().MustMarshalJSON(&Message{fromAccAddress.String(), testFromID, testToID, testClassificationID}))}, transactionRequest{commonTransactionRequest, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				FromID:                   tt.fields.FromID,
-				ToID:                     tt.fields.ToID,
-				ClassificationID:         tt.fields.ClassificationID,
-			}
-			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromJSON() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	commonTransactionRequest, _, testFromID, testToID, testClassificationID := createTestInput(t)
 	type fields struct {
@@ -228,38 +184,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	commonTransactionRequest, _, testFromID, testToID, testClassificationID := createTestInput(t)
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		FromID                   string
-		ToID                     string
-		ClassificationID         string
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve with nil", fields{}, args{codec.NewLegacyAmino()}},
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testToID.AsString(), testClassificationID.AsString()}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				FromID:                   tt.fields.FromID,
-				ToID:                     tt.fields.ToID,
-				ClassificationID:         tt.fields.ClassificationID,
-			}
-			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

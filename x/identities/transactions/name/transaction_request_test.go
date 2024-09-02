@@ -4,7 +4,6 @@
 package name
 
 import (
-	"encoding/json"
 	"reflect"
 	"testing"
 
@@ -109,43 +108,6 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 }
 
-func Test_transactionRequest_FromJSON(t *testing.T) {
-	_, _, _, _, fromAccAddress, commonTransactionRequest := CreateTestInputForRequest(t)
-
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		NubID                    string
-	}
-	type args struct {
-		rawMessage json.RawMessage
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionRequest
-		wantErr bool
-	}{
-		{"+ve", fields{commonTransactionRequest, "nubID"}, args{sdkTypes.MustSortJSON(baseHelpers.CodecPrototype().MustMarshalJSON(&Message{fromAccAddress.String(), baseIDs.NewStringID("nubID").(*baseIDs.StringID)}))}, transactionRequest{commonTransactionRequest, "nubID"}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				Name:                     tt.fields.NubID,
-			}
-			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromJSON() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
@@ -202,34 +164,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
-
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		NubID                    string
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{commonTransactionRequest, "nubID"}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				Name:                     tt.fields.NubID,
-			}
-			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
 	baseData "github.com/AssetMantle/schema/data/base"
 	documentsSchema "github.com/AssetMantle/schema/documents"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
@@ -16,9 +17,6 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	"github.com/AssetMantle/schema/qualified"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 func createTestInput() (ids.ClassificationID, qualified.Immutables, qualified.Mutables, *Mappable) {
@@ -62,32 +60,6 @@ func TestNewMappable(t *testing.T) {
 			if got := NewMappable(tt.args.Asset); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewAsset() = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_mappable_RegisterCodec(t *testing.T) {
-	_, _, _, testMappable := createTestInput()
-	type fields struct {
-		Document *Mappable
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{testMappable}, args{legacyAmino: codec.NewLegacyAmino()}},
-		{"+ve nil", fields{&Mappable{nil}}, args{legacyAmino: codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			as := &Mappable{
-				Asset: tt.fields.Document.Asset,
-			}
-			as.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

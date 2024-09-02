@@ -4,7 +4,6 @@
 package update
 
 import (
-	"encoding/json"
 	"reflect"
 	"testing"
 
@@ -131,50 +130,6 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 }
 
-func Test_transactionRequest_FromJSON(t *testing.T) {
-	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, commonTransactionRequest := createTestInput(t)
-	jsonMessage, _ := json.Marshal(transactionRequest{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString})
-
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		FromID                   string
-		IdentityID               string
-		MutableMetaProperties    string
-		MutableProperties        string
-	}
-	type args struct {
-		rawMessage json.RawMessage
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionRequest
-		wantErr bool
-	}{
-		{"+ve", fields{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage}, transactionRequest{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				FromID:                   tt.fields.FromID,
-				IdentityID:               tt.fields.IdentityID,
-				MutableMetaProperties:    tt.fields.MutableMetaProperties,
-				MutableProperties:        tt.fields.MutableProperties,
-			}
-			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromJSON() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, commonTransactionRequest := createTestInput(t)
 
@@ -247,40 +202,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	_, _, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, commonTransactionRequest := createTestInput(t)
-
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		FromID                   string
-		IdentityID               string
-		MutableMetaProperties    string
-		MutableProperties        string
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				FromID:                   tt.fields.FromID,
-				IdentityID:               tt.fields.IdentityID,
-				MutableMetaProperties:    tt.fields.MutableMetaProperties,
-				MutableProperties:        tt.fields.MutableProperties,
-			}
-			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

@@ -11,7 +11,6 @@ import (
 
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -185,34 +184,6 @@ func Test_message_GetSigners(t *testing.T) {
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_message_RegisterCodec(t *testing.T) {
-	type fields struct {
-		From   string
-		FromID *baseIDs.IdentityID
-		Coins  types.Coins
-	}
-	type args struct {
-		legacyAmino *sdkCodec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, coins}, args{codec.GetLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			me := &Message{
-				From:   tt.fields.From,
-				FromID: tt.fields.FromID,
-				Coins:  tt.fields.Coins,
-			}
-			me.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }

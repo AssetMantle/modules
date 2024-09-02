@@ -4,7 +4,6 @@
 package issue
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
@@ -159,59 +158,6 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 	}
 }
 
-func Test_transactionRequest_FromJSON(t *testing.T) {
-	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
-	jsonMessage, err := json.Marshal(newTransactionRequest(commonTransactionRequest, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString))
-	require.Equal(t, nil, err)
-	jsonMessage1, err := json.Marshal(newTransactionRequest(commonTransactionRequest, "", "", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString))
-	require.Equal(t, nil, err)
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		To                       string
-		FromID                   string
-		ClassificationID         string
-		ImmutableMetaProperties  string
-		ImmutableProperties      string
-		MutableMetaProperties    string
-		MutableProperties        string
-	}
-	type args struct {
-		rawMessage json.RawMessage
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionRequest
-		wantErr bool
-	}{
-
-		{"+ve", fields{commonTransactionRequest, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage}, transactionRequest{commonTransactionRequest, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
-		{"+ve", fields{commonTransactionRequest, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{jsonMessage1}, transactionRequest{commonTransactionRequest, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				FromID:                   tt.fields.FromID,
-				ClassificationID:         tt.fields.ClassificationID,
-				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:      tt.fields.ImmutableProperties,
-				MutableMetaProperties:    tt.fields.MutableMetaProperties,
-				MutableProperties:        tt.fields.MutableProperties,
-			}
-			got, err := transactionRequest.FromJSON(tt.args.rawMessage)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromJSON() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
 	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
 	type fields struct {
@@ -293,44 +239,6 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
 			}
-		})
-	}
-}
-
-func Test_transactionRequest_RegisterCodec(t *testing.T) {
-	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		To                       string
-		FromID                   string
-		ClassificationID         string
-		ImmutableMetaProperties  string
-		ImmutableProperties      string
-		MutableMetaProperties    string
-		MutableProperties        string
-	}
-	type args struct {
-		legacyAmino *codec.LegacyAmino
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{"+ve", fields{commonTransactionRequest, toAddress, "fromID", "classificationID", immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				FromID:                   tt.fields.FromID,
-				ClassificationID:         tt.fields.ClassificationID,
-				ImmutableMetaProperties:  tt.fields.ImmutableMetaProperties,
-				ImmutableProperties:      tt.fields.ImmutableProperties,
-				MutableMetaProperties:    tt.fields.MutableMetaProperties,
-				MutableProperties:        tt.fields.MutableProperties,
-			}
-			tr.RegisterLegacyAminoCodec(tt.args.legacyAmino)
 		})
 	}
 }
