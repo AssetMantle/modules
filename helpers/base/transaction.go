@@ -11,7 +11,6 @@ import (
 	"github.com/AssetMantle/modules/utilities/rest/queuing"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
@@ -102,9 +101,6 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 			return
 		}
 	}
-}
-func (transaction transaction) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
-	transaction.requestPrototype().RegisterLegacyAminoCodec(legacyAmino)
 }
 func (transaction transaction) RegisterInterfaces(interfaceRegistry codecTypes.InterfaceRegistry) {
 	transaction.messagePrototype().RegisterInterface(interfaceRegistry)

@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -20,7 +19,6 @@ type Transaction interface {
 	Command() *cobra.Command
 	HandleMessage(context.Context, Message) (*sdkTypes.Result, error)
 	RESTRequestHandler(client.Context) http.HandlerFunc
-	RegisterLegacyAminoCodec(amino *codec.LegacyAmino)
 	RegisterInterfaces(types.InterfaceRegistry)
 	RegisterService(module.Configurator)
 	InitializeKeeper(Mapper, ParameterManager, ...interface{}) Transaction
