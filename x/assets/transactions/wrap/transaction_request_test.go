@@ -29,7 +29,7 @@ import (
 var (
 	fromAddress              = "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, _        = types.AccAddressFromBech32(fromAddress)
-	commonTransactionRequest = baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest = helpers.PrototypeCommonTransactionRequest()
 	immutables               = baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables                 = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
 	classificationID         = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)

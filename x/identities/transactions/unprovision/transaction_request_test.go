@@ -38,7 +38,7 @@ func createInputForMessage(t *testing.T) (*baseIDs.IdentityID, string, types.Acc
 	toAccAddress, err := types.AccAddressFromBech32(toAddress)
 	require.Nil(t, err)
 
-	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest()
 
 	testMessage := NewMessage(fromAccAddress, toAccAddress, testIdentityID)
 

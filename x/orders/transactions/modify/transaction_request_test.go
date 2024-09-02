@@ -42,7 +42,7 @@ var (
 	testClassificationID     = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
 	testFromID               = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
 	testOrderID              = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
-	commonTransactionRequest = baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest = helpers.PrototypeCommonTransactionRequest()
 	expiresIn                = int64(60)
 	makerSplit               = types.NewInt(60)
 	takerSplit               = types.NewInt(60)

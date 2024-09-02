@@ -36,7 +36,7 @@ var (
 	testFromID               = baseIDs.NewIdentityID(testClassificationID, immutables)
 	testOrderID              = baseIDs.NewOrderID(testClassificationID, immutables)
 	testOrderID1             = baseIDs.PrototypeOrderID()
-	commonTransactionRequest = baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest = helpers.PrototypeCommonTransactionRequest()
 )
 
 func Test_newTransactionRequest(t *testing.T) {

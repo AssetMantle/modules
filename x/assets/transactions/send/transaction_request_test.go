@@ -24,7 +24,7 @@ import (
 
 var (
 	fromAccAddress, _        = types.AccAddressFromBech32(fromAddress.String())
-	commonTransactionRequest = baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest = helpers.PrototypeCommonTransactionRequest()
 	fromID                   = baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)
 	testRate                 = types.OneInt()
 )

@@ -21,7 +21,7 @@ func Test_Reveal_Request(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	data := "S|newData"
-	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest()
 	testTransactionRequest := newTransactionRequest(commonTransactionRequest, data)
 
 	require.Equal(t, transactionRequest{CommonTransactionRequest: commonTransactionRequest, Data: data}, testTransactionRequest)
@@ -29,7 +29,7 @@ func Test_Reveal_Request(t *testing.T) {
 
 	requestFromCLI, err := transactionRequest{}.FromCLI(cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()))
 	require.Equal(t, nil, err)
-	require.Equal(t, transactionRequest{CommonTransactionRequest: baseHelpers.PrototypeCommonTransactionRequest(), Data: ""}, requestFromCLI)
+	require.Equal(t, transactionRequest{CommonTransactionRequest: helpers.PrototypeCommonTransactionRequest(), Data: ""}, requestFromCLI)
 
 	jsonMessage, _ := json.Marshal(testTransactionRequest)
 	transactionRequestUnmarshalled, err := transactionRequest{}.FromJSON(jsonMessage)
@@ -44,11 +44,11 @@ func Test_Reveal_Request(t *testing.T) {
 
 	require.Nil(t, err)
 
-	msg2, err := newTransactionRequest(baseHelpers.PrototypeCommonTransactionRequest(), data).MakeMsg()
+	msg2, err := newTransactionRequest(helpers.PrototypeCommonTransactionRequest(), data).MakeMsg()
 	require.NotNil(t, err)
 	require.Nil(t, msg2)
 
-	msg2, err = newTransactionRequest(baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress), "randomString").MakeMsg()
+	msg2, err = newTransactionRequest(helpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress), "randomString").MakeMsg()
 	require.NotNil(t, err)
 	require.Nil(t, msg2)
 

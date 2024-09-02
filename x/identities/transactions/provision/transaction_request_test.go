@@ -30,7 +30,7 @@ func createTestInput(t *testing.T) (helpers.CommonTransactionRequest, string, *b
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	testToAddress := "cosmos1vx8knpllrj7n963p9ttd80w47kpacrhuts497x"
 	return commonTransactionRequest, testToAddress, testFromID.(*baseIDs.IdentityID)
 }

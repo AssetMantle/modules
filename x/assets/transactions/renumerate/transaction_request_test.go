@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/spf13/viper"
@@ -21,7 +20,7 @@ import (
 )
 
 var (
-	commonTransactionRequest = baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest = helpers.PrototypeCommonTransactionRequest()
 )
 
 func Test_newTransactionRequest(t *testing.T) {

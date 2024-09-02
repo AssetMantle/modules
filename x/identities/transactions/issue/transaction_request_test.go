@@ -60,7 +60,7 @@ func createTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 	toAccAddress, err = sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
-	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest()
 
 	return legacyAmino, cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, toAddress, toAccAddress, commonTransactionRequest
 }
@@ -337,7 +337,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 func Test_transactionRequest_Validate(t *testing.T) {
 	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
-	commonTransactionRequest1 := baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest1 := helpers.PrototypeCommonTransactionRequest()
 
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest

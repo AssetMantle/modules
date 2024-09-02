@@ -43,7 +43,7 @@ var (
 	testFromID                    = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
 	makerAssetID                  = baseDocuments.NewCoinAsset("makerAssetID").GetCoinAssetID().(*baseIDs.AssetID)
 	takerAssetID                  = baseDocuments.NewCoinAsset("takerAssetID").GetCoinAssetID().(*baseIDs.AssetID)
-	commonTransactionRequest      = baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest      = helpers.PrototypeCommonTransactionRequest()
 	expiryHeight                  = int64(60)
 	makerSplit                    = sdkTypes.NewInt(60)
 	takerSplit                    = sdkTypes.NewInt(60)

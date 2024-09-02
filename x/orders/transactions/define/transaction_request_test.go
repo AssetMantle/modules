@@ -44,7 +44,7 @@ var (
 	mutables                             = base.NewMutables(mutableProperties)
 	testClassificationID                 = baseIDs.NewClassificationID(immutables, mutables)
 	testFromID                           = baseIDs.NewIdentityID(testClassificationID, immutables).(*baseIDs.IdentityID)
-	commonTransactionRequest             = baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest             = helpers.PrototypeCommonTransactionRequest()
 )
 
 func Test_newTransactionRequest(t *testing.T) {

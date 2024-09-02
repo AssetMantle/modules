@@ -14,7 +14,6 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/spf13/viper"
@@ -25,7 +24,7 @@ import (
 )
 
 var (
-	commonTransactionRequest    = baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest    = helpers.PrototypeCommonTransactionRequest()
 	mutableMetaPropertiesString = "testMutableMeta1:S|mutableMeta"
 	mutableMetaProperties1      = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("testMutableMeta1"), baseData.NewStringData("mutableMeta")))
 	mutablePropertiesString     = "testMutable1:S|mutable"

@@ -21,7 +21,7 @@ func Test_newTransactionRequest(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress).SetFrom(fromAddress)
+	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress).SetFrom(fromAddress)
 	type args struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
 		fromID                   string
@@ -93,9 +93,9 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve",
-			fields{commonTransactionRequest: baseHelpers.PrototypeCommonTransactionRequest(), FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
+			fields{commonTransactionRequest: helpers.PrototypeCommonTransactionRequest(), FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
 			args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())},
-			transactionRequest{CommonTransactionRequest: baseHelpers.PrototypeCommonTransactionRequest(), FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
+			transactionRequest{CommonTransactionRequest: helpers.PrototypeCommonTransactionRequest(), FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
 			false,
 		}}
 	for _, tt := range tests {
@@ -124,7 +124,7 @@ func Test_transactionRequest_FromJSON(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	jsonMessage, _ := json.Marshal(newTransactionRequest(commonTransactionRequest, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false))
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
@@ -180,7 +180,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
@@ -225,7 +225,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 
 	testFromID, testToID, testClassificationID, fromAccAddress, maintainedProperties := createTestInput(t)
 
-	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest()
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
@@ -271,7 +271,7 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
@@ -317,7 +317,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	maintainedProperty := "maintainedProperties:S|maintainedProperties"
-	commonTransactionRequest := baseHelpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
+	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string

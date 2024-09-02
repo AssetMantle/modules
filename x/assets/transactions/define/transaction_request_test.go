@@ -10,11 +10,11 @@ import (
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"reflect"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/spf13/viper"
@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	commonTransactionRequest      = baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest      = helpers.PrototypeCommonTransactionRequest()
 	immutableMetaPropertiesString = "testImmutableMeta1:S|immutableMeta"
 	immutableMetaProperties1      = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("testImmutableMeta1"), baseData.NewStringData("immutableMeta")))
 	immutablePropertiesString     = "testImmutable1:S|immutable"
@@ -253,14 +253,14 @@ func Test_transactionRequest_RegisterCodec(t *testing.T) {
 		MutableProperties        string
 	}
 	type args struct {
-		legacyAmino *codec.LegacyAmino
+		legacyAmino *sdkCodec.LegacyAmino
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
 	}{
-		{"+ve", fields{commonTransactionRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{codec.NewLegacyAmino()}},
+		{"+ve", fields{commonTransactionRequest, fromID.AsString(), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString}, args{sdkCodec.NewLegacyAmino()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

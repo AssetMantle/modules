@@ -14,7 +14,6 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/spf13/viper"
@@ -25,7 +24,7 @@ import (
 )
 
 var (
-	commonTransactionRequest      = baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest      = helpers.PrototypeCommonTransactionRequest()
 	immutableMetaPropertiesString = "testImmutableMeta1:S|immutableMeta"
 	immutableMetaProperties1      = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("testImmutableMeta1"), baseData.NewStringData("immutableMeta")))
 	immutablePropertiesString     = "testImmutable1:S|immutable"

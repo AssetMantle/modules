@@ -36,7 +36,7 @@ var (
 	testFromID               = baseIDs.NewIdentityID(testClassificationID, immutables)
 	maintainedPropertyString = "maintainedProperty:S|maintainedProperty"
 	maintainedProperties, _  = base.NewPropertyList().FromMetaPropertiesString(maintainedPropertyString)
-	commonTransactionRequest = baseHelpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest = helpers.PrototypeCommonTransactionRequest()
 )
 
 func Test_newTransactionRequest(t *testing.T) {
