@@ -4,14 +4,11 @@
 package helpers
 
 import (
-	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/client"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gorilla/mux"
-
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/gorilla/mux"
 )
 
 type Module interface {
@@ -28,8 +25,6 @@ type Module interface {
 	sdkModuleTypes.HasProposalMsgs
 
 	GetAuxiliary(string) Auxiliary
-
-	DecodeModuleTransactionRequest(string, json.RawMessage) (sdkTypes.Msg, error)
 
 	Initialize(*storeTypes.KVStoreKey, paramsTypes.Subspace, ...interface{}) Module
 
