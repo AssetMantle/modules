@@ -7,6 +7,4 @@ import "github.com/cosmos/gogoproto/proto"
 
 type QueryResponse interface {
 	proto.Message
-	Encode() ([]byte, error)
-	Decode([]byte) (QueryResponse, error)
 }
