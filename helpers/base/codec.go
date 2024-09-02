@@ -2,8 +2,6 @@ package base
 
 import (
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/utilities/rest/id_getters/docs"
-	schemaCodec "github.com/AssetMantle/schema/codec"
 	sdkClient "github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkCodecTypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -33,9 +31,6 @@ func (codec codec) InterfaceRegistry() sdkCodecTypes.InterfaceRegistry {
 func (codec codec) Initialize(moduleManager helpers.ModuleManager) helpers.Codec {
 	std.RegisterLegacyAminoCodec(codec.legacyAmino)
 	std.RegisterInterfaces(codec.interfaceRegistry)
-	helpers.RegisterLegacyAminoCodec(codec.legacyAmino)
-	schemaCodec.RegisterLegacyAminoCodec(codec.legacyAmino)
-	docs.RegisterLegacyAminoCodec(codec.legacyAmino)
 	moduleManager.RegisterLegacyAminoCodec(codec.legacyAmino)
 	moduleManager.RegisterInterfaces(codec.interfaceRegistry)
 	return codec
