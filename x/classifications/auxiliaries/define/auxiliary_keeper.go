@@ -5,7 +5,11 @@ package define
 
 import (
 	"context"
+	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/x/classifications/constants"
+	"github.com/AssetMantle/modules/x/classifications/key"
+	"github.com/AssetMantle/modules/x/classifications/record"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents/base"
@@ -17,11 +21,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/classifications/constants"
-	"github.com/AssetMantle/modules/x/classifications/key"
-	"github.com/AssetMantle/modules/x/classifications/record"
 )
 
 type auxiliaryKeeper struct {
@@ -78,7 +77,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 	classificationID := baseIDs.NewClassificationID(auxiliaryRequest.Immutables, auxiliaryRequest.Mutables)
 	classifications := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(classificationID))
 	if classifications.GetMappable(key.NewKey(classificationID)) != nil {
-		return newAuxiliaryResponse(classificationID), errorConstants.EntityAlreadyExists.Wrapf("classification with ID %s already exists", classificationID.AsString())
+		return NewAuxiliaryResponse(classificationID), errorConstants.EntityAlreadyExists.Wrapf("classification with ID %s already exists", classificationID.AsString())
 	}
 
 	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.AccAddress, constants.ModuleName, sdkTypes.NewCoins(sdkTypes.NewCoin(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), bondAmount.Get()))); err != nil {
@@ -93,7 +92,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 
 	classifications.Add(record.NewRecord(classification))
 
-	return newAuxiliaryResponse(classificationID), nil
+	return NewAuxiliaryResponse(classificationID), nil
 }
 
 func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

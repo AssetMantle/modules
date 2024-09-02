@@ -4,10 +4,9 @@
 package define
 
 import (
+	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 type auxiliaryResponse struct {
@@ -16,7 +15,7 @@ type auxiliaryResponse struct {
 
 var _ helpers.AuxiliaryResponse = (*auxiliaryResponse)(nil)
 
-func newAuxiliaryResponse(classificationID ids.ClassificationID) helpers.AuxiliaryResponse {
+func NewAuxiliaryResponse(classificationID ids.ClassificationID) helpers.AuxiliaryResponse {
 	return auxiliaryResponse{
 		ClassificationID: classificationID,
 	}
