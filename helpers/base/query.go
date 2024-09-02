@@ -63,8 +63,8 @@ func (query query) Command() *cobra.Command {
 	return query.cliCommand.CreateCommand(runE)
 }
 func (query query) HandleQuery(context context.Context, requestQuery abciTypes.RequestQuery) ([]byte, error) {
-	request, err := query.requestPrototype().Decode(requestQuery.Data)
-	if err != nil {
+	request := query.requestPrototype()
+	if err := CodecPrototype().UnmarshalJSON(requestQuery.Data, request); err != nil {
 		return nil, err
 	}
 
