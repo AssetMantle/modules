@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-
 	"github.com/spf13/cobra"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -84,7 +83,7 @@ func (cliCommand cliCommand) ReadString(cliFlag helpers.CLIFlag) string {
 }
 
 func (cliCommand cliCommand) ReadCommonTransactionRequest(context client.Context) helpers.CommonTransactionRequest {
-	return NewCommonTransactionRequestFromContext(context)
+	return helpers.NewCommonTransactionRequestFromContext(context)
 }
 func (cliCommand cliCommand) CreateCommand(runE func(command *cobra.Command, args []string) error) *cobra.Command {
 	command := &cobra.Command{
