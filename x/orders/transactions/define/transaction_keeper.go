@@ -5,7 +5,6 @@ package define
 
 import (
 	"context"
-
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	"github.com/AssetMantle/schema/properties/constants"
 	"github.com/AssetMantle/schema/qualified/base"

@@ -6,7 +6,6 @@ package modify
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"

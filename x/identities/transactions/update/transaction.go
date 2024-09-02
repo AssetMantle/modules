@@ -4,11 +4,10 @@
 package update
 
 import (
-	"google.golang.org/grpc"
-
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
+	"google.golang.org/grpc"
 )
 
 var Transaction = baseHelpers.NewTransaction(

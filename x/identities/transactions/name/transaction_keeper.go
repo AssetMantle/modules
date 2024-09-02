@@ -6,7 +6,6 @@ package name
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents/base"
 	"github.com/cosmos/cosmos-sdk/types"

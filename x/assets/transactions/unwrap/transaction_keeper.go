@@ -7,7 +7,6 @@ import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/assets/constants"
-
 	"github.com/AssetMantle/schema/data/base"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"

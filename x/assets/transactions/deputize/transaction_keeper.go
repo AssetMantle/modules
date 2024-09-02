@@ -5,7 +5,6 @@ package deputize
 
 import (
 	"context"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/utilities"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"

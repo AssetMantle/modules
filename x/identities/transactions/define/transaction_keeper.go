@@ -6,7 +6,6 @@ package define
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	"github.com/AssetMantle/schema/properties/constants"
 	"github.com/AssetMantle/schema/qualified/base"

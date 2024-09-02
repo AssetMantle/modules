@@ -6,7 +6,6 @@ package quash
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	"github.com/AssetMantle/schema/data"
 	"github.com/AssetMantle/schema/properties"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"

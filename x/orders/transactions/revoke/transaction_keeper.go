@@ -5,7 +5,6 @@ package revoke
 
 import (
 	"context"
-
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
