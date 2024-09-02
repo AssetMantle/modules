@@ -1,8 +1,9 @@
 package docs
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/AssetMantle/modules/utilities/rest"
+	"io"
 	"net/http"
 
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -13,16 +14,19 @@ import (
 
 func nameIdentityIDHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		transactionRequest := Prototype()
-		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
-			panic(fmt.Errorf("failed to read request"))
+		body, err := io.ReadAll(httpRequest.Body)
+		if err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+			return
 		}
 
-		if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
-			panic(fmt.Errorf("failed to validate request"))
+		request := request{}
+		if err := json.Unmarshal(body, &request); err != nil {
+			rest.WriteErrorResponse(responseWriter, http.StatusBadRequest, err.Error())
+			return
 		}
 
-		rest.PostProcessResponse(responseWriter, context, newResponse(baseDocuments.NewNameIdentity(baseIDs.NewStringID(transactionRequest.(request).Name), baseData.PrototypeListData()).GetNameIdentityID().AsString(), nil))
+		rest.PostProcessResponse(responseWriter, context, newResponse(baseDocuments.NewNameIdentity(baseIDs.NewStringID(request.Name), baseData.PrototypeListData()).GetNameIdentityID().AsString(), nil))
 	}
 }
 

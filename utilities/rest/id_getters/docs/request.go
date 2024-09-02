@@ -3,10 +3,6 @@
 
 package docs
 
-import (
-	"github.com/AssetMantle/modules/helpers"
-)
-
 type request struct {
 	FromID                  string `json:"fromID" valid:"optional"`
 	ImmutableMetaProperties string `json:"immutableMetaProperties" valid:"optional"`
@@ -23,14 +19,4 @@ type request struct {
 	TakerID                 string `json:"takerID" valid:"optional"`
 	Name                    string `json:"name" valid:"optional"`
 	Coins                   string `json:"coins" valid:"optional"`
-}
-
-var _ helpers.Request = &request{}
-
-func (request request) Validate() error {
-	return nil
-}
-
-func Prototype() helpers.Request {
-	return request{}
 }
