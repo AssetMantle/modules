@@ -5,7 +5,6 @@ package supply
 
 import (
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -46,16 +45,6 @@ func (*QueryRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.QueryRe
 	} else {
 		return newQueryRequest(assetID.(ids.AssetID)), nil
 	}
-}
-func (queryRequest *QueryRequest) Encode() ([]byte, error) {
-	return base.CodecPrototype().MarshalJSON(queryRequest)
-}
-func (queryRequest *QueryRequest) Decode(bytes []byte) (helpers.QueryRequest, error) {
-	if err := base.CodecPrototype().UnmarshalJSON(bytes, queryRequest); err != nil {
-		return nil, err
-	}
-
-	return queryRequest, nil
 }
 func requestPrototype() helpers.QueryRequest {
 	return &QueryRequest{}

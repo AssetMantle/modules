@@ -10,9 +10,7 @@ import (
 )
 
 type QueryRequest interface {
-	Request
+	GRPCRequest
 	FromCLI(CLICommand, client.Context) (QueryRequest, error)
 	FromHTTPRequest(*http.Request) (QueryRequest, error)
-	Encode() ([]byte, error)
-	Decode([]byte) (QueryRequest, error)
 }
