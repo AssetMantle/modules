@@ -10,8 +10,10 @@ import (
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/schema/lists/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
+	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"io"
+	"net/http"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
@@ -61,8 +63,13 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 		cliCommand.ReadString(constants.MutableProperties),
 	), nil
 }
-func (transactionRequest transactionRequest) FromJSON(rawMessage json.RawMessage) (helpers.TransactionRequest, error) {
-	if err := json.Unmarshal(rawMessage, &transactionRequest); err != nil {
+func (transactionRequest transactionRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.TransactionRequest, error) {
+	body, err := io.ReadAll(httpRequest.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(body, &transactionRequest); err != nil {
 		return nil, err
 	}
 
@@ -125,7 +132,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		mutableProperties,
 	), nil
 }
-func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *codec.LegacyAmino) {
+func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
 	codecUtilities.RegisterModuleConcrete(legacyAmino, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
