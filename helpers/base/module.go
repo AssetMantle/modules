@@ -6,13 +6,11 @@ package base
 import (
 	"encoding/json"
 	"fmt"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
-	"math/rand"
-
 	abciTypes "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -20,6 +18,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
+	"math/rand"
 
 	"github.com/AssetMantle/modules/helpers"
 )
@@ -188,13 +187,6 @@ func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
 	}
 
 	panic(fmt.Errorf("auxiliary %v not found/initialized", auxiliaryName))
-}
-func (module module) DecodeModuleTransactionRequest(transactionName string, rawMessage json.RawMessage) (sdkTypes.Msg, error) {
-	if transaction := module.transactionsPrototype().GetTransaction(transactionName); transaction != nil {
-		return transaction.DecodeTransactionRequest(rawMessage)
-	}
-
-	return nil, fmt.Errorf("transaction %s is not supported by module %s", transactionName, module.Name())
 }
 func (module module) Initialize(kvStoreKey *storeTypes.KVStoreKey, paramsSubspace paramsTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
 	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
