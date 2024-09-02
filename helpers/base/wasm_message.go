@@ -5,7 +5,6 @@ package base
 
 import (
 	"encoding/json"
-
 	"github.com/AssetMantle/modules/helpers"
 )
 
