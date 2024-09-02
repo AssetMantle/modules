@@ -5,7 +5,6 @@ package helpers
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -24,6 +23,5 @@ type Transaction interface {
 	RegisterLegacyAminoCodec(amino *codec.LegacyAmino)
 	RegisterInterfaces(types.InterfaceRegistry)
 	RegisterService(module.Configurator)
-	DecodeTransactionRequest(json.RawMessage) (sdkTypes.Msg, error)
 	InitializeKeeper(Mapper, ParameterManager, ...interface{}) Transaction
 }

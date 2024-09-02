@@ -5,7 +5,6 @@ package base
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/utilities/rest"
@@ -16,12 +15,11 @@ import (
 	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
+	"net/http"
 	"strings"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
-	"net/http"
-	"reflect"
 )
 
 type transaction struct {
@@ -79,13 +77,13 @@ func (transaction transaction) HandleMessage(context context.Context, message he
 }
 func (transaction transaction) RESTRequestHandler(context client.Context) http.HandlerFunc {
 	return func(responseWriter http.ResponseWriter, httpRequest *http.Request) {
-		transactionRequest := transaction.requestPrototype()
-		if !rest.ReadRESTReq(responseWriter, httpRequest, context.LegacyAmino, &transactionRequest) {
+		transactionRequest, err := transaction.requestPrototype().FromHTTPRequest(httpRequest)
+		if err != nil {
+			rest.CheckBadRequestError(responseWriter, err)
 			return
-		} else if reflect.TypeOf(transaction.requestPrototype()) != reflect.TypeOf(transactionRequest) {
-			rest.CheckBadRequestError(responseWriter, fmt.Errorf("expected %s, got %s", reflect.TypeOf(transaction.requestPrototype()), reflect.TypeOf(transactionRequest)))
-			return
-		} else if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
+		}
+
+		if rest.CheckBadRequestError(responseWriter, transactionRequest.Validate()) {
 			return
 		}
 
@@ -116,14 +114,6 @@ func (transaction transaction) RegisterService(configurator sdkModuleTypes.Confi
 		panic(fmt.Errorf("keeper for transaction %s is not initialized", transaction.serviceName))
 	}
 	transaction.serviceRegistrar(configurator.MsgServer(), transaction.keeper)
-}
-func (transaction transaction) DecodeTransactionRequest(rawMessage json.RawMessage) (sdkTypes.Msg, error) {
-	transactionRequest, err := transaction.requestPrototype().FromJSON(rawMessage)
-	if err != nil {
-		return nil, err
-	}
-
-	return transactionRequest.MakeMsg()
 }
 func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Transaction {
 	transaction.keeper = transaction.keeperPrototype().Initialize(mapper, parameterManager, auxiliaryKeepers).(helpers.TransactionKeeper)
