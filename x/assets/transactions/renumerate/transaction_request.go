@@ -5,11 +5,9 @@ package renumerate
 
 import (
 	"encoding/json"
-	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"io"
 	"net/http"
@@ -88,9 +86,6 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		fromID.(ids.IdentityID),
 		assetID.(ids.AssetID),
 	), nil
-}
-func (transactionRequest) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
-	codecUtilities.RegisterModuleConcrete(legacyAmino, transactionRequest{})
 }
 func requestPrototype() helpers.TransactionRequest {
 	return transactionRequest{}

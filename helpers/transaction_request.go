@@ -5,7 +5,6 @@ package helpers
 
 import (
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"net/http"
 )
@@ -16,6 +15,5 @@ type TransactionRequest interface {
 	FromCLI(CLICommand, client.Context) (TransactionRequest, error)
 	FromHTTPRequest(*http.Request) (TransactionRequest, error)
 	MakeMsg() (sdkTypes.Msg, error)
-	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 	Request
 }
