@@ -3,7 +3,6 @@ package genesis
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	"github.com/AssetMantle/schema/lists"
 	"github.com/AssetMantle/schema/lists/base"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"

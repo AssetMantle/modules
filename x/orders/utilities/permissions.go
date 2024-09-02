@@ -1,9 +1,8 @@
 package utilities
 
 import (
-	"github.com/AssetMantle/schema/ids"
-
 	"github.com/AssetMantle/modules/x/orders/constants"
+	"github.com/AssetMantle/schema/ids"
 )
 
 func SetModulePermissions(canMakeOrder bool, canCancelOrder bool) []ids.StringID {

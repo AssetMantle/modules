@@ -4,6 +4,7 @@
 package modify
 
 import (
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -13,8 +14,6 @@ import (
 	baseTypes "github.com/AssetMantle/schema/types/base"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 var _ helpers.Message = (*Message)(nil)

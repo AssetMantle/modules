@@ -5,7 +5,6 @@ package meta
 
 import (
 	"context"
-
 	"github.com/AssetMantle/modules/helpers"
 )
 

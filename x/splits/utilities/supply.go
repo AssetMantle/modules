@@ -4,13 +4,12 @@
 package utilities
 
 import (
-	"github.com/AssetMantle/schema/ids"
-	baseIDs "github.com/AssetMantle/schema/ids/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/key"
 	"github.com/AssetMantle/modules/x/splits/mappable"
+	"github.com/AssetMantle/schema/ids"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 func GetTotalSupply(collection helpers.Collection, assetID ids.AssetID) sdkTypes.Int {

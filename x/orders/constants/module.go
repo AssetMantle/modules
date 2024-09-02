@@ -4,9 +4,8 @@
 package constants
 
 import (
-	"github.com/AssetMantle/schema/documents/base"
-
 	"github.com/AssetMantle/modules/utilities/name"
+	"github.com/AssetMantle/schema/documents/base"
 )
 
 type dummy struct{}

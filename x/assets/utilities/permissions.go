@@ -1,9 +1,8 @@
 package utilities
 
 import (
-	"github.com/AssetMantle/schema/ids"
-
 	"github.com/AssetMantle/modules/x/assets/constants"
+	"github.com/AssetMantle/schema/ids"
 )
 
 func SetModulePermissions(canMintAsset bool, canRenumerateAsset bool, canBurnAsset bool) []ids.StringID {

@@ -4,16 +4,15 @@
 package utilities
 
 import (
+	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/x/splits/key"
+	"github.com/AssetMantle/modules/x/splits/mappable"
+	"github.com/AssetMantle/modules/x/splits/record"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/schema/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/key"
-	"github.com/AssetMantle/modules/x/splits/mappable"
-	"github.com/AssetMantle/modules/x/splits/record"
 )
 
 func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) (helpers.Collection, error) {

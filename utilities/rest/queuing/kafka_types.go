@@ -6,10 +6,9 @@ package queuing
 import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/Shopify/sarama"
+	dbm "github.com/cometbft/cometbft-db"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	dbm "github.com/cometbft/cometbft-db"
 )
 
 // TicketID : is a type that implements string

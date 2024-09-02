@@ -5,12 +5,11 @@ package transfer
 
 import (
 	"context"
+	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
+	"github.com/AssetMantle/modules/x/splits/utilities"
 	"github.com/AssetMantle/schema/data"
 	propertyConstants "github.com/AssetMantle/schema/properties/constants"
-
-	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/x/splits/utilities"
 )
 
 type auxiliaryKeeper struct {

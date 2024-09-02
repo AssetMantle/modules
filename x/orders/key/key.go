@@ -4,11 +4,10 @@
 package key
 
 import (
+	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 var _ helpers.Key = (*Key)(nil)

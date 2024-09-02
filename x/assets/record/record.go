@@ -1,14 +1,13 @@
 package record
 
 import (
-	"github.com/AssetMantle/schema/documents"
-	baseIDs "github.com/AssetMantle/schema/ids/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mappable"
+	"github.com/AssetMantle/schema/documents"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var _ helpers.Record = (*Record)(nil)

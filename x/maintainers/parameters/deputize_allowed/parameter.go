@@ -4,13 +4,12 @@
 package deputize_allowed
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseParameters "github.com/AssetMantle/schema/parameters/base"
 	"github.com/AssetMantle/schema/properties/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 var ID = constantProperties.DeputizeAllowedProperty.GetKey()

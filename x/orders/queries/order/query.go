@@ -4,11 +4,10 @@
 package order
 
 import (
-	"google.golang.org/grpc"
-
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	helperConstants "github.com/AssetMantle/modules/helpers/constants"
+	"google.golang.org/grpc"
 )
 
 var Query = baseHelpers.NewQuery(

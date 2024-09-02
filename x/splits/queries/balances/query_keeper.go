@@ -5,7 +5,6 @@ package balances
 
 import (
 	"context"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/utilities"
 )

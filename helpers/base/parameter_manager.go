@@ -10,7 +10,6 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	"github.com/AssetMantle/schema/parameters"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"golang.org/x/net/context"
 

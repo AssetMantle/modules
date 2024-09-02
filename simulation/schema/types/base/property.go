@@ -4,13 +4,12 @@
 package base
 
 import (
-	"math"
-	"math/rand"
-
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/schema/properties"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	"math"
+	"math/rand"
 
 	"github.com/AssetMantle/modules/utilities/random"
 )

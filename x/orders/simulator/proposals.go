@@ -4,14 +4,13 @@
 package simulator
 
 import (
-	govSimulation "github.com/cosmos/cosmos-sdk/x/gov/simulation"
-	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	"math/rand"
-
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	govSimulation "github.com/cosmos/cosmos-sdk/x/gov/simulation"
+	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"math/rand"
 )
 
 func (simulator) ProposalMessages(_ module.SimulationState) []simulationTypes.WeightedProposalMsg {

@@ -5,7 +5,6 @@ package helpers
 
 import (
 	"github.com/cosmos/cosmos-sdk/client"
-
 	"github.com/spf13/cobra"
 )
 

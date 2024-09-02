@@ -4,6 +4,7 @@
 package wrap
 
 import (
+	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	codecUtilities "github.com/AssetMantle/schema/codec/utilities"
@@ -12,8 +13,6 @@ import (
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 var _ helpers.Message = (*Message)(nil)

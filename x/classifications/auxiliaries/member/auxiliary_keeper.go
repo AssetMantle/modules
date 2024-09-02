@@ -6,7 +6,6 @@ package member
 import (
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 
 	"github.com/AssetMantle/modules/helpers"

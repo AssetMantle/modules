@@ -4,12 +4,11 @@
 package reveal
 
 import (
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
 )
 
 var _ helpers.Message = (*Message)(nil)

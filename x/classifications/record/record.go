@@ -1,13 +1,12 @@
 package record
 
 import (
-	"github.com/AssetMantle/schema/documents"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/key"
 	"github.com/AssetMantle/modules/x/classifications/mappable"
+	"github.com/AssetMantle/schema/documents"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 func (record *Record) GetKey() helpers.Key {

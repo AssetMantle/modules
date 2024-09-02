@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-	
+
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )

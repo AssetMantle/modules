@@ -4,14 +4,13 @@
 package max_order_life
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseParameters "github.com/AssetMantle/schema/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/schema/types/base"
-
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 )
 
 var ID = constantProperties.MaxOrderLifeProperty.GetKey()
