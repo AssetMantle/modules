@@ -54,11 +54,7 @@ func (module module) Name() string {
 func (module module) GetTransactions() helpers.Transactions {
 	return module.transactions
 }
-func (module module) RegisterLegacyAminoCodec(legacyAmino *sdkCodec.LegacyAmino) {
-	for _, transaction := range module.transactionsPrototype().Get() {
-		transaction.RegisterLegacyAminoCodec(legacyAmino)
-	}
-}
+func (module module) RegisterLegacyAminoCodec(_ *sdkCodec.LegacyAmino) {}
 func (module module) RegisterInterfaces(interfaceRegistry types.InterfaceRegistry) {
 	for _, transaction := range module.transactionsPrototype().Get() {
 		transaction.RegisterInterfaces(interfaceRegistry)
