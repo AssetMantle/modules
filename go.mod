@@ -3,7 +3,7 @@ module github.com/AssetMantle/modules
 go 1.23
 
 require (
-	github.com/AssetMantle/schema v0.0.0-20240206102051-27352b802163
+	github.com/AssetMantle/schema v1.0.1-0.20240917151727-0814b9bd44b7
 	github.com/Shopify/sarama v1.19.0
 	github.com/cometbft/cometbft v0.37.7
 	github.com/cometbft/cometbft-db v0.8.0
@@ -41,7 +41,6 @@ require (
 	github.com/cockroachdb/errors v1.11.1 // indirect
 	github.com/cockroachdb/logtags v0.0.0-20230118201751-21c54148d20b // indirect
 	github.com/cockroachdb/redact v1.1.5 // indirect
-	github.com/coinbase/rosetta-sdk-go v0.7.9 // indirect
 	github.com/confio/ics23/go v0.9.0 // indirect
 	github.com/cosmos/btcutil v1.0.5 // indirect
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5 // indirect
@@ -148,8 +147,6 @@ require (
 
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v4 v4.4.2
-	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.0
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 	golang.org/x/exp => golang.org/x/exp v0.0.0-20230711153332-06a737ee72cb
 	pgregory.net/rapid => pgregory.net/rapid v0.5.5

@@ -4,6 +4,7 @@
 package simulation
 
 import (
+	"github.com/modern-go/reflect2"
 	"math/rand"
 
 	"github.com/AssetMantle/schema/data"
@@ -59,5 +60,6 @@ func CalculateBondAmount(immutables qualified.Immutables, mutables qualified.Mut
 }
 
 func ExecuteMessage(context sdkTypes.Context, module helpers.Module, message helpers.Message) (*sdkTypes.Result, error) {
-	return module.GetTransactions().GetTransaction(message.Type()).HandleMessage(sdkTypes.WrapSDKContext(context), message)
+	//TODO figure out an easier way to pick a transaction handle message from modules
+	return module.GetTransactions().GetTransaction(reflect2.TypeOf(message).String()).HandleMessage(sdkTypes.WrapSDKContext(context), message)
 }
