@@ -72,7 +72,8 @@ func (query query) HandleQuery(context context.Context, requestQuery abciTypes.R
 	if err != nil {
 		return nil, err
 	}
-	return result.Encode()
+
+	return CodecPrototype().MarshalJSON(result)
 }
 
 func (query query) RESTQueryHandler(Context client.Context) http.HandlerFunc {

@@ -4,12 +4,10 @@
 package provision
 
 import (
-	"encoding/json"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"io"
 	"net/http"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -35,13 +33,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /identities/provision [post]
 func (transactionRequest transactionRequest) Validate() error {
-	if msg, err := transactionRequest.MakeMsg(); err != nil {
-		return err
-	} else if err := msg.(helpers.Message).ValidateBasic(); err != nil {
-		return err
-	}
-
-	return nil
+	return helpers.Validate(transactionRequest)
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(
@@ -51,16 +43,7 @@ func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLIComma
 	), nil
 }
 func (transactionRequest transactionRequest) FromHTTPRequest(httpRequest *http.Request) (helpers.TransactionRequest, error) {
-	body, err := io.ReadAll(httpRequest.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := json.Unmarshal(body, &transactionRequest); err != nil {
-		return nil, err
-	}
-
-	return transactionRequest, nil
+	return helpers.TransactionRequestFromHTTPRequest(httpRequest, &transactionRequest)
 }
 func (transactionRequest transactionRequest) GetCommonTransactionRequest() helpers.CommonTransactionRequest {
 	return transactionRequest.CommonTransactionRequest

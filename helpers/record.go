@@ -1,6 +1,8 @@
 package helpers
 
-import "github.com/cosmos/cosmos-sdk/types"
+import (
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+)
 
 type Record interface {
 	GetKey() Key
@@ -8,8 +10,8 @@ type Record interface {
 
 	WithKey(Key) Record
 
-	ReadFromIterator(types.Iterator) Record
-	Read(types.KVStore) Record
-	Write(types.KVStore) Record
-	Delete(types.KVStore)
+	ReadFromIterator(sdkTypes.Iterator) Record
+	Read(sdkTypes.KVStore) Record
+	Write(sdkTypes.KVStore) Record
+	Delete(sdkTypes.KVStore)
 }

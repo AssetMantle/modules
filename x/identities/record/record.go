@@ -22,15 +22,7 @@ func (record *Record) WithKey(Key helpers.Key) helpers.Record {
 	return record
 }
 func (record *Record) ReadFromIterator(iterator sdkTypes.Iterator) helpers.Record {
-	Bytes := iterator.Value()
-	if Bytes == nil {
-		return Prototype()
-	}
-
-	Mappable := record.GetMappable()
-	base.CodecPrototype().MustUnmarshal(iterator.Value(), Mappable)
-
-	return NewRecord(mappable.GetIdentity(Mappable))
+	return NewRecord(mappable.GetIdentity(helpers.ReadMappableFromIterator(iterator, record.GetMappable())))
 }
 func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
 	if record.GetKey() == nil || len(record.GetKey().GeneratePrefixedStoreKeyBytes()) == 0 {
