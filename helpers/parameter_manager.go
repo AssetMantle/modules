@@ -15,7 +15,7 @@ type ParameterManager interface {
 	Get() lists.ParameterList
 	GetValidatableParameter(ids.PropertyID) ValidatableParameter
 	GetParameter(ids.PropertyID) parameters.Parameter
-	ValidateParameter(parameters.Parameter) error
+	ValidateGenesisParameters([]parameters.Parameter) error
 
 	Fetch(context.Context) ParameterManager
 	Set(context.Context, lists.ParameterList) ParameterManager

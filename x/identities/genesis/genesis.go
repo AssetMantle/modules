@@ -2,7 +2,6 @@ package genesis
 
 import (
 	"context"
-	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	"github.com/AssetMantle/schema/lists"
 	"github.com/AssetMantle/schema/lists/base"
@@ -26,27 +25,8 @@ func (genesis *Genesis) Default() helpers.Genesis {
 	return Prototype()
 }
 func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager) error {
-	if len(genesis.ParameterList.Get()) != len(genesis.Default().(*Genesis).ParameterList.Get()) {
-		return errorConstants.IncorrectFormat.Wrapf("expected %d parameters, got %d", len(genesis.Default().(*Genesis).ParameterList.Get()), len(genesis.ParameterList.Get()))
-	}
-
-	for _, parameter := range genesis.ParameterList.Get() {
-		var isPresent bool
-		for _, defaultParameter := range genesis.Default().(*Genesis).ParameterList.Get() {
-			isPresent = false
-			if defaultParameter.GetMetaProperty().Compare(parameter.GetMetaProperty()) == 0 {
-				isPresent = true
-				break
-			}
-		}
-
-		if !isPresent {
-			return errorConstants.EntityNotFound.Wrapf("expected parameter %s not found", parameter.GetMetaProperty().GetKey().AsString())
-		}
-
-		if err := parameterManager.ValidateParameter(parameter); err != nil {
-			return errorConstants.InvalidParameter.Wrapf("parameter %s: %s", parameter.GetMetaProperty().GetKey().AsString(), err.Error())
-		}
+	if err := parameterManager.ValidateGenesisParameters(genesis.ParameterList.Get()); err != nil {
+		return err
 	}
 
 	for _, record := range genesis.Records {
