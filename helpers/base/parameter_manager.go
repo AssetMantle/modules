@@ -44,16 +44,27 @@ func (parameterManager parameterManager) GetValidatableParameter(propertyID ids.
 	}
 	return nil
 }
-func (parameterManager parameterManager) ValidateParameter(parameter parameters.Parameter) error {
-	if validator := parameterManager.GetValidatableParameter(parameter.GetMetaProperty().GetID()); validator != nil {
-		if err := parameter.ValidateBasic(); err != nil {
-			return err
-		}
-
-		return validator.GetValidator()(parameter.GetMetaProperty().GetData().Get().AsString())
+func (parameterManager parameterManager) ValidateGenesisParameters(parameters []parameters.Parameter) error {
+	if len(parameters) != len(parameterManager.validatableParameters) {
+		return fmt.Errorf("genesis parameters length mismatch")
 	}
 
-	return fmt.Errorf("validator not found for parameter %s", parameter.GetMetaProperty().GetID().AsString())
+	for _, parameter := range parameters {
+		if err := parameter.ValidateBasic(); err != nil {
+			return fmt.Errorf("invalid parameter in genesis %s : %s", parameter.GetMetaProperty().GetID().AsString(), err.Error())
+		}
+
+		validator := parameterManager.GetValidatableParameter(parameter.GetMetaProperty().GetID())
+		if validator == nil {
+			return fmt.Errorf("invalid parameter in genesis %s : not found", parameter.GetMetaProperty().GetID().AsString())
+		}
+
+		if err := validator.GetValidator()(parameter.GetMetaProperty().GetData().Get().AsString()); err != nil {
+			return fmt.Errorf("invalid parameter in genesis %s : %s", parameter.GetMetaProperty().GetID().AsString(), err.Error())
+		}
+	}
+
+	return nil
 }
 func (parameterManager parameterManager) Fetch(context context.Context) helpers.ParameterManager {
 	for _, validatableParameter := range parameterManager.validatableParameters {
