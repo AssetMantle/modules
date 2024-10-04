@@ -9,12 +9,19 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/parameters"
 	"github.com/AssetMantle/modules/x/assets/record"
+	parametersSchema "github.com/AssetMantle/schema/parameters"
 )
 
 var _ helpers.Genesis = (*Genesis)(nil)
 
 func (genesis *Genesis) Default() helpers.Genesis {
 	return Prototype()
+}
+func (genesis *Genesis) GetRecords() []helpers.Record {
+	return helpers.RecordsFromImplementations(genesis.Records)
+}
+func (genesis *Genesis) GetParameters() []parametersSchema.Parameter {
+	return genesis.ParameterList.Get()
 }
 func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager) error {
 	if err := parameterManager.ValidateGenesisParameters(genesis.ParameterList.Get()); err != nil {
