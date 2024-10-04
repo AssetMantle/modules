@@ -24,17 +24,7 @@ func (genesis *Genesis) GetParameters() []parametersSchema.Parameter {
 	return genesis.ParameterList.Get()
 }
 func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager) error {
-	if err := parameterManager.ValidateGenesisParameters(genesis.ParameterList.Get()); err != nil {
-		return err
-	}
-
-	for _, record := range genesis.Records {
-		if err := record.GetMappable().ValidateBasic(); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return helpers.ValidateGenesis(genesis, parameterManager)
 }
 func (genesis *Genesis) Import(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) {
 	for _, record := range genesis.Records {
