@@ -26,3 +26,17 @@ type Genesis interface {
 
 	proto.Message
 }
+
+func ValidateGenesis[T Genesis](genesis T, parameterManager ParameterManager) error {
+	if err := parameterManager.ValidateGenesisParameters(genesis); err != nil {
+		return err
+	}
+
+	for _, record := range genesis.GetRecords() {
+		if err := record.GetMappable().ValidateBasic(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
