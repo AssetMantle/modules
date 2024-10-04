@@ -15,3 +15,12 @@ type Record interface {
 	Write(sdkTypes.KVStore) Record
 	Delete(sdkTypes.KVStore)
 }
+
+func RecordsFromImplementations[T Record](records []T) []Record {
+	Records := make([]Record, len(records))
+	for i, record := range records {
+		Records[i] = record
+	}
+
+	return Records
+}
