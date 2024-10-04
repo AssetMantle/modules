@@ -44,12 +44,12 @@ func (parameterManager parameterManager) GetValidatableParameter(propertyID ids.
 	}
 	return nil
 }
-func (parameterManager parameterManager) ValidateGenesisParameters(parameters []parameters.Parameter) error {
-	if len(parameters) != len(parameterManager.validatableParameters) {
+func (parameterManager parameterManager) ValidateGenesisParameters(genesis helpers.Genesis) error {
+	if len(genesis.GetParameters()) != len(parameterManager.validatableParameters) {
 		return fmt.Errorf("genesis parameters length mismatch")
 	}
 
-	for _, parameter := range parameters {
+	for _, parameter := range genesis.GetParameters() {
 		if err := parameter.ValidateBasic(); err != nil {
 			return fmt.Errorf("invalid parameter in genesis %s : %s", parameter.GetMetaProperty().GetID().AsString(), err.Error())
 		}
