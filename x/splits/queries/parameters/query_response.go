@@ -2,8 +2,8 @@ package parameters
 
 import (
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/schema/lists"
 	baseLists "github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/parameters"
 )
 
 var _ helpers.QueryResponse = (*QueryResponse)(nil)
@@ -11,8 +11,8 @@ var _ helpers.QueryResponse = (*QueryResponse)(nil)
 func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
-func newQueryResponse(parameterList lists.ParameterList) *QueryResponse {
+func newQueryResponse(parameters []parameters.Parameter) *QueryResponse {
 	return &QueryResponse{
-		ParameterList: parameterList.(*baseLists.ParameterList),
+		ParameterList: baseLists.NewParameterList(parameters...).(*baseLists.ParameterList),
 	}
 }
