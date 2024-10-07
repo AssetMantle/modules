@@ -13,27 +13,18 @@ GRPC_GATEWAY_VERSION=1.16.0
 
 export GO111MODULE = on
 
-#install all dependencies for buf
-install-buf-dependencies:
-	@go install github.com/cosmos/cosmos-proto/cmd/protoc-gen-go-pulsar@latest
-	@go install google.golang.org/protobuf/cmd/protoc-gen-go@v${GOLANG_PROTOBUF_VERSION}
-	@go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway@v${GRPC_GATEWAY_VERSION}
-	@go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger@v${GRPC_GATEWAY_VERSION}
-	git clone https://github.com/regen-network/protobuf.git; \
-        cd protobuf; \
-        go mod download; \
-        make install
-	git clone https://github.com/regen-network/cosmos-proto.git; \
-        cd cosmos-proto/protoc-gen-gocosmos; \
-        go install .
-	go install github.com/regen-network/cosmos-proto/protoc-gen-gocosmos
-	go get github.com/cosmos/cosmos-sdk@v0.45.9
-	rm -rf cosmos-proto protobuf
-
 protobuf-generate-go:
-	@cd proto; buf generate --template buf.gen.yaml
-	@cp -r github.com/AssetMantle/modules/* ./
-	@rm -rf github.com
+	@echo "Installing protoc-gen-gocosmos..."
+	@go install -mod=readonly github.com/cosmos/gogoproto/protoc-gen-gocosmos@latest || { echo "Failed to install protoc-gen-gocosmos"; exit 1; }
+	@echo "Deleting old proto-generated Go files..."
+	@find . -name '*.pb.go' -delete || { echo "Failed to delete old proto-generated Go files"; exit 1; }
+	@echo "Generating protobuf files..."
+	@cd proto && buf generate --template buf.gen.yaml || { echo "Failed to generate protobuf files"; exit 1; }
+	@echo "Copying generated files..."
+	@cp -r github.com/AssetMantle/modules/* ./ || { echo "Failed to copy generated files"; exit 1; }
+	@echo "Cleaning up..."
+	@rm -rf github.com || { echo "Failed to clean up"; exit 1; }
+	@echo "Protobuf generation completed successfully."
 
 all: build test lintci
 
