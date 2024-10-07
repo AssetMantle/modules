@@ -6,8 +6,6 @@ package base
 import (
 	"fmt"
 	"github.com/AssetMantle/schema/ids"
-	"github.com/AssetMantle/schema/lists"
-	baseLists "github.com/AssetMantle/schema/lists/base"
 	"github.com/AssetMantle/schema/parameters"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -23,12 +21,12 @@ type parameterManager struct {
 
 var _ helpers.ParameterManager = (*parameterManager)(nil)
 
-func (parameterManager parameterManager) Get() lists.ParameterList {
+func (parameterManager parameterManager) Get() []parameters.Parameter {
 	Parameters := make([]parameters.Parameter, len(parameterManager.validatableParameters))
 	for i, validatableParameter := range parameterManager.validatableParameters {
 		Parameters[i] = validatableParameter.GetParameter()
 	}
-	return baseLists.NewParameterList(Parameters...)
+	return Parameters
 }
 func (parameterManager parameterManager) GetParameter(propertyID ids.PropertyID) parameters.Parameter {
 	if validatableParameter := parameterManager.GetValidatableParameter(propertyID); validatableParameter != nil {
@@ -79,8 +77,8 @@ func (parameterManager parameterManager) Fetch(context context.Context) helpers.
 
 	return parameterManager
 }
-func (parameterManager parameterManager) Set(context context.Context, parameterList lists.ParameterList) helpers.ParameterManager {
-	for _, parameter := range parameterList.Get() {
+func (parameterManager parameterManager) Set(context context.Context, parameters []parameters.Parameter) helpers.ParameterManager {
+	for _, parameter := range parameters {
 		parameterManager.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData().Get().AsString())
 	}
 
