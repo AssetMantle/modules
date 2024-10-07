@@ -10,6 +10,7 @@ import (
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/parameters"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -94,7 +95,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		index += 3
 	}
 
-	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(deputize_allowed.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, []parameters.Parameter{deputize_allowed.Parameter.Mutate(Data)})
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

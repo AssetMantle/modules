@@ -2,7 +2,6 @@ package genesis
 
 import (
 	"context"
-	"github.com/AssetMantle/schema/lists"
 	"github.com/AssetMantle/schema/lists/base"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 
@@ -27,11 +26,7 @@ func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager)
 	return helpers.ValidateGenesis(genesis, parameterManager)
 }
 func (genesis *Genesis) Import(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) {
-	for _, record := range genesis.Records {
-		mapper.NewCollection(context).Add(record)
-	}
-
-	parameterManager.Set(context, genesis.ParameterList)
+	helpers.ImportGenesis(genesis, context, mapper, parameterManager)
 }
 func (genesis *Genesis) Export(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) helpers.Genesis {
 	return genesis.Initialize(mapper.NewCollection(context).FetchAll().Get(), parameterManager.Fetch(context).Get())
@@ -51,17 +46,16 @@ func (genesis *Genesis) Decode(jsonCodec sdkCodec.JSONCodec, byte []byte) helper
 
 	return genesis
 }
-func (genesis *Genesis) Initialize(records []helpers.Record, parameterList lists.ParameterList) helpers.Genesis {
+func (genesis *Genesis) Initialize(records []helpers.Record, parameters []parametersSchema.Parameter) helpers.Genesis {
 	if len(records) == 0 {
 		genesis.Records = genesis.Default().(*Genesis).Records
 	} else {
 		genesis.Records = record.RecordsFromInterface(records)
 	}
 
-	if len(parameterList.Get()) == 0 {
+	if len(parameters) == 0 {
 		genesis.ParameterList = genesis.Default().(*Genesis).ParameterList
 	} else {
-		parameters := parameterList.Get()
 		for _, defaultParameter := range genesis.Default().(*Genesis).ParameterList.Get() {
 			for i, parameter := range parameters {
 				if defaultParameter.GetMetaProperty().GetID().Compare(parameter.GetMetaProperty().GetID()) == 0 {
@@ -78,6 +72,6 @@ func (genesis *Genesis) Initialize(records []helpers.Record, parameterList lists
 func Prototype() helpers.Genesis {
 	return &Genesis{
 		Records:       []*record.Record{},
-		ParameterList: parameters.Prototype().Get().(*base.ParameterList),
+		ParameterList: base.NewParameterList(parameters.Prototype().Get()...).(*base.ParameterList),
 	}
 }

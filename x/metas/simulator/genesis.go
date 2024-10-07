@@ -6,7 +6,7 @@ package simulator
 import (
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
-	"github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/parameters"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"math"
@@ -38,7 +38,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		records[i] = record.NewRecord(baseSimulation.GenerateRandomData(simulationState.Rand, int(math.Abs(float64(simulationState.Rand.Int())))))
 	}
 
-	genesisState := genesis.Prototype().Initialize(records, base.NewParameterList(reveal_enabled.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, []parameters.Parameter{reveal_enabled.Parameter.Mutate(Data)})
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"context"
-	"github.com/AssetMantle/schema/lists"
 	"github.com/AssetMantle/schema/parameters"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/gogoproto/proto"
@@ -22,7 +21,7 @@ type Genesis interface {
 	Encode(sdkCodec.JSONCodec) []byte
 	Decode(sdkCodec.JSONCodec, []byte) Genesis
 
-	Initialize([]Record, lists.ParameterList) Genesis
+	Initialize([]Record, []parameters.Parameter) Genesis
 
 	proto.Message
 }
@@ -39,4 +38,12 @@ func ValidateGenesis[T Genesis](genesis T, parameterManager ParameterManager) er
 	}
 
 	return nil
+}
+
+func ImportGenesis[T Genesis](genesis T, context context.Context, mapper Mapper, parameterManager ParameterManager) {
+	for _, record := range genesis.GetRecords() {
+		mapper.NewCollection(context).Add(record)
+	}
+
+	parameterManager.Set(context, genesis.GetParameters())
 }
