@@ -2,14 +2,17 @@ package helpers
 
 import (
 	"context"
-	"github.com/AssetMantle/schema/parameters"
+	parametersSchema "github.com/AssetMantle/schema/parameters"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/gogoproto/proto"
 )
 
 type Genesis interface {
 	GetRecords() []Record
-	GetParameters() []parameters.Parameter
+	GetParameters() []parametersSchema.Parameter
+
+	SetRecords([]Record) Genesis
+	SetParameters([]parametersSchema.Parameter) Genesis
 
 	Default() Genesis
 
@@ -21,7 +24,7 @@ type Genesis interface {
 	Encode(sdkCodec.JSONCodec) []byte
 	Decode(sdkCodec.JSONCodec, []byte) Genesis
 
-	Initialize([]Record, []parameters.Parameter) Genesis
+	Initialize([]Record, []parametersSchema.Parameter) Genesis
 
 	proto.Message
 }
