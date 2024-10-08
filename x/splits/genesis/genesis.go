@@ -22,6 +22,14 @@ func (genesis *Genesis) GetRecords() []helpers.Record {
 func (genesis *Genesis) GetParameters() []parametersSchema.Parameter {
 	return genesis.ParameterList.Get()
 }
+func (genesis *Genesis) SetRecords(records []helpers.Record) helpers.Genesis {
+	genesis.Records = helpers.RecordsToImplementations(&record.Record{}, records)
+	return genesis
+}
+func (genesis *Genesis) SetParameters(parameters []parametersSchema.Parameter) helpers.Genesis {
+	genesis.ParameterList = base.NewParameterList(parameters...).(*base.ParameterList)
+	return genesis
+}
 func (genesis *Genesis) ValidateBasic(parameterManager helpers.ParameterManager) error {
 	return helpers.ValidateGenesis(genesis, parameterManager)
 }
@@ -32,41 +40,13 @@ func (genesis *Genesis) Export(context context.Context, mapper helpers.Mapper, p
 	return helpers.ExportGenesis(genesis, context, mapper, parameterManager)
 }
 func (genesis *Genesis) Encode(jsonCodec sdkCodec.JSONCodec) []byte {
-	bytes, err := jsonCodec.MarshalJSON(genesis)
-	if err != nil {
-		panic(err)
-	}
-
-	return bytes
+	return helpers.EncodeGenesis(genesis, jsonCodec)
 }
 func (genesis *Genesis) Decode(jsonCodec sdkCodec.JSONCodec, byte []byte) helpers.Genesis {
-	if err := jsonCodec.UnmarshalJSON(byte, genesis); err != nil {
-		panic(err)
-	}
-
-	return genesis
+	return helpers.DecodeGenesis(genesis, jsonCodec, byte)
 }
 func (genesis *Genesis) Initialize(records []helpers.Record, parameters []parametersSchema.Parameter) helpers.Genesis {
-	if len(records) == 0 {
-		genesis.Records = genesis.Default().(*Genesis).Records
-	} else {
-		genesis.Records = record.RecordsFromInterface(records)
-	}
-
-	if len(parameters) == 0 {
-		genesis.ParameterList = genesis.Default().(*Genesis).ParameterList
-	} else {
-		for _, defaultParameter := range genesis.Default().(*Genesis).ParameterList.Get() {
-			for i, parameter := range parameters {
-				if defaultParameter.GetMetaProperty().GetID().Compare(parameter.GetMetaProperty().GetID()) == 0 {
-					parameters[i] = defaultParameter.Mutate(parameter.GetMetaProperty().GetData())
-				}
-			}
-		}
-		genesis.ParameterList = base.NewParameterList(parameters...).(*base.ParameterList)
-	}
-
-	return genesis
+	return helpers.InitializeGenesis(genesis, records, parameters)
 }
 
 func Prototype() helpers.Genesis {
