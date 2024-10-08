@@ -14,6 +14,8 @@ GRPC_GATEWAY_VERSION=1.16.0
 export GO111MODULE = on
 
 protobuf-generate-go:
+	@echo "Installing Buf..."
+	@go install -mod=readonly github.com/bufbuild/buf/cmd/buf@latest || { echo "Failed to install buf"; exit 1; }
 	@echo "Installing protoc-gen-gocosmos..."
 	@go install -mod=readonly github.com/cosmos/gogoproto/protoc-gen-gocosmos@latest || { echo "Failed to install protoc-gen-gocosmos"; exit 1; }
 	@echo "Deleting old proto-generated Go files..."
@@ -25,6 +27,9 @@ protobuf-generate-go:
 	@echo "Cleaning up..."
 	@rm -rf github.com || { echo "Failed to clean up"; exit 1; }
 	@echo "Protobuf generation completed successfully."
+	@echo "Running buf lint..."
+	@cd proto && buf lint || { echo "Buf lint failed"; exit 1; }
+	@echo "Buf lint completed successfully."
 
 all: build test lintci
 
