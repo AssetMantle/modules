@@ -29,7 +29,7 @@ func (genesis *Genesis) Import(context context.Context, mapper helpers.Mapper, p
 	helpers.ImportGenesis(genesis, context, mapper, parameterManager)
 }
 func (genesis *Genesis) Export(context context.Context, mapper helpers.Mapper, parameterManager helpers.ParameterManager) helpers.Genesis {
-	return genesis.Initialize(mapper.NewCollection(context).FetchAll().Get(), parameterManager.Fetch(context).Get())
+	return helpers.ExportGenesis(genesis, context, mapper, parameterManager)
 }
 func (genesis *Genesis) Encode(jsonCodec sdkCodec.JSONCodec) []byte {
 	bytes, err := jsonCodec.MarshalJSON(genesis)
