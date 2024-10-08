@@ -36,7 +36,7 @@ func (key *Key) Equals(compareKey helpers.Key) bool {
 	if CompareKey, ok := compareKey.(*Key); !ok {
 		return false
 	} else {
-		return key.SplitID.Compare(compareKey.SplitID) == 0
+		return key.SplitID.Compare(CompareKey.SplitID) == 0
 	}
 }
 
@@ -51,7 +51,7 @@ func Prototype() helpers.Key {
 }
 
 func GetSplitIDFromKey(key helpers.Key) ids.SplitID {
-	if key, err := keyFromInterface(key); err != nil {
+	if key, ok := key.(*Key); !ok {
 		return baseIDs.PrototypeSplitID().(*baseIDs.SplitID)
 	} else {
 		return key.SplitID

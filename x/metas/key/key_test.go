@@ -55,33 +55,6 @@ func TestPrototype(t *testing.T) {
 	}
 }
 
-func Test_keyFromInterface(t *testing.T) {
-	type args struct {
-		i interface{}
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    *Key
-		wantErr bool
-	}{
-		{"+ve", args{NewKey(testDataID)}, &Key{testDataID}, false},
-		{"+ve with nil", args{NewKey(testDataID1)}, &Key{testDataID1}, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := keyFromInterface(tt.args.i)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("keyFromInterface() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keyFromInterface() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_key_Equals(t *testing.T) {
 	type fields struct {
 		DataID *baseIDs.DataID
