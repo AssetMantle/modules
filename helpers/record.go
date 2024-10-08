@@ -24,3 +24,11 @@ func RecordsFromImplementations[T Record](records []T) []Record {
 
 	return Records
 }
+
+func RecordsToImplementations[T Record](_ T, records []Record) []T {
+	implementations := make([]T, len(records))
+	for i, record := range records {
+		implementations[i] = record.(T)
+	}
+	return implementations
+}
