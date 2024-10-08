@@ -36,7 +36,7 @@ func (key *Key) Equals(compareKey helpers.Key) bool {
 	if CompareKey, ok := compareKey.(*Key); !ok {
 		return false
 	} else {
-		return key.OrderID.Compare(compareKey.OrderID) == 0
+		return key.OrderID.Compare(CompareKey.OrderID) == 0
 	}
 }
 
