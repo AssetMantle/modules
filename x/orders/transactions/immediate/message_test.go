@@ -4,6 +4,7 @@
 package immediate
 
 import (
+	"cosmossdk.io/math"
 	"reflect"
 	"testing"
 

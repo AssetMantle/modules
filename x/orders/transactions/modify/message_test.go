@@ -4,6 +4,7 @@
 package modify
 
 import (
+	"cosmossdk.io/math"
 	"reflect"
 	"testing"
 
