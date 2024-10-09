@@ -20,7 +20,7 @@ import (
 	"github.com/AssetMantle/schema/documents"
 	"github.com/AssetMantle/schema/documents/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
-	baseLists "github.com/AssetMantle/schema/lists/base"
+	parametersSchema "github.com/AssetMantle/schema/parameters"
 	baseParameters "github.com/AssetMantle/schema/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	"github.com/AssetMantle/schema/types"
@@ -123,7 +123,7 @@ var (
 	Context = setContext()
 
 	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace(constants.ModuleName).WithKeyTable(parameters.Prototype().GetKeyTable())).
-				Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(true)))))
+				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(true)))})
 
 	_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
 		Add(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(sdkTypes.NewInt(GenesisSupply))))
@@ -219,7 +219,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		{
 			"transfer not enabled",
 			func() {
-				parameterManager.Set(sdkTypes.WrapSDKContext(Context), baseLists.NewParameterList(baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(false)))))
+				parameterManager.Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(false)))})
 			},
 			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, testSendAmount),
 			nil,
