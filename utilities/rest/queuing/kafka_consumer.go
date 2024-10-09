@@ -4,7 +4,7 @@
 package queuing
 
 import (
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 

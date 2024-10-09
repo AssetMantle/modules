@@ -6,7 +6,7 @@ package queuing
 import (
 	"testing"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers/base"
