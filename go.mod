@@ -3,7 +3,8 @@ module github.com/AssetMantle/modules
 go 1.23
 
 require (
-	github.com/AssetMantle/schema v1.0.1-0.20240917151727-0814b9bd44b7
+	cosmossdk.io/math v1.3.0
+	github.com/AssetMantle/schema v1.0.1-0.20241009124314-fe59b2332024
 	github.com/Shopify/sarama v1.19.0
 	github.com/cometbft/cometbft v0.37.7
 	github.com/cometbft/cometbft-db v0.8.0
@@ -20,14 +21,13 @@ require (
 	google.golang.org/grpc v1.62.1
 )
 
-replace github.com/AssetMantle/schema => ../schema
+//replace github.com/AssetMantle/schema => ../schema
 
 require (
 	cosmossdk.io/api v0.3.1 // indirect
 	cosmossdk.io/core v0.5.1 // indirect
 	cosmossdk.io/depinject v1.0.0-alpha.4 // indirect
 	cosmossdk.io/errors v1.0.1 // indirect
-	cosmossdk.io/math v1.3.0 // indirect
 	filippo.io/edwards25519 v1.0.0 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
