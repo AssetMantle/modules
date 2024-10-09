@@ -165,7 +165,7 @@ func Test_validatableParameter_Mutate(t *testing.T) {
 				parameter: tt.fields.parameter,
 				validator: tt.fields.validator,
 			}
-			assert.Equalf(t, tt.want.GetParameter().String(), validatableParameter.Mutate(tt.args.data).GetParameter().String(), "Mutate(%v)", tt.args.data)
+			assert.Equalf(t, tt.want.GetParameter(), validatableParameter.Mutate(tt.args.data).GetParameter(), "Mutate(%v)", tt.args.data)
 		})
 	}
 }
