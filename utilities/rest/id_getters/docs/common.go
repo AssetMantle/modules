@@ -1,6 +1,7 @@
 package docs
 
 import (
+	"cosmossdk.io/math"
 	"encoding/json"
 	"github.com/AssetMantle/modules/utilities/rest"
 	"io"
@@ -18,7 +19,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func GetTotalWeight(immutables qualified.Immutables, mutables qualified.Mutables) sdkTypes.Int {
+func GetTotalWeight(immutables qualified.Immutables, mutables qualified.Mutables) math.Int {
 	totalWeight := sdkTypes.ZeroInt()
 	for _, property := range append(immutables.GetImmutablePropertyList().Get(), mutables.GetMutablePropertyList().Get()...) {
 		totalWeight = totalWeight.Add(property.Get().GetBondWeight())

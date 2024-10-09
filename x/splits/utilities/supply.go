@@ -4,6 +4,7 @@
 package utilities
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/splits/key"
 	"github.com/AssetMantle/modules/x/splits/mappable"
@@ -12,7 +13,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
-func GetTotalSupply(collection helpers.Collection, assetID ids.AssetID) sdkTypes.Int {
+func GetTotalSupply(collection helpers.Collection, assetID ids.AssetID) math.Int {
 	value := sdkTypes.ZeroInt()
 
 	collection.Iterate(key.NewKey(baseIDs.NewSplitID(assetID, baseIDs.PrototypeIdentityID())), func(record helpers.Record) bool {

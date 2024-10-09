@@ -4,15 +4,15 @@
 package burn
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type auxiliaryRequest struct {
 	classificationID ids.ClassificationID
-	bondAmount       sdkTypes.Int
+	bondAmount       math.Int
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -29,7 +29,7 @@ func (auxiliaryRequest auxiliaryRequest) Validate() error {
 	return nil
 }
 
-func NewAuxiliaryRequest(classificationID ids.ClassificationID, bondAmount sdkTypes.Int) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ClassificationID, bondAmount math.Int) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		classificationID: classificationID,
 		bondAmount:       bondAmount,

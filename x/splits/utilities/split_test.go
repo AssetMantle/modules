@@ -65,7 +65,7 @@ func TestAddSplits(t *testing.T) {
 		splits  helpers.Collection
 		ownerID ids.IdentityID
 		assetID ids.AssetID
-		value   sdkTypes.Int
+		value   math.Int
 	}
 	tests := []struct {
 		name    string
@@ -104,7 +104,7 @@ func TestSubtractSplits(t *testing.T) {
 		splits  helpers.Collection
 		ownerID ids.IdentityID
 		assetID ids.AssetID
-		value   sdkTypes.Int
+		value   math.Int
 	}
 	tests := []struct {
 		name    string

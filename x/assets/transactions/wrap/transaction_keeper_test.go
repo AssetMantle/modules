@@ -285,7 +285,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 
 			tt.setup()
 
-			var initialSupply, initialAddressBalance, finalSupply, finalAddressBalance sdkTypes.Int
+			var initialSupply, initialAddressBalance, finalSupply, finalAddressBalance math.Int
 			if sdkTypes.ValidateDenom(tt.args.denom) == nil {
 				initialSupply = BankKeeper.GetSupply(Context, tt.args.denom).Amount
 				initialAddressBalance = BankKeeper.GetBalance(Context, genesisAddress, tt.args.denom).Amount

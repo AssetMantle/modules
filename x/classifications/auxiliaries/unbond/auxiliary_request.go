@@ -4,6 +4,7 @@
 package unbond
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
@@ -13,7 +14,7 @@ import (
 type auxiliaryRequest struct {
 	classificationID ids.ClassificationID
 	accAddress       sdkTypes.AccAddress
-	bondAmount       sdkTypes.Int
+	bondAmount       math.Int
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -34,7 +35,7 @@ func (auxiliaryRequest auxiliaryRequest) Validate() error {
 	return nil
 }
 
-func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress, bondAmount sdkTypes.Int) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(classificationID ids.ClassificationID, fromAddress sdkTypes.AccAddress, bondAmount math.Int) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		classificationID: classificationID,
 		accAddress:       fromAddress,

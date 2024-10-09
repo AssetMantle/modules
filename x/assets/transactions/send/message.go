@@ -4,6 +4,7 @@
 package send
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
@@ -14,7 +15,7 @@ import (
 
 var _ helpers.Message = (*Message)(nil)
 
-func (message *Message) GetValueAsInt() (sdkTypes.Int, error) {
+func (message *Message) GetValueAsInt() (math.Int, error) {
 	value, ok := sdkTypes.NewIntFromString(message.Value)
 	if !ok {
 		return sdkTypes.ZeroInt(), errorConstants.IncorrectFormat.Wrapf("send value %s is not a valid integer", message.Value)
@@ -57,7 +58,7 @@ func (message *Message) RegisterInterface(interfaceRegistry types.InterfaceRegis
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, toID ids.IdentityID, assetID ids.AssetID, value math.Int) sdkTypes.Msg {
 	return &Message{
 		From:    from.String(),
 		FromID:  fromID.(*baseIDs.IdentityID),

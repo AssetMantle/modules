@@ -4,6 +4,7 @@
 package utilities
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/splits/key"
@@ -15,7 +16,7 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
-func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) (helpers.Collection, error) {
+func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, assetID ids.AssetID, value math.Int) (helpers.Collection, error) {
 	splitID := baseIDs.NewSplitID(assetID, ownerID)
 
 	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))
@@ -28,7 +29,7 @@ func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, assetID ids.As
 	return splits, nil
 }
 
-func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) (helpers.Collection, error) {
+func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, assetID ids.AssetID, value math.Int) (helpers.Collection, error) {
 	splitID := baseIDs.NewSplitID(assetID, ownerID)
 
 	Mappable := splits.Fetch(key.NewKey(splitID)).GetMappable(key.NewKey(splitID))

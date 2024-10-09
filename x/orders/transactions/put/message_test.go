@@ -26,8 +26,8 @@ type fields struct {
 	FromID       *baseIDs.IdentityID
 	MakerAssetID *baseIDs.AssetID
 	TakerAssetID *baseIDs.AssetID
-	MakerSplit   sdkTypes.Int
-	TakerSplit   sdkTypes.Int
+	MakerSplit   math.Int
+	TakerSplit   math.Int
 	ExpiryHeight *base.Height
 }
 
@@ -103,8 +103,8 @@ func Test_NewMessage(t *testing.T) {
 		fromID       ids.IdentityID
 		makerAssetID ids.AssetID
 		takerAssetID ids.AssetID
-		makerSplit   sdkTypes.Int
-		takerSplit   sdkTypes.Int
+		makerSplit   math.Int
+		takerSplit   math.Int
 		expiryHeight types.Height
 	}
 	tests := []struct {
