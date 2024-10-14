@@ -8,7 +8,7 @@ import (
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
-	"github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/parameters"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
@@ -58,7 +58,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		assets.AddMappableBytes(classificationID.AsString(), baseHelpers.CodecPrototype().MustMarshal(mappable.NewMappable(asset)))
 	}
 
-	genesisState := genesis.Prototype().Initialize(records, base.NewParameterList(mint_enabled.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, []parameters.Parameter{mint_enabled.Parameter.Mutate(Data)})
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

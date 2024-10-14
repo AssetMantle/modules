@@ -4,8 +4,8 @@
 package supply
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var _ helpers.QueryResponse = (*QueryResponse)(nil)
@@ -13,6 +13,6 @@ var _ helpers.QueryResponse = (*QueryResponse)(nil)
 func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
-func newQueryResponse(supply sdkTypes.Int) *QueryResponse {
+func newQueryResponse(supply math.Int) *QueryResponse {
 	return &QueryResponse{Supply: supply.String()}
 }

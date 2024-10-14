@@ -4,6 +4,7 @@
 package immediate
 
 import (
+	"cosmossdk.io/math"
 	"reflect"
 	"testing"
 
@@ -31,8 +32,8 @@ type fields struct {
 	MakerAssetID            *baseIDs.AssetID
 	TakerAssetID            *baseIDs.AssetID
 	ExpiresIn               *base.Height
-	MakerSplit              sdkTypes.Int
-	TakerSplit              sdkTypes.Int
+	MakerSplit              math.Int
+	TakerSplit              math.Int
 	ImmutableMetaProperties *baseLists.PropertyList
 	ImmutableProperties     *baseLists.PropertyList
 	MutableMetaProperties   *baseLists.PropertyList
@@ -131,8 +132,8 @@ func Test_NewMessage(t *testing.T) {
 		makerAssetID            ids.AssetID
 		takerAssetID            ids.AssetID
 		expiresIn               types.Height
-		makerSplit              sdkTypes.Int
-		takerSplit              sdkTypes.Int
+		makerSplit              math.Int
+		takerSplit              math.Int
 		immutableMetaProperties lists.PropertyList
 		immutableProperties     lists.PropertyList
 		mutableMetaProperties   lists.PropertyList

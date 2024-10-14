@@ -4,6 +4,7 @@
 package transfer
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
@@ -14,7 +15,7 @@ type auxiliaryRequest struct {
 	FromID  ids.IdentityID
 	ToID    ids.IdentityID
 	AssetID ids.AssetID
-	Value   sdkTypes.Int
+	Value   math.Int
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -39,7 +40,7 @@ func (auxiliaryRequest auxiliaryRequest) Validate() error {
 	return nil
 }
 
-func NewAuxiliaryRequest(fromID ids.IdentityID, toID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(fromID ids.IdentityID, toID ids.IdentityID, assetID ids.AssetID, value math.Int) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		FromID:  fromID,
 		ToID:    toID,

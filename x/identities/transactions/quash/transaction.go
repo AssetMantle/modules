@@ -11,7 +11,7 @@ import (
 )
 
 var Transaction = baseHelpers.NewTransaction(
-	_Msg_serviceDesc.ServiceName,
+	Msg_serviceDesc.ServiceName,
 	"",
 	"",
 

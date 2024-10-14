@@ -33,18 +33,10 @@ func (key *Key) IsPartial() bool {
 	return len(key.OrderID.Bytes()) == 0
 }
 func (key *Key) Equals(compareKey helpers.Key) bool {
-	if compareKey, err := keyFromInterface(compareKey); err != nil {
+	if CompareKey, ok := compareKey.(*Key); !ok {
 		return false
 	} else {
-		return key.OrderID.Compare(compareKey.OrderID) == 0
-	}
-}
-func keyFromInterface(i interface{}) (*Key, error) {
-	switch value := i.(type) {
-	case *Key:
-		return value, nil
-	default:
-		return &Key{}, errorConstants.IncorrectFormat.Wrapf("incorrect key type")
+		return key.OrderID.Compare(CompareKey.OrderID) == 0
 	}
 }
 

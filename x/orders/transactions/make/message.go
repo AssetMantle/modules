@@ -4,6 +4,7 @@
 package make
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
@@ -73,7 +74,7 @@ func (message *Message) RegisterInterface(interfaceRegistry types.InterfaceRegis
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, takerID ids.IdentityID, makerAssetID ids.AssetID, takerAssetID ids.AssetID, expiresIn typesSchema.Height, makerSplit sdkTypes.Int, takerSplit sdkTypes.Int, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, classificationID ids.ClassificationID, takerID ids.IdentityID, makerAssetID ids.AssetID, takerAssetID ids.AssetID, expiresIn typesSchema.Height, makerSplit math.Int, takerSplit math.Int, immutableMetaProperties lists.PropertyList, immutableProperties lists.PropertyList, mutableMetaProperties lists.PropertyList, mutableProperties lists.PropertyList) sdkTypes.Msg {
 
 	return &Message{
 		From:                    from.String(),

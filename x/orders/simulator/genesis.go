@@ -9,6 +9,7 @@ import (
 	"github.com/AssetMantle/schema/documents/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/parameters"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -48,7 +49,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		if assetMap == nil {
 			continue
 		}
-		for class, _ := range assetMap {
+		for class := range assetMap {
 			classificationIDString = class
 		}
 		mappable := &mappableAssets.Mappable{}
@@ -72,7 +73,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		index++
 	}
 
-	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(max_order_life.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, []parameters.Parameter{max_order_life.Parameter.Mutate(Data)})
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

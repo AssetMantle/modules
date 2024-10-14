@@ -48,14 +48,6 @@ func (record *Record) Delete(kvStore sdkTypes.KVStore) {
 	kvStore.Delete(record.GetKey().GeneratePrefixedStoreKeyBytes())
 }
 
-func RecordsFromInterface(records []helpers.Record) []*Record {
-	Records := make([]*Record, len(records))
-	for index, record := range records {
-		Records[index] = record.(*Record)
-	}
-	return Records
-}
-
 func Prototype() helpers.Record {
 	return &Record{
 		Key:      key.Prototype().(*key.Key),

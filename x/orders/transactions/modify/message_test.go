@@ -4,6 +4,7 @@
 package modify
 
 import (
+	"cosmossdk.io/math"
 	"reflect"
 	"testing"
 
@@ -27,8 +28,8 @@ type fields struct {
 	From                  string
 	FromID                *baseIDs.IdentityID
 	OrderID               *baseIDs.OrderID
-	MakerSplit            sdkTypes.Int
-	TakerSplit            sdkTypes.Int
+	MakerSplit            math.Int
+	TakerSplit            math.Int
 	ExpiresIn             *base.Height
 	MutableMetaProperties *baseLists.PropertyList
 	MutableProperties     *baseLists.PropertyList
@@ -112,8 +113,8 @@ func Test_NewMessage(t *testing.T) {
 		from                  sdkTypes.AccAddress
 		fromID                ids.IdentityID
 		orderID               ids.OrderID
-		takerSplit            sdkTypes.Int
-		makerSplit            sdkTypes.Int
+		takerSplit            math.Int
+		makerSplit            math.Int
 		expiresIn             types.Height
 		mutableMetaProperties lists.PropertyList
 		mutableProperties     lists.PropertyList

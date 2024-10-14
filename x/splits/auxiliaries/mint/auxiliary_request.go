@@ -4,6 +4,7 @@
 package mint
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
@@ -13,7 +14,7 @@ import (
 type auxiliaryRequest struct {
 	OwnerID ids.IdentityID
 	ids.AssetID
-	Value sdkTypes.Int
+	Value math.Int
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -34,7 +35,7 @@ func (auxiliaryRequest auxiliaryRequest) Validate() error {
 	return nil
 }
 
-func NewAuxiliaryRequest(ownerID ids.IdentityID, assetID ids.AssetID, value sdkTypes.Int) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(ownerID ids.IdentityID, assetID ids.AssetID, value math.Int) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		OwnerID: ownerID,
 		AssetID: assetID,

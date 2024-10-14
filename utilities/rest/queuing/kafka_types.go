@@ -5,7 +5,7 @@ package queuing
 
 import (
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	dbm "github.com/cometbft/cometbft-db"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"

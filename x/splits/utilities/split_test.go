@@ -4,6 +4,7 @@
 package utilities
 
 import (
+	"cosmossdk.io/math"
 	"fmt"
 	"github.com/AssetMantle/modules/x/splits/record"
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -65,7 +66,7 @@ func TestAddSplits(t *testing.T) {
 		splits  helpers.Collection
 		ownerID ids.IdentityID
 		assetID ids.AssetID
-		value   sdkTypes.Int
+		value   math.Int
 	}
 	tests := []struct {
 		name    string
@@ -104,7 +105,7 @@ func TestSubtractSplits(t *testing.T) {
 		splits  helpers.Collection
 		ownerID ids.IdentityID
 		assetID ids.AssetID
-		value   sdkTypes.Int
+		value   math.Int
 	}
 	tests := []struct {
 		name    string

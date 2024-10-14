@@ -15,8 +15,7 @@ type queryKeeper struct {
 var _ helpers.QueryKeeper = (*queryKeeper)(nil)
 
 func (queryKeeper queryKeeper) Enquire(context context.Context, queryRequest helpers.QueryRequest) (helpers.QueryResponse, error) {
-	queryResponse, err := queryKeeper.Handle(context, queryRequest.(*QueryRequest))
-	return queryResponse, err
+	return queryKeeper.Handle(context, queryRequest.(*QueryRequest))
 }
 func (queryKeeper queryKeeper) Handle(context context.Context, queryRequest *QueryRequest) (*QueryResponse, error) {
 	if err := queryRequest.Validate(); err != nil {

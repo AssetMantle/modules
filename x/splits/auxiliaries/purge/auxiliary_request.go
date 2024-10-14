@@ -4,16 +4,16 @@
 package purge
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type auxiliaryRequest struct {
 	OwnerID ids.IdentityID
 	ids.AssetID
-	Supply sdkTypes.Int
+	Supply math.Int
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
@@ -34,7 +34,7 @@ func (auxiliaryRequest auxiliaryRequest) Validate() error {
 	return nil
 }
 
-func NewAuxiliaryRequest(ownerID ids.IdentityID, assetID ids.AssetID, supply sdkTypes.Int) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(ownerID ids.IdentityID, assetID ids.AssetID, supply math.Int) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
 		OwnerID: ownerID,
 		AssetID: assetID,

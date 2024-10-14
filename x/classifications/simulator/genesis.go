@@ -8,6 +8,7 @@ import (
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/parameters"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -79,7 +80,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		accountPosition++
 	}
 
-	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(bond_rate.Parameter.Mutate(bondRateData), max_property_count.Parameter.Mutate(maxPropertyCountData)))
+	genesisState := genesis.Prototype().Initialize(records, []parameters.Parameter{bond_rate.Parameter.Mutate(bondRateData), max_property_count.Parameter.Mutate(maxPropertyCountData)})
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

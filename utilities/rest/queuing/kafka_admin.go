@@ -4,7 +4,7 @@
 package queuing
 
 import (
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 )
 
 // kafkaAdmin : is admin to create topics

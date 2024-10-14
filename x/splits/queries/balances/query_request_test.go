@@ -40,26 +40,6 @@ func Test_newQueryRequest(t *testing.T) {
 	}
 }
 
-func Test_queryRequestFromInterface(t *testing.T) {
-	type args struct {
-		request helpers.QueryRequest
-	}
-	tests := []struct {
-		name string
-		args args
-		want helpers.QueryRequest
-	}{
-		{"+ve", args{newQueryRequest(testIdentityID)}, newQueryRequest(testIdentityID).(*QueryRequest)},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.args.request.(*QueryRequest); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("queryRequestFromInterface() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID})
 

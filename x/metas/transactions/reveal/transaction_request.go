@@ -31,7 +31,7 @@ var _ helpers.TransactionRequest = (*transactionRequest)(nil)
 // @Failure default  {object}  transactionResponse "Message for an unexpected error response."
 // @Router /metas/reveal [post]
 func (transactionRequest transactionRequest) Validate() error {
-	return helpers.Validate(transactionRequest)
+	return helpers.ValidateTransactionRequest(transactionRequest)
 }
 func (transactionRequest transactionRequest) FromCLI(cliCommand helpers.CLICommand, context client.Context) (helpers.TransactionRequest, error) {
 	return newTransactionRequest(

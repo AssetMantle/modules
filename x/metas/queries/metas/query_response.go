@@ -14,9 +14,5 @@ func responsePrototype() helpers.QueryResponse {
 	return &QueryResponse{}
 }
 func newQueryResponse(collection helpers.Collection) *QueryResponse {
-	list := record.RecordsFromInterface(collection.Get())
-
-	return &QueryResponse{
-		List: list,
-	}
+	return &QueryResponse{helpers.RecordsToImplementations(&record.Record{}, collection.Get())}
 }

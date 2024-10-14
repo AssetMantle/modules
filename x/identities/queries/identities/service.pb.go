@@ -120,6 +120,7 @@ func _Query_Handle_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+var Query_serviceDesc = _Query_serviceDesc
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "AssetMantle.modules.x.identities.queries.identities.Query",
 	HandlerType: (*QueryServer)(nil),

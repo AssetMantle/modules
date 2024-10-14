@@ -6,8 +6,6 @@ package base
 import (
 	"fmt"
 	"github.com/AssetMantle/schema/ids"
-	"github.com/AssetMantle/schema/lists"
-	baseLists "github.com/AssetMantle/schema/lists/base"
 	"github.com/AssetMantle/schema/parameters"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -23,12 +21,12 @@ type parameterManager struct {
 
 var _ helpers.ParameterManager = (*parameterManager)(nil)
 
-func (parameterManager parameterManager) Get() lists.ParameterList {
+func (parameterManager parameterManager) Get() []parameters.Parameter {
 	Parameters := make([]parameters.Parameter, len(parameterManager.validatableParameters))
 	for i, validatableParameter := range parameterManager.validatableParameters {
 		Parameters[i] = validatableParameter.GetParameter()
 	}
-	return baseLists.NewParameterList(Parameters...)
+	return Parameters
 }
 func (parameterManager parameterManager) GetParameter(propertyID ids.PropertyID) parameters.Parameter {
 	if validatableParameter := parameterManager.GetValidatableParameter(propertyID); validatableParameter != nil {
@@ -44,16 +42,27 @@ func (parameterManager parameterManager) GetValidatableParameter(propertyID ids.
 	}
 	return nil
 }
-func (parameterManager parameterManager) ValidateParameter(parameter parameters.Parameter) error {
-	if validator := parameterManager.GetValidatableParameter(parameter.GetMetaProperty().GetID()); validator != nil {
-		if err := parameter.ValidateBasic(); err != nil {
-			return err
-		}
-
-		return validator.GetValidator()(parameter.GetMetaProperty().GetData().Get().AsString())
+func (parameterManager parameterManager) ValidateGenesisParameters(genesis helpers.Genesis) error {
+	if len(genesis.GetParameters()) != len(parameterManager.validatableParameters) {
+		return fmt.Errorf("genesis parameters length mismatch")
 	}
 
-	return fmt.Errorf("validator not found for parameter %s", parameter.GetMetaProperty().GetID().AsString())
+	for _, parameter := range genesis.GetParameters() {
+		if err := parameter.ValidateBasic(); err != nil {
+			return fmt.Errorf("invalid parameter in genesis %s : %s", parameter.GetMetaProperty().GetID().AsString(), err.Error())
+		}
+
+		validator := parameterManager.GetValidatableParameter(parameter.GetMetaProperty().GetID())
+		if validator == nil {
+			return fmt.Errorf("invalid parameter in genesis %s : not found", parameter.GetMetaProperty().GetID().AsString())
+		}
+
+		if err := validator.GetValidator()(parameter.GetMetaProperty().GetData().Get().AsString()); err != nil {
+			return fmt.Errorf("invalid parameter in genesis %s : %s", parameter.GetMetaProperty().GetID().AsString(), err.Error())
+		}
+	}
+
+	return nil
 }
 func (parameterManager parameterManager) Fetch(context context.Context) helpers.ParameterManager {
 	for _, validatableParameter := range parameterManager.validatableParameters {
@@ -68,8 +77,8 @@ func (parameterManager parameterManager) Fetch(context context.Context) helpers.
 
 	return parameterManager
 }
-func (parameterManager parameterManager) Set(context context.Context, parameterList lists.ParameterList) helpers.ParameterManager {
-	for _, parameter := range parameterList.Get() {
+func (parameterManager parameterManager) Set(context context.Context, parameters []parameters.Parameter) helpers.ParameterManager {
+	for _, parameter := range parameters {
 		parameterManager.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData().Get().AsString())
 	}
 

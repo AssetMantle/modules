@@ -4,6 +4,7 @@
 package take
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
@@ -43,7 +44,7 @@ func (message *Message) RegisterInterface(interfaceRegistry types.InterfaceRegis
 func messagePrototype() helpers.Message {
 	return &Message{}
 }
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, takerSplit sdkTypes.Int, orderID ids.OrderID) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, takerSplit math.Int, orderID ids.OrderID) sdkTypes.Msg {
 	return &Message{
 		From:       from.String(),
 		FromID:     fromID.(*baseIDs.IdentityID),

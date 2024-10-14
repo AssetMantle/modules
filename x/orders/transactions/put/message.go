@@ -4,6 +4,7 @@
 package put
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
@@ -62,7 +63,7 @@ func messagePrototype() helpers.Message {
 	return &Message{}
 }
 
-func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, makerAssetID ids.AssetID, takerAssetID ids.AssetID, makerSplit sdkTypes.Int, takerSplit sdkTypes.Int, expiryHeight typesSchema.Height) sdkTypes.Msg {
+func NewMessage(from sdkTypes.AccAddress, fromID ids.IdentityID, makerAssetID ids.AssetID, takerAssetID ids.AssetID, makerSplit math.Int, takerSplit math.Int, expiryHeight typesSchema.Height) sdkTypes.Msg {
 	return &Message{
 		From:         from.String(),
 		FromID:       fromID.(*baseIDs.IdentityID),
