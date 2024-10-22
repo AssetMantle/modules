@@ -27,7 +27,7 @@ type auxiliaryKeeper struct {
 	mapper           helpers.Mapper
 	parameterManager helpers.ParameterManager
 	bankKeeper       bankKeeper.Keeper
-	stakingKeeper    stakingKeeper.Keeper
+	stakingKeeper    *stakingKeeper.Keeper
 }
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
@@ -102,7 +102,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, paramet
 		switch value := auxiliary.(type) {
 		case bankKeeper.Keeper:
 			auxiliaryKeeper.bankKeeper = value
-		case stakingKeeper.Keeper:
+		case *stakingKeeper.Keeper:
 			auxiliaryKeeper.stakingKeeper = value
 		}
 	}
