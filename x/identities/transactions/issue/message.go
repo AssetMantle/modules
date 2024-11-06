@@ -5,6 +5,7 @@ package issue
 
 import (
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/schema/lists"
@@ -27,26 +28,26 @@ func (message *Message) GetFromIdentityID() ids.IdentityID {
 	return message.FromID
 }
 func (message *Message) ValidateBasic() error {
-	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
-		return err
+	if message.GetFromAddress() == nil {
+		return constants.InvalidMessage.Wrapf("from address %s is not a valid address", message.From)
 	}
-	if err := message.FromID.ValidateBasic(); err != nil {
-		return err
+	if err := message.GetFromIdentityID().ValidateBasic(); err != nil {
+		return constants.InvalidMessage.Wrapf(err.Error())
 	}
 	if err := message.ClassificationID.ValidateBasic(); err != nil {
-		return err
+		return constants.InvalidMessage.Wrapf(err.Error())
 	}
 	if err := message.ImmutableMetaProperties.ValidateBasic(); err != nil {
-		return err
+		return constants.InvalidMessage.Wrapf(err.Error())
 	}
 	if err := message.MutableMetaProperties.ValidateBasic(); err != nil {
-		return err
+		return constants.InvalidMessage.Wrapf(err.Error())
 	}
 	if err := message.ImmutableProperties.ValidateBasic(); err != nil {
-		return err
+		return constants.InvalidMessage.Wrapf(err.Error())
 	}
 	if err := message.MutableProperties.ValidateBasic(); err != nil {
-		return err
+		return constants.InvalidMessage.Wrapf(err.Error())
 	}
 	return nil
 }

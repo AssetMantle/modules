@@ -5,6 +5,7 @@ package provision
 
 import (
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -25,14 +26,14 @@ func (message *Message) GetFromIdentityID() ids.IdentityID {
 	return nil
 }
 func (message *Message) ValidateBasic() error {
-	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
-		return err
+	if message.GetFromAddress() == nil {
+		return constants.InvalidMessage.Wrapf("from address %s is not a valid address", message.From)
 	}
-	if _, err := sdkTypes.AccAddressFromBech32(message.To); err != nil {
-		return err
+	if to, err := sdkTypes.AccAddressFromBech32(message.To); err != nil || to.Empty() {
+		return constants.InvalidMessage.Wrapf("to address %s is not a valid address", message.To)
 	}
 	if err := message.IdentityID.ValidateBasic(); err != nil {
-		return err
+		return constants.InvalidMessage.Wrapf(err.Error())
 	}
 	return nil
 }

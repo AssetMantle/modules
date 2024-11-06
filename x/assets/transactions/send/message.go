@@ -36,12 +36,11 @@ func (message *Message) GetValueAsInt() (math.Int, error) {
 
 	return value, nil
 }
-
 func (message *Message) ValidateBasic() error {
-	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
-		return errorConstants.InvalidMessage.Wrapf("invalid from address %s", err.Error())
+	if message.GetFromAddress() == nil {
+		return errorConstants.InvalidMessage.Wrapf("from address %s is not a valid address", message.From)
 	}
-	if err := message.FromID.ValidateBasic(); err != nil {
+	if err := message.GetFromIdentityID().ValidateBasic(); err != nil {
 		return errorConstants.InvalidMessage.Wrapf("invalid from id %s", err.Error())
 	}
 	if err := message.ToID.ValidateBasic(); err != nil {

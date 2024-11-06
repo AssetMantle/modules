@@ -26,18 +26,15 @@ func (message *Message) GetFromIdentityID() ids.IdentityID {
 	return nil
 }
 func (message *Message) ValidateBasic() error {
-	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
-		return err
+	if message.GetFromAddress() == nil {
+		return constants.InvalidMessage.Wrapf("from address %s is not a valid address", message.From)
 	}
-
 	if message.Name == nil || message.Name.AsString() == "" {
-		return constants.InvalidRequest.Wrapf("name cannot be empty")
+		return constants.InvalidMessage.Wrapf("name cannot be empty")
 	}
-
 	if err := message.Name.ValidateBasic(); err != nil {
-		return err
+		return constants.InvalidMessage.Wrapf(err.Error())
 	}
-
 	return nil
 }
 func (message *Message) GetSigners() []sdkTypes.AccAddress {
