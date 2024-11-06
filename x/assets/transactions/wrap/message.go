@@ -42,11 +42,7 @@ func (message *Message) ValidateBasic() error {
 	return nil
 }
 func (message *Message) GetSigners() []sdkTypes.AccAddress {
-	from, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic(err)
-	}
-	return []sdkTypes.AccAddress{from}
+	return []sdkTypes.AccAddress{message.GetFromAddress()}
 }
 func (message *Message) RegisterInterface(interfaceRegistry types.InterfaceRegistry) {
 	interfaceRegistry.RegisterImplementations((*sdkTypes.Msg)(nil), message)
