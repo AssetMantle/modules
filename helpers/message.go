@@ -4,11 +4,15 @@
 package helpers
 
 import (
+	"github.com/AssetMantle/schema/ids"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type Message interface {
+	GetFromAddress() sdkTypes.AccAddress
+	GetFromIdentityID() ids.IdentityID
 	RegisterInterface(types.InterfaceRegistry)
+
 	sdkTypes.Msg
 }
