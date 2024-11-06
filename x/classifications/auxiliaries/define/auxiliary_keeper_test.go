@@ -10,10 +10,6 @@ import (
 	"reflect"
 	"testing"
 
-	baseData "github.com/AssetMantle/schema/data/base"
-	baseIDs "github.com/AssetMantle/schema/ids/base"
-	"github.com/AssetMantle/schema/properties"
-	baseProperties "github.com/AssetMantle/schema/properties/base"
 	tendermintDB "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -101,7 +97,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper, parameterManager, bankKeeper.BaseKeeper{}, stakingKeeper.Keeper{}}},
+		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper, parameterManager, bankKeeper.BaseKeeper{}, &stakingKeeper.Keeper{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -110,57 +106,6 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 			}
 			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func createTestProperties(noOfMeta int, nOfMesa int, propertyType string) []properties.Property {
-	var propertyLists []properties.Property
-	for i := 0; i < noOfMeta; i++ {
-		propertyLists = append(propertyLists, baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"+propertyType+fmt.Sprint(i)), baseData.NewStringData("DataMeta"+fmt.Sprint(i))))
-	}
-	for i := 0; i < nOfMesa; i++ {
-		propertyLists = append(propertyLists, baseProperties.NewMesaProperty(baseIDs.NewStringID("ID"+propertyType+fmt.Sprint(i)), baseData.NewStringData("DataMesa"+fmt.Sprint(i))))
-	}
-	return propertyLists
-}
-
-func Test_auxiliaryKeeper_Help(t *testing.T) {
-	type fields struct {
-		mapper           helpers.Mapper
-		parameterManager helpers.ParameterManager
-		bankKeeper       bankKeeper.Keeper
-		stakingKeeper    stakingKeeper.Keeper
-	}
-	type args struct {
-		context context.Context
-		request helpers.AuxiliaryRequest
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.AuxiliaryResponse
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			auxiliaryKeeper := auxiliaryKeeper{
-				mapper:           tt.fields.mapper,
-				parameterManager: tt.fields.parameterManager,
-				bankKeeper:       tt.fields.bankKeeper,
-				stakingKeeper:    tt.fields.stakingKeeper,
-			}
-			got, err := auxiliaryKeeper.Help(tt.args.context, tt.args.request)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Help() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
