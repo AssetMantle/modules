@@ -9,13 +9,10 @@ import (
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
-	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 )
 
 type auxiliaryKeeper struct {
-	mapper              helpers.Mapper
-	parameterManager    helpers.ParameterManager
-	supplementAuxiliary helpers.Auxiliary
+	mapper helpers.Mapper
 }
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
@@ -30,33 +27,21 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 		return nil, err
 	}
 
-	Mappable := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.IdentityID)).GetMappable(key.NewKey(auxiliaryRequest.IdentityID))
+	Mappable := auxiliaryKeeper.mapper.NewCollection(context).Fetch(key.NewKey(auxiliaryRequest.fromID)).GetMappable(key.NewKey(auxiliaryRequest.fromID))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", auxiliaryRequest.IdentityID.AsString())
+		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", auxiliaryRequest.fromID.AsString())
 	}
 	identity := mappable.GetIdentity(Mappable)
 
-	if !identity.IsProvisioned(auxiliaryRequest.Address) {
-		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned for identity with ID %s", auxiliaryRequest.Address.String(), auxiliaryRequest.IdentityID.AsString())
+	if !identity.IsProvisioned(auxiliaryRequest.from) {
+		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned for identity with ID %s", auxiliaryRequest.from.String(), auxiliaryRequest.fromID.AsString())
 	}
 
 	return newAuxiliaryResponse(), nil
 }
 
-func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
-	auxiliaryKeeper.mapper, auxiliaryKeeper.parameterManager = mapper, parameterManager
-
-	for _, auxiliary := range auxiliaries {
-		switch value := auxiliary.(type) {
-		case helpers.Auxiliary:
-			switch value.GetName() {
-			case supplement.Auxiliary.GetName():
-				auxiliaryKeeper.supplementAuxiliary = value
-			default:
-				break
-			}
-		}
-	}
+func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {
+	auxiliaryKeeper.mapper = mapper
 
 	return auxiliaryKeeper
 }

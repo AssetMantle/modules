@@ -5,16 +5,14 @@ package define
 
 import (
 	"context"
-	baseLists "github.com/AssetMantle/schema/lists/base"
-	"github.com/AssetMantle/schema/properties/constants"
-	"github.com/AssetMantle/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/x/orders/utilities"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/properties/constants"
+	"github.com/AssetMantle/schema/qualified/base"
 )
 
 type transactionKeeper struct {
@@ -32,13 +30,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-
-	fromAddress, err := types.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
-	}
-
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message)); err != nil {
 		return nil, err
 	}
 
@@ -68,13 +60,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		),
 	)
 
-	auxiliaryResponse, err := transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(fromAddress, immutables, mutables))
+	auxiliaryResponse, err := transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(message.GetFromAddress(), immutables, mutables))
 	if err != nil {
 		return nil, err
 	}
 	classificationID := define.GetClassificationIDFromResponse(auxiliaryResponse)
 
-	if _, err := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromID, mutables, utilities.SetModulePermissions(true, true)...)); err != nil {
+	if _, err := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.GetFromIdentityID(), mutables, utilities.SetModulePermissions(true, true)...)); err != nil {
 		return nil, err
 	}
 

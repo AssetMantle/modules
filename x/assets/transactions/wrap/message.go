@@ -15,11 +15,22 @@ import (
 
 var _ helpers.Message = (*Message)(nil)
 
-func (message *Message) ValidateBasic() error {
-	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
-		return errorConstants.InvalidMessage.Wrapf("invalid from address %s", err.Error())
+func (message *Message) GetFromAddress() sdkTypes.AccAddress {
+	from, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil || from.Empty() {
+		// NOTE: This should never happen as the message is validated before it is sent
+		return nil
 	}
-	if err := message.FromID.ValidateBasic(); err != nil {
+	return from
+}
+func (message *Message) GetFromIdentityID() ids.IdentityID {
+	return message.FromID
+}
+func (message *Message) ValidateBasic() error {
+	if message.GetFromAddress() == nil {
+		return errorConstants.InvalidMessage.Wrapf("from address %s is not a valid address", message.From)
+	}
+	if err := message.GetFromIdentityID().ValidateBasic(); err != nil {
 		return errorConstants.InvalidMessage.Wrapf("invalid from id %s", err.Error())
 	}
 	if err := message.Coins.Validate(); err != nil {
@@ -31,11 +42,7 @@ func (message *Message) ValidateBasic() error {
 	return nil
 }
 func (message *Message) GetSigners() []sdkTypes.AccAddress {
-	from, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic(err)
-	}
-	return []sdkTypes.AccAddress{from}
+	return []sdkTypes.AccAddress{message.GetFromAddress()}
 }
 func (message *Message) RegisterInterface(interfaceRegistry types.InterfaceRegistry) {
 	interfaceRegistry.RegisterImplementations((*sdkTypes.Msg)(nil), message)

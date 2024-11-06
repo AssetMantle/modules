@@ -5,19 +5,17 @@ package define
 
 import (
 	"context"
-	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	baseLists "github.com/AssetMantle/schema/lists/base"
-	"github.com/AssetMantle/schema/properties/constants"
-	"github.com/AssetMantle/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/utilities"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/super"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/properties/constants"
+	"github.com/AssetMantle/schema/qualified/base"
 )
 
 type transactionKeeper struct {
@@ -33,19 +31,14 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 	return transactionKeeper.Handle(context, message.(*Message))
 }
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	fromAddress, err := types.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
-	}
-
-	Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromID)).GetMappable(key.NewKey(message.FromID))
+	Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.GetFromIdentityID())).GetMappable(key.NewKey(message.GetFromIdentityID()))
 	if Mappable == nil {
-		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.FromID.AsString())
+		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.GetFromIdentityID().AsString())
 	}
 	identity := mappable.GetIdentity(Mappable)
 
-	if !identity.IsProvisioned(fromAddress) {
-		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned by identity with ID %s", message.From, message.FromID.AsString())
+	if !identity.IsProvisioned(message.GetFromAddress()) {
+		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned by identity with ID %s", message.GetFromAddress(), message.GetFromIdentityID().AsString())
 	}
 
 	immutables := base.NewImmutables(message.ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.ImmutableProperties.Get()...)...))
@@ -60,13 +53,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		),
 	)
 
-	auxiliaryResponse, err := transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(fromAddress, immutables, mutables))
+	auxiliaryResponse, err := transactionKeeper.defineAuxiliary.GetKeeper().Help(context, define.NewAuxiliaryRequest(message.GetFromAddress(), immutables, mutables))
 	if err != nil {
 		return nil, err
 	}
 	classificationID := define.GetClassificationIDFromResponse(auxiliaryResponse)
 
-	if _, err := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.FromID, base.NewMutables(mutables.GetMutablePropertyList().Remove(constants.AuthenticationProperty)), utilities.SetModulePermissions(true, true)...)); err != nil {
+	if _, err := transactionKeeper.superAuxiliary.GetKeeper().Help(context, super.NewAuxiliaryRequest(classificationID, message.GetFromIdentityID(), base.NewMutables(mutables.GetMutablePropertyList().Remove(constants.AuthenticationProperty)), utilities.SetModulePermissions(true, true)...)); err != nil {
 		return nil, err
 	}
 

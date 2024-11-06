@@ -36,15 +36,10 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	identity := mappable.GetIdentity(Mappable)
 
-	fromAddress := message.GetSigners()[0]
+	toAddress, _ := sdkTypes.AccAddressFromBech32(message.To)
 
-	toAddress, err := sdkTypes.AccAddressFromBech32(message.To)
-	if err != nil {
-		panic("Could not get To address from Bech32 string")
-	}
-
-	if !identity.IsProvisioned(fromAddress) {
-		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned", fromAddress.String())
+	if !identity.IsProvisioned(message.GetFromAddress()) {
+		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned", message.GetFromAddress().String())
 	}
 
 	if !identity.IsProvisioned(toAddress) {

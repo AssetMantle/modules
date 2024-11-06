@@ -48,13 +48,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("minting is not enabled")
 	}
 
-	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.ClassificationID, message.FromID, constants.CanMintAssetPermission)); err != nil {
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.ClassificationID, message.GetFromIdentityID(), constants.CanMintAssetPermission)); err != nil {
 		return nil, err
 	}
 
-	fromAddress := message.GetSigners()[0]
-
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message)); err != nil {
 		return nil, err
 	}
 
@@ -96,7 +94,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		bondAmount = bondAmountProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
 	}
 
-	if _, err := transactionKeeper.bondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(message.ClassificationID, fromAddress, bondAmount)); err != nil {
+	if _, err := transactionKeeper.bondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(message.ClassificationID, message.GetFromAddress(), bondAmount)); err != nil {
 		return nil, err
 	}
 

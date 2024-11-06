@@ -5,10 +5,8 @@ package get
 
 import (
 	"context"
-	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/orders/constants"
@@ -33,12 +31,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	address, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
-	}
-
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(address, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message)); err != nil {
 		return nil, err
 	}
 
@@ -50,11 +43,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	order := mappable.GetOrder(Mappable)
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerAssetID(), order.GetTakerSplit())); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.GetFromIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), order.GetTakerSplit())); err != nil {
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), message.FromID, order.GetMakerAssetID(), order.GetMakerSplit())); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), message.GetFromIdentityID(), order.GetMakerAssetID(), order.GetMakerSplit())); err != nil {
 		return nil, err
 	}
 

@@ -46,9 +46,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("burning is not enabled")
 	}
 
-	fromAddress, _ := sdkTypes.AccAddressFromBech32(message.From)
-
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message)); err != nil {
 		return nil, err
 	}
 
@@ -60,7 +58,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	asset := mappable.GetAsset(Mappable)
 
-	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, constants.CanBurnAssetPermission)); err != nil {
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(asset.GetClassificationID(), message.GetFromIdentityID(), constants.CanBurnAssetPermission)); err != nil {
 		return nil, err
 	}
 
@@ -98,7 +96,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		}
 	}
 
-	if _, err := transactionKeeper.purgeAuxiliary.GetKeeper().Help(context, purge.NewAuxiliaryRequest(message.FromID, message.AssetID, supply)); err != nil {
+	if _, err := transactionKeeper.purgeAuxiliary.GetKeeper().Help(context, purge.NewAuxiliaryRequest(message.GetFromIdentityID(), message.AssetID, supply)); err != nil {
 		return nil, err
 	}
 
@@ -109,7 +107,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		bondAmount = bondAmountProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
 	}
 
-	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), fromAddress, bondAmount)); err != nil {
+	if _, err := transactionKeeper.unbondAuxiliary.GetKeeper().Help(context, unbond.NewAuxiliaryRequest(asset.GetClassificationID(), message.GetFromAddress(), bondAmount)); err != nil {
 		return nil, err
 	}
 

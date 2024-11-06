@@ -35,9 +35,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	fromAddress := message.GetSigners()[0]
-
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message)); err != nil {
 		return nil, err
 	}
 
@@ -49,7 +47,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	order := mappable.GetOrder(Mappable)
 
-	//if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(order.GetClassificationID(), message.FromID, constants.CanCancelOrderPermission)); err != nil {
+	//if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(order.GetClassificationID(), message.GetFromIdentityID(), constants.CanCancelOrderPermission)); err != nil {
 	//	 TODO enable after permissioning is implemented
 	//	 return nil, err
 	//}
@@ -59,11 +57,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	//	return nil, err
 	//}
 
-	if message.FromID.Compare(order.GetMakerID()) != 0 {
-		return nil, errorConstants.NotAuthorized.Wrapf("order with ID %s not owned by %s", message.OrderID.AsString(), message.FromID.AsString())
+	if message.GetFromIdentityID().Compare(order.GetMakerID()) != 0 {
+		return nil, errorConstants.NotAuthorized.Wrapf("order with ID %s not owned by %s", message.OrderID.AsString(), message.GetFromIdentityID().AsString())
 	}
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), message.FromID, order.GetMakerAssetID(), order.GetMakerSplit())); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), message.GetFromIdentityID(), order.GetMakerAssetID(), order.GetMakerSplit())); err != nil {
 		return nil, err
 	}
 

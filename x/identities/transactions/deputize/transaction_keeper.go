@@ -26,15 +26,13 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	fromAddress := message.GetSigners()[0]
-
-	if Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromID)).GetMappable(key.NewKey(message.FromID)); Mappable == nil {
-		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.FromID.AsString())
-	} else if identity := mappable.GetIdentity(Mappable); !identity.IsProvisioned(fromAddress) {
-		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned for identity with ID %s", fromAddress.String(), message.FromID.AsString())
+	if Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.GetFromIdentityID())).GetMappable(key.NewKey(message.GetFromIdentityID())); Mappable == nil {
+		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.GetFromIdentityID().AsString())
+	} else if identity := mappable.GetIdentity(Mappable); !identity.IsProvisioned(message.GetFromAddress()) {
+		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned for identity with ID %s", message.GetFromAddress().String(), message.GetFromIdentityID().AsString())
 	}
 
-	if _, err := transactionKeeper.deputizeAuxiliary.GetKeeper().Help(context, deputize.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID, message.MaintainedProperties, message.CanAddMaintainer, message.CanRemoveMaintainer, message.CanMutateMaintainer, utilities.SetModulePermissions(message.CanIssueIdentity, message.CanQuashIdentity)...)); err != nil {
+	if _, err := transactionKeeper.deputizeAuxiliary.GetKeeper().Help(context, deputize.NewAuxiliaryRequest(message.GetFromIdentityID(), message.ToID, message.ClassificationID, message.MaintainedProperties, message.CanAddMaintainer, message.CanRemoveMaintainer, message.CanMutateMaintainer, utilities.SetModulePermissions(message.CanIssueIdentity, message.CanQuashIdentity)...)); err != nil {
 		return nil, err
 	}
 

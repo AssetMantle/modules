@@ -6,12 +6,10 @@ package authenticate
 import (
 	"context"
 	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/identities/constants"
 	"github.com/AssetMantle/modules/x/identities/mapper"
-	"github.com/AssetMantle/modules/x/identities/parameters"
 	"github.com/AssetMantle/modules/x/identities/record"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents"
@@ -24,8 +22,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/mock"
 	"reflect"
 	"testing"
@@ -68,33 +64,17 @@ const (
 var (
 	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
 
-	supplementAuxiliaryKeeper = new(MockAuxiliaryKeeper)
-	_                         = supplementAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(newAuxiliaryResponse(), nil)
-
-	supplementAuxiliary = new(MockAuxiliary)
-	_                   = supplementAuxiliary.On("GetKeeper").Return(supplementAuxiliaryKeeper)
-
 	provisionedAddress   = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
 	unprovisionedAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
 	testIdentity         = base.PrototypeNameIdentity().ProvisionAddress(provisionedAddress)
 	testIdentityID       = testIdentity.(documents.NameIdentity).GetNameIdentityID()
 
-	codec = baseHelpers.TestCodec()
-
-	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
-	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
-	ParamsKeeper             = paramsKeeper.NewKeeper(codec, codec.GetLegacyAmino(), paramsStoreKey, paramsTransientStoreKeys)
-
-	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace(constants.ModuleName).WithKeyTable(parameters.Prototype().GetKeyTable()))
-
-	AuxiliaryKeeper = auxiliaryKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager, supplementAuxiliary}
+	AuxiliaryKeeper = auxiliaryKeeper{mapper.Prototype().Initialize(moduleStoreKey)}
 
 	setContext = func() sdkTypes.Context {
 		memDB := tendermintDB.NewMemDB()
 		commitMultiStore := store.NewCommitMultiStore(memDB)
 		commitMultiStore.MountStoreWithDB(moduleStoreKey, storeTypes.StoreTypeIAVL, memDB)
-		commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
-		commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
 		_ = commitMultiStore.LoadLatestVersion()
 		return sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{ChainID: ChainID}, false, log.NewNopLogger())
 
@@ -118,8 +98,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			"valid request",
 			func() {},
 			auxiliaryRequest{
-				Address:    provisionedAddress,
-				IdentityID: testIdentityID,
+				provisionedAddress,
+				testIdentityID,
 			},
 			newAuxiliaryResponse(),
 			nil,
@@ -128,8 +108,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			"invalid request",
 			func() {},
 			auxiliaryRequest{
-				Address:    unprovisionedAddress,
-				IdentityID: testIdentityID,
+				unprovisionedAddress,
+				testIdentityID,
 			},
 			nil,
 			errorConstants.NotAuthorized,
@@ -138,8 +118,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			"identity not found",
 			func() {},
 			auxiliaryRequest{
-				Address:    provisionedAddress,
-				IdentityID: base.NewNameIdentity(baseIDs.NewStringID("not found"), baseData.NewListData()).GetNameIdentityID(),
+				provisionedAddress,
+				base.NewNameIdentity(baseIDs.NewStringID("not found"), baseData.NewListData()).GetNameIdentityID(),
 			},
 			nil,
 			errorConstants.EntityNotFound,
@@ -153,8 +133,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 				}
 			},
 			auxiliaryRequest{
-				Address:    provisionedAddress,
-				IdentityID: testIdentityID,
+				provisionedAddress,
+				testIdentityID,
 			},
 			newAuxiliaryResponse(),
 			nil,

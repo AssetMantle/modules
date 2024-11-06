@@ -25,13 +25,11 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	fromAddress := message.GetSigners()[0]
-
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message)); err != nil {
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.deputizeAuxiliary.GetKeeper().Help(context, deputize.NewAuxiliaryRequest(message.FromID, message.ToID, message.ClassificationID, message.MaintainedProperties, message.CanAddMaintainer, message.CanMutateMaintainer, message.CanRemoveMaintainer, utilities.SetModulePermissions(message.CanMintAsset, message.CanRenumerateAsset, message.CanBurnAsset)...)); err != nil {
+	if _, err := transactionKeeper.deputizeAuxiliary.GetKeeper().Help(context, deputize.NewAuxiliaryRequest(message.GetFromIdentityID(), message.ToID, message.ClassificationID, message.MaintainedProperties, message.CanAddMaintainer, message.CanMutateMaintainer, message.CanRemoveMaintainer, utilities.SetModulePermissions(message.CanMintAsset, message.CanRenumerateAsset, message.CanBurnAsset)...)); err != nil {
 		return nil, err
 	}
 
