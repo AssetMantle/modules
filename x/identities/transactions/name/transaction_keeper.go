@@ -5,14 +5,12 @@ package name
 
 import (
 	"context"
-	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	baseData "github.com/AssetMantle/schema/data/base"
-	"github.com/AssetMantle/schema/documents/base"
-	"github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/identities/key"
 	"github.com/AssetMantle/modules/x/identities/record"
+	baseData "github.com/AssetMantle/schema/data/base"
+	"github.com/AssetMantle/schema/documents/base"
 )
 
 type transactionKeeper struct {
@@ -26,12 +24,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	address, err := types.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
-	}
-
-	nameIdentity := base.NewNameIdentity(message.Name, baseData.NewListData(baseData.NewAccAddressData(address)))
+	nameIdentity := base.NewNameIdentity(message.Name, baseData.NewListData(baseData.NewAccAddressData(message.GetFromAddress())))
 
 	identities := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(nameIdentity.GetNameIdentityID()))
 	if identities.GetMappable(key.NewKey(nameIdentity.GetNameIdentityID())) != nil {
@@ -47,7 +40,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	return newTransactionResponse(nameIdentity.GetNameIdentityID()), nil
 }
 
-func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {
+func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
 
 	return transactionKeeper

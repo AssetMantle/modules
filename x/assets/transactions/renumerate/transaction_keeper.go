@@ -39,9 +39,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("renumerate is not enabled")
 	}
 
-	fromAddress := message.GetSigners()[0]
-
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message)); err != nil {
 		return nil, err
 	}
 
@@ -53,7 +51,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	asset := mappable.GetAsset(Mappable)
 
-	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(asset.GetClassificationID(), message.FromID, constants.CanRenumerateAssetPermission)); err != nil {
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(asset.GetClassificationID(), message.GetFromIdentityID(), constants.CanRenumerateAssetPermission)); err != nil {
 		return nil, err
 	}
 
@@ -76,7 +74,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.MetaDataError.Wrapf("asset supply is negative")
 	}
 
-	if _, err := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.FromID, message.AssetID, supply)); err != nil {
+	if _, err := transactionKeeper.renumerateAuxiliary.GetKeeper().Help(context, renumerate.NewAuxiliaryRequest(message.GetFromIdentityID(), message.AssetID, supply)); err != nil {
 		return nil, err
 	}
 

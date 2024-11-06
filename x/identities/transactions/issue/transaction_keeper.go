@@ -44,19 +44,14 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("identity issuing is not enabled")
 	}
 
-	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.ClassificationID, message.FromID, constants.CanIssueIdentityPermission)); err != nil {
+	if _, err := transactionKeeper.authorizeAuxiliary.GetKeeper().Help(context, authorize.NewAuxiliaryRequest(message.ClassificationID, message.GetFromIdentityID(), constants.CanIssueIdentityPermission)); err != nil {
 		return nil, err
 	}
 
-	fromAddress, err := types.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
-	}
-
-	if Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.FromID)).GetMappable(key.NewKey(message.FromID)); Mappable == nil {
-		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.FromID.AsString())
-	} else if identity := mappable.GetIdentity(Mappable); !identity.IsProvisioned(fromAddress) {
-		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned for identity with ID %s", fromAddress.String(), message.FromID.AsString())
+	if Mappable := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(message.GetFromIdentityID())).GetMappable(key.NewKey(message.GetFromIdentityID())); Mappable == nil {
+		return nil, errorConstants.EntityNotFound.Wrapf("identity with ID %s not found", message.GetFromIdentityID().AsString())
+	} else if identity := mappable.GetIdentity(Mappable); !identity.IsProvisioned(message.GetFromAddress()) {
+		return nil, errorConstants.NotAuthorized.Wrapf("address %s is not provisioned for identity with ID %s", message.GetFromAddress().String(), message.GetFromIdentityID().AsString())
 	}
 
 	immutables := baseQualified.NewImmutables(message.ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.ImmutableProperties.Get()...)...))
@@ -95,7 +90,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		bondAmount = bondAmountProperty.Get().(properties.MetaProperty).GetData().Get().(data.NumberData).Get()
 	}
 
-	if _, err := transactionKeeper.bondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(message.ClassificationID, fromAddress, bondAmount)); err != nil {
+	if _, err := transactionKeeper.bondAuxiliary.GetKeeper().Help(context, bond.NewAuxiliaryRequest(message.ClassificationID, message.GetFromAddress(), bondAmount)); err != nil {
 		return nil, err
 	}
 

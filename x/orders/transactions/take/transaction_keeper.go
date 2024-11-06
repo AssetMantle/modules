@@ -43,12 +43,8 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	address, err := sdkTypes.AccAddressFromBech32(message.From)
-	if err != nil {
-		panic("Could not get from address from Bech32 string")
-	}
-
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(address, message.FromID)); err != nil {
+	//TODO check if dec or int is correct usage there
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message)); err != nil {
 		return nil, err
 	}
 
@@ -60,22 +56,22 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 	order := mappable.GetOrder(Mappable)
 
-	if order.GetTakerID().Compare(baseIDs.PrototypeIdentityID()) != 0 && order.GetTakerID().Compare(message.FromID) != 0 {
-		return nil, errorConstants.NotAuthorized.Wrapf("taker ID %s is not authorized to take private order with ID %s", message.FromID.AsString(), message.OrderID.AsString())
+	if order.GetTakerID().Compare(baseIDs.PrototypeIdentityID()) != 0 && order.GetTakerID().Compare(message.GetFromIdentityID()) != 0 {
+		return nil, errorConstants.NotAuthorized.Wrapf("taker ID %s is not authorized to take private order with ID %s", message.GetFromIdentityID().AsString(), message.OrderID.AsString())
 	}
-	takerSplit, err := sdkTypes.NewDecFromStr(message.TakerSplit)
+	takerSplit, _ := sdkTypes.NewIntFromString(message.TakerSplit)
 	makerReceiveTakerSplit := order.GetMakerSplit().ToLegacyDec().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
-	takerReceiveMakerSplit := takerSplit.QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(order.GetExchangeRate())
+	takerReceiveMakerSplit := takerSplit.ToLegacyDec().QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(order.GetExchangeRate())
 
 	switch updatedMakerSplit := order.GetMakerSplit().Sub(takerReceiveMakerSplit.TruncateInt()); {
 	case updatedMakerSplit.Equal(sdkTypes.ZeroInt()):
-		if takerSplit.LT(makerReceiveTakerSplit) {
+		if takerSplit.ToLegacyDec().LT(makerReceiveTakerSplit) {
 			return nil, errorConstants.InsufficientBalance.Wrapf("taker split %s is less than the required amount %s for order execution", message.TakerSplit, makerReceiveTakerSplit.String())
 		}
 
 		orders.Remove(record.NewRecord(order))
 	case updatedMakerSplit.LT(sdkTypes.ZeroInt()):
-		if takerSplit.LT(makerReceiveTakerSplit) {
+		if takerSplit.ToLegacyDec().LT(makerReceiveTakerSplit) {
 			return nil, errorConstants.InsufficientBalance.Wrapf("taker split %s is less than the required amount %s for order execution", message.TakerSplit, makerReceiveTakerSplit.String())
 		}
 
@@ -83,7 +79,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 		orders.Remove(record.NewRecord(order))
 	default:
-		makerReceiveTakerSplit = takerSplit
+		makerReceiveTakerSplit = takerSplit.ToLegacyDec()
 		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(updatedMakerSplit)))
 
 		updatedOrder := base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))
@@ -95,11 +91,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		orders.Mutate(record.NewRecord(updatedOrder))
 	}
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, order.GetMakerID(), order.GetTakerAssetID(), makerReceiveTakerSplit.TruncateInt())); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.GetFromIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), makerReceiveTakerSplit.TruncateInt())); err != nil {
 		return nil, err
 	}
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), message.FromID, order.GetMakerAssetID(), takerReceiveMakerSplit.TruncateInt())); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), message.GetFromIdentityID(), order.GetMakerAssetID(), takerReceiveMakerSplit.TruncateInt())); err != nil {
 		return nil, err
 	}
 

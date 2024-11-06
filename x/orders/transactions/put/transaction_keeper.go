@@ -40,9 +40,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("put orders not enabled")
 	}
 
-	fromAddress := message.GetSigners()[0]
-
-	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(fromAddress, message.FromID)); err != nil {
+	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message)); err != nil {
 		return nil, err
 	}
 
@@ -51,7 +49,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.IncorrectFormat.Wrapf("maker split is not a valid integer")
 	}
 
-	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.FromID, constants.ModuleIdentity.GetModuleIdentityID(), message.MakerAssetID, makerSplit)); err != nil {
+	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.GetFromIdentityID(), constants.ModuleIdentity.GetModuleIdentityID(), message.MakerAssetID, makerSplit)); err != nil {
 		return nil, err
 	}
 
@@ -66,7 +64,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.InvalidRequest.Wrapf("order expiry exceeds maximum allowed %d", transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get())
 	}
 
-	putOrder := base.NewPutOrder(message.FromID, message.MakerAssetID, message.TakerAssetID, makerSplit, takerSplit, message.ExpiryHeight)
+	putOrder := base.NewPutOrder(message.GetFromIdentityID(), message.MakerAssetID, message.TakerAssetID, makerSplit, takerSplit, message.ExpiryHeight)
 
 	orders := transactionKeeper.mapper.NewCollection(context).Fetch(key.NewKey(putOrder.GetPutOrderID()))
 	if orders.GetMappable(key.NewKey(putOrder.GetPutOrderID())) != nil {
