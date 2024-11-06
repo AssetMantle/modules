@@ -13,6 +13,17 @@ import (
 
 var _ helpers.Message = (*Message)(nil)
 
+func (message *Message) GetFromAddress() sdkTypes.AccAddress {
+	from, err := sdkTypes.AccAddressFromBech32(message.From)
+	if err != nil || from.Empty() {
+		// NOTE: This should never happen as the message is validated before it is sent
+		return nil
+	}
+	return from
+}
+func (message *Message) GetFromIdentityID() ids.IdentityID {
+	return nil
+}
 func (message *Message) ValidateBasic() error {
 	if _, err := sdkTypes.AccAddressFromBech32(message.From); err != nil {
 		return err
