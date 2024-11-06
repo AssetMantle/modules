@@ -11,27 +11,27 @@ import (
 )
 
 type auxiliaryRequest struct {
-	Address sdkTypes.AccAddress
-	ids.IdentityID
+	from   sdkTypes.AccAddress
+	fromID ids.IdentityID
 }
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
-	if auxiliaryRequest.Address.Empty() {
+	if auxiliaryRequest.from.Empty() {
 		return constants.InvalidRequest.Wrapf("address cannot be empty")
 	}
 
-	if err := auxiliaryRequest.IdentityID.ValidateBasic(); err != nil {
+	if err := auxiliaryRequest.fromID.ValidateBasic(); err != nil {
 		return constants.InvalidRequest.Wrapf("invalid identity id: %s", err.Error())
 	}
 
 	return nil
 }
 
-func NewAuxiliaryRequest(address sdkTypes.AccAddress, identityID ids.IdentityID) helpers.AuxiliaryRequest {
+func NewAuxiliaryRequest(message helpers.Message) helpers.AuxiliaryRequest {
 	return auxiliaryRequest{
-		Address:    address,
-		IdentityID: identityID,
+		from:   message.GetFromAddress(),
+		fromID: message.GetFromIdentityID(),
 	}
 }
