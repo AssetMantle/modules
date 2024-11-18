@@ -22,13 +22,13 @@ import (
 )
 
 type transaction struct {
-	serviceName      string
-	cliCommand       helpers.CLICommand
-	keeper           helpers.TransactionKeeper
-	requestPrototype func() helpers.TransactionRequest
-	messagePrototype func() helpers.Message
-	keeperPrototype  func() helpers.TransactionKeeper
-	serviceRegistrar func(grpc.ServiceRegistrar, helpers.TransactionKeeper)
+	serviceName       string
+	cliCommand        helpers.CLICommand
+	transactionKeeper helpers.TransactionKeeper
+	requestPrototype  func() helpers.TransactionRequest
+	messagePrototype  func() helpers.Message
+	keeperPrototype   func() helpers.TransactionKeeper
+	serviceRegistrar  func(grpc.ServiceRegistrar, helpers.TransactionKeeper)
 }
 
 var _ helpers.Transaction = (*transaction)(nil)
@@ -68,7 +68,7 @@ func (transaction transaction) Command() *cobra.Command {
 	return transaction.cliCommand.CreateCommand(runE)
 }
 func (transaction transaction) HandleMessage(context context.Context, message helpers.Message) (*sdkTypes.Result, error) {
-	if transactionResponse, err := transaction.keeper.Transact(context, message); err != nil {
+	if transactionResponse, err := transaction.transactionKeeper.Transact(context, message); err != nil {
 		return nil, err
 	} else {
 		return transactionResponse.GetResult(), nil
@@ -106,13 +106,14 @@ func (transaction transaction) RegisterInterfaces(interfaceRegistry codecTypes.I
 	transaction.messagePrototype().RegisterInterface(interfaceRegistry)
 }
 func (transaction transaction) RegisterService(configurator sdkModuleTypes.Configurator) {
-	if transaction.keeper == nil {
+	if transaction.transactionKeeper == nil {
 		panic(fmt.Errorf("keeper for transaction %s is not initialized", transaction.serviceName))
 	}
-	transaction.serviceRegistrar(configurator.MsgServer(), transaction.keeper)
+	transaction.serviceRegistrar(configurator.MsgServer(), transaction.transactionKeeper)
 }
 func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Transaction {
-	transaction.keeper = transaction.keeperPrototype().Initialize(mapper, parameterManager, auxiliaryKeepers).(helpers.TransactionKeeper)
+	transaction.transactionKeeper = transaction.keeperPrototype().Initialize(mapper, parameterManager, auxiliaryKeepers).(helpers.TransactionKeeper)
+	helpers.PanicOnUninitializedKeeperFields(transaction.transactionKeeper)
 	return transaction
 }
 
