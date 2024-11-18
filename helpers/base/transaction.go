@@ -113,7 +113,6 @@ func (transaction transaction) RegisterService(configurator sdkModuleTypes.Confi
 }
 func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Transaction {
 	transaction.transactionKeeper = transaction.keeperPrototype().Initialize(mapper, parameterManager, auxiliaryKeepers).(helpers.TransactionKeeper)
-	helpers.PanicOnUninitializedKeeperFields(transaction.transactionKeeper)
 	return transaction
 }
 
