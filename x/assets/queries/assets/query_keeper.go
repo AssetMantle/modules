@@ -25,6 +25,7 @@ func (queryKeeper queryKeeper) Handle(context context.Context, queryRequest *Que
 }
 func (queryKeeper queryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {
 	queryKeeper.mapper = mapper
+	helpers.PanicOnUninitializedKeeperFields(queryKeeper)
 	return queryKeeper
 }
 
