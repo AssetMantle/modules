@@ -43,7 +43,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {
 	transactionKeeper.mapper = mapper
 
-	helpers.PanicOnUninitializedTransactionKeeperFields(transactionKeeper)
+	helpers.PanicOnUninitializedKeeperFields(transactionKeeper)
 	return transactionKeeper
 }
 

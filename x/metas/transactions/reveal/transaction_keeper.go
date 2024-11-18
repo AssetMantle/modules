@@ -52,7 +52,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, _ []interface{}) helpers.Keeper {
 	transactionKeeper.mapper, transactionKeeper.parameterManager = mapper, parameterManager
-	helpers.PanicOnUninitializedTransactionKeeperFields(transactionKeeper)
+	helpers.PanicOnUninitializedKeeperFields(transactionKeeper)
 	return transactionKeeper
 }
 func keeperPrototype() helpers.TransactionKeeper {

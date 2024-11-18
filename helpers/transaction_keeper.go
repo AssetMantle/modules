@@ -5,22 +5,9 @@ package helpers
 
 import (
 	"context"
-	"fmt"
-	"reflect"
 )
 
 type TransactionKeeper interface {
 	Transact(context.Context, Message) (TransactionResponse, error)
 	Keeper
-}
-
-func PanicOnUninitializedTransactionKeeperFields[T TransactionKeeper](transactionKeeper T) {
-	elem := reflect.ValueOf(&transactionKeeper).Elem()
-
-	for i := 0; i < elem.NumField(); i++ {
-		field := elem.Field(i)
-		if field.IsNil() {
-			panic(fmt.Sprintf("field %s of %s uninitialized", elem.Type().Field(i).Name, elem.Type().PkgPath()))
-		}
-	}
 }
