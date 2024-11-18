@@ -141,6 +141,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, paramet
 		}
 	}
 
+	helpers.PanicOnUninitializedKeeperFields(auxiliaryKeeper)
 	return auxiliaryKeeper
 }
 

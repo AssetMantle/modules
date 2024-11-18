@@ -49,6 +49,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, _ []interface{}) helpers.Keeper {
 	auxiliaryKeeper.mapper, auxiliaryKeeper.parameterManager = mapper, parameterManager
 
+	helpers.PanicOnUninitializedKeeperFields(auxiliaryKeeper)
 	return auxiliaryKeeper
 }
 

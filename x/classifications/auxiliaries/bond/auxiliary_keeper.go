@@ -64,6 +64,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpe
 			auxiliaryKeeper.stakingKeeper = value
 		}
 	}
+	helpers.PanicOnUninitializedKeeperFields(auxiliaryKeeper)
 	return auxiliaryKeeper
 }
 

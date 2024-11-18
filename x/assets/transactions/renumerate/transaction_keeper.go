@@ -101,6 +101,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 		}
 	}
 
+	helpers.PanicOnUninitializedKeeperFields(transactionKeeper)
 	return transactionKeeper
 }
 

@@ -53,8 +53,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 	return NewAuxiliaryResponse(propertyList), nil
 }
 
-func (auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {
-	return auxiliaryKeeper{mapper: mapper}
+func (auxiliaryKeeper auxiliaryKeeper) Initialize(mapper helpers.Mapper, _ helpers.ParameterManager, _ []interface{}) helpers.Keeper {
+	auxiliaryKeeper.mapper = mapper
+
+	helpers.PanicOnUninitializedKeeperFields(auxiliaryKeeper)
+	return auxiliaryKeeper
 }
 
 func keeperPrototype() helpers.AuxiliaryKeeper {

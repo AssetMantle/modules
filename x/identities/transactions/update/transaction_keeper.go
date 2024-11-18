@@ -80,6 +80,7 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, _ h
 		}
 	}
 
+	helpers.PanicOnUninitializedKeeperFields(transactionKeeper)
 	return transactionKeeper
 }
 
