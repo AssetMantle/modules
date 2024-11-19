@@ -8,6 +8,7 @@ import (
 
 var Query = baseHelpers.NewQuery(
 	Query_serviceDesc.ServiceName,
+	Query_serviceDesc.Methods[0].MethodName,
 	"",
 	"",
 
