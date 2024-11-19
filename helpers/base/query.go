@@ -21,6 +21,7 @@ import (
 
 type query struct {
 	serviceName       string
+	methodName        string
 	cliCommand        helpers.CLICommand
 	queryKeeper       helpers.QueryKeeper
 	requestPrototype  func() helpers.QueryRequest
@@ -43,7 +44,7 @@ func (query query) GetServicePath() string {
 }
 func (query query) Command() *cobra.Command {
 	runE := func(command *cobra.Command, args []string) error {
-		clientContext, err := client.GetClientTxContext(command)
+		clientContext, err := client.GetClientQueryContext(command)
 		if err != nil {
 			return err
 		}
@@ -53,7 +54,7 @@ func (query query) Command() *cobra.Command {
 		}
 
 		queryResponse := query.responsePrototype()
-		if err := clientContext.Invoke(context.Background(), query.serviceName+"/Handle", queryRequest, queryResponse); err != nil {
+		if err := clientContext.Invoke(context.Background(), "/"+query.serviceName+"/"+query.methodName, queryRequest, queryResponse); err != nil {
 			return err
 		}
 
@@ -95,7 +96,7 @@ func (query query) RESTQueryHandler(Context client.Context) http.HandlerFunc {
 		}
 
 		queryResponse := query.responsePrototype()
-		if err := clientContext.Invoke(context.Background(), query.serviceName+"/Handle", queryRequest, queryResponse); err != nil {
+		if err := clientContext.Invoke(context.Background(), "/"+query.serviceName+"/"+query.methodName, queryRequest, queryResponse); err != nil {
 			rest.WriteErrorResponse(responseWriter, http.StatusInternalServerError, err.Error())
 			return
 		}
@@ -108,10 +109,11 @@ func (query query) Initialize(mapper helpers.Mapper, parameterManager helpers.Pa
 	return query
 }
 
-func NewQuery(serviceName string, short string, long string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, serviceRegistrar func(grpc.ServiceRegistrar, helpers.QueryKeeper), flagList ...helpers.CLIFlag) helpers.Query {
+func NewQuery(serviceName string, methodName string, short string, long string, requestPrototype func() helpers.QueryRequest, responsePrototype func() helpers.QueryResponse, keeperPrototype func() helpers.QueryKeeper, serviceRegistrar func(grpc.ServiceRegistrar, helpers.QueryKeeper), flagList ...helpers.CLIFlag) helpers.Query {
 	splits := strings.Split(serviceName, ".")
 	return query{
 		serviceName:       serviceName,
+		methodName:        methodName,
 		cliCommand:        NewCLICommand(splits[5], short, long, flagList),
 		requestPrototype:  requestPrototype,
 		responsePrototype: responsePrototype,
