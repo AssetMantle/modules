@@ -185,11 +185,11 @@ func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
 	panic(fmt.Errorf("auxiliary %v not found/initialized", auxiliaryName))
 }
 func (module module) Initialize(kvStoreKey *storeTypes.KVStoreKey, paramsSubspace paramsTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
-	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
-
 	module.genesis = module.genesisPrototype()
 
-	module.parameterManager = module.parameterManagerPrototype().Initialize(paramsSubspace.WithKeyTable(module.parameterManagerPrototype().GetKeyTable()))
+	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
+
+	module.parameterManager = module.parameterManagerPrototype().Initialize(kvStoreKey)
 
 	auxiliaryList := make([]helpers.Auxiliary, len(module.auxiliariesPrototype().Get()))
 

@@ -7,6 +7,7 @@ import (
 	"context"
 	"github.com/AssetMantle/schema/ids"
 	"github.com/AssetMantle/schema/parameters"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
@@ -19,5 +20,5 @@ type ParameterManager interface {
 	Set(context.Context, []parameters.Parameter) ParameterManager
 
 	GetKeyTable() paramsTypes.KeyTable
-	Initialize(paramsTypes.Subspace) ParameterManager
+	Initialize(*storeTypes.KVStoreKey) ParameterManager
 }

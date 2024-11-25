@@ -15,8 +15,8 @@ import (
 )
 
 type parameterManager struct {
+	kvStoreKey            *storeTypes.KVStoreKey
 	validatableParameters []helpers.ValidatableParameter
-	paramsSubspace        paramsTypes.Subspace
 }
 
 var _ helpers.ParameterManager = (*parameterManager)(nil)
@@ -96,8 +96,8 @@ func (parameterManager parameterManager) ParamSetPairs() paramsTypes.ParamSetPai
 func (parameterManager parameterManager) GetKeyTable() paramsTypes.KeyTable {
 	return paramsTypes.NewKeyTable().RegisterParamSet(parameterManager)
 }
-func (parameterManager parameterManager) Initialize(subspace paramsTypes.Subspace) helpers.ParameterManager {
-	parameterManager.paramsSubspace = subspace
+func (parameterManager parameterManager) Initialize(kvStoreKey *storeTypes.KVStoreKey) helpers.ParameterManager {
+	parameterManager.kvStoreKey = kvStoreKey
 	return parameterManager
 }
 
