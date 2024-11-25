@@ -29,12 +29,12 @@ func (parameterManager parameterManager) Get() []parameters.Parameter {
 	return Parameters
 }
 func (parameterManager parameterManager) GetParameter(propertyID ids.PropertyID) parameters.Parameter {
-	if validatableParameter := parameterManager.GetValidatableParameter(propertyID); validatableParameter != nil {
+	if validatableParameter := parameterManager.getValidatableParameter(propertyID); validatableParameter != nil {
 		return validatableParameter.GetParameter()
 	}
 	return nil
 }
-func (parameterManager parameterManager) GetValidatableParameter(propertyID ids.PropertyID) helpers.ValidatableParameter {
+func (parameterManager parameterManager) getValidatableParameter(propertyID ids.PropertyID) helpers.ValidatableParameter {
 	for _, validatableParameter := range parameterManager.validatableParameters {
 		if validatableParameter.GetParameter().GetMetaProperty().GetID().Compare(propertyID) == 0 {
 			return validatableParameter
@@ -52,7 +52,7 @@ func (parameterManager parameterManager) ValidateGenesisParameters(genesis helpe
 			return fmt.Errorf("invalid parameter in genesis %s : %s", parameter.GetMetaProperty().GetID().AsString(), err.Error())
 		}
 
-		validator := parameterManager.GetValidatableParameter(parameter.GetMetaProperty().GetID())
+		validator := parameterManager.getValidatableParameter(parameter.GetMetaProperty().GetID())
 		if validator == nil {
 			return fmt.Errorf("invalid parameter in genesis %s : not found", parameter.GetMetaProperty().GetID().AsString())
 		}

@@ -12,7 +12,6 @@ import (
 
 type ParameterManager interface {
 	Get() []parameters.Parameter
-	GetValidatableParameter(ids.PropertyID) ValidatableParameter
 	GetParameter(ids.PropertyID) parameters.Parameter
 	ValidateGenesisParameters(Genesis) error
 
