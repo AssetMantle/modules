@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/AssetMantle/schema/ids"
 	"github.com/AssetMantle/schema/parameters"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"golang.org/x/net/context"
@@ -66,9 +67,7 @@ func (parameterManager parameterManager) ValidateGenesisParameters(genesis helpe
 }
 func (parameterManager parameterManager) Fetch(context context.Context) helpers.ParameterManager {
 	for _, validatableParameter := range parameterManager.validatableParameters {
-		var value string
-		parameterManager.paramsSubspace.Get(sdkTypes.UnwrapSDKContext(context), validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes(), &value)
-		if data, err := validatableParameter.GetParameter().GetMetaProperty().GetData().Get().FromString(value); err != nil {
+		if data, err := validatableParameter.GetParameter().GetMetaProperty().GetData().Get().FromString(string(sdkTypes.UnwrapSDKContext(context).KVStore(parameterManager.kvStoreKey).Get(validatableParameter.GetParameter().GetMetaProperty().GetID().Bytes()))); err != nil {
 			panic(err)
 		} else {
 			validatableParameter = validatableParameter.Mutate(data)
@@ -79,7 +78,7 @@ func (parameterManager parameterManager) Fetch(context context.Context) helpers.
 }
 func (parameterManager parameterManager) Set(context context.Context, parameters []parameters.Parameter) helpers.ParameterManager {
 	for _, parameter := range parameters {
-		parameterManager.paramsSubspace.Set(sdkTypes.UnwrapSDKContext(context), parameter.GetMetaProperty().GetID().Bytes(), parameter.GetMetaProperty().GetData().Get().AsString())
+		sdkTypes.UnwrapSDKContext(context).KVStore(parameterManager.kvStoreKey).Set(parameter.GetMetaProperty().GetID().Bytes(), []byte(parameter.GetMetaProperty().GetData().Get().AsString()))
 	}
 
 	return parameterManager
