@@ -2,17 +2,17 @@ package helpers
 
 import (
 	"context"
-	parametersSchema "github.com/AssetMantle/schema/parameters"
+	"github.com/AssetMantle/schema/lists"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/gogoproto/proto"
 )
 
 type Genesis interface {
 	GetRecords() []Record
-	GetParameters() []parametersSchema.Parameter
+	GetParameterList() lists.ParameterList
 
 	SetRecords([]Record) Genesis
-	SetParameters([]parametersSchema.Parameter) Genesis
+	SetParameters(list lists.ParameterList) Genesis
 
 	Default() Genesis
 
@@ -24,13 +24,13 @@ type Genesis interface {
 	Encode(sdkCodec.JSONCodec) []byte
 	Decode(sdkCodec.JSONCodec, []byte) Genesis
 
-	Initialize([]Record, []parametersSchema.Parameter) Genesis
+	Initialize([]Record, lists.ParameterList) Genesis
 
 	proto.Message
 }
 
 func ValidateGenesis[T Genesis](genesis T, parameterManager ParameterManager) error {
-	if err := parameterManager.ValidateGenesisParameters(genesis); err != nil {
+	if err := parameterManager.Set(genesis.GetParameterList()).Validate(); err != nil {
 		return err
 	}
 
@@ -48,7 +48,7 @@ func ImportGenesis[T Genesis](genesis T, context context.Context, mapper Mapper,
 		mapper.NewCollection(context).Add(record)
 	}
 
-	parameterManager.Set(context, genesis.GetParameters())
+	parameterManager.Set(genesis.GetParameterList()).Update(context)
 }
 
 func ExportGenesis[T Genesis](genesis T, context context.Context, mapper Mapper, parameterManager ParameterManager) Genesis {
@@ -71,28 +71,20 @@ func DecodeGenesis[T Genesis](genesis T, jsonCodec sdkCodec.JSONCodec, byte []by
 	return genesis
 }
 
-func InitializeGenesis[T Genesis](genesis T, records []Record, parameters []parametersSchema.Parameter) Genesis {
+func InitializeGenesis[T Genesis](genesis T, records []Record, parameterList lists.ParameterList) Genesis {
 	if len(records) == 0 {
 		records = genesis.Default().GetRecords()
 	}
 
-	if len(parameters) == 0 {
-		parameters = genesis.Default().GetParameters()
+	if len(parameterList.Get()) == 0 {
+		parameterList = genesis.Default().GetParameterList()
 	} else {
-		providedParamsMap := make(map[string]parametersSchema.Parameter)
-		for _, parameter := range parameters {
-			providedParamsMap[parameter.GetMetaProperty().GetID().AsString()] = parameter
-		}
-
-		defaultParameters := genesis.Default().GetParameters()
-		for i, defaultParameter := range defaultParameters {
-			if providedParameter, exists := providedParamsMap[defaultParameter.GetMetaProperty().GetID().AsString()]; exists {
-				defaultParameters[i] = defaultParameter.Mutate(providedParameter.GetMetaProperty().GetData())
-			}
-		}
-
-		parameters = defaultParameters
+		parameterList = genesis.Default().GetParameterList().Mutate(parameterList.Get()...)
 	}
 
-	return genesis.SetRecords(records).SetParameters(parameters)
+	if err := parameterList.ValidateBasic(); err != nil {
+		panic(err)
+	}
+
+	return genesis.SetRecords(records).SetParameters(parameterList)
 }
