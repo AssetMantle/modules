@@ -9,7 +9,6 @@ import (
 
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/stretchr/testify/require"
@@ -19,8 +18,7 @@ import (
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, sdkTypes.AccAddress, helpers.CommonTransactionRequest) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
+func CreateTestInputForRequest(t *testing.T) (helpers.CLICommand, client.Context, string, sdkTypes.AccAddress, helpers.CommonTransactionRequest) {
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.Name})
 
@@ -30,10 +28,10 @@ func CreateTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 
 	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest()
 
-	return legacyAmino, cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), fromAddress, fromAccAddress, commonTransactionRequest
+	return cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), fromAddress, fromAccAddress, commonTransactionRequest
 }
 func Test_newTransactionRequest(t *testing.T) {
-	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
+	_, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 	type args struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
 		nubID                    string
@@ -71,7 +69,7 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	_, cliCommand, context, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
+	cliCommand, context, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
@@ -109,7 +107,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
-	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
+	_, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
@@ -136,7 +134,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 }
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
-	_, _, _, _, fromAccAddress, commonTransactionRequest := CreateTestInputForRequest(t)
+	_, _, _, fromAccAddress, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
@@ -169,7 +167,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 }
 
 func Test_transactionRequest_Validate(t *testing.T) {
-	_, _, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
+	_, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
