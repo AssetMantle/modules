@@ -6,8 +6,8 @@ package wrap_allowed_coins
 import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
+	"github.com/AssetMantle/schema/parameters"
 	baseParameters "github.com/AssetMantle/schema/parameters/base"
 	"github.com/AssetMantle/schema/properties/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
@@ -17,22 +17,21 @@ import (
 var ID = constantProperties.WrapAllowedCoinsProperty.GetKey()
 var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewListData(baseData.NewStringData(sdkTypes.DefaultBondDenom))))
 
-func validator(i interface{}) error {
-	switch value := i.(type) {
-	case string:
-		if data, err := baseData.PrototypeListData().FromString(value); err != nil {
-			return err
-		} else if err = validateWrapAllowedCoinsProperty(data.ToAnyData().Get().(*baseData.ListData)); err != nil {
-			return err
-		} else {
-			return data.(*baseData.ListData).ValidateWithoutLengthCheck()
-		}
-	default:
-		return errorConstants.IncorrectFormat.Wrapf("incorrect type for wrapAllowedCoins parameter, expected %s type as string, got %T", baseData.PrototypeListData().GetTypeID().AsString(), i)
+func validator(parameter parameters.Parameter) error {
+	if parameter.GetMetaProperty().GetID().Compare(Parameter.GetMetaProperty().GetID()) != 0 {
+		return errorConstants.InvalidParameter.Wrapf("incorrect  ID, expected %s, got %s", ID.AsString(), parameter.GetMetaProperty().GetID().AsString())
 	}
-}
 
-func validateWrapAllowedCoinsProperty(listData data.ListData) error {
+	if err := parameter.ValidateBasic(); err != nil {
+		return errorConstants.InvalidParameter.Wrapf(err.Error())
+	}
+
+	listData := parameter.GetMetaProperty().GetData().Get().(*baseData.ListData)
+
+	if err := listData.ValidateWithoutLengthCheck(); err != nil {
+		return err
+	}
+
 	for _, anyData := range listData.Get() {
 		if stringData, ok := anyData.Get().(*baseData.StringData); !ok {
 			return errorConstants.IncorrectFormat.Wrapf("%s is not of type %s", anyData.Get().AsString(), baseData.PrototypeStringData().GetTypeID().AsString())

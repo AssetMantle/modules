@@ -21,11 +21,9 @@ import (
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/types"
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/maintainers/mapper"
 	"github.com/AssetMantle/modules/x/maintainers/parameters"
 	"github.com/AssetMantle/modules/x/maintainers/record"
@@ -47,20 +45,13 @@ var (
 )
 
 func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
 	storeKey := types.NewKVStoreKey("test")
 	paramsStoreKey := types.NewKVStoreKey("testParams")
 	paramsTransientStoreKeys := types.NewTransientStoreKey("testParamsTransient")
 	Mapper := mapper.Prototype().Initialize(storeKey)
-	codec := baseHelpers.TestCodec()
-	ParamsKeeper := paramsKeeper.NewKeeper(
-		codec,
-		legacyAmino,
-		paramsStoreKey,
-		paramsTransientStoreKeys,
-	)
-	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+
+	parameterManager := parameters.Prototype().Initialize(storeKey)
 
 	memDB := tendermintDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB)

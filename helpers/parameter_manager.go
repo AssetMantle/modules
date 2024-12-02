@@ -5,20 +5,24 @@ package helpers
 
 import (
 	"context"
-	"github.com/AssetMantle/schema/ids"
+	"github.com/AssetMantle/schema/lists"
 	"github.com/AssetMantle/schema/parameters"
-	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 )
 
 type ParameterManager interface {
-	Get() []parameters.Parameter
-	GetValidatableParameter(ids.PropertyID) ValidatableParameter
-	GetParameter(ids.PropertyID) parameters.Parameter
-	ValidateGenesisParameters(Genesis) error
+	// Get returns the parameters of the parameter manager
+	// NOTE: if the parameters are not fetched from the context, a nil parameter list will be returned
+	Get() lists.ParameterList
+	GetDefaultParameterList() lists.ParameterList
+	// Set sets the parameters of the parameter manager
+	// NOTE: if the parameter are not fetched from the context, it will be initialized with the default parameters, if the parameters are then updated, will be updated with the default parameters and the updated parameters
+	Set(...parameters.Parameter) ParameterManager
+
+	Validate() error
 
 	Fetch(context.Context) ParameterManager
-	Set(context.Context, []parameters.Parameter) ParameterManager
+	Update(context.Context) (ParameterManager, error)
 
-	GetKeyTable() paramsTypes.KeyTable
-	Initialize(paramsTypes.Subspace) ParameterManager
+	Initialize(*storeTypes.KVStoreKey) ParameterManager
 }

@@ -6,7 +6,7 @@ package unwrap
 import (
 	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	"github.com/AssetMantle/modules/x/assets/constants"
+	dataConstants "github.com/AssetMantle/schema/data/constants"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -36,8 +36,8 @@ func (message *Message) ValidateBasic() error {
 	if err := message.Coins.Validate(); err != nil {
 		return errorConstants.InvalidMessage.Wrapf("invalid coins %s", err.Error())
 	}
-	if message.Coins.Len() > constants.MaxListLength {
-		return errorConstants.InvalidMessage.Wrapf("number of coins in message: %d exceeds maximum allowed: %d", message.Coins.Len(), constants.MaxListLength)
+	if message.Coins.Len() > dataConstants.MaxListLength {
+		return errorConstants.InvalidMessage.Wrapf("number of coins in message: %d exceeds maximum allowed: %d", message.Coins.Len(), dataConstants.MaxListLength)
 	}
 	return nil
 }

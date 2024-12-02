@@ -36,7 +36,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	if !transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.PutEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+	if !transactionKeeper.parameterManager.Fetch(context).Get().GetParameter(propertyConstants.PutEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
 		return nil, errorConstants.NotAuthorized.Wrapf("put orders not enabled")
 	}
 
@@ -60,8 +60,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	if message.ExpiryHeight.Compare(baseTypes.CurrentHeight(context)) <= 0 {
 		return nil, errorConstants.InvalidRequest.Wrapf("order expiry is in the past")
-	} else if message.ExpiryHeight.Get()-baseTypes.CurrentHeight(context).Get() > transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get() {
-		return nil, errorConstants.InvalidRequest.Wrapf("order expiry exceeds maximum allowed %d", transactionKeeper.parameterManager.Fetch(context).GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get())
+	} else if message.ExpiryHeight.Get()-baseTypes.CurrentHeight(context).Get() > transactionKeeper.parameterManager.Fetch(context).Get().GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get() {
+		return nil, errorConstants.InvalidRequest.Wrapf("order expiry exceeds maximum allowed %d", transactionKeeper.parameterManager.Fetch(context).Get().GetParameter(propertyConstants.MaxOrderLifeProperty.GetID()).GetMetaProperty().GetData().Get().(data.HeightData).Get().Get())
 	}
 
 	putOrder := base.NewPutOrder(message.GetFromIdentityID(), message.MakerAssetID, message.TakerAssetID, makerSplit, takerSplit, message.ExpiryHeight)

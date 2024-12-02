@@ -6,7 +6,6 @@ package send
 import (
 	"context"
 	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/assets/constants"
@@ -22,7 +21,6 @@ import (
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
-	parametersSchema "github.com/AssetMantle/schema/parameters"
 	"github.com/AssetMantle/schema/parameters/base"
 	"github.com/AssetMantle/schema/properties"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
@@ -36,7 +34,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/mock"
 	"math/rand"
@@ -139,11 +136,8 @@ var (
 	transferAuxiliaryAuxiliary      = new(MockAuxiliary)
 	_                               = transferAuxiliaryAuxiliary.On("GetKeeper").Return(transferAuxiliaryKeeper)
 
-	codec = baseHelpers.TestCodec()
-
 	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
 	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
-	ParamsKeeper             = paramsKeeper.NewKeeper(codec, codec.GetLegacyAmino(), paramsStoreKey, paramsTransientStoreKeys)
 
 	setContext = func() sdkTypes.Context {
 		memDB := tendermintDB.NewMemDB()
@@ -156,12 +150,12 @@ var (
 	}
 	Context = setContext()
 
-	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace(constants.ModuleName).WithKeyTable(parameters.Prototype().GetKeyTable())).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))}).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true)))}).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true)))}).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(true)))}).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))})
+	parameterManager = parameters.Prototype().Initialize(moduleStoreKey).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom)))))).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))))
 
 	TransactionKeeper = transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager, authenticateAuxiliary, supplementAuxiliaryAuxiliary, transferAuxiliaryAuxiliary}
 

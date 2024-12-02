@@ -63,7 +63,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	unwrapAllowedCoins := transactionKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.UnwrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData)
+	unwrapAllowedCoins := transactionKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.UnwrapAllowedCoinsProperty.GetID()).GetMetaProperty().GetData().Get().(*base.ListData)
 
 	for _, coin := range message.Coins {
 		coinAsset := baseDocuments.NewCoinAsset(coin.Denom)

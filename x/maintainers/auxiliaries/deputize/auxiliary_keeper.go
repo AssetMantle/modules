@@ -44,7 +44,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 		return nil, err
 	}
 
-	if !auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.DeputizeAllowedProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+	if !auxiliaryKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.DeputizeAllowedProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
 		return nil, errorConstants.NotAuthorized.Wrapf("deputize is not allowed")
 	}
 

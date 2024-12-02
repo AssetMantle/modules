@@ -17,18 +17,15 @@ import (
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/classifications/key"
 	"github.com/AssetMantle/modules/x/classifications/mapper"
 	"github.com/AssetMantle/modules/x/classifications/parameters"
 )
 
 func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
 
 	storeKey := sdkTypes.NewKVStoreKey("test")
 	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
@@ -47,14 +44,8 @@ func CreateTestInput2(t *testing.T) (sdkTypes.Context, helpers.Keeper) {
 	}, false, log.NewNopLogger())
 
 	Mapper := mapper.Prototype().Initialize(storeKey)
-	codec := baseHelpers.TestCodec()
-	ParamsKeeper := paramsKeeper.NewKeeper(
-		codec,
-		legacyAmino,
-		paramsStoreKey,
-		paramsTransientStoreKeys,
-	)
-	parameterManager := parameters.Prototype().Initialize(ParamsKeeper.Subspace("test"))
+
+	parameterManager := parameters.Prototype().Initialize(storeKey)
 
 	testQueryKeeper := keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{})
 

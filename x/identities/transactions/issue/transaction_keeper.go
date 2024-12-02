@@ -40,7 +40,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	if !transactionKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.IssueEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+	if !transactionKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.IssueEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
 		return nil, errorConstants.NotAuthorized.Wrapf("identity issuing is not enabled")
 	}
 
@@ -75,8 +75,8 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.IncorrectFormat.Wrapf("identity with ID %s has no provisioned address", identityID.AsString())
 	}
 
-	if identity.GetProvisionedAddressCount().GTE(transactionKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.MaxProvisionAddressCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()) {
-		return nil, errorConstants.NotAuthorized.Wrapf("identity with ID %s has reached the maximum allowed number of provision-able addresses %d", identityID.AsString(), transactionKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.MaxProvisionAddressCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get())
+	if identity.GetProvisionedAddressCount().GTE(transactionKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.MaxProvisionAddressCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()) {
+		return nil, errorConstants.NotAuthorized.Wrapf("identity with ID %s has reached the maximum allowed number of provision-able addresses %d", identityID.AsString(), transactionKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.MaxProvisionAddressCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get())
 	}
 
 	if _, err := transactionKeeper.conformAuxiliary.GetKeeper().Help(context, conform.NewAuxiliaryRequest(message.ClassificationID, immutables, mutables)); err != nil {

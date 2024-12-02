@@ -37,7 +37,7 @@ func (transactionKeeper transactionKeeper) Transact(context context.Context, mes
 }
 
 func (transactionKeeper transactionKeeper) Handle(context context.Context, message *Message) (*TransactionResponse, error) {
-	if !transactionKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.QuashEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+	if !transactionKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.QuashEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
 		return nil, errorConstants.NotAuthorized.Wrapf("identity quashing is not enabled")
 	}
 

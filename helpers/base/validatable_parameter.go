@@ -1,6 +1,7 @@
 package base
 
 import (
+	"fmt"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/data"
 	"github.com/AssetMantle/schema/parameters"
@@ -8,7 +9,7 @@ import (
 
 type validatableParameter struct {
 	parameter parameters.Parameter
-	validator func(i interface{}) error
+	validator func(parameters.Parameter) error
 }
 
 var _ helpers.ValidatableParameter = (*validatableParameter)(nil)
@@ -20,19 +21,18 @@ func (validatableParameter validatableParameter) Mutate(data data.Data) helpers.
 	if data != nil {
 		validatableParameter.parameter = validatableParameter.parameter.Mutate(data)
 	}
+
 	return validatableParameter
-}
-func (validatableParameter validatableParameter) GetValidator() func(i interface{}) error {
-	return validatableParameter.validator
 }
 func (validatableParameter validatableParameter) Validate() error {
 	if validatableParameter.validator == nil {
-		return nil
+		return fmt.Errorf("validator is not set for parameter  " + validatableParameter.parameter.GetMetaProperty().GetID().AsString())
 	}
+
 	return validatableParameter.validator(validatableParameter.parameter)
 }
 
-func NewValidatableParameter(parameter parameters.Parameter, validator func(i interface{}) error) helpers.ValidatableParameter {
+func NewValidatableParameter(parameter parameters.Parameter, validator func(parameters.Parameter) error) helpers.ValidatableParameter {
 	return &validatableParameter{
 		parameter: parameter,
 		validator: validator,

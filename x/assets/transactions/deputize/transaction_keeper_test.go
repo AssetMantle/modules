@@ -17,7 +17,6 @@ import (
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
-	parametersSchema "github.com/AssetMantle/schema/parameters"
 	"github.com/AssetMantle/schema/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
@@ -33,7 +32,6 @@ import (
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	govTypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -96,11 +94,10 @@ var (
 	deputizeAuxiliary       = new(MockAuxiliary)
 	_                       = deputizeAuxiliary.On("GetKeeper").Return(deputizeAuxiliaryKeeper)
 
-	codec = baseHelpers.TestCodec()
-
 	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
 	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
-	ParamsKeeper             = paramsKeeper.NewKeeper(codec, codec.GetLegacyAmino(), paramsStoreKey, paramsTransientStoreKeys)
+
+	codec = baseHelpers.TestCodec()
 
 	authStoreKey             = sdkTypes.NewKVStoreKey(authTypes.StoreKey)
 	moduleAccountPermissions = map[string][]string{TestMinterModuleName: {authTypes.Minter}, constants.ModuleName: nil}
@@ -118,12 +115,12 @@ var (
 	genesisAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
 	_              = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
 
-	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace(constants.ModuleName).WithKeyTable(parameters.Prototype().GetKeyTable())).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))}).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true)))}).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true)))}).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(true)))}).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))})
+	parameterManager = parameters.Prototype().Initialize(moduleStoreKey).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom)))))).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))))
 	TransactionKeeper = transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager, authenticateAuxiliary, deputizeAuxiliary}
 )
 

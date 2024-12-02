@@ -42,7 +42,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 		return nil, err
 	}
 
-	if !auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.DefineEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
+	if !auxiliaryKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.DefineEnabledProperty.GetID()).GetMetaProperty().GetData().Get().(data.BooleanData).Get() {
 		return nil, errorConstants.NotAuthorized.Wrapf("classification defining is not enabled")
 	}
 
@@ -57,7 +57,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 		totalWeight = totalWeight.Add(constantProperties.BondAmountProperty.GetBondWeight())
 	}
 
-	minBondAmount := baseData.NewNumberData(auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.BondRateProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get().Mul(totalWeight))
+	minBondAmount := baseData.NewNumberData(auxiliaryKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.BondRateProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get().Mul(totalWeight))
 
 	bondAmount := minBondAmount
 
@@ -70,8 +70,8 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 		return nil, errorConstants.InvalidRequest.Wrapf("bound amount is less than min allowed %s", minBondAmount.Get().String())
 	}
 
-	if totalPropertyCount := sdkTypes.NewInt(int64(len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) + len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()))); totalPropertyCount.GT(auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()) {
-		return nil, errorConstants.InvalidRequest.Wrapf("total property count %s exceeds maximum %s", totalPropertyCount.String(), auxiliaryKeeper.parameterManager.Fetch(context).GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get().String())
+	if totalPropertyCount := sdkTypes.NewInt(int64(len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) + len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()))); totalPropertyCount.GT(auxiliaryKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()) {
+		return nil, errorConstants.InvalidRequest.Wrapf("total property count %s exceeds maximum %s", totalPropertyCount.String(), auxiliaryKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get().String())
 	}
 
 	classificationID := baseIDs.NewClassificationID(auxiliaryRequest.Immutables, auxiliaryRequest.Mutables)

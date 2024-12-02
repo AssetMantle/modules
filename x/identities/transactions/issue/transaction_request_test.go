@@ -15,7 +15,6 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/stretchr/testify/require"
@@ -25,8 +24,7 @@ import (
 	"github.com/AssetMantle/modules/helpers/constants"
 )
 
-func createTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICommand, client.Context, string, string, string, string, lists.PropertyList, lists.PropertyList, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, helpers.CommonTransactionRequest) {
-	var legacyAmino = baseHelpers.CodecPrototype().GetLegacyAmino()
+func createTestInputForRequest(t *testing.T) (helpers.CLICommand, client.Context, string, string, string, string, lists.PropertyList, lists.PropertyList, lists.PropertyList, lists.PropertyList, string, sdkTypes.AccAddress, string, sdkTypes.AccAddress, helpers.CommonTransactionRequest) {
 
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.To, constants.ClassificationID, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
 
@@ -61,11 +59,11 @@ func createTestInputForRequest(t *testing.T) (*codec.LegacyAmino, helpers.CLICom
 
 	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest()
 
-	return legacyAmino, cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, toAddress, toAccAddress, commonTransactionRequest
+	return cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype()), immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, fromAddress, fromAccAddress, toAddress, toAccAddress, commonTransactionRequest
 }
 
 func Test_newTransactionRequest(t *testing.T) {
-	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
+	_, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
 	type args struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
 		to                       string
@@ -111,7 +109,7 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	_, cliCommand, context, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
+	cliCommand, context, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
 		To                       string
@@ -159,7 +157,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 }
 
 func Test_transactionRequest_GetBaseReq(t *testing.T) {
-	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
+	_, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
 		To                       string
@@ -197,7 +195,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 }
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
-	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, _, fromAccAddress, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
+	_, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties, _, fromAccAddress, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -244,7 +242,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 }
 
 func Test_transactionRequest_Validate(t *testing.T) {
-	_, _, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
+	_, _, immutableMetaPropertiesString, immutablePropertiesString, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, _, _, toAddress, _, commonTransactionRequest := createTestInputForRequest(t)
 	commonTransactionRequest1 := helpers.PrototypeCommonTransactionRequest()
 
 	type fields struct {

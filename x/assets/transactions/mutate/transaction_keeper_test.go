@@ -6,7 +6,7 @@ package mutate
 import (
 	"context"
 	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/mapper"
@@ -98,10 +98,10 @@ var (
 	testAsset      = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, mutables), baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))
 	testNewAssetID = baseIDs.NewAssetID(testAsset.GetClassificationID(), testAsset.GetImmutables()).(*baseIDs.AssetID)
 
-	codec = baseHelpers.TestCodec()
-
 	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
 	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
+
+	codec = base.TestCodec()
 
 	authStoreKey             = sdkTypes.NewKVStoreKey(authTypes.StoreKey)
 	moduleAccountPermissions = map[string][]string{TestMinterModuleName: {authTypes.Minter}, constants.ModuleName: nil}

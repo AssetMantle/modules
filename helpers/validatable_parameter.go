@@ -8,6 +8,5 @@ import (
 type ValidatableParameter interface {
 	GetParameter() parameters.Parameter
 	Mutate(data.Data) ValidatableParameter
-	GetValidator() func(i interface{}) error
 	Validate() error
 }
