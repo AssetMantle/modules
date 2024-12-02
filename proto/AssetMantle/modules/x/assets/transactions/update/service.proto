@@ -1,0 +1,11 @@
+syntax = "proto3";
+package AssetMantle.modules.x.assets.transactions.update;
+
+import "cosmos/msg/v1/msg.proto";
+import "AssetMantle/modules/x/assets/transactions/update/message.proto";
+import "AssetMantle/modules/x/assets/transactions/update/transaction_response.proto";
+
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+  rpc Handle(Message) returns (TransactionResponse) {}
+}

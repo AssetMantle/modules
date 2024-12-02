@@ -146,6 +146,11 @@ func (module module) RegisterServices(configurator sdkModuleTypes.Configurator) 
 	for _, transaction := range module.transactions.Get() {
 		transaction.RegisterService(configurator)
 	}
+	//m := keeper.NewMigrator(am.keeper)
+	//err := cfg.RegisterMigration(authz.ModuleName, 1, m.Migrate1to2)
+	//if err != nil {
+	//	panic(fmt.Sprintf("failed to migrate x/%s from version 1 to 2: %v", authz.ModuleName, err))
+	//}
 }
 func (module module) ConsensusVersion() uint64 {
 	return module.consensusVersion
