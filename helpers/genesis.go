@@ -30,7 +30,7 @@ type Genesis interface {
 }
 
 func ValidateGenesis[T Genesis](genesis T, parameterManager ParameterManager) error {
-	if err := parameterManager.Set(genesis.GetParameterList()).Validate(); err != nil {
+	if err := parameterManager.Set(genesis.GetParameterList().Get()...).Validate(); err != nil {
 		return err
 	}
 
@@ -48,7 +48,9 @@ func ImportGenesis[T Genesis](genesis T, context context.Context, mapper Mapper,
 		mapper.NewCollection(context).Add(record)
 	}
 
-	parameterManager.Set(genesis.GetParameterList()).Update(context)
+	if _, err := parameterManager.Set(genesis.GetParameterList().Get()...).Update(context); err != nil {
+		panic(err)
+	}
 }
 
 func ExportGenesis[T Genesis](genesis T, context context.Context, mapper Mapper, parameterManager ParameterManager) Genesis {

@@ -52,6 +52,6 @@ func (genesis *Genesis) Initialize(records []helpers.Record, parameterList lists
 func Prototype() helpers.Genesis {
 	return &Genesis{
 		Records:       []*record.Record{},
-		ParameterList: parameters.Prototype().Get().(*base.ParameterList),
+		ParameterList: parameters.Prototype().GetDefaultParameterList().(*base.ParameterList),
 	}
 }

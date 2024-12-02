@@ -59,6 +59,6 @@ func Prototype() helpers.Genesis {
 			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypeMaintainer())).(*record.Record),
 			record.NewRecord(baseDocuments.NewClassificationFromDocument(baseDocuments.PrototypePutOrder())).(*record.Record),
 		},
-		ParameterList: parameters.Prototype().Get().(*base.ParameterList),
+		ParameterList: parameters.Prototype().GetDefaultParameterList().(*base.ParameterList),
 	}
 }

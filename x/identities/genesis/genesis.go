@@ -68,6 +68,6 @@ func Prototype() helpers.Genesis {
 			record.NewRecord(baseDocuments.NewIdentityFromDocument(baseDocuments.NewModuleIdentity(ordersConstants.ModuleName))).(*record.Record),
 			record.NewRecord(baseDocuments.NewIdentityFromDocument(baseDocuments.NewModuleIdentity(splitsConstants.ModuleName))).(*record.Record),
 		},
-		ParameterList: parameters.Prototype().Get().(*base.ParameterList),
+		ParameterList: parameters.Prototype().GetDefaultParameterList().(*base.ParameterList),
 	}
 }
