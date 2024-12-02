@@ -36,8 +36,8 @@ func (message *Message) ValidateBasic() error {
 	if err := message.Coins.Validate(); err != nil {
 		return errorConstants.InvalidMessage.Wrapf("invalid coins %s", err.Error())
 	}
-	if message.Coins.Len() > constants.MaxListLength {
-		return errorConstants.InvalidMessage.Wrapf("number of coins in message: %d exceeds maximum allowed: %d", message.Coins.Len(), constants.MaxListLength)
+	if message.Coins.Len() > dataConstants.MaxListLength {
+		return errorConstants.InvalidMessage.Wrapf("number of coins in message: %d exceeds maximum allowed: %d", message.Coins.Len(), dataConstants.MaxListLength)
 	}
 	return nil
 }
