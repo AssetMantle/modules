@@ -1,0 +1,9 @@
+syntax = "proto3";
+package AssetMantle.modules.x.classifications.transactions.govern;
+
+import "AssetMantle/schema/parameters/base/parameter.proto";
+
+message Message {
+  string from = 1;
+  AssetMantle.schema.parameters.base.Parameter parameter = 2;
+}

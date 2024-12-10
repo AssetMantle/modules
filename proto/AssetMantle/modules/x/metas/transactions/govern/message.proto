@@ -1,5 +1,5 @@
 syntax = "proto3";
-package AssetMantle.modules.x.assets.transactions.update;
+package AssetMantle.modules.x.metas.transactions.govern;
 
 import "AssetMantle/schema/parameters/base/parameter.proto";
 

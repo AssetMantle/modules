@@ -1,0 +1,11 @@
+syntax = "proto3";
+package AssetMantle.modules.x.identities.transactions.govern;
+
+import "cosmos/msg/v1/msg.proto";
+import "AssetMantle/modules/x/identities/transactions/govern/message.proto";
+import "AssetMantle/modules/x/identities/transactions/govern/transaction_response.proto";
+
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+  rpc Handle(Message) returns (TransactionResponse) {}
+}
