@@ -15,6 +15,7 @@ import (
 	"github.com/AssetMantle/modules/x/assets/transactions/revoke"
 	"github.com/AssetMantle/modules/x/assets/transactions/send"
 	"github.com/AssetMantle/modules/x/assets/transactions/unwrap"
+	"github.com/AssetMantle/modules/x/assets/transactions/update"
 	"github.com/AssetMantle/modules/x/assets/transactions/wrap"
 )
 
@@ -29,6 +30,7 @@ func Prototype() helpers.Transactions {
 		revoke.Transaction,
 		send.Transaction,
 		unwrap.Transaction,
+		update.Transaction,
 		wrap.Transaction,
 	)
 }

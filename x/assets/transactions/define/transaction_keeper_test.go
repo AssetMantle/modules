@@ -5,6 +5,7 @@ package define
 
 import (
 	"context"
+	"github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
@@ -34,7 +35,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	dataHelper "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/assets/mapper"
 	permissionHelper "github.com/AssetMantle/modules/x/assets/utilities"
@@ -102,10 +102,10 @@ var (
 	superAuxiliary                = new(MockAuxiliary)
 	_                             = superAuxiliary.On("GetKeeper").Return(superAuxiliaryKeeper)
 
-	codec = baseHelpers.TestCodec()
-
 	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
 	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
+
+	codec = base.TestCodec()
 
 	authStoreKey             = sdkTypes.NewKVStoreKey(authTypes.StoreKey)
 	moduleAccountPermissions = map[string][]string{TestMinterModuleName: {authTypes.Minter}, constants.ModuleName: nil}

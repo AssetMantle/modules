@@ -1,8 +1,8 @@
 package base
 
 import (
+	sdkErrors "cosmossdk.io/errors"
 	"github.com/AssetMantle/modules/helpers"
-	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 var _ helpers.Error = (*sdkErrors.Error)(nil)

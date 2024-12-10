@@ -5,6 +5,7 @@ package burn
 
 import (
 	"context"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	recordassets "github.com/AssetMantle/modules/x/assets/record"
@@ -12,7 +13,7 @@ import (
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	"github.com/AssetMantle/schema/ids"
-	parametersSchema "github.com/AssetMantle/schema/parameters"
+	baseLists "github.com/AssetMantle/schema/lists/base"
 	"github.com/AssetMantle/schema/parameters/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
@@ -30,6 +31,10 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers"
+	baseProp "github.com/AssetMantle/modules/simulation/schema/types/base"
+	"github.com/AssetMantle/modules/x/assets/mapper"
+	"github.com/AssetMantle/modules/x/assets/parameters"
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
@@ -38,13 +43,6 @@ import (
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-
-	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	baseProp "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/x/assets/mapper"
-	"github.com/AssetMantle/modules/x/assets/parameters"
 )
 
 type MockAuxiliary struct {
@@ -150,12 +148,10 @@ var (
 	unbondAuxiliary       = new(MockAuxiliary)
 	_                     = unbondAuxiliary.On("GetKeeper").Return(unbondAuxiliaryKeeper)
 
-	codec = baseHelpers.TestCodec()
-
 	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
 	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
-	ParamsKeeper             = paramsKeeper.NewKeeper(codec, codec.GetLegacyAmino(), paramsStoreKey, paramsTransientStoreKeys)
 
+	codec                    = baseHelpers.TestCodec()
 	authStoreKey             = sdkTypes.NewKVStoreKey(authTypes.StoreKey)
 	moduleAccountPermissions = map[string][]string{TestMinterModuleName: {authTypes.Minter}, constants.ModuleName: nil}
 	AuthKeeper               = authKeeper.NewAccountKeeper(codec, authStoreKey, authTypes.ProtoBaseAccount, moduleAccountPermissions, sdkTypes.GetConfig().GetBech32AccountAddrPrefix(), authTypes.NewModuleAddress(govTypes.ModuleName).String())
@@ -172,12 +168,13 @@ var (
 
 	Context = setContext()
 
-	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace(constants.ModuleName).WithKeyTable(parameters.Prototype().GetKeyTable())).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))}).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true)))}).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true)))}).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(true)))}).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))})
+	parameterManager = parameters.Prototype().Initialize(moduleStoreKey).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom)))))).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(true))))).
+				Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom)))))).
+				Update(Context)
 
 	TransactionKeeper = transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager, authenticateAuxiliary, authorizeAuxiliary, purgeAuxiliary, supplementAuxiliary, unbondAuxiliary}
 )
@@ -216,7 +213,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				assetID: assetID,
 			},
 			setup: func() {
-				parameterManager.Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(false)))})
+				parameterManager.Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(false)))))
 				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 			},
 			want:    nil,
@@ -230,7 +227,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				assetID: assetID,
 			},
 			setup: func() {
-				parameterManager.Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true)))})
+				parameterManager.Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true)))))
 				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(asset))
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				purgeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()

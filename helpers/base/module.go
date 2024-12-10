@@ -146,6 +146,11 @@ func (module module) RegisterServices(configurator sdkModuleTypes.Configurator) 
 	for _, transaction := range module.transactions.Get() {
 		transaction.RegisterService(configurator)
 	}
+	//m := keeper.NewMigrator(am.keeper)
+	//err := cfg.RegisterMigration(authz.ModuleName, 1, m.Migrate1to2)
+	//if err != nil {
+	//	panic(fmt.Sprintf("failed to migrate x/%s from version 1 to 2: %v", authz.ModuleName, err))
+	//}
 }
 func (module module) ConsensusVersion() uint64 {
 	return module.consensusVersion
@@ -185,11 +190,11 @@ func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
 	panic(fmt.Errorf("auxiliary %v not found/initialized", auxiliaryName))
 }
 func (module module) Initialize(kvStoreKey *storeTypes.KVStoreKey, paramsSubspace paramsTypes.Subspace, auxiliaryKeepers ...interface{}) helpers.Module {
-	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
-
 	module.genesis = module.genesisPrototype()
 
-	module.parameterManager = module.parameterManagerPrototype().Initialize(paramsSubspace.WithKeyTable(module.parameterManagerPrototype().GetKeyTable()))
+	module.mapper = module.mapperPrototype().Initialize(kvStoreKey)
+
+	module.parameterManager = module.parameterManagerPrototype().Initialize(kvStoreKey)
 
 	auxiliaryList := make([]helpers.Auxiliary, len(module.auxiliariesPrototype().Get()))
 

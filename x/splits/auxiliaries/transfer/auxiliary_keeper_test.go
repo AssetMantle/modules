@@ -6,7 +6,6 @@ package transfer
 import (
 	"context"
 	"github.com/AssetMantle/modules/helpers"
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/splits/constants"
@@ -20,7 +19,7 @@ import (
 	"github.com/AssetMantle/schema/documents"
 	"github.com/AssetMantle/schema/documents/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
-	parametersSchema "github.com/AssetMantle/schema/parameters"
+	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseParameters "github.com/AssetMantle/schema/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	"github.com/AssetMantle/schema/types"
@@ -31,7 +30,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	paramsKeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/mock"
 	"math/rand"
@@ -100,11 +98,8 @@ var (
 	uninitializedCoinAsset   = base.NewCoinAsset("uninitialized")
 	uninitializedCoinAssetID = uninitializedCoinAsset.GetCoinAssetID()
 
-	codec = baseHelpers.TestCodec()
-
 	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
 	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
-	ParamsKeeper             = paramsKeeper.NewKeeper(codec, codec.GetLegacyAmino(), paramsStoreKey, paramsTransientStoreKeys)
 
 	moduleStoreKey  = sdkTypes.NewKVStoreKey(constants.ModuleName)
 	AuxiliaryKeeper = auxiliaryKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager}
@@ -122,8 +117,8 @@ var (
 
 	Context = setContext()
 
-	parameterManager = parameters.Prototype().Initialize(ParamsKeeper.Subspace(constants.ModuleName).WithKeyTable(parameters.Prototype().GetKeyTable())).
-				Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(true)))})
+	parameterManager = parameters.Prototype().Initialize(moduleStoreKey).
+				Set(baseLists.NewParameterList(baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(true)))))
 
 	_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
 		Add(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(sdkTypes.NewInt(GenesisSupply))))
@@ -219,7 +214,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		{
 			"transfer not enabled",
 			func() {
-				parameterManager.Set(sdkTypes.WrapSDKContext(Context), []parametersSchema.Parameter{baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(false)))})
+				parameterManager.Set(baseLists.NewParameterList(baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(false)))))
 			},
 			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, testSendAmount),
 			nil,
