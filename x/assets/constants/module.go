@@ -7,8 +7,9 @@ import (
 	"github.com/AssetMantle/modules/utilities/name"
 )
 
+// TODO find a simpler way to do this
 type dummy struct{}
 
 var ModuleName = name.GetSuperPackageName(dummy{})
 
-const ModuleConsensusVersion = 1
+const ModuleConsensusVersion = 2

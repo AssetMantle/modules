@@ -1,4 +1,4 @@
-package update
+package govern
 
 import (
 	"context"
@@ -19,7 +19,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if _, err := transactionKeeper.parameterManager.Fetch(context).Set(message.Parameter).Update(context); err != nil {
 		return nil, constants.InvalidRequest.Wrapf(err.Error())
 	}
-	
+
 	return newTransactionResponse(), nil
 }
 

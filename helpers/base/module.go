@@ -32,6 +32,7 @@ type module struct {
 	genesisPrototype          func() helpers.Genesis
 	invariantsPrototype       func() helpers.Invariants
 	mapperPrototype           func() helpers.Mapper
+	migrationsPrototype       func() helpers.Migrations
 	parameterManagerPrototype func() helpers.ParameterManager
 	queriesPrototype          func() helpers.Queries
 	simulatorPrototype        func() helpers.Simulator
@@ -40,6 +41,7 @@ type module struct {
 	auxiliaries      helpers.Auxiliaries
 	genesis          helpers.Genesis
 	mapper           helpers.Mapper
+	migrations       helpers.Migrations
 	parameterManager helpers.ParameterManager
 	queries          helpers.Queries
 	transactions     helpers.Transactions
@@ -146,11 +148,12 @@ func (module module) RegisterServices(configurator sdkModuleTypes.Configurator) 
 	for _, transaction := range module.transactions.Get() {
 		transaction.RegisterService(configurator)
 	}
-	//m := keeper.NewMigrator(am.keeper)
-	//err := cfg.RegisterMigration(authz.ModuleName, 1, m.Migrate1to2)
-	//if err != nil {
-	//	panic(fmt.Sprintf("failed to migrate x/%s from version 1 to 2: %v", authz.ModuleName, err))
-	//}
+
+	for _, migration := range module.migrations.Get() {
+		if err := configurator.RegisterMigration(module.name, module.consensusVersion, migration.GetHandler()); err != nil {
+			panic(fmt.Sprintf("failed to migrate x/%s to version %s: %v", module.name, module.consensusVersion, err))
+		}
+	}
 }
 func (module module) ConsensusVersion() uint64 {
 	return module.consensusVersion
@@ -226,14 +229,23 @@ func (module module) Initialize(kvStoreKey *storeTypes.KVStoreKey, paramsSubspac
 
 	module.block = module.blockPrototype().Initialize(module.mapper, module.parameterManager, auxiliaryKeepers...)
 
+	migrationsList := make([]helpers.Migration, len(module.migrationsPrototype().Get()))
+
+	for i, migration := range module.migrationsPrototype().Get() {
+		migrationsList[i] = migration.Initialize(module.mapper, module.parameterManager, paramsSubspace)
+	}
+
+	module.migrations = NewMigrations(migrationsList...)
+
 	return module
 }
 
-func NewModule(name string, consensusVersion uint64, auxiliariesPrototype func() helpers.Auxiliaries, blockPrototype func() helpers.Block, genesisPrototype func() helpers.Genesis, invariantsPrototype func() helpers.Invariants, mapperPrototype func() helpers.Mapper, parameterManagerPrototype func() helpers.ParameterManager, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions) helpers.Module {
+func NewModule(name string, consensusVersion uint64, auxiliariesPrototype func() helpers.Auxiliaries, blockPrototype func() helpers.Block, genesisPrototype func() helpers.Genesis, invariantsPrototype func() helpers.Invariants, mapperPrototype func() helpers.Mapper, migrationsPrototype func() helpers.Migrations, parameterManagerPrototype func() helpers.ParameterManager, queriesPrototype func() helpers.Queries, simulatorPrototype func() helpers.Simulator, transactionsPrototype func() helpers.Transactions) helpers.Module {
 	return module{
 		name:                      name,
 		consensusVersion:          consensusVersion,
 		auxiliariesPrototype:      auxiliariesPrototype,
+		migrationsPrototype:       migrationsPrototype,
 		blockPrototype:            blockPrototype,
 		genesisPrototype:          genesisPrototype,
 		invariantsPrototype:       invariantsPrototype,

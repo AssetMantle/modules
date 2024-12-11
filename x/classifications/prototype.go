@@ -12,6 +12,7 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/genesis"
 	"github.com/AssetMantle/modules/x/classifications/invariants"
 	"github.com/AssetMantle/modules/x/classifications/mapper"
+	"github.com/AssetMantle/modules/x/classifications/migrations"
 	"github.com/AssetMantle/modules/x/classifications/parameters"
 	"github.com/AssetMantle/modules/x/classifications/queries"
 	"github.com/AssetMantle/modules/x/classifications/simulator"
@@ -27,6 +28,7 @@ func Prototype() helpers.Module {
 		genesis.Prototype,
 		invariants.Prototype,
 		mapper.Prototype,
+		migrations.Prototype,
 		parameters.Prototype,
 		queries.Prototype,
 		simulator.Prototype,

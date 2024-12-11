@@ -4,6 +4,7 @@
 package orders
 
 import (
+	"github.com/AssetMantle/modules/x/assets/migrations"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -30,6 +31,7 @@ func TestPrototype(t *testing.T) {
 		genesis.Prototype,
 		invariants.Prototype,
 		mapper.Prototype,
+		migrations.Prototype,
 		parameters.Prototype,
 		queries.Prototype,
 		simulator.Prototype,
