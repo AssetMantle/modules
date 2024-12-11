@@ -9,13 +9,13 @@ import (
 	"github.com/AssetMantle/modules/x/assets/transactions/burn"
 	"github.com/AssetMantle/modules/x/assets/transactions/define"
 	"github.com/AssetMantle/modules/x/assets/transactions/deputize"
+	"github.com/AssetMantle/modules/x/assets/transactions/govern"
 	"github.com/AssetMantle/modules/x/assets/transactions/mint"
 	"github.com/AssetMantle/modules/x/assets/transactions/mutate"
 	"github.com/AssetMantle/modules/x/assets/transactions/renumerate"
 	"github.com/AssetMantle/modules/x/assets/transactions/revoke"
 	"github.com/AssetMantle/modules/x/assets/transactions/send"
 	"github.com/AssetMantle/modules/x/assets/transactions/unwrap"
-	"github.com/AssetMantle/modules/x/assets/transactions/update"
 	"github.com/AssetMantle/modules/x/assets/transactions/wrap"
 )
 
@@ -30,7 +30,7 @@ func Prototype() helpers.Transactions {
 		revoke.Transaction,
 		send.Transaction,
 		unwrap.Transaction,
-		update.Transaction,
+		govern.Transaction,
 		wrap.Transaction,
 	)
 }

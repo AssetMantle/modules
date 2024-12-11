@@ -11,4 +11,4 @@ type dummy struct{}
 
 var ModuleName = name.GetSuperPackageName(dummy{})
 
-const ModuleConsensusVersion = 1
+const ModuleConsensusVersion = 2
