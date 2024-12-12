@@ -1,4 +1,4 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// Copyright [2021] - [2025], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
 package base
@@ -54,7 +54,7 @@ func (parameterManager parameterManager) Validate() error {
 	if err := parameterManager.parameterList.ValidateBasic(); err != nil {
 		return err
 	}
-	
+
 	for _, validatableParameter := range parameterManager.defaultValidatableParameters {
 		parameter := parameterManager.parameterList.GetParameter(validatableParameter.GetParameter().GetMetaProperty().GetID())
 		if parameter == nil {
