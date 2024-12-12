@@ -21,5 +21,5 @@ type Transaction interface {
 	RESTRequestHandler(client.Context) http.HandlerFunc
 	RegisterInterfaces(types.InterfaceRegistry)
 	RegisterService(module.Configurator)
-	InitializeKeeper(Mapper, ParameterManager, ...interface{}) Transaction
+	Initialize(Mapper, ParameterManager, ...interface{}) Transaction
 }
