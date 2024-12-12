@@ -1,4 +1,4 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// Copyright [2021] - [2025], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
 package base
@@ -214,7 +214,7 @@ func (module module) Initialize(kvStoreKey *storeTypes.KVStoreKey, paramsSubspac
 	transactionList := make([]helpers.Transaction, len(module.transactionsPrototype().Get()))
 
 	for i, transaction := range module.transactionsPrototype().Get() {
-		transactionList[i] = transaction.InitializeKeeper(module.mapper, module.parameterManager, auxiliaryKeepers...)
+		transactionList[i] = transaction.Initialize(module.mapper, module.parameterManager, auxiliaryKeepers...)
 	}
 
 	module.transactions = NewTransactions(transactionList...)

@@ -1,4 +1,4 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// Copyright [2021] - [2025], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
 package base
@@ -111,7 +111,7 @@ func (transaction transaction) RegisterService(configurator sdkModuleTypes.Confi
 	}
 	transaction.serviceRegistrar(configurator.MsgServer(), transaction.transactionKeeper)
 }
-func (transaction transaction) InitializeKeeper(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Transaction {
+func (transaction transaction) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaryKeepers ...interface{}) helpers.Transaction {
 	transaction.transactionKeeper = transaction.keeperPrototype().Initialize(mapper, parameterManager, auxiliaryKeepers).(helpers.TransactionKeeper)
 	return transaction
 }

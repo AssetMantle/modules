@@ -1,4 +1,4 @@
-// Copyright [2021] - [2022], AssetMantle Pte. Ltd. and the code contributors
+// Copyright [2021] - [2025], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
 package helpers
@@ -21,5 +21,5 @@ type Transaction interface {
 	RESTRequestHandler(client.Context) http.HandlerFunc
 	RegisterInterfaces(types.InterfaceRegistry)
 	RegisterService(module.Configurator)
-	InitializeKeeper(Mapper, ParameterManager, ...interface{}) Transaction
+	Initialize(Mapper, ParameterManager, ...interface{}) Transaction
 }
