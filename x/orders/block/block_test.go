@@ -4,14 +4,14 @@
 package block
 
 import (
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "cosmossdk.io/store/types"
 	"testing"
 
 	tendermintDB "github.com/cometbft/cometbft-db"
 	abciTypes "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
+	"cosmossdk.io/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 

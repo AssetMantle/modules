@@ -7,8 +7,8 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	prefixStore "github.com/cosmos/cosmos-sdk/store/prefix"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	prefixStore "cosmossdk.io/store/prefix"
+	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
@@ -46,7 +46,7 @@ func (mapper mapper) FetchAll(context context.Context) []helpers.Record {
 	return records
 }
 func (mapper mapper) Iterate(context context.Context, key helpers.Key, accumulator func(helpers.Record) bool) {
-	kvStorePrefixIterator := sdkTypes.KVStorePrefixIterator(prefixStore.NewStore(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey), key.GenerateStorePrefixBytes()), key.GenerateStoreKeyBytes())
+	kvStorePrefixIterator := storeTypes.KVStorePrefixIterator(prefixStore.NewStore(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey), key.GenerateStorePrefixBytes()), key.GenerateStoreKeyBytes())
 
 	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
 		if accumulator(mapper.recordPrototype().ReadFromIterator(kvStorePrefixIterator)) {

@@ -8,7 +8,7 @@ import (
 	"github.com/AssetMantle/schema/lists"
 	"github.com/AssetMantle/schema/lists/base"
 	"github.com/AssetMantle/schema/parameters"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"golang.org/x/net/context"
 

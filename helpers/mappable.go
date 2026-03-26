@@ -4,8 +4,8 @@
 package helpers
 
 import (
+	storeTypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type Mappable interface {
@@ -13,7 +13,7 @@ type Mappable interface {
 	ValidateBasic() error
 }
 
-func ReadMappableFromIterator[T Mappable](iterator sdkTypes.Iterator, mappable T) Mappable {
+func ReadMappableFromIterator[T Mappable](iterator storeTypes.Iterator, mappable T) Mappable {
 	if err := mappable.Unmarshal(iterator.Value()); err != nil {
 		panic(err)
 	}

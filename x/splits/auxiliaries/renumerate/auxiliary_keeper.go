@@ -4,11 +4,11 @@
 package renumerate
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/splits/utilities"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type auxiliaryKeeper struct {
@@ -27,7 +27,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 		return nil, err
 	}
 
-	if auxiliaryRequest.Supply.LTE(sdkTypes.ZeroInt()) {
+	if auxiliaryRequest.Supply.LTE(math.ZeroInt()) {
 		return nil, errorConstants.IncorrectFormat.Wrapf("value is less than or equal to 0 for asset: %s", auxiliaryRequest.AssetID.AsString())
 	}
 

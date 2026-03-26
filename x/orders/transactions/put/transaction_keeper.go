@@ -4,13 +4,13 @@
 package put
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/data"
 	"github.com/AssetMantle/schema/documents/base"
 	propertyConstants "github.com/AssetMantle/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/schema/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
@@ -44,7 +44,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	makerSplit, ok := sdkTypes.NewIntFromString(message.MakerSplit)
+	makerSplit, ok := math.NewIntFromString(message.MakerSplit)
 	if !ok || makerSplit.IsNegative() {
 		return nil, errorConstants.IncorrectFormat.Wrapf("maker split is not a valid integer")
 	}
@@ -53,7 +53,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	takerSplit, ok := sdkTypes.NewIntFromString(message.TakerSplit)
+	takerSplit, ok := math.NewIntFromString(message.TakerSplit)
 	if !ok || takerSplit.IsNegative() {
 		return nil, errorConstants.IncorrectFormat.Wrapf("taker split is not a valid integer")
 	}

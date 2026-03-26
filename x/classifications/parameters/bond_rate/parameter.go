@@ -4,6 +4,7 @@
 package bond_rate
 
 import (
+	"cosmossdk.io/math"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -11,11 +12,10 @@ import (
 	baseParameters "github.com/AssetMantle/schema/parameters/base"
 	"github.com/AssetMantle/schema/properties/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
-	"github.com/cosmos/cosmos-sdk/types"
 )
 
 var ID = constantProperties.BondRateProperty.GetKey()
-var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewNumberData(types.NewInt(1))))
+var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewNumberData(math.NewInt(1))))
 
 func validator(parameter parameters.Parameter) error {
 	if parameter.GetMetaProperty().GetID().Compare(Parameter.GetMetaProperty().GetID()) != 0 {

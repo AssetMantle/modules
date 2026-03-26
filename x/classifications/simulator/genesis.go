@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents/base"
@@ -33,7 +34,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		&bondRateData,
 		simulationState.Rand,
 		func(rand *rand.Rand) {
-			bondRateData = baseData.NewNumberData(sdkTypes.NewInt(int64(rand.Intn(99))))
+			bondRateData = baseData.NewNumberData(math.NewInt(int64(rand.Intn(99))))
 		},
 	)
 
@@ -44,7 +45,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		&maxPropertyCountData,
 		simulationState.Rand,
 		func(rand *rand.Rand) {
-			maxPropertyCountData = baseData.NewNumberData(sdkTypes.NewInt(int64(rand.Intn(99))))
+			maxPropertyCountData = baseData.NewNumberData(math.NewInt(int64(rand.Intn(99))))
 		},
 	)
 

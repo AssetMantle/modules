@@ -4,6 +4,7 @@
 package mint
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/data"
@@ -13,7 +14,6 @@ import (
 	"github.com/AssetMantle/schema/properties"
 	propertyConstants "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/constants"
@@ -87,7 +87,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	bondAmount := sdkTypes.ZeroInt()
+	bondAmount := math.ZeroInt()
 	if bondAmountProperty := mutables.GetProperty(propertyConstants.BondAmountProperty.GetID()); bondAmountProperty == nil || !bondAmountProperty.IsMeta() {
 		return nil, errorConstants.MetaDataError.Wrapf("asset with ID %s has no revealed bond amount", assetID.AsString())
 	} else {

@@ -4,6 +4,7 @@
 package simulation
 
 import (
+	"cosmossdk.io/math"
 	"github.com/modern-go/reflect2"
 	"math/rand"
 
@@ -52,7 +53,7 @@ func GetGenesisProperties(r *rand.Rand) (qualified.Immutables, qualified.Mutable
 }
 
 func CalculateBondAmount(immutables qualified.Immutables, mutables qualified.Mutables) data.NumberData {
-	totalWeight := sdkTypes.ZeroInt()
+	totalWeight := math.ZeroInt()
 	for _, property := range append(immutables.GetImmutablePropertyList().Get(), mutables.GetMutablePropertyList().Get()...) {
 		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
 	}

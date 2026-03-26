@@ -31,8 +31,8 @@ import (
 	"github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	"cosmossdk.io/store"
+	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/mock"
@@ -131,7 +131,7 @@ var (
 	transferAuxiliaryKeeper         = new(MockAuxiliaryKeeper)
 	transferAuxiliaryFailureAsset   = randomAssetGenerator(baseProperties.NewMetaProperty(constantProperties.LockHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(0))), nil)
 	transferAuxiliaryFailureAssetID = baseIDs.NewAssetID(transferAuxiliaryFailureAsset.GetClassificationID(), transferAuxiliaryFailureAsset.GetImmutables()).(*baseIDs.AssetID)
-	_                               = transferAuxiliaryKeeper.On("Help", mock.Anything, transfer.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), transferAuxiliaryFailureAssetID, sdkTypes.NewInt(1))).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
+	_                               = transferAuxiliaryKeeper.On("Help", mock.Anything, transfer.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), transferAuxiliaryFailureAssetID, math.NewInt(1))).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 	_                               = transferAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
 	transferAuxiliaryAuxiliary      = new(MockAuxiliary)
 	_                               = transferAuxiliaryAuxiliary.On("GetKeeper").Return(transferAuxiliaryKeeper)
@@ -290,7 +290,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 
 			tt.setup()
 
-			got, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(tt.args.from, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), tt.args.assetID, sdkTypes.NewInt(int64(tt.args.value))).(helpers.Message))
+			got, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(tt.args.from, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), tt.args.assetID, math.NewInt(int64(tt.args.value))).(helpers.Message))
 
 			if (tt.wantErr != nil && !tt.wantErr.Is(err)) || (tt.wantErr == nil && err != nil) {
 				t.Errorf("unexpected error: %v", err)

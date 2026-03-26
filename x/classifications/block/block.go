@@ -5,7 +5,6 @@ package block
 
 import (
 	"context"
-	abciTypes "github.com/cometbft/cometbft/abci/types"
 
 	"github.com/AssetMantle/modules/helpers"
 )
@@ -17,11 +16,13 @@ type block struct {
 
 var _ helpers.Block = (*block)(nil)
 
-func (block block) Begin(_ context.Context, _ abciTypes.RequestBeginBlock) {
+func (block block) Begin(_ context.Context) error {
+	return nil
 
 }
 
-func (block block) End(_ context.Context, _ abciTypes.RequestEndBlock) {
+func (block block) End(_ context.Context) error {
+	return nil
 
 }
 

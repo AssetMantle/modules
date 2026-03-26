@@ -4,12 +4,12 @@
 package base
 
 import (
+	"cosmossdk.io/math"
 	"math/rand"
 	"strconv"
 
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )
 
@@ -18,7 +18,7 @@ func GenerateRandomID(r *rand.Rand) ids.StringID {
 }
 
 func GenerateRandomIDWithDec(r *rand.Rand) ids.ID {
-	return baseIDs.NewStringID(sdkTypes.MustNewDecFromStr(strconv.FormatInt(r.Int63(), 10)).String())
+	return baseIDs.NewStringID(math.LegacyMustNewDecFromStr(strconv.FormatInt(r.Int63(), 10)).String())
 }
 
 func GenerateRandomIDWithInt64(r *rand.Rand) ids.ID {

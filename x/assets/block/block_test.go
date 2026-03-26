@@ -6,7 +6,7 @@ package block
 import (
 	"context"
 	"fmt"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "cosmossdk.io/store/types"
 	"reflect"
 	"testing"
 
@@ -14,7 +14,7 @@ import (
 	abciTypes "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
+	"cosmossdk.io/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 

@@ -5,7 +5,7 @@ package helpers
 
 import (
 	"github.com/cosmos/cosmos-sdk/client"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "cosmossdk.io/store/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gorilla/mux"
@@ -13,16 +13,13 @@ import (
 
 type Module interface {
 	BasicModule
-	sdkModuleTypes.AppModuleGenesis
-	sdkModuleTypes.EndBlockAppModule
-	sdkModuleTypes.BeginBlockAppModule
+	sdkModuleTypes.HasABCIGenesis
 
 	sdkModuleTypes.HasConsensusVersion
 	sdkModuleTypes.HasInvariants
 	sdkModuleTypes.HasServices
 
 	sdkModuleTypes.AppModuleSimulation
-	sdkModuleTypes.HasProposalMsgs
 
 	GetAuxiliary(string) Auxiliary
 

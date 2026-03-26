@@ -7,7 +7,7 @@ import (
 	"cosmossdk.io/math"
 	"fmt"
 	"github.com/AssetMantle/modules/x/splits/record"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "cosmossdk.io/store/types"
 	"reflect"
 	"testing"
 
@@ -22,7 +22,7 @@ import (
 	tendermintDB "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
+	"cosmossdk.io/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -58,7 +58,7 @@ func TestAddSplits(t *testing.T) {
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
 	testAssetID := baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID()
-	testRate := sdkTypes.OneInt()
+	testRate := math.OneInt()
 	split := baseTypes.NewSplit(testRate)
 	context, testMapper := createTestInput1(t)
 	testSplits := testMapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))
@@ -74,8 +74,8 @@ func TestAddSplits(t *testing.T) {
 		want    helpers.Collection
 		wantErr bool
 	}{
-		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.NewInt(100)}, testSplits.Mutate(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split.Subtract(sdkTypes.NewInt(100)))), false},
-		{"+ve Not authorized", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.ZeroInt()}, nil, true},
+		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, math.NewInt(100)}, testSplits.Mutate(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split.Subtract(math.NewInt(100)))), false},
+		{"+ve Not authorized", args{testSplits, testOwnerIdentityID, testAssetID, math.ZeroInt()}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,7 +97,7 @@ func TestSubtractSplits(t *testing.T) {
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
 	testAssetID := baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID()
-	testRate := sdkTypes.NewInt(10)
+	testRate := math.NewInt(10)
 	split := baseTypes.NewSplit(testRate)
 	context, testMapper := createTestInput1(t)
 	testSplits := testMapper.NewCollection(sdkTypes.WrapSDKContext(context)).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))
@@ -113,9 +113,9 @@ func TestSubtractSplits(t *testing.T) {
 		want    helpers.Collection
 		wantErr bool
 	}{
-		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.NewInt(9)}, testSplits.Mutate(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split)), false},
-		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.NewInt(100)}, nil, true},
-		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testAssetID, sdkTypes.ZeroInt()}, nil, true},
+		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, math.NewInt(9)}, testSplits.Mutate(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split)), false},
+		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testAssetID, math.NewInt(100)}, nil, true},
+		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testAssetID, math.ZeroInt()}, nil, true},
 		{"+ve Entity Not found", args{testSplits, baseIDs.PrototypeIdentityID(), testAssetID, testRate}, nil, true},
 	}
 	for _, tt := range tests {

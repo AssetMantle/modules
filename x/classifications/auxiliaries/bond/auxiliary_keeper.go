@@ -46,7 +46,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 		return nil, errorConstants.InvalidRequest.Wrapf("bond amount %s is less than minimum bond amount %s", auxiliaryRequest.bondAmount.String(), classification.GetBondAmount().String())
 	}
 
-	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.accAddress, constants.ModuleName, sdkTypes.NewCoins(sdkTypes.NewCoin(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), auxiliaryRequest.bondAmount))); err != nil {
+	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.accAddress, constants.ModuleName, sdkTypes.NewCoins(sdkTypes.NewCoin(func() string { d, _ := auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)); return d }(), auxiliaryRequest.bondAmount))); err != nil {
 		return nil, err
 	}
 

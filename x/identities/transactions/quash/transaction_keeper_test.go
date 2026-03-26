@@ -10,7 +10,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/mapper"
 	"github.com/AssetMantle/modules/x/identities/record"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "cosmossdk.io/store/types"
 	"reflect"
 	"testing"
 
@@ -23,7 +23,7 @@ import (
 	tendermintDB "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
+	"cosmossdk.io/store"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 

@@ -4,6 +4,7 @@
 package make
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/schema/lists/base"
@@ -77,12 +78,12 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	makerSplit, ok := sdkTypes.NewIntFromString(transactionRequest.MakerSplit)
+	makerSplit, ok := math.NewIntFromString(transactionRequest.MakerSplit)
 	if !ok {
 		return nil, constants.IncorrectFormat.Wrapf("maker split %s is not a valid integer", transactionRequest.MakerSplit)
 	}
 
-	takerSplit, ok := sdkTypes.NewIntFromString(transactionRequest.TakerSplit)
+	takerSplit, ok := math.NewIntFromString(transactionRequest.TakerSplit)
 	if !ok {
 		return nil, constants.IncorrectFormat.Wrapf("taker split %s is not a valid integer", transactionRequest.TakerSplit)
 	}

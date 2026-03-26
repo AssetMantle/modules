@@ -33,9 +33,7 @@ func TransactionRequestFromHTTPRequest[T TransactionRequest](httpRequest *http.R
 	return *TransactionRequest, nil
 }
 func ValidateTransactionRequest[T TransactionRequest](transactionRequest T) error {
-	if msg, err := transactionRequest.MakeMsg(); err != nil {
-		return err
-	} else if err := msg.(Message).ValidateBasic(); err != nil {
+	if _, err := transactionRequest.MakeMsg(); err != nil {
 		return err
 	}
 

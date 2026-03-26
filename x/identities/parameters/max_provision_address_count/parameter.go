@@ -13,11 +13,10 @@ import (
 	baseParameters "github.com/AssetMantle/schema/parameters/base"
 	"github.com/AssetMantle/schema/properties/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var ID = constantProperties.MaxProvisionAddressCountProperty.GetKey()
-var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewNumberData(sdkTypes.NewInt(16))))
+var Parameter = baseParameters.NewParameter(base.NewMetaProperty(ID, baseData.NewNumberData(math.NewInt(16))))
 
 func validator(parameter parameters.Parameter) error {
 	if parameter.GetMetaProperty().GetID().Compare(Parameter.GetMetaProperty().GetID()) != 0 {
@@ -28,7 +27,7 @@ func validator(parameter parameters.Parameter) error {
 		return errorConstants.InvalidParameter.Wrapf(err.Error())
 	}
 
-	if parameter.GetMetaProperty().GetData().Get().(*baseData.NumberData).Get().LT(sdkTypes.OneInt()) {
+	if parameter.GetMetaProperty().GetData().Get().(*baseData.NumberData).Get().LT(math.OneInt()) {
 		return errorConstants.InvalidParameter.Wrapf("%s must be greater than or equal to 1", ID.AsString())
 	}
 

@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
@@ -54,8 +55,8 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		}
 		identityID, _ := base.PrototypeIdentityID().FromString(identityIDString)
 
-		records[index] = record.NewRecord(base.NewSplitID(assetID.(ids.AssetID), identityID.(ids.IdentityID)), baseTypes.NewSplit(sdkTypes.NewInt(1)))
-		records[index+1] = record.NewRecord(base.NewSplitID(baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), identityID.(ids.IdentityID)), baseTypes.NewSplit(sdkTypes.NewInt(1000)))
+		records[index] = record.NewRecord(base.NewSplitID(assetID.(ids.AssetID), identityID.(ids.IdentityID)), baseTypes.NewSplit(math.NewInt(1)))
+		records[index+1] = record.NewRecord(base.NewSplitID(baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), identityID.(ids.IdentityID)), baseTypes.NewSplit(math.NewInt(1000)))
 		index += 2
 	}
 

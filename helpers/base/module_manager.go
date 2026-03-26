@@ -3,7 +3,6 @@ package base
 import (
 	"encoding/json"
 	"github.com/AssetMantle/modules/helpers"
-	abciTypes "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -24,22 +23,34 @@ type moduleManager struct {
 
 var _ helpers.ModuleManager = (*moduleManager)(nil)
 
+type hasTxCmd interface {
+	GetTxCmd() *cobra.Command
+}
+type hasQueryCmd interface {
+	GetQueryCmd() *cobra.Command
+}
+
 func (moduleManager moduleManager) AddTxCommands(command *cobra.Command) {
 	for _, basicModule := range moduleManager.basicModules {
-		if cmd := basicModule.GetTxCmd(); cmd != nil {
-			command.AddCommand(cmd)
+		if m, ok := basicModule.(hasTxCmd); ok {
+			if cmd := m.GetTxCmd(); cmd != nil {
+				command.AddCommand(cmd)
+			}
 		}
 	}
 }
 func (moduleManager moduleManager) AddQueryCommands(rootQueryCmd *cobra.Command) {
 	for _, basicModule := range moduleManager.basicModules {
-		if cmd := basicModule.GetQueryCmd(); cmd != nil {
-			rootQueryCmd.AddCommand(cmd)
+		if m, ok := basicModule.(hasQueryCmd); ok {
+			if cmd := m.GetQueryCmd(); cmd != nil {
+				rootQueryCmd.AddCommand(cmd)
+			}
 		}
 	}
 }
-func (moduleManager moduleManager) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, genesisData map[string]json.RawMessage) abciTypes.ResponseInitChain {
-	return moduleManager.getManager().InitGenesis(context, jsonCodec, genesisData)
+func (moduleManager moduleManager) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, genesisData map[string]json.RawMessage) error {
+	_, err := moduleManager.getManager().InitGenesis(context, jsonCodec, genesisData)
+	return err
 }
 func (moduleManager moduleManager) GetVersionMap() sdkModuleTypes.VersionMap {
 	return moduleManager.getManager().GetVersionMap()
@@ -75,11 +86,13 @@ func (moduleManager moduleManager) SetOrderExportGenesis(moduleName ...string) h
 
 	return moduleManager
 }
-func (moduleManager moduleManager) BeginBlock(context sdkTypes.Context, requestBeginBlock abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock {
-	return moduleManager.getManager().BeginBlock(context, requestBeginBlock)
+func (moduleManager moduleManager) BeginBlock(context sdkTypes.Context) error {
+	_, err := moduleManager.getManager().BeginBlock(context)
+	return err
 }
-func (moduleManager moduleManager) EndBlock(context sdkTypes.Context, requestEndBlock abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock {
-	return moduleManager.getManager().EndBlock(context, requestEndBlock)
+func (moduleManager moduleManager) EndBlock(context sdkTypes.Context) error {
+	_, err := moduleManager.getManager().EndBlock(context)
+	return err
 }
 func (moduleManager moduleManager) RunMigrations(context sdkTypes.Context, configurator sdkModuleTypes.Configurator, versionMap sdkModuleTypes.VersionMap) (sdkModuleTypes.VersionMap, error) {
 	return moduleManager.getManager().RunMigrations(context, configurator, versionMap)
@@ -90,7 +103,7 @@ func (moduleManager moduleManager) RegisterInvariants(invariantRegistry sdkTypes
 func (moduleManager moduleManager) GetBasicManager() sdkModuleTypes.BasicManager {
 	return sdkModuleTypes.NewBasicManager(moduleManager.getAppModulesBasic()...)
 }
-func (moduleManager moduleManager) ExportGenesisForModules(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, moduleNames []string) map[string]json.RawMessage {
+func (moduleManager moduleManager) ExportGenesisForModules(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, moduleNames []string) (map[string]json.RawMessage, error) {
 	return moduleManager.getManager().ExportGenesisForModules(context, jsonCodec, moduleNames)
 }
 func (moduleManager moduleManager) RegisterRESTRoutes(context client.Context, router *mux.Router) {

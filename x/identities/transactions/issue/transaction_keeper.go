@@ -4,6 +4,7 @@
 package issue
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/data"
@@ -13,7 +14,6 @@ import (
 	"github.com/AssetMantle/schema/properties"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
@@ -71,7 +71,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	if identity.GetProvisionedAddressCount().LT(types.OneInt()) {
+	if identity.GetProvisionedAddressCount().LT(math.OneInt()) {
 		return nil, errorConstants.IncorrectFormat.Wrapf("identity with ID %s has no provisioned address", identityID.AsString())
 	}
 
@@ -83,7 +83,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	bondAmount := types.ZeroInt()
+	bondAmount := math.ZeroInt()
 	if bondAmountProperty := mutables.GetProperty(constantProperties.BondAmountProperty.GetID()); bondAmountProperty == nil || !bondAmountProperty.IsMeta() {
 		return nil, errorConstants.MetaDataError.Wrapf("identity with ID %s has no revealed bond amount", identityID.AsString())
 	} else {

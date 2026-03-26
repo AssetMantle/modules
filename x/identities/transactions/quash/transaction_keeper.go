@@ -4,6 +4,7 @@
 package quash
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/data"
@@ -64,7 +65,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("identity with ID %s is not expired yet", message.IdentityID.AsString())
 	}
 
-	bondAmount := sdkTypes.ZeroInt()
+	bondAmount := math.ZeroInt()
 	if bondAmountProperty := identity.GetProperty(constantProperties.BondAmountProperty.GetID()); bondAmountProperty == nil || !bondAmountProperty.IsMeta() {
 		return nil, errorConstants.MetaDataError.Wrapf("identity with ID %s has no revealed bond amount", message.IdentityID)
 	} else {

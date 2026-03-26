@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"encoding/json"
-	abciTypes "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkCodecTypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -20,8 +19,8 @@ type ModuleManager interface {
 	AddTxCommands(*cobra.Command)
 	AddQueryCommands(*cobra.Command)
 
-	InitGenesis(sdkTypes.Context, codec.JSONCodec, map[string]json.RawMessage) abciTypes.ResponseInitChain
-	ExportGenesisForModules(sdkTypes.Context, codec.JSONCodec, []string) map[string]json.RawMessage
+	InitGenesis(sdkTypes.Context, codec.JSONCodec, map[string]json.RawMessage) error
+	ExportGenesisForModules(sdkTypes.Context, codec.JSONCodec, []string) (map[string]json.RawMessage, error)
 
 	RegisterServices(module.Configurator)
 	RegisterGRPCGatewayRoutes(client.Context, *runtime.ServeMux)
@@ -36,8 +35,8 @@ type ModuleManager interface {
 	SetOrderInitGenesis(...string) ModuleManager
 	SetOrderExportGenesis(...string) ModuleManager
 
-	BeginBlock(sdkTypes.Context, abciTypes.RequestBeginBlock) abciTypes.ResponseBeginBlock
-	EndBlock(sdkTypes.Context, abciTypes.RequestEndBlock) abciTypes.ResponseEndBlock
+	BeginBlock(sdkTypes.Context) error
+	EndBlock(sdkTypes.Context) error
 
 	RunMigrations(sdkTypes.Context, module.Configurator, module.VersionMap) (module.VersionMap, error)
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type auxiliaryRequest struct {
@@ -28,7 +27,7 @@ func (auxiliaryRequest auxiliaryRequest) Validate() error {
 		return errorConstants.InvalidRequest.Wrapf("invalid asset id: %s", err)
 	}
 
-	if auxiliaryRequest.Value.LTE(sdkTypes.ZeroInt()) {
+	if auxiliaryRequest.Value.LTE(math.ZeroInt()) {
 		return errorConstants.InvalidRequest.Wrapf("value must be greater than zero")
 	}
 

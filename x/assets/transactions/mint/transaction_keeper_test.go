@@ -29,8 +29,8 @@ import (
 	"github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	"cosmossdk.io/store"
+	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -87,7 +87,7 @@ var (
 	randomSeed             int64 = 99
 	randomInt              int64 = 1
 	randomMetaProperty           = baseProp.GenerateRandomMetaProperty(rand.New(rand.NewSource(randomSeed)))
-	randomBondMetaProperty       = baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewNumberData(sdkTypes.NewInt(randomInt)))
+	randomBondMetaProperty       = baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewNumberData(math.NewInt(randomInt)))
 
 	newMutables = baseQualified.NewMutables(baseLists.NewPropertyList())
 	asset       = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, newMutables), immutables, newMutables)
@@ -137,7 +137,7 @@ var (
 
 	Context = setContext()
 
-	coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom, sdkTypes.NewInt(GenesisSupply)))
+	coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom, math.NewInt(GenesisSupply)))
 	_          = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
 
 	genesisAddress   = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
@@ -196,7 +196,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				toID:             baseIDs.PrototypeIdentityID(),
 				classificationID: asset.GetClassificationID(),
 				immutableProps:   asset.GetImmutables().GetImmutablePropertyList(),
-				mutableProps:     baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetID().GetKey(), baseData.NewNumberData(sdkTypes.NewInt(1)))),
+				mutableProps:     baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetID().GetKey(), baseData.NewNumberData(math.NewInt(1)))),
 			},
 			setup: func(t *testing.T) {
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
@@ -294,7 +294,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				toID:             baseIDs.PrototypeIdentityID(),
 				classificationID: baseIDs.PrototypeClassificationID(),
 				immutableProps:   baseLists.NewPropertyList(),
-				mutableProps:     baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetID().GetKey(), baseData.NewNumberData(sdkTypes.NewInt(-1)))),
+				mutableProps:     baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetID().GetKey(), baseData.NewNumberData(math.NewInt(-1)))),
 			},
 			setup: func(t *testing.T) {
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
@@ -327,7 +327,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				toID:             baseIDs.PrototypeIdentityID(),
 				classificationID: baseIDs.PrototypeClassificationID(),
 				immutableProps:   baseLists.NewPropertyList(),
-				mutableProps:     baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetID().GetKey(), baseData.NewNumberData(sdkTypes.NewInt(1)))),
+				mutableProps:     baseLists.NewPropertyList(baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetID().GetKey(), baseData.NewNumberData(math.NewInt(1)))),
 			},
 			setup: func(t *testing.T) {
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()

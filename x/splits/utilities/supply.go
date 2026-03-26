@@ -10,11 +10,10 @@ import (
 	"github.com/AssetMantle/modules/x/splits/mappable"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 func GetTotalSupply(collection helpers.Collection, assetID ids.AssetID) math.Int {
-	value := sdkTypes.ZeroInt()
+	value := math.ZeroInt()
 
 	collection.Iterate(key.NewKey(baseIDs.NewSplitID(assetID, baseIDs.PrototypeIdentityID())), func(record helpers.Record) bool {
 		value = value.Add(mappable.GetSplit(record.GetMappable()).GetValue())

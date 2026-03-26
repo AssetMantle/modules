@@ -15,7 +15,7 @@ import (
 	"github.com/AssetMantle/schema/parameters/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	"github.com/cometbft/cometbft/crypto/ed25519"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "cosmossdk.io/store/types"
 	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -31,7 +31,7 @@ import (
 	tendermintDB "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
+	"cosmossdk.io/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -111,7 +111,7 @@ var (
 
 	Context = setContext()
 
-	coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom, sdkTypes.NewInt(GenesisSupply)))
+	coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom, math.NewInt(GenesisSupply)))
 	_          = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
 
 	genesisAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())

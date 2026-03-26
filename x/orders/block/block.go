@@ -6,7 +6,6 @@ package block
 import (
 	"context"
 	"github.com/AssetMantle/schema/types/base"
-	abciTypes "github.com/cometbft/cometbft/abci/types"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/orders/mappable"
@@ -18,8 +17,11 @@ type block struct {
 
 var _ helpers.Block = (*block)(nil)
 
-func (block block) Begin(_ context.Context, _ abciTypes.RequestBeginBlock) {}
-func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
+func (block block) Begin(_ context.Context) error {
+	return nil
+}
+
+func (block block) End(context context.Context) error {
 	orders := block.mapper.NewCollection(context)
 	orders.IterateAll(func(record helpers.Record) bool {
 		if mappable.GetOrder(record.GetMappable()).GetExpiryHeight().Compare(base.CurrentHeight(context)) <= 0 {
@@ -27,6 +29,7 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 		}
 		return false
 	})
+	return nil
 }
 
 //executeOrders := make(map[ids.OrderID]bool)
@@ -47,9 +50,9 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 //		} else {
 //			// TODO ***** figure out use case
 //			// // TODO ***** test
-//			// id1 := baseIDs.NewOrderID(order.GetClassificationID(), order.GetMakerAssetID(), order.GetTakerAssetID(), sdkTypes.SmallestDec(), baseTypes.NewHeight(0), baseIDs.PrototypeIdentityID(), baseQualified.NewImmutables(baseLists.NewPropertyList()))
+//			// id1 := baseIDs.NewOrderID(order.GetClassificationID(), order.GetMakerAssetID(), order.GetTakerAssetID(), math.LegacySmallestDec(), baseTypes.NewHeight(0), baseIDs.PrototypeIdentityID(), baseQualified.NewImmutables(baseLists.NewPropertyList()))
 //			// // TODO ***** test
-//			// id2 := baseIDs.NewOrderID(order.GetClassificationID(), order.GetTakerAssetID(), order.GetMakerAssetID(), sdkTypes.SmallestDec(), baseTypes.NewHeight(0), baseIDs.PrototypeIdentityID(), baseQualified.NewImmutables(baseLists.NewPropertyList()))
+//			// id2 := baseIDs.NewOrderID(order.GetClassificationID(), order.GetTakerAssetID(), order.GetMakerAssetID(), math.LegacySmallestDec(), baseTypes.NewHeight(0), baseIDs.PrototypeIdentityID(), baseQualified.NewImmutables(baseLists.NewPropertyList()))
 //			// if !executeOrders[id1] && !executeOrders[id2] {
 //			// 	executeOrders[id1] = true
 //			// }
@@ -95,9 +98,9 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 //
 //					rightOrderMakerSplit := rightOrder.GetMakerSplit()
 //
-//					rightOrderTakerSplitDemanded := rightOrderExchangeRate.MulTruncate(rightOrderMakerSplit.ToLegacyDec()).MulTruncate(sdkTypes.SmallestDec()).TruncateInt()
+//					rightOrderTakerSplitDemanded := rightOrderExchangeRate.MulTruncate(rightOrderMakerSplit.ToLegacyDec()).MulTruncate(math.LegacySmallestDec()).TruncateInt()
 //
-//					if leftOrderExchangeRate.MulTruncate(rightOrderExchangeRate).MulTruncate(sdkTypes.SmallestDec()).MulTruncate(sdkTypes.SmallestDec()).LTE(sdkTypes.OneDec()) {
+//					if leftOrderExchangeRate.MulTruncate(rightOrderExchangeRate).MulTruncate(math.LegacySmallestDec()).MulTruncate(math.LegacySmallestDec()).LTE(math.LegacyOneDec()) {
 //						switch {
 //						case leftOrderMakerSplit.GT(rightOrderTakerSplitDemanded):
 //							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), leftOrder.GetMakerID(), leftOrder.GetTakerAssetID(), rightOrderMakerSplit)); err != nil {
@@ -116,7 +119,7 @@ func (block block) End(context context.Context, _ abciTypes.RequestEndBlock) {
 //								return true
 //							}
 //						case leftOrderMakerSplit.LT(rightOrderTakerSplitDemanded):
-//							sendToLeftOrder := leftOrderMakerSplit.ToLegacyDec().QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(rightOrderExchangeRate)
+//							sendToLeftOrder := leftOrderMakerSplit.ToLegacyDec().QuoTruncate(math.LegacySmallestDec()).QuoTruncate(rightOrderExchangeRate)
 //							if _, err := block.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), leftOrder.GetMakerID(), leftOrder.GetTakerAssetID(), sendToLeftOrder.TruncateInt())); err != nil {
 //								panic(err)
 //							}

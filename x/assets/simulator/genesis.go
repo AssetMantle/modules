@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
@@ -46,7 +47,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	for i := range records {
 		immutables := baseQualified.NewImmutables(baseSimulation.GenerateRandomMetaPropertyListWithoutData(simulationState.Rand))
-		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand).Add(baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(100)))))
+		mutables := baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(simulationState.Rand).Add(baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(math.NewInt(100)))))
 		// for _, property := range immutables.GetImmutablePropertyList().GetList() {
 		//	immutables = base.NewImmutables(immutables.GetImmutablePropertyList().Mutate(baseProperties.NewMetaProperty(property.Get().GenerateKey(), baseTypes.GenerateRandomDataForTypeID(simulationState.Rand, property.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))))
 		// }

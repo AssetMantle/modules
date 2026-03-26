@@ -5,11 +5,10 @@ package helpers
 
 import (
 	"context"
-	abciTypes "github.com/cometbft/cometbft/abci/types"
 )
 
 type Block interface {
-	Begin(context.Context, abciTypes.RequestBeginBlock)
-	End(context.Context, abciTypes.RequestEndBlock)
+	Begin(context.Context) error
+	End(context.Context) error
 	Initialize(Mapper, ParameterManager, ...interface{}) Block
 }

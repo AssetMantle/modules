@@ -4,6 +4,7 @@
 package modify
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -52,17 +53,17 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.EntityNotFound.Wrapf("order with ID %s not found", message.OrderID.AsString())
 	}
 	order := mappable.GetOrder(Mappable)
-	makerSplit, ok := sdkTypes.NewIntFromString(message.MakerSplit)
+	makerSplit, ok := math.NewIntFromString(message.MakerSplit)
 	if !ok {
 		return nil, errorConstants.IncorrectFormat.Wrapf("invalid maker split %s", message.MakerSplit)
 	}
 	transferMakerSplit := makerSplit.Sub(order.GetMakerSplit())
 
-	if transferMakerSplit.LT(sdkTypes.ZeroInt()) {
+	if transferMakerSplit.LT(math.ZeroInt()) {
 		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), message.GetFromIdentityID(), order.GetMakerAssetID(), transferMakerSplit.Abs())); err != nil {
 			return nil, err
 		}
-	} else if transferMakerSplit.GT(sdkTypes.ZeroInt()) {
+	} else if transferMakerSplit.GT(math.ZeroInt()) {
 		if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.GetFromIdentityID(), constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerAssetID(), transferMakerSplit)); err != nil {
 			return nil, err
 		}

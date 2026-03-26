@@ -27,8 +27,8 @@ import (
 	tendermintDB "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	"cosmossdk.io/store"
+	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/mock"
@@ -84,7 +84,7 @@ const (
 )
 
 var (
-	testSendAmount = sdkTypes.NewInt(100)
+	testSendAmount = math.NewInt(100)
 
 	testFromIdentity   = base.NewNameIdentity(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewListData())
 	testFromIdentityID = testFromIdentity.(documents.NameIdentity).GetNameIdentityID()
@@ -121,7 +121,7 @@ var (
 				Set(baseLists.NewParameterList(baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(true)))))
 
 	_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
-		Add(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(sdkTypes.NewInt(GenesisSupply))))
+		Add(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(math.NewInt(GenesisSupply))))
 )
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
@@ -149,21 +149,21 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		{
 			"insufficient balance",
 			func() {},
-			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, sdkTypes.NewInt(GenesisSupply+1)),
+			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, math.NewInt(GenesisSupply+1)),
 			nil,
 			errorConstants.InsufficientBalance,
 		},
 		{
 			"send zero",
 			func() {},
-			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, sdkTypes.ZeroInt()),
+			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, math.ZeroInt()),
 			nil,
 			errorConstants.InvalidRequest,
 		},
 		{
 			"send negative",
 			func() {},
-			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, sdkTypes.NewInt(-1)),
+			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, math.NewInt(-1)),
 			nil,
 			errorConstants.InvalidRequest,
 		},
@@ -193,7 +193,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			func() {
 				for i := 0; i < 100000; i++ {
 					_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
-						Add(record.NewRecord(baseIDs.NewSplitID(base.NewCoinAsset(random.GenerateUniqueIdentifier()).GetCoinAssetID(), base.NewNameIdentity(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewListData()).GetNameIdentityID()), baseTypes.NewSplit(sdkTypes.NewInt(int64(rand.Intn(100000000000))))))
+						Add(record.NewRecord(baseIDs.NewSplitID(base.NewCoinAsset(random.GenerateUniqueIdentifier()).GetCoinAssetID(), base.NewNameIdentity(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewListData()).GetNameIdentityID()), baseTypes.NewSplit(math.NewInt(int64(rand.Intn(100000000000))))))
 				}
 			},
 			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, testSendAmount),
@@ -204,10 +204,10 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			"transfer full amount",
 			func() {
 				_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
-					Remove(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(sdkTypes.OneInt()))).
-					Add(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(sdkTypes.NewInt(GenesisSupply))))
+					Remove(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(math.OneInt()))).
+					Add(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(math.NewInt(GenesisSupply))))
 			},
-			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, sdkTypes.NewInt(GenesisSupply)),
+			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, math.NewInt(GenesisSupply)),
 			newAuxiliaryResponse(),
 			nil,
 		},

@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	testRate = sdkTypes.NewInt(1)
+	testRate = math.NewInt(1)
 	split    = baseTypes.NewSplit(testRate).(*baseTypes.Split)
 )
 

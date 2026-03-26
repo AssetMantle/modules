@@ -4,6 +4,7 @@
 package immediate
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/data"
@@ -48,12 +49,12 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	makerSplit, ok := sdkTypes.NewIntFromString(message.MakerSplit)
+	makerSplit, ok := math.NewIntFromString(message.MakerSplit)
 	if !ok {
 		return nil, errorConstants.InvalidParameter.Wrapf("maker split %s is not a valid integer", message.MakerSplit)
 	}
 
-	takerSplit, ok := sdkTypes.NewIntFromString(message.TakerSplit)
+	takerSplit, ok := math.NewIntFromString(message.TakerSplit)
 	if !ok {
 		return nil, errorConstants.InvalidParameter.Wrapf("taker split %s is not a valid integer", message.TakerSplit)
 	}
@@ -62,7 +63,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 	immutableMetaProperties := message.ImmutableMetaProperties.
-		Add(baseProperties.NewMetaProperty(propertyConstants.ExchangeRateProperty.GetKey(), baseData.NewNumberData(takerSplit.Quo(sdkTypes.OneInt()).Quo(makerSplit)))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.ExchangeRateProperty.GetKey(), baseData.NewNumberData(takerSplit.Quo(math.OneInt()).Quo(makerSplit)))).
 		Add(baseProperties.NewMetaProperty(propertyConstants.CreationHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
 		Add(baseProperties.NewMetaProperty(propertyConstants.MakerAssetIDProperty.GetKey(), baseData.NewIDData(message.MakerAssetID))).
 		Add(baseProperties.NewMetaProperty(propertyConstants.TakerAssetIDProperty.GetKey(), baseData.NewIDData(message.TakerAssetID))).
@@ -107,9 +108,9 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	accumulator := func(Record helpers.Record) bool {
 		executableOrder := mappable.GetOrder(Record.GetMappable())
 
-		executableOrderTakerSplitDemanded := executableOrder.GetExchangeRate().MulTruncate(executableOrder.GetMakerSplit().ToLegacyDec()).MulTruncate(sdkTypes.SmallestDec()).TruncateInt()
+		executableOrderTakerSplitDemanded := executableOrder.GetExchangeRate().MulTruncate(executableOrder.GetMakerSplit().ToLegacyDec()).MulTruncate(math.LegacySmallestDec()).TruncateInt()
 
-		if order.GetExchangeRate().MulTruncate(executableOrder.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec()).MulTruncate(sdkTypes.SmallestDec()).LTE(sdkTypes.OneDec()) {
+		if order.GetExchangeRate().MulTruncate(executableOrder.GetExchangeRate()).MulTruncate(math.LegacySmallestDec()).MulTruncate(math.LegacySmallestDec()).LTE(math.LegacyOneDec()) {
 			switch {
 			case orderLeftOverMakerSplit.GT(executableOrderTakerSplitDemanded):
 				// sending to buyer
@@ -126,7 +127,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 				orders.Remove(record.NewRecord(executableOrder))
 			case orderLeftOverMakerSplit.LT(executableOrderTakerSplitDemanded):
 				// sending to buyer
-				sendToBuyer := orderLeftOverMakerSplit.Quo(sdkTypes.OneInt()).ToLegacyDec().QuoTruncate(executableOrder.GetExchangeRate()).TruncateInt()
+				sendToBuyer := orderLeftOverMakerSplit.Quo(math.OneInt()).ToLegacyDec().QuoTruncate(executableOrder.GetExchangeRate()).TruncateInt()
 				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), sendToBuyer)); err != nil {
 					panic(err)
 				}
@@ -145,7 +146,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 				orders.Mutate(record.NewRecord(updatedOrder))
 
-				orderLeftOverMakerSplit = sdkTypes.ZeroInt()
+				orderLeftOverMakerSplit = math.ZeroInt()
 			default:
 				// case orderLeftOverMakerSplit.Equal(executableOrderTakerSplitDemanded):
 				// sending to buyer
@@ -159,13 +160,13 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 				orders.Remove(record.NewRecord(executableOrder))
 
-				orderLeftOverMakerSplit = sdkTypes.ZeroInt()
+				orderLeftOverMakerSplit = math.ZeroInt()
 			}
 
 			orderMutated = true
 		}
 
-		if orderLeftOverMakerSplit.Equal(sdkTypes.ZeroInt()) {
+		if orderLeftOverMakerSplit.Equal(math.ZeroInt()) {
 			orders.Remove(record.NewRecord(order))
 			return true
 		}
@@ -175,7 +176,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	orders.Iterate(record.NewRecord(order).GetKey(), accumulator)
 
-	if !orderLeftOverMakerSplit.Equal(sdkTypes.ZeroInt()) && orderMutated {
+	if !orderLeftOverMakerSplit.Equal(math.ZeroInt()) && orderMutated {
 		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(orderLeftOverMakerSplit)))
 
 		updatedOrder := base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))

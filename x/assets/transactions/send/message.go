@@ -27,11 +27,11 @@ func (message *Message) GetFromIdentityID() ids.IdentityID {
 	return message.FromID
 }
 func (message *Message) GetValueAsInt() (math.Int, error) {
-	value, ok := sdkTypes.NewIntFromString(message.Value)
+	value, ok := math.NewIntFromString(message.Value)
 	if !ok {
-		return sdkTypes.ZeroInt(), errorConstants.IncorrectFormat.Wrapf("send value %s is not a valid integer", message.Value)
+		return math.ZeroInt(), errorConstants.IncorrectFormat.Wrapf("send value %s is not a valid integer", message.Value)
 	} else if value.IsNegative() {
-		return sdkTypes.ZeroInt(), errorConstants.InvalidParameter.Wrapf("send value is negative %s", message.Value)
+		return math.ZeroInt(), errorConstants.InvalidParameter.Wrapf("send value is negative %s", message.Value)
 	}
 
 	return value, nil

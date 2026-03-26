@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	"cosmossdk.io/math"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -152,7 +153,7 @@ func simulateTakeMsg(module helpers.Module) simulationTypes.Operation {
 
 		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(makeMessage.(*make.Message).ImmutableProperties.Get()...)...)))
 
-		takeMessage := take.NewMessage(to.Address, makeMessage.(*make.Message).TakerID, sdkTypes.NewInt(1), orderID)
+		takeMessage := take.NewMessage(to.Address, makeMessage.(*make.Message).TakerID, math.NewInt(1), orderID)
 		result, err = simulationModules.ExecuteMessage(context, module, takeMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(takeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
@@ -219,7 +220,7 @@ func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 		}
 	}
 
-	return make.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID.(ids.ClassificationID), toID.(ids.IdentityID), assetID.(ids.AssetID), baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), baseTypesGo.NewHeight(-1), sdkTypes.NewInt(1), sdkTypes.NewInt(1), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+	return make.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID.(ids.ClassificationID), toID.(ids.IdentityID), assetID.(ids.AssetID), baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), baseTypesGo.NewHeight(-1), math.NewInt(1), math.NewInt(1), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 }
 func GenerateDefineMessage(from sdkTypes.AccAddress, identityID ids.IdentityID, r *rand.Rand) helpers.Message {
 	return define.NewMessage(from, identityID, baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r), baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r)).(helpers.Message)

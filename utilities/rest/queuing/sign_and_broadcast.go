@@ -4,6 +4,7 @@
 package queuing
 
 import (
+	goContext "context"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -98,7 +99,7 @@ func signAndBroadcastMultiple(kafkaMsgList []kafkaMsg, context client.Context) (
 			return nil, err
 		}
 
-		err = tx.Sign(txFactory, context.FromName, txBuilder, true)
+		err = tx.Sign(goContext.TODO(), txFactory, context.FromName, txBuilder, true)
 		if err != nil {
 			return nil, err
 		}

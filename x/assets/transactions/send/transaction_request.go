@@ -4,6 +4,7 @@
 package send
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -58,7 +59,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	value, ok := sdkTypes.NewIntFromString(transactionRequest.Value)
+	value, ok := math.NewIntFromString(transactionRequest.Value)
 	if !ok {
 		return nil, constants.IncorrectFormat.Wrapf("send value %s is not a valid integer", transactionRequest.Value)
 	}

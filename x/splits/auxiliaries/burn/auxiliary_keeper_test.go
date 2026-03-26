@@ -21,8 +21,8 @@ import (
 	tendermintDB "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	"cosmossdk.io/store"
+	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
 	"math/rand"
@@ -46,7 +46,7 @@ func (*mockAuxiliaryRequest) Validate() error {
 
 var _ helpers.AuxiliaryRequest = (*mockAuxiliaryRequest)(nil)
 var (
-	testSendAmount = sdkTypes.NewInt(100)
+	testSendAmount = math.NewInt(100)
 
 	testFromIdentity   = baseDocuments.NewNameIdentity(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewListData())
 	testFromIdentityID = testFromIdentity.(documents.NameIdentity).GetNameIdentityID()
@@ -72,7 +72,7 @@ var (
 	Context = setContext()
 
 	_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
-		Add(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(sdkTypes.NewInt(GenesisAmount))))
+		Add(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(math.NewInt(GenesisAmount))))
 )
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
@@ -121,7 +121,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			auxiliaryRequest{
 				OwnerID: testFromIdentityID,
 				AssetID: testCoinAssetID,
-				Value:   sdkTypes.NewInt(-1),
+				Value:   math.NewInt(-1),
 			},
 			nil,
 			errorConstants.InvalidRequest,
@@ -149,7 +149,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			func() {
 				for i := 0; i < 100000; i++ {
 					_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
-						Add(record.NewRecord(baseIDs.NewSplitID(baseDocuments.NewCoinAsset(random.GenerateUniqueIdentifier()).GetCoinAssetID(), baseDocuments.NewNameIdentity(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewListData()).GetNameIdentityID()), baseTypes.NewSplit(sdkTypes.NewInt(int64(rand.Intn(100000000000))))))
+						Add(record.NewRecord(baseIDs.NewSplitID(baseDocuments.NewCoinAsset(random.GenerateUniqueIdentifier()).GetCoinAssetID(), baseDocuments.NewNameIdentity(baseIDs.NewStringID(random.GenerateUniqueIdentifier()), baseData.NewListData()).GetNameIdentityID()), baseTypes.NewSplit(math.NewInt(int64(rand.Intn(100000000000))))))
 				}
 			},
 			auxiliaryRequest{

@@ -4,6 +4,7 @@
 package make
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/data"
@@ -61,11 +62,11 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if _, err := transactionKeeper.authenticateAuxiliary.GetKeeper().Help(context, authenticate.NewAuxiliaryRequest(message)); err != nil {
 		return nil, err
 	}
-	makerSplit, ok := sdkTypes.NewIntFromString(message.MakerSplit)
+	makerSplit, ok := math.NewIntFromString(message.MakerSplit)
 	if !ok {
 		return nil, errorConstants.IncorrectFormat.Wrapf("MakerSplit is not a valid integer")
 	}
-	takerSplit, ok := sdkTypes.NewIntFromString(message.TakerSplit)
+	takerSplit, ok := math.NewIntFromString(message.TakerSplit)
 	if !ok {
 		return nil, errorConstants.IncorrectFormat.Wrapf("TakerSplit is not a valid integer")
 	}
@@ -74,7 +75,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	immutableMetaProperties := message.ImmutableMetaProperties.
-		Add(baseProperties.NewMetaProperty(propertyConstants.ExchangeRateProperty.GetKey(), baseData.NewDecData(takerSplit.ToLegacyDec().QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(makerSplit.ToLegacyDec())))).
+		Add(baseProperties.NewMetaProperty(propertyConstants.ExchangeRateProperty.GetKey(), baseData.NewDecData(takerSplit.ToLegacyDec().QuoTruncate(math.LegacySmallestDec()).QuoTruncate(makerSplit.ToLegacyDec())))).
 		Add(baseProperties.NewMetaProperty(propertyConstants.CreationHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(sdkTypes.UnwrapSDKContext(context).BlockHeight())))).
 		Add(baseProperties.NewMetaProperty(propertyConstants.MakerAssetIDProperty.GetKey(), baseData.NewIDData(message.MakerAssetID))).
 		Add(baseProperties.NewMetaProperty(propertyConstants.TakerAssetIDProperty.GetKey(), baseData.NewIDData(message.TakerAssetID))).
@@ -104,7 +105,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	bondAmount := sdkTypes.ZeroInt()
+	bondAmount := math.ZeroInt()
 	if bondAmountProperty := mutables.GetProperty(propertyConstants.BondAmountProperty.GetID()); bondAmountProperty == nil || !bondAmountProperty.IsMeta() {
 		return nil, errorConstants.MetaDataError.Wrapf("order with ID %s has no revealed bond amount", orderID.AsString())
 	} else {

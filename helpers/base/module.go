@@ -6,14 +6,14 @@ package base
 import (
 	"encoding/json"
 	"fmt"
-	abciTypes "github.com/cometbft/cometbft/abci/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkModuleTypes "github.com/cosmos/cosmos-sdk/types/module"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -122,16 +122,16 @@ func (module module) GetQueryCmd() *cobra.Command {
 func (module module) GenerateGenesisState(simulationState *sdkModuleTypes.SimulationState) {
 	module.simulatorPrototype().RandomizedGenesisState(simulationState)
 }
-func (module module) ProposalMsgs(simulationState sdkModuleTypes.SimulationState) []simulationTypes.WeightedProposalMsg {
+func (module module) ProposalMsgs(simulationState sdkModuleTypes.SimulationState) []simtypes.WeightedProposalMsg {
 	return module.simulatorPrototype().ProposalMessages(simulationState)
 }
-func (module module) RandomizedParams(r *rand.Rand) []simulationTypes.LegacyParamChange {
+func (module module) RandomizedParams(r *rand.Rand) []simtypes.LegacyParamChange {
 	return module.simulatorPrototype().ParamChangeList(r)
 }
-func (module module) WeightedOperations(simulationState sdkModuleTypes.SimulationState) []simulationTypes.WeightedOperation {
+func (module module) WeightedOperations(simulationState sdkModuleTypes.SimulationState) []simtypes.WeightedOperation {
 	return module.simulatorPrototype().WeightedOperations(simulationState, module)
 }
-func (module module) RegisterStoreDecoder(storeDecoderRegistry sdkTypes.StoreDecoderRegistry) {
+func (module module) RegisterStoreDecoder(storeDecoderRegistry simtypes.StoreDecoderRegistry) {
 	storeDecoderRegistry[module.name] = module.mapperPrototype().StoreDecoder
 }
 func (module module) RegisterInvariants(invariantRegistry sdkTypes.InvariantRegistry) {
@@ -158,7 +158,7 @@ func (module module) RegisterServices(configurator sdkModuleTypes.Configurator) 
 func (module module) ConsensusVersion() uint64 {
 	return module.consensusVersion
 }
-func (module module) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, rawMessage json.RawMessage) []abciTypes.ValidatorUpdate {
+func (module module) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, rawMessage json.RawMessage) []abci.ValidatorUpdate {
 	genesisState := module.genesisPrototype().Decode(jsonCodec, rawMessage)
 
 	if module.mapper == nil || module.parameterManager == nil {
@@ -167,7 +167,7 @@ func (module module) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JS
 
 	genesisState.Import(sdkTypes.WrapSDKContext(context), module.mapper, module.parameterManager)
 
-	return []abciTypes.ValidatorUpdate{}
+	return []abci.ValidatorUpdate{}
 }
 func (module module) ExportGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec) json.RawMessage {
 	if module.mapper == nil || module.parameterManager == nil {
@@ -176,13 +176,18 @@ func (module module) ExportGenesis(context sdkTypes.Context, jsonCodec sdkCodec.
 
 	return module.genesisPrototype().Export(sdkTypes.WrapSDKContext(context), module.mapper, module.parameterManager).Encode(jsonCodec)
 }
-func (module module) BeginBlock(context sdkTypes.Context, beginBlockRequest abciTypes.RequestBeginBlock) {
-	module.block.Begin(sdkTypes.WrapSDKContext(context), beginBlockRequest)
+func (module module) BeginBlock(context sdkTypes.Context) error {
+	return module.block.Begin(sdkTypes.WrapSDKContext(context))
 }
-func (module module) EndBlock(context sdkTypes.Context, endBlockRequest abciTypes.RequestEndBlock) []abciTypes.ValidatorUpdate {
-	module.block.End(sdkTypes.WrapSDKContext(context), endBlockRequest)
-	return []abciTypes.ValidatorUpdate{}
+func (module module) EndBlock(context sdkTypes.Context) error {
+	return module.block.End(sdkTypes.WrapSDKContext(context))
 }
+
+// IsAppModule implements appmodule.AppModule tag interface (SDK v0.50)
+func (module module) IsAppModule() {}
+
+// IsOnePerModuleType implements depinject tag interface
+func (module module) IsOnePerModuleType() {}
 func (module module) GetAuxiliary(auxiliaryName string) helpers.Auxiliary {
 	if module.auxiliaries != nil {
 		if auxiliary := module.auxiliaries.GetAuxiliary(auxiliaryName); auxiliary != nil {

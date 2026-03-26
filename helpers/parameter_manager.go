@@ -7,7 +7,7 @@ import (
 	"context"
 	"github.com/AssetMantle/schema/lists"
 	"github.com/AssetMantle/schema/parameters"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "cosmossdk.io/store/types"
 )
 
 type ParameterManager interface {

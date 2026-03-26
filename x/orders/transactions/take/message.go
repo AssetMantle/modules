@@ -36,7 +36,7 @@ func (message *Message) ValidateBasic() error {
 	if err := message.OrderID.ValidateBasic(); err != nil {
 		return constants.InvalidMessage.Wrapf(err.Error())
 	}
-	if _, ok := sdkTypes.NewIntFromString(message.TakerSplit); !ok {
+	if _, ok := math.NewIntFromString(message.TakerSplit); !ok {
 		return constants.InvalidMessage.Wrapf("taker split %s is not a valid integer", message.TakerSplit)
 	}
 	return nil

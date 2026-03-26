@@ -4,6 +4,7 @@
 package take
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/data"
@@ -14,7 +15,6 @@ import (
 	"github.com/AssetMantle/schema/properties"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	propertyConstants "github.com/AssetMantle/schema/properties/constants"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/burn"
@@ -59,18 +59,18 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	if order.GetTakerID().Compare(baseIDs.PrototypeIdentityID()) != 0 && order.GetTakerID().Compare(message.GetFromIdentityID()) != 0 {
 		return nil, errorConstants.NotAuthorized.Wrapf("taker ID %s is not authorized to take private order with ID %s", message.GetFromIdentityID().AsString(), message.OrderID.AsString())
 	}
-	takerSplit, _ := sdkTypes.NewIntFromString(message.TakerSplit)
-	makerReceiveTakerSplit := order.GetMakerSplit().ToLegacyDec().MulTruncate(order.GetExchangeRate()).MulTruncate(sdkTypes.SmallestDec())
-	takerReceiveMakerSplit := takerSplit.ToLegacyDec().QuoTruncate(sdkTypes.SmallestDec()).QuoTruncate(order.GetExchangeRate())
+	takerSplit, _ := math.NewIntFromString(message.TakerSplit)
+	makerReceiveTakerSplit := order.GetMakerSplit().ToLegacyDec().MulTruncate(order.GetExchangeRate()).MulTruncate(math.LegacySmallestDec())
+	takerReceiveMakerSplit := takerSplit.ToLegacyDec().QuoTruncate(math.LegacySmallestDec()).QuoTruncate(order.GetExchangeRate())
 
 	switch updatedMakerSplit := order.GetMakerSplit().Sub(takerReceiveMakerSplit.TruncateInt()); {
-	case updatedMakerSplit.Equal(sdkTypes.ZeroInt()):
+	case updatedMakerSplit.Equal(math.ZeroInt()):
 		if takerSplit.ToLegacyDec().LT(makerReceiveTakerSplit) {
 			return nil, errorConstants.InsufficientBalance.Wrapf("taker split %s is less than the required amount %s for order execution", message.TakerSplit, makerReceiveTakerSplit.String())
 		}
 
 		orders.Remove(record.NewRecord(order))
-	case updatedMakerSplit.LT(sdkTypes.ZeroInt()):
+	case updatedMakerSplit.LT(math.ZeroInt()):
 		if takerSplit.ToLegacyDec().LT(makerReceiveTakerSplit) {
 			return nil, errorConstants.InsufficientBalance.Wrapf("taker split %s is less than the required amount %s for order execution", message.TakerSplit, makerReceiveTakerSplit.String())
 		}
@@ -99,7 +99,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	bondAmount := sdkTypes.ZeroInt()
+	bondAmount := math.ZeroInt()
 	if bondAmountProperty := order.GetProperty(propertyConstants.BondAmountProperty.GetID()); bondAmountProperty == nil || !bondAmountProperty.IsMeta() {
 		return nil, errorConstants.MetaDataError.Wrapf("order with ID %s has no revealed bond amount", message.OrderID)
 	} else {

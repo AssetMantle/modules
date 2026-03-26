@@ -14,13 +14,12 @@ import (
 	"github.com/AssetMantle/schema/qualified"
 	"github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/gorilla/mux"
 )
 
 func GetTotalWeight(immutables qualified.Immutables, mutables qualified.Mutables) math.Int {
-	totalWeight := sdkTypes.ZeroInt()
+	totalWeight := math.ZeroInt()
 	for _, property := range append(immutables.GetImmutablePropertyList().Get(), mutables.GetMutablePropertyList().Get()...) {
 		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
 	}

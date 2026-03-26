@@ -5,8 +5,8 @@ package scrub
 
 import (
 	"context"
-	"github.com/cosmos/cosmos-sdk/store"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	"cosmossdk.io/store"
+	storeTypes "cosmossdk.io/store/types"
 	"reflect"
 	"testing"
 

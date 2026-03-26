@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
@@ -379,7 +380,7 @@ func simulateSendMsg(module helpers.Module) simulationTypes.Operation {
 		}
 
 		assetID, _ := baseIDs.PrototypeAssetID().FromString(assetIDString)
-		message := send.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), assetID.(ids.AssetID), sdkTypes.NewInt(1))
+		message := send.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), assetID.(ids.AssetID), math.NewInt(1))
 
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
@@ -403,14 +404,14 @@ func simulateWrapAndUnwrapMsg(module helpers.Module) simulationTypes.Operation {
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		wrapMessage := wrap.NewMessage(from.Address, fromID.(ids.IdentityID), sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(1))))
+		wrapMessage := wrap.NewMessage(from.Address, fromID.(ids.IdentityID), sdkTypes.NewCoins(sdkTypes.NewCoin("stake", math.NewInt(1))))
 
 		result, err = simulationModules.ExecuteMessage(context, module, wrapMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(wrapMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
 		}
 
-		unwrapMessage := unwrap.NewMessage(from.Address, fromID.(ids.IdentityID), sdkTypes.NewCoins(sdkTypes.NewCoin("stake", sdkTypes.NewInt(1))))
+		unwrapMessage := unwrap.NewMessage(from.Address, fromID.(ids.IdentityID), sdkTypes.NewCoins(sdkTypes.NewCoin("stake", math.NewInt(1))))
 
 		result, err = simulationModules.ExecuteMessage(context, module, unwrapMessage.(helpers.Message))
 		if err != nil {

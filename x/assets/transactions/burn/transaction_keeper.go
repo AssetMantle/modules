@@ -4,13 +4,13 @@
 package burn
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/data"
 	"github.com/AssetMantle/schema/properties"
 	propertyConstants "github.com/AssetMantle/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/schema/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/assets/constants"
@@ -100,7 +100,7 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, err
 	}
 
-	bondAmount := sdkTypes.ZeroInt()
+	bondAmount := math.ZeroInt()
 	if bondAmountProperty := asset.GetProperty(propertyConstants.BondAmountProperty.GetID()); bondAmountProperty == nil || !bondAmountProperty.IsMeta() {
 		return nil, errorConstants.MetaDataError.Wrapf("asset with ID %s has no revealed bond amount", message.AssetID)
 	} else {

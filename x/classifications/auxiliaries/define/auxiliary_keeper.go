@@ -4,6 +4,7 @@
 package define
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
@@ -47,7 +48,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 	}
 
 	// calculating minimum bound amount
-	totalWeight := sdkTypes.ZeroInt()
+	totalWeight := math.ZeroInt()
 	for _, property := range append(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get(), auxiliaryRequest.Mutables.GetMutablePropertyList().Get()...) {
 		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
 	}
@@ -70,7 +71,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 		return nil, errorConstants.InvalidRequest.Wrapf("bound amount is less than min allowed %s", minBondAmount.Get().String())
 	}
 
-	if totalPropertyCount := sdkTypes.NewInt(int64(len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) + len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()))); totalPropertyCount.GT(auxiliaryKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()) {
+	if totalPropertyCount := math.NewInt(int64(len(auxiliaryRequest.Immutables.GetImmutablePropertyList().Get()) + len(auxiliaryRequest.Mutables.GetMutablePropertyList().Get()))); totalPropertyCount.GT(auxiliaryKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get()) {
 		return nil, errorConstants.InvalidRequest.Wrapf("total property count %s exceeds maximum %s", totalPropertyCount.String(), auxiliaryKeeper.parameterManager.Fetch(context).Get().GetParameter(constantProperties.MaxPropertyCountProperty.GetID()).GetMetaProperty().GetData().Get().(data.NumberData).Get().String())
 	}
 
@@ -80,7 +81,7 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 		return NewAuxiliaryResponse(classificationID), errorConstants.EntityAlreadyExists.Wrapf("classification with ID %s already exists", classificationID.AsString())
 	}
 
-	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.AccAddress, constants.ModuleName, sdkTypes.NewCoins(sdkTypes.NewCoin(auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)), bondAmount.Get()))); err != nil {
+	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.AccAddress, constants.ModuleName, sdkTypes.NewCoins(sdkTypes.NewCoin(func() string { d, _ := auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)); return d }(), bondAmount.Get()))); err != nil {
 		return nil, err
 	}
 

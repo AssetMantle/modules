@@ -28,8 +28,8 @@ import (
 	"github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	"cosmossdk.io/store"
+	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -96,7 +96,7 @@ var (
 
 	burnAuxiliaryFailureDenom = "burn"
 	burnAuxiliaryKeeper       = new(MockAuxiliaryKeeper)
-	_                         = burnAuxiliaryKeeper.On("Help", mock.Anything, burn.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseDocuments.NewCoinAsset(burnAuxiliaryFailureDenom).GetCoinAssetID(), sdkTypes.OneInt())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
+	_                         = burnAuxiliaryKeeper.On("Help", mock.Anything, burn.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), baseDocuments.NewCoinAsset(burnAuxiliaryFailureDenom).GetCoinAssetID(), math.OneInt())).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 	_                         = burnAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
 	burnAuxiliary             = new(MockAuxiliary)
 	_                         = burnAuxiliary.On("GetKeeper").Return(burnAuxiliaryKeeper)
@@ -115,7 +115,7 @@ var (
 
 	Context = setContext()
 
-	coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom, sdkTypes.NewInt(GenesisSupply)))
+	coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom, math.NewInt(GenesisSupply)))
 	_          = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
 
 	genesisAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
@@ -215,7 +215,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			"unwrapCoinNotAuthorized",
 			args{genesisAddress, "unauthorizedCoin", 1},
 			func() {
-				coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin("unauthorizedCoin", sdkTypes.NewInt(GenesisSupply)))
+				coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin("unauthorizedCoin", math.NewInt(GenesisSupply)))
 				_ = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
 				_ = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
 			},
@@ -247,7 +247,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			args{genesisAddress, Denom, 1},
 			func() {
 				for i := 0; i < 1000; i++ {
-					coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom+strconv.Itoa(i), sdkTypes.NewInt(GenesisSupply)))
+					coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom+strconv.Itoa(i), math.NewInt(GenesisSupply)))
 					_ = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
 					_ = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
 				}
@@ -260,7 +260,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			args{genesisAddress, Denom, 1},
 			func() {
 				for i := 0; i < 1000; i++ {
-					coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom+strconv.Itoa(i), sdkTypes.NewInt(GenesisSupply)))
+					coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom+strconv.Itoa(i), math.NewInt(GenesisSupply)))
 					_ = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
 					_ = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address()), coinSupply)
 				}
@@ -276,14 +276,14 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				unwrapCoins := sdkTypes.NewCoins()
 
 				for i := 0; i < 1000; i++ {
-					coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom+strconv.Itoa(i), sdkTypes.NewInt(GenesisSupply)))
+					coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom+strconv.Itoa(i), math.NewInt(GenesisSupply)))
 					_ = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
 					_ = BankKeeper.SendCoinsFromModuleToModule(Context, TestMinterModuleName, constants.ModuleName, coinSupply)
 
 					TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(baseDocuments.NewCoinAsset(Denom + strconv.Itoa(i))))
 
 					unwrapAllowedDenoms = unwrapAllowedDenoms.Add(baseData.NewStringData(Denom + strconv.Itoa(i)))
-					unwrapCoins = unwrapCoins.Add(sdkTypes.NewCoin(Denom+strconv.Itoa(i), sdkTypes.NewInt(GenesisSupply)))
+					unwrapCoins = unwrapCoins.Add(sdkTypes.NewCoin(Denom+strconv.Itoa(i), math.NewInt(GenesisSupply)))
 				}
 				parameterManager.Set(baseLists.NewParameterList(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), unwrapAllowedDenoms))))
 				_, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(genesisAddress, baseIDs.PrototypeIdentityID(), unwrapCoins).(helpers.Message))
@@ -307,7 +307,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				initialSupply = BankKeeper.GetSupply(Context, tt.args.denom).Amount
 				initialAddressBalance = BankKeeper.GetBalance(Context, genesisAddress, tt.args.denom).Amount
 			}
-			got, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(tt.args.from, baseIDs.PrototypeIdentityID(), sdkTypes.Coins{sdkTypes.Coin{Denom: tt.args.denom, Amount: sdkTypes.NewInt(int64(tt.args.amount))}}).(helpers.Message))
+			got, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(tt.args.from, baseIDs.PrototypeIdentityID(), sdkTypes.Coins{sdkTypes.Coin{Denom: tt.args.denom, Amount: math.NewInt(int64(tt.args.amount))}}).(helpers.Message))
 
 			if sdkTypes.ValidateDenom(tt.args.denom) == nil {
 				finalSupply = BankKeeper.GetSupply(Context, tt.args.denom).Amount
@@ -316,7 +316,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				}
 
 				finalAddressBalance = BankKeeper.GetBalance(Context, genesisAddress, tt.args.denom).Amount
-				if tt.wantErr == nil && !finalAddressBalance.Sub(initialAddressBalance).Equal(sdkTypes.NewInt(int64(tt.args.amount))) {
+				if tt.wantErr == nil && !finalAddressBalance.Sub(initialAddressBalance).Equal(math.NewInt(int64(tt.args.amount))) {
 					t.Error("unexpected address balance")
 				}
 			}

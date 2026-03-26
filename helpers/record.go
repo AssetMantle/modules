@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	storeTypes "cosmossdk.io/store/types"
 )
 
 type Record interface {
@@ -10,10 +10,10 @@ type Record interface {
 
 	WithKey(Key) Record
 
-	ReadFromIterator(sdkTypes.Iterator) Record
-	Read(sdkTypes.KVStore) Record
-	Write(sdkTypes.KVStore) Record
-	Delete(sdkTypes.KVStore)
+	ReadFromIterator(storeTypes.Iterator) Record
+	Read(storeTypes.KVStore) Record
+	Write(storeTypes.KVStore) Record
+	Delete(storeTypes.KVStore)
 }
 
 func RecordsFromImplementations[T Record](records []T) []Record {

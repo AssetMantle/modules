@@ -19,7 +19,7 @@ import (
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	baseType "github.com/AssetMantle/schema/types/base"
 	"github.com/cometbft/cometbft/crypto/ed25519"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "cosmossdk.io/store/types"
 	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -41,7 +41,7 @@ import (
 	tendermintDB "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
+	"cosmossdk.io/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -93,7 +93,7 @@ var (
 	burnHeightMesaPropList = baseProp.GenerateRandomPropertyList(rand.New(rand.NewSource(randomSeed)))
 	burnHeightMesaMutables = baseQualified.NewMutables(burnHeightMesaPropList).GetMutablePropertyList().Add(
 		baseProperties.NewMesaProperty(constantProperties.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseType.NewHeight(randomInteger))),
-		baseProperties.NewMesaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
+		baseProperties.NewMesaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(math.NewInt(randomInteger))),
 	)
 	burnHeightAssetMesaMutables = baseQualified.NewMutables(burnHeightMesaMutables)
 	burnHeightMesaAsset         = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutablesMesaMock, burnHeightAssetMesaMutables), immutablesMesaMock, burnHeightAssetMesaMutables)
@@ -101,7 +101,7 @@ var (
 
 	supplyMesaPropList = baseProp.GenerateRandomPropertyList(rand.New(rand.NewSource(randomSeed)))
 	supplyMesaMutables = baseQualified.NewMutables(supplyMesaPropList).GetMutablePropertyList().Add(
-		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
+		baseProperties.NewMesaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(math.NewInt(randomInteger))),
 	)
 	supplyAssetMesaMutables = baseQualified.NewMutables(supplyMesaMutables)
 	supplyMesaAsset         = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutablesMesaMock, supplyAssetMesaMutables), immutablesMesaMock, supplyAssetMesaMutables)
@@ -109,20 +109,20 @@ var (
 
 	burnHeightMetaPropList = baseProp.GenerateRandomPropertyList(rand.New(rand.NewSource(randomSeed)))
 	burnHeightMetaMutables = baseQualified.NewMutables(burnHeightMetaPropList).GetMutablePropertyList().Add(
-		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
-		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
+		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(math.NewInt(randomInteger))),
+		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(math.NewInt(randomInteger))),
 		baseProperties.NewMetaProperty(constantProperties.BurnHeightProperty.GetKey(), baseData.NewHeightData(baseType.NewHeight(randomInteger))),
 	)
 
 	supplyMetaPropList = baseProp.GenerateRandomPropertyList(rand.New(rand.NewSource(randomSeed)))
 	supplyMetaMutables = baseQualified.NewMutables(supplyMetaPropList).GetMutablePropertyList().Add(
-		baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
+		baseProperties.NewMetaProperty(constantProperties.SupplyProperty.GetKey(), baseData.NewNumberData(math.NewInt(randomInteger))),
 	)
 
 	mutableMetaMock        = baseProp.GenerateRandomPropertyList(rand.New(rand.NewSource(randomSeed)))
 	BurnEnableMetaMutables = baseQualified.NewMutables(mutableMetaMock).GetMutablePropertyList().Add(
-		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
-		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(sdkTypes.NewInt(randomInteger))),
+		baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewNumberData(math.NewInt(randomInteger))),
+		baseProperties.NewMetaProperty(constantProperties.BondAmountProperty.GetKey(), baseData.NewNumberData(math.NewInt(randomInteger))),
 	)
 	BurnEnabledAssetMetaMutable = baseQualified.NewMutables(BurnEnableMetaMutables)
 	asset                       = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, BurnEnabledAssetMetaMutable), immutables, BurnEnabledAssetMetaMutable)
@@ -160,7 +160,7 @@ var (
 	blacklistedAddresses = map[string]bool{authTypes.NewModuleAddress(TestMinterModuleName).String(): false, authTypes.NewModuleAddress(constants.ModuleName).String(): false}
 	BankKeeper           = bankKeeper.NewBaseKeeper(codec, bankStoreKey, AuthKeeper, blacklistedAddresses, authTypes.NewModuleAddress(govTypes.ModuleName).String())
 
-	coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom, sdkTypes.NewInt(GenesisSupply)))
+	coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom, math.NewInt(GenesisSupply)))
 	_          = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
 
 	genesisAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())

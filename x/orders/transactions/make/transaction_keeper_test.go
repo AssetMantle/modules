@@ -9,7 +9,7 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/x/orders/mapper"
 	"github.com/AssetMantle/modules/x/orders/record"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "cosmossdk.io/store/types"
 	"reflect"
 	"testing"
 
@@ -23,7 +23,7 @@ import (
 	tendermintDB "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
+	"cosmossdk.io/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -147,7 +147,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	Context, keepers, Mapper, parameterManager := CreateTestInput(t)
 	mutableMetaProperties := baseLists.NewPropertyList(
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()),
-		baseProperties.NewMetaProperty(baseIDs.NewStringID("exchangeRate"), baseData.NewDecData(sdkTypes.NewDec(10))),
+		baseProperties.NewMetaProperty(baseIDs.NewStringID("exchangeRate"), baseData.NewDecData(math.LegacyNewDec(10))),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerAssetID"), baseData.NewIDData(baseDocuments.NewCoinAsset("makerID").GetCoinAssetID())),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("creationHeight"), baseData.NewHeightData(baseTypes.NewHeight(1))),
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("takerAssetID"), baseData.NewIDData(baseDocuments.NewCoinAsset("takerID").GetCoinAssetID())),
@@ -176,7 +176,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	// testOrderID := mappable.NewMappable(testOrder).GenerateKey()
 	testMakerAssetID := baseDocuments.NewCoinAsset("makerID").GetCoinAssetID()
 	testTakerAssetID := baseDocuments.NewCoinAsset("takerID").GetCoinAssetID()
-	testRate := sdkTypes.NewInt(10)
+	testRate := math.NewInt(10)
 	testHeight := baseTypes.NewHeight(1)
 	// testOrderID := baseIDs.NewOrderID(testClassificationID, testMakerAssetID, testTakerAssetID, testRate, testHeight, testFromID, immutablesMeta)
 	// testOrderID2 := baseIDs.NewOrderID(testClassificationID, testTakerAssetID, testTakerAssetID, testRate, testHeight, testFromID, immutablesMeta)

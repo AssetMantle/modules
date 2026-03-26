@@ -6,7 +6,7 @@ package supply
 import (
 	"context"
 	"fmt"
-	storeTypes "github.com/cosmos/cosmos-sdk/store/types"
+	storeTypes "cosmossdk.io/store/types"
 	"reflect"
 	"testing"
 
@@ -20,7 +20,7 @@ import (
 	tendermintDB "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/store"
+	"cosmossdk.io/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -115,7 +115,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
 	testAssetID := baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID()
-	testRate := sdkTypes.OneInt()
+	testRate := math.OneInt()
 	split := baseTypes.NewSplit(testRate)
 	keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))
 

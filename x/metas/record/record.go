@@ -1,13 +1,13 @@
 package record
 
 import (
+	storeTypes "cosmossdk.io/store/types"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/metas/key"
 	"github.com/AssetMantle/modules/x/metas/mappable"
 	"github.com/AssetMantle/schema/data"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 func (record *Record) GetKey() helpers.Key {
@@ -21,10 +21,10 @@ func (record *Record) WithKey(Key helpers.Key) helpers.Record {
 	record.Mappable = mappable.Prototype().(*mappable.Mappable)
 	return record
 }
-func (record *Record) ReadFromIterator(iterator sdkTypes.Iterator) helpers.Record {
+func (record *Record) ReadFromIterator(iterator storeTypes.Iterator) helpers.Record {
 	return NewRecord(mappable.GetData(helpers.ReadMappableFromIterator(iterator, record.GetMappable())))
 }
-func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
+func (record *Record) Read(kvStore storeTypes.KVStore) helpers.Record {
 	if record.GetKey() == nil || len(record.GetKey().GeneratePrefixedStoreKeyBytes()) == 0 {
 		return Prototype()
 	}
@@ -39,12 +39,12 @@ func (record *Record) Read(kvStore sdkTypes.KVStore) helpers.Record {
 
 	return record
 }
-func (record *Record) Write(kvStore sdkTypes.KVStore) helpers.Record {
+func (record *Record) Write(kvStore storeTypes.KVStore) helpers.Record {
 	Bytes := base.CodecPrototype().MustMarshal(record.GetMappable())
 	kvStore.Set(record.GetKey().GeneratePrefixedStoreKeyBytes(), Bytes)
 	return record
 }
-func (record *Record) Delete(kvStore sdkTypes.KVStore) {
+func (record *Record) Delete(kvStore storeTypes.KVStore) {
 	kvStore.Delete(record.GetKey().GeneratePrefixedStoreKeyBytes())
 }
 

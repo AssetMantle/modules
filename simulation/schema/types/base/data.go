@@ -4,7 +4,8 @@
 package base
 
 import (
-	"math"
+	goMath "math"
+	"cosmossdk.io/math"
 	"math/rand"
 	"time"
 
@@ -15,7 +16,6 @@ import (
 	"github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/schema/ids/constants"
 	baseTypes "github.com/AssetMantle/schema/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/AssetMantle/modules/utilities/random"
@@ -51,7 +51,7 @@ func GenerateRandomData(r *rand.Rand, randomPositiveInt int) data.Data {
 	case 1:
 		return baseData.NewStringData(simulationTypes.RandStringOfLength(r, r.Intn(99)))
 	case 2:
-		return baseData.NewDecData(simulationTypes.RandomDecAmount(r, sdkTypes.NewDec(99)))
+		return baseData.NewDecData(simulationTypes.RandomDecAmount(r, math.LegacyNewDec(99)))
 	case 3:
 		return baseData.NewHeightData(baseTypes.NewHeight(r.Int63()))
 	case 4:
@@ -59,7 +59,7 @@ func GenerateRandomData(r *rand.Rand, randomPositiveInt int) data.Data {
 	case 5:
 		return baseData.NewAccAddressData(simulationTypes.RandomAccounts(r, 1)[0].Address)
 	case 6:
-		return baseData.NewNumberData(sdkTypes.NewInt(int64(r.Intn(99))))
+		return baseData.NewNumberData(math.NewInt(int64(r.Intn(99))))
 	case 7:
 		return GenerateRandomListData(r)
 	default:
@@ -101,7 +101,7 @@ func GenerateRandomCoinListString(listCount int) string {
 }
 
 func GenerateRandomListData(r *rand.Rand) data.ListData {
-	listDataType := int(math.Abs(float64(r.Int()))) % 7
+	listDataType := int(goMath.Abs(float64(r.Int()))) % 7
 	listData := baseData.PrototypeListData()
 
 	for i := 0; i < r.Intn(10); i++ {

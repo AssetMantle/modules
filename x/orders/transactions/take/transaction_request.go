@@ -4,6 +4,7 @@
 package take
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -56,7 +57,7 @@ func (transactionRequest transactionRequest) MakeMsg() (sdkTypes.Msg, error) {
 		return nil, err
 	}
 
-	takerSplit, ok := sdkTypes.NewIntFromString(transactionRequest.TakerSplit)
+	takerSplit, ok := math.NewIntFromString(transactionRequest.TakerSplit)
 	if !ok {
 		return nil, constants.IncorrectFormat.Wrapf("taker split %s is not a valid integer", transactionRequest.TakerSplit)
 	}

@@ -13,7 +13,6 @@ import (
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/schema/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 func AddSplits(splits helpers.Collection, ownerID ids.IdentityID, assetID ids.AssetID, value math.Int) (helpers.Collection, error) {
@@ -39,9 +38,9 @@ func SubtractSplits(splits helpers.Collection, ownerID ids.IdentityID, assetID i
 	split := mappable.GetSplit(Mappable)
 
 	switch split = split.Subtract(value); {
-	case split.GetValue().LT(sdkTypes.ZeroInt()):
+	case split.GetValue().LT(math.ZeroInt()):
 		return nil, errorConstants.InsufficientBalance.Wrapf("%d is less then %d", split.GetValue(), value)
-	case split.GetValue().Equal(sdkTypes.ZeroInt()):
+	case split.GetValue().Equal(math.ZeroInt()):
 		splits.Remove(record.NewRecord(splitID, split))
 	default:
 		splits.Mutate(record.NewRecord(splitID, split))
