@@ -13,7 +13,6 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"math/rand"
 
@@ -34,7 +33,6 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	var Data data.Data
 
 	simulationState.AppParams.GetOrGenerate(
-		simulationState.Cdc,
 		burn_enabled.ID.AsString(),
 		&Data,
 		simulationState.Rand,

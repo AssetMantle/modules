@@ -14,7 +14,7 @@ import (
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
 	var weightMsg int
 
-	simulationState.AppParams.GetOrGenerate(nil, OpWeightMsg, &weightMsg, nil,
+	simulationState.AppParams.GetOrGenerate(OpWeightMsg, &weightMsg, nil,
 		func(_ *rand.Rand) {
 			weightMsg = DefaultWeightMsg
 		},

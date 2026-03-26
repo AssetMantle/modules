@@ -11,7 +11,6 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"math/rand"
 
@@ -29,7 +28,6 @@ import (
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
 	var bondRateData data.Data
 	simulationState.AppParams.GetOrGenerate(
-		simulationState.Cdc,
 		bond_rate.ID.AsString(),
 		&bondRateData,
 		simulationState.Rand,
@@ -40,7 +38,6 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 
 	var maxPropertyCountData data.Data
 	simulationState.AppParams.GetOrGenerate(
-		simulationState.Cdc,
 		max_property_count.ID.AsString(),
 		&maxPropertyCountData,
 		simulationState.Rand,

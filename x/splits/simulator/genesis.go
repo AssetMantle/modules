@@ -12,7 +12,6 @@ import (
 	"github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseTypes "github.com/AssetMantle/schema/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"math/rand"
 
@@ -30,11 +29,10 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	var Data data.Data
 
 	simulationState.AppParams.GetOrGenerate(
-		simulationState.Cdc,
 		transfer_enabled.ID.AsString(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
+		func(rand *rand.Rand) { Data = baseData.NewDecData(math.LegacyNewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
 	records := make([]helpers.Record, 2*len(assets.ClassificationIDMappableBytesMap))

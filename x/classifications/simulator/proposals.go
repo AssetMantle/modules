@@ -7,7 +7,6 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	govSimulation "github.com/cosmos/cosmos-sdk/x/gov/simulation"
 	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"math/rand"
@@ -19,7 +18,7 @@ func (simulator) ProposalMessages(_ module.SimulationState) []simulationTypes.We
 			OpWeightSubmitTextProposal,
 			DefaultWeightTextProposal,
 			func(r *rand.Rand, _ sdkTypes.Context, simulationAccounts []simulationTypes.Account) sdkTypes.Msg {
-				msgSubmitProposal, err := v1beta1.NewMsgSubmitProposal(v1beta1.NewTextProposal(simulationTypes.RandStringOfLength(r, 140), simulationTypes.RandStringOfLength(r, 5000)), govSimulation.GenDepositParamsMinDeposit(r), simulationAccounts[r.Intn(len(simulationAccounts))].Address)
+				msgSubmitProposal, err := v1beta1.NewMsgSubmitProposal(v1beta1.NewTextProposal(simulationTypes.RandStringOfLength(r, 140), simulationTypes.RandStringOfLength(r, 5000)), sdkTypes.NewCoins(sdkTypes.NewInt64Coin(sdkTypes.DefaultBondDenom, 10000000)), simulationAccounts[r.Intn(len(simulationAccounts))].Address)
 				if err != nil {
 					panic(err)
 				}

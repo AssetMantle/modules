@@ -4,13 +4,13 @@
 package simulator
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"math/rand"
 	"strconv"
 
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/metas/constants"
 	"github.com/AssetMantle/modules/x/metas/parameters/reveal_enabled"

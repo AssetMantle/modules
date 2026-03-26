@@ -4,12 +4,12 @@
 package simulator
 
 import (
+	"cosmossdk.io/math"
+	goMath "math"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/lists/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"math"
 	"math/rand"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -25,17 +25,16 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	var Data data.Data
 
 	simulationState.AppParams.GetOrGenerate(
-		simulationState.Cdc,
 		reveal_enabled.ID.AsString(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
+		func(rand *rand.Rand) { Data = baseData.NewDecData(math.LegacyNewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
 	records := make([]helpers.Record, simulationState.Rand.Intn(99))
 
 	for i := range records {
-		records[i] = record.NewRecord(baseSimulation.GenerateRandomData(simulationState.Rand, int(math.Abs(float64(simulationState.Rand.Int())))))
+		records[i] = record.NewRecord(baseSimulation.GenerateRandomData(simulationState.Rand, int(goMath.Abs(float64(simulationState.Rand.Int())))))
 	}
 
 	genesisState := genesis.Prototype().Initialize(records, base.NewParameterList(reveal_enabled.Parameter.Mutate(Data)))

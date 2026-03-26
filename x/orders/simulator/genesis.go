@@ -4,6 +4,7 @@
 package simulator
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents/base"
@@ -11,7 +12,6 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"math/rand"
 
@@ -31,11 +31,10 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 	var Data data.Data
 
 	simulationState.AppParams.GetOrGenerate(
-		simulationState.Cdc,
 		max_order_life.ID.AsString(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = baseData.NewDecData(sdkTypes.NewDecWithPrec(int64(rand.Intn(99)), 2)) },
+		func(rand *rand.Rand) { Data = baseData.NewDecData(math.LegacyNewDecWithPrec(int64(rand.Intn(99)), 2)) },
 	)
 
 	records := make([]helpers.Record, len(assets.ClassificationIDMappableBytesMap))

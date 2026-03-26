@@ -36,7 +36,7 @@ import (
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
 	var weightMsg int
 
-	simulationState.AppParams.GetOrGenerate(nil, OpWeightMsg, &weightMsg, nil,
+	simulationState.AppParams.GetOrGenerate(OpWeightMsg, &weightMsg, nil,
 		func(_ *rand.Rand) {
 			weightMsg = DefaultWeightMsg
 		},
@@ -80,9 +80,9 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
 	}
 }
 func simulateMakeMsg(module helpers.Module) simulationTypes.Operation {
@@ -95,14 +95,14 @@ func simulateMakeMsg(module helpers.Module) simulationTypes.Operation {
 
 		message := GetMakeMessage(from, to, rand)
 		if message == nil {
-			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message", base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message"), nil, nil
 		}
 
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
 	}
 }
 func simulateCancelMsg(module helpers.Module) simulationTypes.Operation {
@@ -115,12 +115,12 @@ func simulateCancelMsg(module helpers.Module) simulationTypes.Operation {
 
 		makeMessage := GetMakeMessage(from, to, rand)
 		if makeMessage == nil {
-			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message", base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message"), nil, nil
 		}
 
 		result, err = simulationModules.ExecuteMessage(context, module, makeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(makeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(makeMessage, false, err.Error()), nil, nil
 		}
 
 		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(makeMessage.(*make.Message).ImmutableProperties.Get()...)...)))
@@ -128,9 +128,9 @@ func simulateCancelMsg(module helpers.Module) simulationTypes.Operation {
 		cancelMessage := cancel.NewMessage(from.Address, makeMessage.(*make.Message).FromID, orderID)
 		result, err = simulationModules.ExecuteMessage(context, module, cancelMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(cancelMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(cancelMessage, false, err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(cancelMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(cancelMessage, true, string(result.Data)), nil, nil
 	}
 }
 func simulateTakeMsg(module helpers.Module) simulationTypes.Operation {
@@ -143,12 +143,12 @@ func simulateTakeMsg(module helpers.Module) simulationTypes.Operation {
 
 		makeMessage := GetMakeMessage(from, to, rand)
 		if makeMessage == nil {
-			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message", base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message"), nil, nil
 		}
 
 		result, err = simulationModules.ExecuteMessage(context, module, makeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(makeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(makeMessage, false, err.Error()), nil, nil
 		}
 
 		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(makeMessage.(*make.Message).ImmutableProperties.Get()...)...)))
@@ -156,9 +156,9 @@ func simulateTakeMsg(module helpers.Module) simulationTypes.Operation {
 		takeMessage := take.NewMessage(to.Address, makeMessage.(*make.Message).TakerID, math.NewInt(1), orderID)
 		result, err = simulationModules.ExecuteMessage(context, module, takeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(takeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(takeMessage, false, err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(takeMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(takeMessage, true, string(result.Data)), nil, nil
 	}
 }
 

@@ -40,7 +40,7 @@ import (
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
 	var weightMsg int
 
-	simulationState.AppParams.GetOrGenerate(nil, OpWeightMsg, &weightMsg, nil,
+	simulationState.AppParams.GetOrGenerate(OpWeightMsg, &weightMsg, nil,
 		func(_ *rand.Rand) {
 			weightMsg = DefaultWeightMsg
 		},
@@ -98,9 +98,9 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 		message = GenerateDefineMessage(account.Address, identityID.(ids.IdentityID), rand).(*define.Message)
 		result, err = simulationModules.ExecuteMessage(context, module, message)
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, "error executing define message", base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(message, false, "error executing define message"), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
 	}
 }
 func simulateMintMsg(module helpers.Module) simulationTypes.Operation {
@@ -112,13 +112,13 @@ func simulateMintMsg(module helpers.Module) simulationTypes.Operation {
 
 		message := GetMintMessage(from, to, rand)
 		if message == nil {
-			return simulationTypes.NewOperationMsg(&mint.Message{}, false, "error in mint message", base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(&mint.Message{}, false, "error in mint message"), nil, nil
 		}
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
 	}
 }
 func simulateRenumerateMsg(module helpers.Module) simulationTypes.Operation {
@@ -130,20 +130,20 @@ func simulateRenumerateMsg(module helpers.Module) simulationTypes.Operation {
 
 		mintMessage := GetMintMessage(from, to, rand)
 		if mintMessage == nil {
-			return simulationTypes.NewOperationMsg(&mint.Message{}, false, "error in mint message", base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(&mint.Message{}, false, "error in mint message"), nil, nil
 		}
 		result, err = simulationModules.ExecuteMessage(context, module, mintMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(&renumerate.Message{}, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(&renumerate.Message{}, false, err.Error()), nil, nil
 		}
 
 		assetID := baseIDs.NewAssetID(mintMessage.(*mint.Message).ClassificationID, baseQualified.NewImmutables(mintMessage.(*mint.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(mintMessage.(*mint.Message).ImmutableProperties.Get()...)...)))
 		renumerateMessage := renumerate.NewMessage(from.Address, mintMessage.(*mint.Message).FromID, assetID)
 		result, err = simulationModules.ExecuteMessage(context, module, renumerateMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(renumerateMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(renumerateMessage, false, err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(renumerateMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(renumerateMessage, true, string(result.Data)), nil, nil
 	}
 }
 func simulateBurnMsg(module helpers.Module) simulationTypes.Operation {
@@ -155,21 +155,21 @@ func simulateBurnMsg(module helpers.Module) simulationTypes.Operation {
 
 		mintMessage := GetMintMessage(from, to, rand)
 		if mintMessage == nil {
-			return simulationTypes.NewOperationMsg(&mint.Message{}, false, "error in mint message", base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(&mint.Message{}, false, "error in mint message"), nil, nil
 		}
 
 		result, err = simulationModules.ExecuteMessage(context, module, mintMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(mintMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(mintMessage, false, err.Error()), nil, nil
 		}
 
 		assetID := baseIDs.NewAssetID(mintMessage.(*mint.Message).ClassificationID, baseQualified.NewImmutables(mintMessage.(*mint.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(mintMessage.(*mint.Message).ImmutableProperties.Get()...)...)))
 		burnMessage := burn.NewMessage(from.Address, mintMessage.(*mint.Message).FromID, assetID)
 		result, err = simulationModules.ExecuteMessage(context, module, burnMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(burnMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(burnMessage, false, err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(burnMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(burnMessage, true, string(result.Data)), nil, nil
 	}
 }
 func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operation {
@@ -182,7 +182,7 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		fromIDMap := identities.GetIDData(from.Address.String())
 
 		if fromIDMap == nil {
-			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "address not found", base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "address not found"), nil, nil
 		}
 
 		for _, id := range fromIDMap {
@@ -204,7 +204,7 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		toIDMap := identities.GetIDData(to.Address.String())
 
 		if toIDMap == nil {
-			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "address not found", base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "address not found"), nil, nil
 		}
 
 		for _, id := range toIDMap {
@@ -218,14 +218,14 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID), mappable.Asset.Mutables.PropertyList, true, true, true, true, true, true)
 		result, err = simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(deputizeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(deputizeMessage, false, err.Error()), nil, nil
 		}
 		revokeMessage := revoke.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID))
 		result, err = simulationModules.ExecuteMessage(context, module, revokeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(revokeMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(revokeMessage, false, err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(revokeMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(revokeMessage, true, string(result.Data)), nil, nil
 	}
 }
 func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
@@ -264,7 +264,7 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 		mutableProperties := &baseLists.PropertyList{}
 		updatedProperties := &baseLists.PropertyList{}
 		if mappable.Asset == nil {
-			return simulationTypes.NewOperationMsg(&issue.Message{}, false, "invalid identity", base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(&issue.Message{}, false, "invalid identity"), nil, nil
 		}
 		for _, i := range mappable.GetAsset().Get().GetImmutables().GetImmutablePropertyList().Get() {
 			if i.IsMeta() {
@@ -285,16 +285,16 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 		mintMessage := mint.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 		result, err = simulationModules.ExecuteMessage(context, module, mintMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(mintMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(mintMessage, false, err.Error()), nil, nil
 		}
 		mintedAssetID := baseIDs.NewAssetID(classificationID.(ids.ClassificationID), baseQualified.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(immutableProperties.Get()...)...)))
 		mutateMessage := mutate.NewMessage(from.Address, fromID.(ids.IdentityID), mintedAssetID, updatedProperties, mutableProperties)
 
 		result, err = simulationModules.ExecuteMessage(context, module, mutateMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(mutateMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(mutateMessage, false, err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(mutateMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(mutateMessage, true, string(result.Data)), nil, nil
 	}
 }
 
@@ -384,9 +384,9 @@ func simulateSendMsg(module helpers.Module) simulationTypes.Operation {
 
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
 	}
 }
 func simulateWrapAndUnwrapMsg(module helpers.Module) simulationTypes.Operation {
@@ -408,15 +408,15 @@ func simulateWrapAndUnwrapMsg(module helpers.Module) simulationTypes.Operation {
 
 		result, err = simulationModules.ExecuteMessage(context, module, wrapMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(wrapMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(wrapMessage, false, err.Error()), nil, nil
 		}
 
 		unwrapMessage := unwrap.NewMessage(from.Address, fromID.(ids.IdentityID), sdkTypes.NewCoins(sdkTypes.NewCoin("stake", math.NewInt(1))))
 
 		result, err = simulationModules.ExecuteMessage(context, module, unwrapMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(unwrapMessage, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(unwrapMessage, false, err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(unwrapMessage, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(unwrapMessage, true, string(result.Data)), nil, nil
 	}
 }

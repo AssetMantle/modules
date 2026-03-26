@@ -4,13 +4,13 @@
 package simulator
 
 import (
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"math/rand"
 	"strconv"
 
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/maintainers/constants"
 	"github.com/AssetMantle/modules/x/maintainers/parameters/deputize_allowed"

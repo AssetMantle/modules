@@ -12,7 +12,6 @@ import (
 	"math/rand"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	base2 "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/x/metas/transactions/reveal"
@@ -21,7 +20,7 @@ import (
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
 	var weightMsg int
 
-	simulationState.AppParams.GetOrGenerate(nil, OpWeightMsg, &weightMsg, nil,
+	simulationState.AppParams.GetOrGenerate(OpWeightMsg, &weightMsg, nil,
 		func(_ *rand.Rand) {
 			weightMsg = DefaultWeightMsg
 		},
@@ -41,8 +40,8 @@ func simulateRevealMsg(module helpers.Module) simulationTypes.Operation {
 		message := reveal.NewMessage(from.Address, base2.GenerateRandomData(rand, rand.Int()))
 		result, err := simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error(), base.CodecPrototype().GetProtoCodec()), nil, nil
+			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(message, true, string(result.Data), base.CodecPrototype().GetProtoCodec()), nil, nil
+		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
 	}
 }
