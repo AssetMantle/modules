@@ -5,5 +5,5 @@ import (
 )
 
 type BasicModule interface {
-	module.AppModule
+	module.AppModuleBasic
 }

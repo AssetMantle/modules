@@ -129,9 +129,11 @@ func (moduleManager moduleManager) RegisterInterfaces(interfaceRegistry types.In
 	}
 }
 func (moduleManager moduleManager) getManager() *sdkModuleTypes.Manager {
-	appModules := make([]sdkModuleTypes.AppModule, len(moduleManager.basicModules))
-	for i, basicModule := range moduleManager.basicModules {
-		appModules[i] = basicModule
+	var appModules []sdkModuleTypes.AppModule
+	for _, basicModule := range moduleManager.basicModules {
+		if appModule, ok := basicModule.(sdkModuleTypes.AppModule); ok {
+			appModules = append(appModules, appModule)
+		}
 	}
 
 	manager := sdkModuleTypes.NewManager(appModules...)
