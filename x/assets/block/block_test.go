@@ -58,7 +58,7 @@ func Test_block_Begin(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateAssetsTestInput(t), abciTypes.RequestBeginBlock{}}},
+		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateAssetsTestInput(t), }},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -86,7 +86,7 @@ func Test_block_End(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateAssetsTestInput(t), abciTypes.RequestEndBlock{}}},
+		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateAssetsTestInput(t), }},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

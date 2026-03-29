@@ -4,6 +4,7 @@
 package burn
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"

@@ -4,6 +4,7 @@
 package bond_rate
 
 import (
+	"cosmossdk.io/math"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/data/base"

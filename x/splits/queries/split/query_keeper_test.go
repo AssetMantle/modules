@@ -4,6 +4,7 @@
 package split
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	"fmt"
 	"github.com/AssetMantle/modules/helpers"

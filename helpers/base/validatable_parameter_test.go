@@ -17,13 +17,13 @@ func TestNewValidatableParameter(t *testing.T) {
 	tests := []struct {
 		name         string
 		param        parameters.Parameter
-		validateFunc func(i interface{}) error
+		validateFunc func(i parameters.Parameter) error
 		wantErr      error
 	}{
 		{
 			name:         "Test invalid input",
 			param:        base.NewParameter(base2.NewMetaProperty(base3.NewStringID("testName"), base4.NewStringData("testData"))),
-			validateFunc: func(i interface{}) error { return fmt.Errorf("error") },
+			validateFunc: func(i parameters.Parameter) error { return fmt.Errorf("error") },
 			wantErr:      fmt.Errorf("error"),
 		},
 	}
@@ -41,7 +41,7 @@ func TestNewValidatableParameter(t *testing.T) {
 func Test_validatableParameter_GetParameter(t *testing.T) {
 	type fields struct {
 		parameter parameters.Parameter
-		validator func(i interface{}) error
+		validator func(i parameters.Parameter) error
 	}
 	tests := []struct {
 		name   string
@@ -52,7 +52,7 @@ func Test_validatableParameter_GetParameter(t *testing.T) {
 			name: "Test valid input",
 			fields: fields{
 				parameter: base.NewParameter(base2.NewMetaProperty(base3.NewStringID("testName"), base4.NewStringData("testData"))),
-				validator: func(i interface{}) error { return nil },
+				validator: func(i parameters.Parameter) error { return nil },
 			},
 			want: base.NewParameter(base2.NewMetaProperty(base3.NewStringID("testName"), base4.NewStringData("testData"))),
 		},
@@ -79,25 +79,25 @@ func Test_validatableParameter_GetParameter(t *testing.T) {
 func Test_validatableParameter_GetValidator(t *testing.T) {
 	type fields struct {
 		parameter parameters.Parameter
-		validator func(i interface{}) error
+		validator func(i parameters.Parameter) error
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   func(i interface{}) error
+		want   func(i parameters.Parameter) error
 	}{
 		{
 			name: "Test valid input",
 			fields: fields{
 				parameter: base.NewParameter(base2.NewMetaProperty(base3.NewStringID("testName"), base4.NewStringData("testData"))),
-				validator: func(i interface{}) error {
+				validator: func(i parameters.Parameter) error {
 					if i != base4.NewStringData("valid") {
 						return fmt.Errorf("error")
 					}
 					return nil
 				},
 			},
-			want: func(i interface{}) error {
+			want: func(i parameters.Parameter) error {
 				if i != base4.NewStringData("valid") {
 					return fmt.Errorf("error")
 				}
@@ -119,7 +119,7 @@ func Test_validatableParameter_GetValidator(t *testing.T) {
 func Test_validatableParameter_Mutate(t *testing.T) {
 	type fields struct {
 		parameter parameters.Parameter
-		validator func(i interface{}) error
+		validator func(i parameters.Parameter) error
 	}
 	type args struct {
 		data data.Data
@@ -134,28 +134,28 @@ func Test_validatableParameter_Mutate(t *testing.T) {
 			name: "Test valid input",
 			fields: fields{
 				parameter: base.NewParameter(base2.NewMetaProperty(base3.NewStringID("testName"), base4.NewStringData("testData"))),
-				validator: func(i interface{}) error { return nil },
+				validator: func(i parameters.Parameter) error { return nil },
 			},
 			args: args{
 				data: base4.NewStringData("mutatedTestData"),
 			},
 			want: validatableParameter{
 				parameter: base.NewParameter(base2.NewMetaProperty(base3.NewStringID("testName"), base4.NewStringData("mutatedTestData"))),
-				validator: func(i interface{}) error { return nil },
+				validator: func(i parameters.Parameter) error { return nil },
 			},
 		},
 		{
 			name: "Test nil input",
 			fields: fields{
 				parameter: base.NewParameter(base2.NewMetaProperty(base3.NewStringID("testName"), base4.NewStringData("testData"))),
-				validator: func(i interface{}) error { return nil },
+				validator: func(i parameters.Parameter) error { return nil },
 			},
 			args: args{
 				data: nil,
 			},
 			want: validatableParameter{
 				parameter: base.NewParameter(base2.NewMetaProperty(base3.NewStringID("testName"), base4.NewStringData("testData"))),
-				validator: func(i interface{}) error { return nil },
+				validator: func(i parameters.Parameter) error { return nil },
 			},
 		},
 	}
@@ -173,7 +173,7 @@ func Test_validatableParameter_Mutate(t *testing.T) {
 func Test_validatableParameter_Validate(t *testing.T) {
 	type fields struct {
 		parameter parameters.Parameter
-		validator func(i interface{}) error
+		validator func(i parameters.Parameter) error
 	}
 	tests := []struct {
 		name    string
@@ -184,7 +184,7 @@ func Test_validatableParameter_Validate(t *testing.T) {
 			name: "Test invalid input",
 			fields: fields{
 				parameter: base.NewParameter(base2.NewMetaProperty(base3.NewStringID("testName"), base4.NewStringData("testData"))),
-				validator: func(i interface{}) error { return fmt.Errorf("error") },
+				validator: func(i parameters.Parameter) error { return fmt.Errorf("error") },
 			},
 			wantErr: assert.Error,
 		},
@@ -192,7 +192,7 @@ func Test_validatableParameter_Validate(t *testing.T) {
 			name: "Test valid input",
 			fields: fields{
 				parameter: base.NewParameter(base2.NewMetaProperty(base3.NewStringID("testName"), base4.NewStringData("testData"))),
-				validator: func(i interface{}) error { return nil },
+				validator: func(i parameters.Parameter) error { return nil },
 			},
 			wantErr: assert.NoError,
 		},

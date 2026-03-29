@@ -56,9 +56,9 @@ func Test_Block_Methods(t *testing.T) {
 	block := Prototype()
 	context, Mapper, transferAuxiliary, supplementAuxiliary, _ := CreateTestInput(t)
 	block = block.Initialize(Mapper, parameters.Prototype(), transferAuxiliary, supplementAuxiliary)
-	block.Begin(sdkTypes.WrapSDKContext(context), abciTypes.RequestBeginBlock{})
+	block.Begin(sdkTypes.WrapSDKContext(context), )
 
-	block.End(sdkTypes.WrapSDKContext(context), abciTypes.RequestEndBlock{})
+	block.End(sdkTypes.WrapSDKContext(context), )
 }
 
 func Test_block_End(t *testing.T) {
@@ -82,7 +82,7 @@ func Test_block_End(t *testing.T) {
 		args   args
 	}{
 		{"+ve with block height", fields{Mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{testContext, abciTypes.RequestEndBlock{Height: int64(1)}}},
-		{"-ve without block height", fields{Mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{context, abciTypes.RequestEndBlock{}}},
+		{"-ve without block height", fields{Mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{context, }},
 		{"-ve with -ve block height", fields{Mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{testContext1, abciTypes.RequestEndBlock{Height: int64(-1)}}},
 	}
 	for _, tt := range tests {

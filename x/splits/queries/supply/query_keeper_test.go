@@ -4,6 +4,7 @@
 package supply
 
 import (
+	"cosmossdk.io/math"
 	"context"
 	"fmt"
 	storeTypes "cosmossdk.io/store/types"

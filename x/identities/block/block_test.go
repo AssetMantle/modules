@@ -57,7 +57,7 @@ func Test_block_Begin(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{mapper: mapper.Prototype(), parameterManager: parameters.Prototype()}, args{in0: ctx, in1: abciTypes.RequestBeginBlock{}}},
+		{"+ve", fields{mapper: mapper.Prototype(), parameterManager: parameters.Prototype()}, args{in0: ctx, in1: }},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -85,7 +85,7 @@ func Test_block_End(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateTestInput(t), abciTypes.RequestEndBlock{}}},
+		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateTestInput(t), }},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

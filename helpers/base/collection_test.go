@@ -29,7 +29,7 @@ func (mr MockRecord) WithKey(helpers.Key) helpers.Record {
 	return nil
 }
 
-func (mr MockRecord) ReadFromIterator(sdkTypes.Iterator) helpers.Record {
+func (mr MockRecord) ReadFromIterator(storeTypes.Iterator) helpers.Record {
 	return nil
 }
 

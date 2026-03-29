@@ -4,6 +4,7 @@
 package mappable
 
 import (
+	"cosmossdk.io/math"
 	"reflect"
 	"testing"
 

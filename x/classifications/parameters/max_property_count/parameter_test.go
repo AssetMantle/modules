@@ -4,6 +4,7 @@
 package max_property_count
 
 import (
+	"cosmossdk.io/math"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"testing"
 

@@ -45,6 +45,6 @@ func Test_Block_Methods(t *testing.T) {
 	block := Prototype()
 	block.Initialize(mapper.Prototype(), parameters.Prototype(), []helpers.Auxiliary{})
 	context := createTestInput(t)
-	block.Begin(context, abciTypes.RequestBeginBlock{})
-	block.End(context, abciTypes.RequestEndBlock{})
+	block.Begin(context, )
+	block.End(context, )
 }
