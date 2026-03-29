@@ -33,18 +33,24 @@ type hasQueryCmd interface {
 func (moduleManager moduleManager) AddTxCommands(command *cobra.Command) {
 	for _, basicModule := range moduleManager.basicModules {
 		if m, ok := basicModule.(hasTxCmd); ok {
-			if cmd := m.GetTxCmd(); cmd != nil {
-				command.AddCommand(cmd)
-			}
+			func() {
+				defer func() { recover() }() // protect against nil receivers in uninitialized AppModuleBasic
+				if cmd := m.GetTxCmd(); cmd != nil {
+					command.AddCommand(cmd)
+				}
+			}()
 		}
 	}
 }
 func (moduleManager moduleManager) AddQueryCommands(rootQueryCmd *cobra.Command) {
 	for _, basicModule := range moduleManager.basicModules {
 		if m, ok := basicModule.(hasQueryCmd); ok {
-			if cmd := m.GetQueryCmd(); cmd != nil {
-				rootQueryCmd.AddCommand(cmd)
-			}
+			func() {
+				defer func() { recover() }() // protect against nil receivers in uninitialized AppModuleBasic
+				if cmd := m.GetQueryCmd(); cmd != nil {
+					rootQueryCmd.AddCommand(cmd)
+				}
+			}()
 		}
 	}
 }
