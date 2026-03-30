@@ -7,6 +7,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/burn"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/distribute"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/purge"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
@@ -16,6 +17,7 @@ import (
 func Prototype() helpers.Auxiliaries {
 	return baseHelpers.NewAuxiliaries(
 		burn.Auxiliary,
+		distribute.Auxiliary,
 		mint.Auxiliary,
 		purge.Auxiliary,
 		renumerate.Auxiliary,
