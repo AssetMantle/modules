@@ -7,10 +7,12 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/compliance"
 )
 
 func Prototype() helpers.Auxiliaries {
 	return baseHelpers.NewAuxiliaries(
 		authenticate.Auxiliary,
+		compliance.Auxiliary,
 	)
 }
