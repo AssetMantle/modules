@@ -10,8 +10,10 @@ import (
 	"github.com/AssetMantle/modules/x/assets/key"
 	"github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/compliance"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/schema/data"
 	"github.com/AssetMantle/schema/properties"
 	propertyConstants "github.com/AssetMantle/schema/properties/constants"
@@ -22,6 +24,7 @@ type transactionKeeper struct {
 	mapper                helpers.Mapper
 	parameterManager      helpers.ParameterManager
 	authenticateAuxiliary helpers.Auxiliary
+	complianceAuxiliary   helpers.Auxiliary
 	supplementAuxiliary   helpers.Auxiliary
 	transferAuxiliary     helpers.Auxiliary
 }
@@ -101,6 +104,19 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("transfer is not allowed until height %d", lockHeight.Get())
 	}
 
+	// RWA Compliance: check receiver identity meets compliance requirements
+	// Uses tier 0 (no restriction) by default — classifications can set higher tiers
+	if transactionKeeper.complianceAuxiliary != nil {
+		if _, err := transactionKeeper.complianceAuxiliary.GetKeeper().Help(context, compliance.NewAuxiliaryRequest(
+			message.ToID,
+			math.ZeroInt(), // minimum tier: 0 (no restriction by default)
+			"",             // any jurisdiction
+			false,          // sanctions check not required by default
+		)); err != nil {
+			return nil, err
+		}
+	}
+
 	if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(message.GetFromIdentityID(), message.ToID, message.AssetID, value)); err != nil {
 		return nil, err
 	}
@@ -117,6 +133,8 @@ func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, par
 			switch value.GetName() {
 			case authenticate.Auxiliary.GetName():
 				transactionKeeper.authenticateAuxiliary = value
+			case compliance.Auxiliary.GetName():
+				transactionKeeper.complianceAuxiliary = value
 			case supplement.Auxiliary.GetName():
 				transactionKeeper.supplementAuxiliary = value
 			case transfer.Auxiliary.GetName():
