@@ -13,7 +13,6 @@ import (
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseParameters "github.com/AssetMantle/schema/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 func Test_validator(t *testing.T) {

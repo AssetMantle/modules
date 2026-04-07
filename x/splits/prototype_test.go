@@ -18,6 +18,7 @@ import (
 	"github.com/AssetMantle/modules/x/splits/parameters"
 	"github.com/AssetMantle/modules/x/splits/queries"
 	"github.com/AssetMantle/modules/x/splits/simulator"
+	"github.com/AssetMantle/modules/x/splits/migrations"
 	"github.com/AssetMantle/modules/x/splits/transactions"
 )
 

@@ -10,9 +10,7 @@ import (
 
 	"github.com/AssetMantle/schema/types"
 	baseTypes "github.com/AssetMantle/schema/types/base"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/AssetMantle/modules/helpers"
+"github.com/AssetMantle/modules/helpers"
 )
 
 var (

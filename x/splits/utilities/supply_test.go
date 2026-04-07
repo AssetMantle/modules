@@ -39,7 +39,7 @@ func TestGetTotalSupply(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want types.Int
+		want math.Int
 	}{
 		{"+ve", args{testSplits, testAssetID}, testRate},
 	}

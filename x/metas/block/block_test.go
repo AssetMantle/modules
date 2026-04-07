@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	cosmosDB "github.com/cosmos/cosmos-db"
-	abciTypes "github.com/cometbft/cometbft/abci/types"
 	"cosmossdk.io/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"cosmossdk.io/store"

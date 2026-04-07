@@ -18,6 +18,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/parameters"
 	"github.com/AssetMantle/modules/x/identities/queries"
 	"github.com/AssetMantle/modules/x/identities/simulator"
+	"github.com/AssetMantle/modules/x/identities/migrations"
 	"github.com/AssetMantle/modules/x/identities/transactions"
 )
 

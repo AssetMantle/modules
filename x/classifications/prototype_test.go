@@ -18,6 +18,7 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/parameters"
 	"github.com/AssetMantle/modules/x/classifications/queries"
 	"github.com/AssetMantle/modules/x/classifications/simulator"
+	"github.com/AssetMantle/modules/x/classifications/migrations"
 	"github.com/AssetMantle/modules/x/classifications/transactions"
 )
 

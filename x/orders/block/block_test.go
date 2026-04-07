@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	cosmosDB "github.com/cosmos/cosmos-db"
-	abciTypes "github.com/cometbft/cometbft/abci/types"
 	"cosmossdk.io/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"cosmossdk.io/store"
@@ -56,15 +55,15 @@ func Test_Block_Methods(t *testing.T) {
 	block := Prototype()
 	context, Mapper, transferAuxiliary, supplementAuxiliary, _ := CreateTestInput(t)
 	block = block.Initialize(Mapper, parameters.Prototype(), transferAuxiliary, supplementAuxiliary)
-	block.Begin(sdkTypes.WrapSDKContext(context), )
+	block.Begin(sdkTypes.WrapSDKContext(context))
 
-	block.End(sdkTypes.WrapSDKContext(context), )
+	block.End(sdkTypes.WrapSDKContext(context))
 }
 
 func Test_block_End(t *testing.T) {
 	context, Mapper, transferAuxiliary, supplementAuxiliary, scrubAuxiliary := CreateTestInput(t)
-	testContext := context.WithBlockHeight(1)
-	testContext1 := context.WithBlockHeight(-1)
+	_ = context.WithBlockHeight(1)
+	_ = context.WithBlockHeight(-1)
 	type fields struct {
 		mapper              helpers.Mapper
 		parameterManager    helpers.ParameterManager
@@ -80,14 +79,14 @@ func Test_block_End(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"-ve without block height", fields{Mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{context, }},
+		{"-ve without block height", fields{Mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{context}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			block := block{
 				mapper: tt.fields.mapper,
 			}
-			block.End(sdkTypes.WrapSDKContext(tt.args.context), tt.args.in1)
+			block.End(sdkTypes.WrapSDKContext(tt.args.context))
 		})
 	}
 }

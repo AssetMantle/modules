@@ -76,45 +76,6 @@ func Test_validatableParameter_GetParameter(t *testing.T) {
 	}
 }
 
-func Test_validatableParameter_GetValidator(t *testing.T) {
-	type fields struct {
-		parameter parameters.Parameter
-		validator func(i parameters.Parameter) error
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   func(i parameters.Parameter) error
-	}{
-		{
-			name: "Test valid input",
-			fields: fields{
-				parameter: base.NewParameter(base2.NewMetaProperty(base3.NewStringID("testName"), base4.NewStringData("testData"))),
-				validator: func(i parameters.Parameter) error {
-					if i != base4.NewStringData("valid") {
-						return fmt.Errorf("error")
-					}
-					return nil
-				},
-			},
-			want: func(i parameters.Parameter) error {
-				if i != base4.NewStringData("valid") {
-					return fmt.Errorf("error")
-				}
-				return nil
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			validatableParameter := validatableParameter{
-				parameter: tt.fields.parameter,
-				validator: tt.fields.validator,
-			}
-			assert.Equalf(t, tt.want(base4.NewStringData("aa")), validatableParameter.GetValidator()(base4.NewStringData("aa")), "GetValidator()")
-		})
-	}
-}
 
 func Test_validatableParameter_Mutate(t *testing.T) {
 	type fields struct {

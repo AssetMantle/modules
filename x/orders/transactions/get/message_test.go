@@ -4,6 +4,7 @@
 package get
 
 import (
+	"cosmossdk.io/math"
 	"reflect"
 	"testing"
 
@@ -21,7 +22,7 @@ var (
 type fields struct {
 	From       string
 	FromID     *baseIDs.IdentityID
-	TakerSplit types.Int
+	TakerSplit math.Int
 	OrderID    *baseIDs.OrderID
 }
 
@@ -99,7 +100,7 @@ func Test_NewMessage(t *testing.T) {
 	type args struct {
 		from       types.AccAddress
 		fromID     ids.IdentityID
-		takerSplit types.Int
+		takerSplit math.Int
 		orderID    ids.OrderID
 	}
 	tests := []struct {

@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/AssetMantle/schema/parameters"
 	"cosmossdk.io/math"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/data/base"

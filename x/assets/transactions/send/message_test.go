@@ -141,7 +141,7 @@ func Test_message_GetSigners(t *testing.T) {
 		FromID  *baseIDs.IdentityID
 		ToID    *baseIDs.IdentityID
 		AssetID *baseIDs.AssetID
-		Value   types.Int
+		Value   math.Int
 	}
 	tests := []struct {
 		name   string
@@ -172,7 +172,7 @@ func Test_NewMessage(t *testing.T) {
 		fromID  ids.IdentityID
 		toID    ids.IdentityID
 		assetID ids.AssetID
-		value   types.Int
+		value   math.Int
 	}
 	tests := []struct {
 		name string

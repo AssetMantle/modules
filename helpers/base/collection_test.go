@@ -7,7 +7,6 @@ import (
 	"context"
 	"github.com/AssetMantle/modules/helpers"
 	storeTypes "cosmossdk.io/store/types"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/assert"
 	"testing"

@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	cosmosDB "github.com/cosmos/cosmos-db"
-	abciTypes "github.com/cometbft/cometbft/abci/types"
 	"cosmossdk.io/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"cosmossdk.io/store"
@@ -56,7 +55,7 @@ func Test_block_Begin(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{mapper: mapper.Prototype(), parameterManager: parameters.Prototype()}, args{in0: ctx, in1: }},
+		{"+ve", fields{mapper: mapper.Prototype(), parameterManager: parameters.Prototype()}, args{in0: ctx}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -64,7 +63,7 @@ func Test_block_Begin(t *testing.T) {
 				mapper:           tt.fields.mapper,
 				parameterManager: tt.fields.parameterManager,
 			}
-			block.Begin(tt.args.in0, tt.args.in1)
+			block.Begin(tt.args.in0)
 		})
 	}
 }
@@ -91,7 +90,7 @@ func Test_block_End(t *testing.T) {
 				mapper:           tt.fields.mapper,
 				parameterManager: tt.fields.parameterManager,
 			}
-			block.End(tt.args.in0, tt.args.in1)
+			block.End(tt.args.in0)
 		})
 	}
 }

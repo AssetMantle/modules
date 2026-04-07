@@ -15,12 +15,10 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	"github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/AssetMantle/modules/helpers"
 )
 
-func createTestInput1() (ids.IdentityID, ids.AssetID, types.Int) {
+func createTestInput1() (ids.IdentityID, ids.AssetID, math.Int) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -35,7 +33,7 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 	type args struct {
 		ownerID ids.IdentityID
 		assetID ids.AssetID
-		value   types.Int
+		value   math.Int
 	}
 	tests := []struct {
 		name string
@@ -59,7 +57,7 @@ func Test_auxiliaryRequest_Validate(t *testing.T) {
 	type fields struct {
 		OwnerID ids.IdentityID
 		AssetID ids.AssetID
-		Value   types.Int
+		Value   math.Int
 	}
 	tests := []struct {
 		name    string

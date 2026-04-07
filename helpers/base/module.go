@@ -151,7 +151,7 @@ func (module module) RegisterServices(configurator sdkModuleTypes.Configurator) 
 
 	for _, migration := range module.migrations.Get() {
 		if err := configurator.RegisterMigration(module.name, module.consensusVersion, migration.GetHandler()); err != nil {
-			panic(fmt.Sprintf("failed to migrate x/%s to version %s: %v", module.name, module.consensusVersion, err))
+			panic(fmt.Sprintf("failed to migrate x/%s to version %d: %v", module.name, module.consensusVersion, err))
 		}
 	}
 }
