@@ -166,7 +166,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(classificationID), false},
-		{"-ve", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress2, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil), false},
+		{"-ve", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress2, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(baseIDs.PrototypeClassificationID()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

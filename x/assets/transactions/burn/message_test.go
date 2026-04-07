@@ -47,22 +47,22 @@ func Test_messagePrototype(t *testing.T) {
 func Test_message_GetSigners(t *testing.T) {
 	type fields struct {
 		From    sdkTypes.AccAddress
-		FromID  ids.IdentityID
-		AssetID ids.AssetID
+		FromID  *baseIDs.IdentityID
+		AssetID *baseIDs.AssetID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   []sdkTypes.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID}, []sdkTypes.AccAddress{fromAccAddress}},
+		{"+ve", fields{fromAccAddress, fromID.(*baseIDs.IdentityID), testAssetID.(*baseIDs.AssetID)}, []sdkTypes.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
 				From:    tt.fields.From.String(),
-				FromID:  tt.fields.FromID.(*baseIDs.IdentityID),
-				AssetID: tt.fields.AssetID.(*baseIDs.AssetID),
+				FromID:  tt.fields.FromID,
+				AssetID: tt.fields.AssetID,
 			}
 			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
@@ -74,23 +74,23 @@ func Test_message_GetSigners(t *testing.T) {
 func Test_message_ValidateBasic(t *testing.T) {
 	type fields struct {
 		From    sdkTypes.AccAddress
-		FromID  ids.IdentityID
-		AssetID ids.AssetID
+		FromID  *baseIDs.IdentityID
+		AssetID *baseIDs.AssetID
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{fromAccAddress, fromID, testAssetID}, false},
+		{"+ve", fields{fromAccAddress, fromID.(*baseIDs.IdentityID), testAssetID.(*baseIDs.AssetID)}, false},
 		{"-ve", fields{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			message := &Message{
 				From:    tt.fields.From.String(),
-				FromID:  tt.fields.FromID.(*baseIDs.IdentityID),
-				AssetID: tt.fields.AssetID.(*baseIDs.AssetID),
+				FromID:  tt.fields.FromID,
+				AssetID: tt.fields.AssetID,
 			}
 			if err := message.ValidateBasic(); (err != nil) != tt.wantErr {
 				t.Errorf("ValidateBasic() error = %v, wantErr %v", err, tt.wantErr)
@@ -111,7 +111,7 @@ func Test_NewMessage(t *testing.T) {
 		want sdkTypes.Msg
 	}{
 		{"+ve", args{fromAccAddress, fromID, testAssetID}, &Message{fromAccAddress.String(), fromID.(*baseIDs.IdentityID), testAssetID.(*baseIDs.AssetID)}},
-		{"+ve with nil", args{}, &Message{}},
+		{"+ve with nil", args{fromID: baseIDs.PrototypeIdentityID(), assetID: baseIDs.PrototypeAssetID()}, NewMessage(nil, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAssetID())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

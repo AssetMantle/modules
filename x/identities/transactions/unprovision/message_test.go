@@ -122,7 +122,7 @@ func Test_NewMessage(t *testing.T) {
 		want sdkTypes.Msg
 	}{
 		{"+ve", args{fromAccAddress, toAccAddress, testIdentityID}, &Message{fromAccAddress.String(), toAccAddress.String(), testIdentityID}},
-		{"-ve", args{}, &Message{}},
+		{"-ve", args{IdentityID: baseIDs.PrototypeIdentityID()}, NewMessage(nil, nil, baseIDs.PrototypeIdentityID())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

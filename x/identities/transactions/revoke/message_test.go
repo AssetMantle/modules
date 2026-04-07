@@ -126,7 +126,7 @@ func Test_NewMessage(t *testing.T) {
 		want sdkTypes.Msg
 	}{
 		{"+ve", args{fromAccAddress, testFromID, testToID, testClassificationID}, &Message{fromAccAddress.String(), testFromID, testToID, testClassificationID}},
-		{"-ve with nil", args{}, &Message{}},
+		{"-ve with nil", args{fromID: baseIDs.PrototypeIdentityID(), toID: baseIDs.PrototypeIdentityID(), classificationID: baseIDs.PrototypeClassificationID()}, NewMessage(nil, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), baseIDs.PrototypeClassificationID())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -180,7 +180,7 @@ func Test_NewMessage(t *testing.T) {
 	}{
 
 		{"+ve", args{fromAccAddress, testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}, &Message{fromAccAddress.String(), testFromID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties}},
-		{"+ve with nil", args{}, &Message{}},
+		{"+ve with nil", args{fromID: baseIDs.PrototypeIdentityID(), immutableMetaProperties: baseLists.NewPropertyList(), immutableProperties: baseLists.NewPropertyList(), mutableMetaProperties: baseLists.NewPropertyList(), mutableProperties: baseLists.NewPropertyList()}, NewMessage(nil, baseIDs.PrototypeIdentityID(), baseLists.NewPropertyList(), baseLists.NewPropertyList(), baseLists.NewPropertyList(), baseLists.NewPropertyList())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

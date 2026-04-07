@@ -120,7 +120,7 @@ func Test_NewMessage(t *testing.T) {
 		args args
 		want sdkTypes.Msg
 	}{
-		{"+ve with nil", args{}, &Message{}},
+		{"+ve with nil", args{fromID: baseIDs.PrototypeIdentityID(), assetID: baseIDs.PrototypeAssetID(), mutableMetaProperties: baseLists.NewPropertyList(), mutableProperties: baseLists.NewPropertyList()}, NewMessage(nil, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAssetID(), baseLists.NewPropertyList(), baseLists.NewPropertyList())},
 		{"+ve", args{fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties}, NewMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties, mutableProperties)},
 	}
 	for _, tt := range tests {

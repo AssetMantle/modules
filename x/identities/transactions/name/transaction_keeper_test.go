@@ -6,6 +6,7 @@ package name
 import (
 	"context"
 	"github.com/AssetMantle/modules/helpers"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/modules/x/identities/mapper"
 	"github.com/AssetMantle/modules/x/identities/parameters"
 	cosmosDB "github.com/cosmos/cosmos-db"
@@ -60,7 +61,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve", fields{mapper: Mapper}, args{context: Context, message: nil}, newTransactionResponse(nil), false},
+		{"+ve", fields{mapper: Mapper}, args{context: Context, message: nil}, newTransactionResponse(baseIDs.PrototypeIdentityID()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

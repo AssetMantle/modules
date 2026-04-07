@@ -129,7 +129,7 @@ func Test_NewMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		{"+ve with nil", args{}, &Message{}},
+		{"+ve with nil", args{fromID: baseIDs.PrototypeIdentityID(), identityID: baseIDs.PrototypeIdentityID(), mutableMetaProperties: baseLists.NewPropertyList(), mutableProperties: baseLists.NewPropertyList()}, NewMessage(nil, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), baseLists.NewPropertyList(), baseLists.NewPropertyList())},
 		{"+ve", args{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, &Message{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
 	}
 	for _, tt := range tests {
