@@ -135,7 +135,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	identity = identity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
 	fromIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
 	toIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	keepers.DeputizeKeeper.(transactionKeeper).mapper.NewCollection(Context.Context()).Add(record.NewRecord(identity))
+	keepers.DeputizeKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(identity))
 	type fields struct {
 		mapper            helpers.Mapper
 		parameterManager  helpers.ParameterManager
@@ -152,7 +152,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper, parameterManager, deputizeAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, fromIdentityID, toIdentityID, classificationID, maintainedProperties, true, true, true, true, true).(*Message)}, newTransactionResponse(), false},
+		{"+ve", fields{Mapper, parameterManager, deputizeAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromIdentityID, toIdentityID, classificationID, maintainedProperties, true, true, true, true, true).(*Message)}, newTransactionResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

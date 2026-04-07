@@ -30,6 +30,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/parameters"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var (
@@ -160,7 +161,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper, parameterManager, authorizeAuxiliary, supplementAuxiliary, unbondAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, testFromID, testFromID).(*Message)}, newTransactionResponse(), false},
+		{"+ve", fields{Mapper, parameterManager, authorizeAuxiliary, supplementAuxiliary, unbondAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testFromID).(*Message)}, newTransactionResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

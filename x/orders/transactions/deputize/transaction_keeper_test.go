@@ -161,7 +161,7 @@ func Test_transactionKeeper_Transact1(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper, parameterManager, authenticateAuxiliary, deputizeAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, testFromID, testFromID, testClassificationID, mutableMetaProperties, true, true, true, true, true).(*Message)}, newTransactionResponse(), false},
+		{"+ve", fields{Mapper, parameterManager, authenticateAuxiliary, deputizeAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testFromID, testClassificationID, mutableMetaProperties, true, true, true, true, true).(*Message)}, newTransactionResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

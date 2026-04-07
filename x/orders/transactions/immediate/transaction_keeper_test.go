@@ -33,6 +33,7 @@ import (
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/orders/parameters"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var (
@@ -173,7 +174,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	testHeight := baseTypes.NewHeight(1)
 	// testOrderID := baseIDs.NewOrderID(testClassificationID, testMakerAssetID, testTakerAssetID, testRate, testHeight, testFromID, immutablesMeta)
 	// testOrderID2 := baseIDs.NewOrderID(testClassificationID, testTakerAssetID, testTakerAssetID, testRate, testHeight, testFromID, immutablesMeta)
-	keepers.ImmediateKeeper.(transactionKeeper).mapper.NewCollection(Context.Context()).Add(record.NewRecord(testOrder))
+	keepers.ImmediateKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(testOrder))
 	type fields struct {
 		mapper                helpers.Mapper
 		parameterManager      helpers.ParameterManager
@@ -193,7 +194,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper, parameterManager, conformAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, testFromID, testClassificationID, testTakerID, testMakerAssetID, testTakerAssetID, testHeight, testRate, testRate, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(), false},
+		{"+ve", fields{Mapper, parameterManager, conformAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testClassificationID, testTakerID, testMakerAssetID, testTakerAssetID, testHeight, testRate, testRate, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

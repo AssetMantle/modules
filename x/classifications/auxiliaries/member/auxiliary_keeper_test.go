@@ -68,7 +68,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	immutables1 := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")), baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("ImmutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	classificationID1 := baseIDs.NewClassificationID(immutables1, mutables)
-	keepers.MemberKeeper.(auxiliaryKeeper).mapper.NewCollection(Context.Context()).Add(record.NewRecord(baseDocuments.NewClassification(immutables, mutables)))
+	keepers.MemberKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(baseDocuments.NewClassification(immutables, mutables)))
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -83,9 +83,9 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		want    helpers.AuxiliaryResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse(), false},
-		{"+ve Entity Not found", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(classificationID1, immutables, mutables)}, newAuxiliaryResponse(), false},
-		{"+ve IncorrectFormat", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(classificationID, immutables1, mutables)}, newAuxiliaryResponse(), false},
+		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse(), false},
+		{"+ve Entity Not found", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID1, immutables, mutables)}, newAuxiliaryResponse(), false},
+		{"+ve IncorrectFormat", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, immutables1, mutables)}, newAuxiliaryResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

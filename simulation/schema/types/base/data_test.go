@@ -30,8 +30,8 @@ func TestGenerateRandomData(t *testing.T) {
 					t.Errorf("GenerateRandomData() recover = %v, wantPanic = %v", r, tt.wantPanic)
 				}
 			}()
-			if got := GenerateRandomData(tt.args.r, 1); reflect.TypeOf(got).String() != "base.idData" {
-				t.Errorf("GenerateRandomData() = %v, want base.idData", got)
+			if got := GenerateRandomData(tt.args.r, 1); reflect.TypeOf(got).String() != "*base.StringData" {
+				t.Errorf("GenerateRandomData() = %v, want *base.StringData", got)
 			}
 		})
 	}

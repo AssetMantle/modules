@@ -134,7 +134,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 		want    helpers.QueryResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper}, args{Context.Context(), newQueryRequest(testAssetID)}, newQueryResponse(testRate), false},
+		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), newQueryRequest(testAssetID)}, newQueryResponse(testRate), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

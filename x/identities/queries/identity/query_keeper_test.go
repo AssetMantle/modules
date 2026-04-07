@@ -26,6 +26,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type TestKeepers struct {
@@ -132,7 +133,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 		want    helpers.QueryResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper}, args{Context.Context(), newQueryRequest(testFromID)}, newQueryResponse(keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(Context)).Fetch(key.NewKey(testFromID)).FetchRecord(key.NewKey(testFromID))), false},
+		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), newQueryRequest(testFromID)}, newQueryResponse(keepers.QueryKeeper.(queryKeeper).mapper.NewCollection(types.WrapSDKContext(Context)).Fetch(key.NewKey(testFromID)).FetchRecord(key.NewKey(testFromID))), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

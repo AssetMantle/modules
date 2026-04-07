@@ -28,6 +28,7 @@ import (
 	"github.com/AssetMantle/modules/x/maintainers/parameters"
 	"github.com/AssetMantle/modules/x/maintainers/record"
 	maintainerUtilities "github.com/AssetMantle/modules/x/maintainers/utilities"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type TestKeepers struct {
@@ -74,7 +75,7 @@ func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
 	Context, keepers, Mapper, _ := createTestInput(t)
-	keepers.RevokeKeeper.(auxiliaryKeeper).mapper.NewCollection(Context.Context()).Add(record.NewRecord(baseDocuments.NewMaintainer(testFromID, testClassificationID, maintainedProperties.GetPropertyIDList(), permissions)))
+	keepers.RevokeKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(baseDocuments.NewMaintainer(testFromID, testClassificationID, maintainedProperties.GetPropertyIDList(), permissions)))
 
 	type fields struct {
 		mapper helpers.Mapper
@@ -90,8 +91,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		want    helpers.AuxiliaryResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(testFromID, testFromID, testClassificationID)}, newAuxiliaryResponse(), false},
-		{"+ve Entity Not Found ", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(testFromID, testFromID, baseIDs.PrototypeClassificationID())}, newAuxiliaryResponse(), false},
+		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testFromID, testFromID, testClassificationID)}, newAuxiliaryResponse(), false},
+		{"+ve Entity Not Found ", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testFromID, testFromID, baseIDs.PrototypeClassificationID())}, newAuxiliaryResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

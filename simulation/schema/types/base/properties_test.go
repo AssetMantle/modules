@@ -29,8 +29,8 @@ func TestGenerateRandomProperties(t *testing.T) {
 				}
 			}()
 
-			if got := GenerateRandomPropertyList(tt.args.r); reflect.TypeOf(got).String() != "base.propertyList" {
-				t.Errorf("GenerateRandomPropertyList() = %v, want base.propertyList", got)
+			if got := GenerateRandomPropertyList(tt.args.r); reflect.TypeOf(got).String() != "*base.PropertyList" {
+				t.Errorf("GenerateRandomPropertyList() = %v, want *base.PropertyList", got)
 			}
 		})
 	}

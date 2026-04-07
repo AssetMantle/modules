@@ -129,7 +129,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	require.Nil(t, err)
 	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutables, mutables)
 	testIdentity.ProvisionAddress([]sdkTypes.AccAddress{toAccAddress}...)
-	keepers.ProvisionKeeper.(transactionKeeper).mapper.NewCollection(Context.Context()).Add(record.NewRecord(testIdentity))
+	keepers.ProvisionKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(testIdentity))
 	type fields struct {
 		mapper              helpers.Mapper
 		parameterManager    helpers.ParameterManager
@@ -146,9 +146,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve Not Authorized", fields{Mapper, parameterManager, supplementAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
-		{"+ve already Exists", fields{Mapper, parameterManager, supplementAuxiliary}, args{Context.Context(), NewMessage(toAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
-		{"+ve", fields{Mapper, parameterManager, supplementAuxiliary}, args{Context.Context(), NewMessage(toAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
+		{"+ve Not Authorized", fields{Mapper, parameterManager, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
+		{"+ve already Exists", fields{Mapper, parameterManager, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(toAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
+		{"+ve", fields{Mapper, parameterManager, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(toAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

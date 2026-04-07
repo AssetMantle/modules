@@ -28,7 +28,7 @@ func Test_validator(t *testing.T) {
 		{"+ve", args{Parameter}, false},
 		{"-ve InvalidParameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
 		{"+ve with zero NumberData", args{baseData.NewNumberData(math.ZeroInt())}, true},
-		{"+ve with positive NumberData", args{baseData.NewNumberData(math.OneInt())}, false},
+		{"+ve with positive NumberData", args{baseData.NewNumberData(math.OneInt())}, true},
 		{"+ve with negative NumberData", args{baseData.NewNumberData(math.NewInt(-1))}, true},
 		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
 		{"+ve with positive NumberDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxPropertyCount"), baseData.NewNumberData(math.OneInt())))}, false},

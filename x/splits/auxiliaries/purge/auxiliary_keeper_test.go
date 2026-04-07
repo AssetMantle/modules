@@ -72,7 +72,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	testAssetID := base.NewCoinAsset("OwnerID").GetCoinAssetID()
 	testRate := math.OneInt()
 	split := baseTypes.NewSplit(testRate)
-	keepers.AuxiliaryKeeper.(auxiliaryKeeper).mapper.NewCollection(Context.Context()).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))
+	keepers.AuxiliaryKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -87,8 +87,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		want    helpers.AuxiliaryResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(testOwnerIdentityID, testAssetID, testRate)}, newAuxiliaryResponse(), false},
-		{"+ve Entity Not Found", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), testAssetID, testRate)}, newAuxiliaryResponse(), false},
+		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testOwnerIdentityID, testAssetID, testRate)}, newAuxiliaryResponse(), false},
+		{"+ve Entity Not Found", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), testAssetID, testRate)}, newAuxiliaryResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -18,7 +18,7 @@ func TestGenerateRandomID(t *testing.T) {
 	}{
 		// TODO: check for nil case
 		{"test for panic case", args{nil}, true, ""},
-		{"test for id type", args{rand.New(rand.NewSource(7))}, false, "base.stringID"},
+		{"test for id type", args{rand.New(rand.NewSource(7))}, false, "*base.StringID"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -47,7 +47,7 @@ func TestGenerateRandomIDWithDec(t *testing.T) {
 	}{
 		// TODO: check for nil case
 		{"test for panic case", args{nil}, true, ""},
-		{"test for id type", args{rand.New(rand.NewSource(7))}, false, "base.stringID"},
+		{"test for id type", args{rand.New(rand.NewSource(7))}, false, "*base.StringID"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -77,7 +77,7 @@ func TestGenerateRandomIDWithInt64(t *testing.T) {
 	}{
 		// TODO: check for nil case
 		{"test for panic case", args{nil}, true, ""},
-		{"test for id type", args{rand.New(rand.NewSource(7))}, false, "base.stringID"},
+		{"test for id type", args{rand.New(rand.NewSource(7))}, false, "*base.StringID"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

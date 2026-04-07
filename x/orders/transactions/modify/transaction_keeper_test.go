@@ -33,6 +33,7 @@ import (
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/orders/parameters"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 var (
@@ -194,7 +195,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper, parameterManager, conformAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, testFromID, testOrderID, testRate, testRate, testHeight, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(), false},
+		{"+ve", fields{Mapper, parameterManager, conformAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testOrderID, testRate, testRate, testHeight, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

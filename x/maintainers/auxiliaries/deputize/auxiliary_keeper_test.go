@@ -29,6 +29,7 @@ import (
 	"github.com/AssetMantle/modules/x/maintainers/parameters"
 	"github.com/AssetMantle/modules/x/maintainers/record"
 	maintainerUtilities "github.com/AssetMantle/modules/x/maintainers/utilities"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type TestKeepers struct {
@@ -77,7 +78,7 @@ func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
 	Context, keepers, Mapper, parameterManager := createTestInput(t)
-	keepers.DeputizeKeeper.(auxiliaryKeeper).mapper.NewCollection(Context.Context()).Add(record.NewRecord(baseDocuments.NewMaintainer(testFromID, testClassificationID, maintainedProperties.GetPropertyIDList(), permissions)))
+	keepers.DeputizeKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(baseDocuments.NewMaintainer(testFromID, testClassificationID, maintainedProperties.GetPropertyIDList(), permissions)))
 	type fields struct {
 		mapper           helpers.Mapper
 		parameterManager helpers.ParameterManager
@@ -94,7 +95,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		want    helpers.AuxiliaryResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper, parameterManager, memberAuxiliary}, args{Context.Context(), NewAuxiliaryRequest(testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true)}, newAuxiliaryResponse(), false},
+		{"+ve", fields{Mapper, parameterManager, memberAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true)}, newAuxiliaryResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

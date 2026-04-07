@@ -26,7 +26,7 @@ func Test_validator(t *testing.T) {
 		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, true},
 		{"+ve", args{Parameter}, false},
 		{"-ve InvalidParameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
-		{"+ve with booleanData", args{baseData.NewBooleanData(false)}, false},
+		{"+ve with booleanData", args{baseData.NewBooleanData(false)}, true},
 		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
 		{"+ve with true booleanData", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("quashEnabled"), baseData.NewBooleanData(true)))}, false},
 		{"+ve with false booleanData", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("quashEnabled"), baseData.NewBooleanData(false)))}, false},

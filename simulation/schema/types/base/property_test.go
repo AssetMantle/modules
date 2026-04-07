@@ -18,7 +18,7 @@ func TestGenerateRandomProperty(t *testing.T) {
 	}{
 		// TODO: check for nil case
 		{"test for panic case", args{nil}, "", true},
-		{"test for type", args{rand.New(rand.NewSource(7))}, "base.mesaProperty", false},
+		{"test for type", args{rand.New(rand.NewSource(7))}, "*base.AnyProperty", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

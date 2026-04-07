@@ -25,6 +25,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/maintainers/mapper"
 	"github.com/AssetMantle/modules/x/maintainers/parameters"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 type TestKeepers struct {
@@ -82,8 +83,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		want    helpers.AuxiliaryResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse(), false},
-		{"+ve Already exists", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse(), false},
+		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse(), false},
+		{"+ve Already exists", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

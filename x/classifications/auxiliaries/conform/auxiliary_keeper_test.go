@@ -69,7 +69,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("MutableData"))))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
-	keepers.ConformKeeper.(auxiliaryKeeper).mapper.NewCollection(Context.Context()).Add(record.NewRecord(baseDocuments.NewClassification(immutables, mutables)))
+	keepers.ConformKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(baseDocuments.NewClassification(immutables, mutables)))
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -84,9 +84,9 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		want    helpers.AuxiliaryResponse
 		wantErr bool
 	}{
-		{"+ve Entity Not Found", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(testClassificationID1, immutables1, mutables1)}, newAuxiliaryResponse(), false},
-		{"+ve", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse(), false},
-		{"+ve Incorrect Format", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(classificationID, immutables1, mutables)}, newAuxiliaryResponse(), false},
+		{"+ve Entity Not Found", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testClassificationID1, immutables1, mutables1)}, newAuxiliaryResponse(), false},
+		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse(), false},
+		{"+ve Incorrect Format", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, immutables1, mutables)}, newAuxiliaryResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

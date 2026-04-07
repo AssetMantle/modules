@@ -164,8 +164,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		wantErr bool
 	}{
 		// NOTE: When test individually run 2nd test will fail
-		{"+ve", fields{Mapper, parameterManager, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil), false},
-		{"+ve Entity Already Exists", fields{Mapper, parameterManager, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{Context.Context(), NewMessage(fromAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil), false},
+		{"+ve", fields{Mapper, parameterManager, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil), false},
+		{"+ve Entity Already Exists", fields{Mapper, parameterManager, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(nil), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

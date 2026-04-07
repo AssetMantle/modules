@@ -50,7 +50,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", &Key{}},
+		{"+ve", &Key{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

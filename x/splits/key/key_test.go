@@ -52,7 +52,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", &Key{}},
+		{"+ve", &Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

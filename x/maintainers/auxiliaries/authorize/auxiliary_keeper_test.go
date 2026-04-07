@@ -73,7 +73,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Test dependency on issue #95: https://github.com/AssetMantle/modules/issues/95
-		{"+ve", fields{Mapper}, args{Context.Context(), NewAuxiliaryRequest(classificationID, identityID)}, newAuxiliaryResponse(), false},
+		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, identityID)}, newAuxiliaryResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
