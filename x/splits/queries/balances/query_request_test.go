@@ -12,12 +12,14 @@ import (
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
 )
 
 var (
-	testIdentityID = baseIDs.NewIdentityID(baseIDs.PrototypeClassificationID(), nil)
+	testIdentityID = baseIDs.NewIdentityID(baseIDs.PrototypeClassificationID(), baseQualified.NewImmutables(baseLists.NewPropertyList()))
 )
 
 func Test_newQueryRequest(t *testing.T) {

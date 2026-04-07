@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	commonTransactionRequest      = helpers.PrototypeCommonTransactionRequest()
+	commonTransactionRequest      = helpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress)
 	immutableMetaPropertiesString = "testImmutableMeta1:S|immutableMeta"
 	immutableMetaProperties1      = baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("testImmutableMeta1"), baseData.NewStringData("immutableMeta")))
 	immutablePropertiesString     = "testImmutable1:S|immutable"

@@ -9,7 +9,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	"github.com/AssetMantle/modules/x/assets/parameters/wrap_allowed_coins"
+	"github.com/AssetMantle/modules/x/splits/parameters/transfer_enabled"
 )
 
 func TestPrototype(t *testing.T) {
@@ -17,7 +17,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.ParameterManager
 	}{
-		{"+ve", baseHelpers.NewParameterManager(wrap_allowed_coins.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterManager(transfer_enabled.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

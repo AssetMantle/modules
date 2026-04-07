@@ -24,19 +24,24 @@ func (key *Key) GenerateStorePrefixBytes() []byte {
 	return []byte{0x0}
 }
 func (key *Key) GenerateStoreKeyBytes() []byte {
+	if key.IdentityID == nil {
+		return []byte{}
+	}
 	return key.IdentityID.Bytes()
 }
 func (key *Key) GeneratePrefixedStoreKeyBytes() []byte {
 	return append(key.GenerateStorePrefixBytes(), key.GenerateStoreKeyBytes()...)
 }
 func (key *Key) IsPartial() bool {
-	return len(key.IdentityID.Bytes()) == 0
+	return key.IdentityID == nil || len(key.IdentityID.Bytes()) == 0
 }
 func (key *Key) Equals(compareKey helpers.Key) bool {
 	if CompareKey, ok := compareKey.(*Key); !ok {
 		return false
 	} else {
-		// TODO test nil IdentityID case
+		if key.IdentityID == nil || CompareKey.IdentityID == nil {
+			return key.IdentityID == nil && CompareKey.IdentityID == nil
+		}
 		return key.IdentityID.Compare(CompareKey.IdentityID) == 0
 	}
 }

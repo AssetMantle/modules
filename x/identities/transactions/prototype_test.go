@@ -19,7 +19,7 @@ import (
 )
 
 func TestPrototype(t *testing.T) {
-	require.Equal(t, Prototype().GetTransaction("unprovision").GetServicePath(), baseHelpers.NewTransactions(
+	require.Equal(t, Prototype().GetTransaction(unprovision.Transaction.GetServicePath()).GetServicePath(), baseHelpers.NewTransactions(
 		define.Transaction,
 		deputize.Transaction,
 		issue.Transaction,
@@ -27,5 +27,5 @@ func TestPrototype(t *testing.T) {
 		provision.Transaction,
 		revoke.Transaction,
 		unprovision.Transaction,
-	).GetTransaction("unprovision").GetServicePath())
+	).GetTransaction(unprovision.Transaction.GetServicePath()).GetServicePath())
 }

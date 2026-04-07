@@ -66,7 +66,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		RevokeKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.TransactionKeeper),
+		RevokeKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary, revokeAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return Context, keepers, Mapper, parameterManager

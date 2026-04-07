@@ -19,6 +19,9 @@ type auxiliaryRequest struct {
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
+	if auxiliaryRequest.ClassificationID == nil {
+		return constants.InvalidRequest.Wrapf("nil classification id")
+	}
 	if err := auxiliaryRequest.ClassificationID.ValidateBasic(); err != nil {
 		return constants.InvalidRequest.Wrapf("invalid classification id: %s", err.Error())
 	}

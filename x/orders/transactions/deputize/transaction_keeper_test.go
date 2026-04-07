@@ -28,6 +28,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/deputize"
 	"github.com/AssetMantle/modules/x/orders/parameters"
 )
@@ -59,14 +60,15 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	require.Nil(t, err)
 
 	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
-	deputizeAuxiliary = deputize.Auxiliary.Initialize(Mapper, parameterManager)
+	memberAuxiliary := member.Auxiliary.Initialize(Mapper, parameterManager)
+	deputizeAuxiliary = deputize.Auxiliary.Initialize(Mapper, parameterManager, memberAuxiliary)
 
 	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		DeputizeKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.TransactionKeeper),
+		DeputizeKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary, deputizeAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return Context, keepers, Mapper, parameterManager

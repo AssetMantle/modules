@@ -61,7 +61,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve", fields{mapper: Mapper}, args{context: Context, message: nil}, newTransactionResponse(baseIDs.PrototypeIdentityID()), false},
+		{"-ve nil message", fields{mapper: Mapper}, args{context: Context, message: nil}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

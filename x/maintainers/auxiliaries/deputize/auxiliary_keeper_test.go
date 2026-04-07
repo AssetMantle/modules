@@ -71,7 +71,7 @@ func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 
 	memberAuxiliary = member.Auxiliary.Initialize(Mapper, parameterManager)
 	keepers := TestKeepers{
-		DeputizeKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
+		DeputizeKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{memberAuxiliary}).(helpers.AuxiliaryKeeper),
 	}
 
 	return Context, keepers, Mapper, parameterManager

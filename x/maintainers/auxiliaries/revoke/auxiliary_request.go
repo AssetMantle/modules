@@ -18,14 +18,23 @@ type auxiliaryRequest struct {
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
 func (auxiliaryRequest auxiliaryRequest) Validate() error {
+	if auxiliaryRequest.FromID == nil {
+		return constants.InvalidRequest.Wrapf("nil from id")
+	}
 	if err := auxiliaryRequest.FromID.ValidateBasic(); err != nil {
 		return constants.InvalidRequest.Wrapf("invalid from id: %s", err.Error())
 	}
 
+	if auxiliaryRequest.ToID == nil {
+		return constants.InvalidRequest.Wrapf("nil to id")
+	}
 	if err := auxiliaryRequest.ToID.ValidateBasic(); err != nil {
 		return constants.InvalidRequest.Wrapf("invalid to id: %s", err.Error())
 	}
 
+	if auxiliaryRequest.MaintainedClassificationID == nil {
+		return constants.InvalidRequest.Wrapf("nil maintained classification id")
+	}
 	if err := auxiliaryRequest.MaintainedClassificationID.ValidateBasic(); err != nil {
 		return constants.InvalidRequest.Wrapf("invalid maintained classification id: %s", err.Error())
 	}

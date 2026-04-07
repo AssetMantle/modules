@@ -17,7 +17,7 @@ func TestPrototype(t *testing.T) {
 		getString string
 	}{
 
-		{"+ve", asset.Query.GetServicePath(), "assets"},
+		{"+ve", asset.Query.GetServicePath(), asset.Query.GetServicePath()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

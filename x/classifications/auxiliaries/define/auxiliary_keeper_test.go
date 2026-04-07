@@ -51,7 +51,7 @@ func createTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		ClassificationsKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
+		ClassificationsKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{bankKeeper.BaseKeeper{}, &stakingKeeper.Keeper{}}).(helpers.AuxiliaryKeeper),
 	}
 
 	return sdkTypes.WrapSDKContext(Context), keepers, Mapper, parameterManager
@@ -89,7 +89,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper, parameterManager, bankKeeper.BaseKeeper{}, &stakingKeeper.Keeper{}}},
+		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{bankKeeper.BaseKeeper{}, &stakingKeeper.Keeper{}}}, auxiliaryKeeper{Mapper, parameterManager, bankKeeper.BaseKeeper{}, &stakingKeeper.Keeper{}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

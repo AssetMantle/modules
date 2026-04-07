@@ -12,6 +12,9 @@ import (
 var _ helpers.Mappable = (*Mappable)(nil)
 
 func (mappable *Mappable) ValidateBasic() error {
+	if mappable.Data == nil {
+		return nil
+	}
 	return mappable.Data.ValidateBasic()
 }
 

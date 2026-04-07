@@ -20,6 +20,9 @@ type transactionKeeper struct {
 var _ helpers.TransactionKeeper = (*transactionKeeper)(nil)
 
 func (transactionKeeper transactionKeeper) Transact(context context.Context, message helpers.Message) (helpers.TransactionResponse, error) {
+	if message == nil {
+		return nil, errorConstants.InvalidMessage.Wrapf("nil message")
+	}
 	return transactionKeeper.Handle(context, message.(*Message))
 }
 

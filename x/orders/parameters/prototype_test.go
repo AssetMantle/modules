@@ -10,6 +10,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/orders/parameters/max_order_life"
+	"github.com/AssetMantle/modules/x/orders/parameters/put_enabled"
 )
 
 func TestPrototype(t *testing.T) {
@@ -17,7 +18,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.ParameterManager
 	}{
-		{"+ve", baseHelpers.NewParameterManager(max_order_life.ValidatableParameter)},
+		{"+ve", baseHelpers.NewParameterManager(max_order_life.ValidatableParameter, put_enabled.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

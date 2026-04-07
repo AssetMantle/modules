@@ -12,6 +12,8 @@ import (
 	"github.com/AssetMantle/modules/x/assets/parameters/burn_enabled"
 	"github.com/AssetMantle/modules/x/assets/parameters/mint_enabled"
 	"github.com/AssetMantle/modules/x/assets/parameters/renumerate_enabled"
+	"github.com/AssetMantle/modules/x/assets/parameters/unwrap_allowed_coins"
+	"github.com/AssetMantle/modules/x/assets/parameters/wrap_allowed_coins"
 )
 
 func TestPrototype(t *testing.T) {
@@ -20,7 +22,7 @@ func TestPrototype(t *testing.T) {
 		want      helpers.ParameterManager
 		wantError error
 	}{
-		{"+ve", baseHelpers.NewParameterManager(burn_enabled.ValidatableParameter, mint_enabled.ValidatableParameter, renumerate_enabled.ValidatableParameter), nil},
+		{"+ve", baseHelpers.NewParameterManager(burn_enabled.ValidatableParameter, mint_enabled.ValidatableParameter, renumerate_enabled.ValidatableParameter, unwrap_allowed_coins.ValidatableParameter, wrap_allowed_coins.ValidatableParameter), nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

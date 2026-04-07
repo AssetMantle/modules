@@ -72,7 +72,7 @@ func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 	}, false, log.NewNopLogger())
 
 	keepers := TestKeepers{
-		TakeKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.TransactionKeeper),
+		TakeKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary, supplementAuxiliary, transferAuxiliary}).(helpers.TransactionKeeper),
 	}
 
 	return Context, keepers, Mapper, parameterManager

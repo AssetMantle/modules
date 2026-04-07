@@ -11,6 +11,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/mapper"
 	"github.com/AssetMantle/modules/x/identities/parameters"
 	"github.com/AssetMantle/modules/x/identities/record"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/deputize"
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
@@ -62,7 +63,8 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 	}, false, log.NewNopLogger())
 
 	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
-	deputizeAuxiliary = deputize.Auxiliary.Initialize(Mapper, parameterManager)
+	memberAuxiliary := member.Auxiliary.Initialize(Mapper, parameterManager)
+	deputizeAuxiliary = deputize.Auxiliary.Initialize(Mapper, parameterManager, memberAuxiliary)
 	keepers := TestKeepers{
 		DeputizeKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary, deputizeAuxiliary}).(helpers.TransactionKeeper),
 	}
