@@ -20,6 +20,7 @@ import (
 	"cosmossdk.io/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"cosmossdk.io/store"
+	storeMetrics "cosmossdk.io/store/metrics"
 	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
@@ -73,7 +74,7 @@ var (
 
 	setContext = func() sdkTypes.Context {
 		memDB := cosmosDB.NewMemDB()
-		commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), nil)
+		commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), storeMetrics.NewNoOpMetrics())
 		commitMultiStore.MountStoreWithDB(moduleStoreKey, storeTypes.StoreTypeIAVL, memDB)
 		_ = commitMultiStore.LoadLatestVersion()
 		return sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{ChainID: ChainID}, false, log.NewNopLogger())

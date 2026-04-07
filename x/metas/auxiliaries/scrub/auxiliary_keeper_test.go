@@ -6,6 +6,7 @@ package scrub
 import (
 	"context"
 	"cosmossdk.io/store"
+	storeMetrics "cosmossdk.io/store/metrics"
 	storeTypes "cosmossdk.io/store/types"
 	"reflect"
 	"testing"
@@ -35,7 +36,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers) {
 	parameterManager := parameters.Prototype().Initialize(storeKey)
 
 	memDB := cosmosDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), nil)
+	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), storeMetrics.NewNoOpMetrics())
 	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)

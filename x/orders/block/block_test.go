@@ -11,6 +11,7 @@ import (
 	"cosmossdk.io/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"cosmossdk.io/store"
+	storeMetrics "cosmossdk.io/store/metrics"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -29,7 +30,7 @@ func CreateTestInput(t *testing.T) (sdkTypes.Context, helpers.Mapper, helpers.Au
 	paramsTransientStoreKeys := storeTypes.NewTransientStoreKey("testParamsTransient")
 
 	memDB := cosmosDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), nil)
+	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), storeMetrics.NewNoOpMetrics())
 	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
