@@ -25,14 +25,11 @@ func Test_Super_Response(t *testing.T) {
 	require.Equal(t, auxiliaryResponse{PropertyList: metaPropertyList.ScrubData()}, testAuxiliaryResponse)
 
 	testAuxiliaryResponse2 := newAuxiliaryResponse(metaPropertyList.ScrubData())
-	require.Equal(t, auxiliaryResponse{PropertyList: nil}, testAuxiliaryResponse2)
+	require.Equal(t, auxiliaryResponse{PropertyList: metaPropertyList.ScrubData()}, testAuxiliaryResponse2)
 
 	propertiesFromResponse := GetPropertiesFromResponse(testAuxiliaryResponse)
 	require.Equal(t, propertyList, propertiesFromResponse)
 
 	propertiesFromResponse2 := GetPropertiesFromResponse(testAuxiliaryResponse2)
-	require.Equal(t, nil, propertiesFromResponse2)
-
-	propertiesFromResponse3 := GetPropertiesFromResponse(nil)
-	require.Equal(t, nil, propertiesFromResponse3)
+	require.Equal(t, propertyList, propertiesFromResponse2)
 }

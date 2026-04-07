@@ -10,7 +10,9 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/x/identities/queries/identities"
 	"github.com/AssetMantle/modules/x/identities/queries/identity"
+	"github.com/AssetMantle/modules/x/identities/queries/parameters"
 )
 
 func TestPrototype(t *testing.T) {
@@ -20,6 +22,8 @@ func TestPrototype(t *testing.T) {
 	}{
 		{"+ve", baseHelpers.NewQueries(
 			identity.Query,
+			identities.Query,
+			parameters.Query,
 		)},
 	}
 	for _, tt := range tests {

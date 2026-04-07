@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/AssetMantle/schema/ids"
 	"github.com/AssetMantle/schema/lists"
 	"github.com/AssetMantle/schema/lists/base"
 
@@ -15,28 +14,24 @@ import (
 )
 
 func TestSetPermissions(t *testing.T) {
-	idList := base.NewIDList()
 	type args struct {
-		mint       bool
-		burn       bool
-		renumerate bool
-		add        bool
-		remove     bool
-		mutate     bool
+		canAddMaintainer    bool
+		canMutateMaintainer bool
+		canRemoveMaintainer bool
 	}
 	tests := []struct {
 		name string
 		args args
 		want lists.IDList
 	}{
-		{"+ve for can Add", args{false, false, false, true, false, false}, idList.Add(constants.CanAddMaintainerPermission)},
-		{"+ve for can remove", args{false, false, false, false, true, false}, idList.Add(constants.CanRemoveMaintainerPermission)},
-		{"+ve for can mutate", args{false, false, false, false, false, true}, idList.Add(constants.CanMutateMaintainerPermission)},
-		{"+ve", args{true, true, true, true, true, true}, idList.Add([]ids.ID{constants.CanAddMaintainerPermission, constants.CanRemoveMaintainerPermission, constants.CanMutateMaintainerPermission}...)},
+		{"+ve for can Add", args{true, false, false}, base.NewIDList().Add(constants.CanAddMaintainerPermission)},
+		{"+ve for can Mutate", args{false, true, false}, base.NewIDList().Add(constants.CanMutateMaintainerPermission)},
+		{"+ve for can Remove", args{false, false, true}, base.NewIDList().Add(constants.CanRemoveMaintainerPermission)},
+		{"+ve", args{true, true, true}, base.NewIDList().Add(constants.CanAddMaintainerPermission).Add(constants.CanMutateMaintainerPermission).Add(constants.CanRemoveMaintainerPermission)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := SetModulePermissions(tt.args.add, tt.args.remove, tt.args.mutate); !reflect.DeepEqual(got, tt.want) {
+			if got := SetModulePermissions(tt.args.canAddMaintainer, tt.args.canMutateMaintainer, tt.args.canRemoveMaintainer); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("SetModulePermissions() = %v, want %v", got, tt.want)
 			}
 		})
