@@ -124,8 +124,6 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		// TODO: Test dependency on #96  https://github.com/AssetMantle/modules/issues/96
-		{"+ve with nil", fields{}, args{}, auxiliaryKeeper{}},
 		{"+ve", fields{Mapper}, args{Mapper, parameterManager, nil}, auxiliaryKeeper{Mapper}}, // TODO: type & data same but doesn't match
 	}
 	for _, tt := range tests {

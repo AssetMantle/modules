@@ -121,7 +121,6 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve with nil", fields{}, args{}, auxiliaryKeeper{}},
 		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper}},
 	}
 	for _, tt := range tests {

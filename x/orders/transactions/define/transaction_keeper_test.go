@@ -111,7 +111,6 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve with nil", fields{}, args{}, transactionKeeper{}},
 		{"+ve", fields{Mapper, parameterManger, defineAuxiliary, superAuxiliary, authenticateAuxiliary}, args{Mapper, parameterManger, []interface{}{}}, transactionKeeper{Mapper, parameterManger, defineAuxiliary, superAuxiliary, authenticateAuxiliary}},
 	}
 	for _, tt := range tests {

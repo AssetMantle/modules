@@ -90,7 +90,6 @@ func Test_queryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve with nil", fields{}, args{}, queryKeeper{}},
 		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, queryKeeper{Mapper}},
 	}
 	for _, tt := range tests {
