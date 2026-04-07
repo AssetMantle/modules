@@ -38,8 +38,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 
 	memDB := cosmosDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), storeMetrics.NewNoOpMetrics())
-	commitMultiStore.MountStoreWithDB(kvStoreKey, storeTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(kvStoreKey, storeTypes.StoreTypeIAVL, nil)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, nil)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
 
 	err := commitMultiStore.LoadLatestVersion()
@@ -103,8 +103,8 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 
 	memDB := cosmosDB.NewMemDB()
 	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), storeMetrics.NewNoOpMetrics())
-	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, memDB)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
+	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, nil)
+	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, nil)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
 
 	err := commitMultiStore.LoadLatestVersion()
