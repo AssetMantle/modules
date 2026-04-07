@@ -15,8 +15,8 @@ import (
 	"github.com/AssetMantle/schema/lists/base"
 	"github.com/AssetMantle/schema/properties"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
-	tendermintDB "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
+	cosmosDB "github.com/cosmos/cosmos-db"
+	"cosmossdk.io/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"cosmossdk.io/store"
 	storeTypes "cosmossdk.io/store/types"
@@ -65,12 +65,12 @@ var (
 		Data: baseData.NewStringData("invalid").ToAnyData().(*baseData.AnyData),
 	}
 
-	moduleStoreKey  = sdkTypes.NewKVStoreKey(constants.ModuleName)
+	moduleStoreKey  = storeTypes.NewKVStoreKey(constants.ModuleName)
 	AuxiliaryKeeper = auxiliaryKeeper{mapper.Prototype().Initialize(moduleStoreKey)}
 
 	setContext = func() sdkTypes.Context {
-		memDB := tendermintDB.NewMemDB()
-		commitMultiStore := store.NewCommitMultiStore(memDB)
+		memDB := cosmosDB.NewMemDB()
+		commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), nil)
 		commitMultiStore.MountStoreWithDB(moduleStoreKey, storeTypes.StoreTypeIAVL, memDB)
 		_ = commitMultiStore.LoadLatestVersion()
 		return sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{ChainID: ChainID}, false, log.NewNopLogger())

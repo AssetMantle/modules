@@ -4,6 +4,7 @@
 package wrap
 
 import (
+	"cosmossdk.io/math"
 	"fmt"
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -30,7 +31,7 @@ var (
 	mutables                 = baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
 	classificationID         = baseIDs.NewClassificationID(immutables, mutables).(*baseIDs.ClassificationID)
 	fromID                   = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
-	coins                    = types.NewCoins(types.NewCoin("stake", types.NewInt(100)))
+	coins                    = types.NewCoins(types.NewCoin("stake", math.NewInt(100)))
 )
 
 func Test_newTransactionRequest(t *testing.T) {

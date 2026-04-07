@@ -21,8 +21,8 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/schema/types/base"
-	tendermintDB "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
+	cosmosDB "github.com/cosmos/cosmos-db"
+	"cosmossdk.io/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"cosmossdk.io/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -52,15 +52,15 @@ type TestKeepers struct {
 
 func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 
-	storeKey := sdkTypes.NewKVStoreKey("test")
-	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
+	storeKey := storeTypes.NewKVStoreKey("test")
+	paramsStoreKey := storeTypes.NewKVStoreKey("testParams")
+	paramsTransientStoreKeys := storeTypes.NewTransientStoreKey("testParamsTransient")
 	Mapper := mapper.Prototype().Initialize(storeKey)
 
 	parameterManager := parameters.Prototype().Initialize(storeKey)
 
-	memDB := tendermintDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB)
+	memDB := cosmosDB.NewMemDB()
+	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), nil)
 	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)

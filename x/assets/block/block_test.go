@@ -10,9 +10,9 @@ import (
 	"reflect"
 	"testing"
 
-	tendermintDB "github.com/cometbft/cometbft-db"
+	cosmosDB "github.com/cosmos/cosmos-db"
 	abciTypes "github.com/cometbft/cometbft/abci/types"
-	"github.com/cometbft/cometbft/libs/log"
+	"cosmossdk.io/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"cosmossdk.io/store"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -24,12 +24,12 @@ import (
 )
 
 func CreateAssetsTestInput(t *testing.T) context.Context {
-	storeKey := sdkTypes.NewKVStoreKey("test")
-	paramsStoreKey := sdkTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := sdkTypes.NewTransientStoreKey("testParamsTransient")
+	storeKey := storeTypes.NewKVStoreKey("test")
+	paramsStoreKey := storeTypes.NewKVStoreKey("testParams")
+	paramsTransientStoreKeys := storeTypes.NewTransientStoreKey("testParamsTransient")
 
-	memDB := tendermintDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB)
+	memDB := cosmosDB.NewMemDB()
+	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), nil)
 	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
@@ -50,7 +50,6 @@ func Test_block_Begin(t *testing.T) {
 	}
 	type args struct {
 		in0 context.Context
-		in1 abciTypes.RequestBeginBlock
 	}
 	tests := []struct {
 		name   string
@@ -78,7 +77,6 @@ func Test_block_End(t *testing.T) {
 	}
 	type args struct {
 		in0 context.Context
-		in1 abciTypes.RequestEndBlock
 	}
 	tests := []struct {
 		name   string

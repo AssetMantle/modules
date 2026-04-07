@@ -4,6 +4,7 @@
 package transfer
 
 import (
+	"cosmossdk.io/math"
 	"reflect"
 	"testing"
 
@@ -25,7 +26,7 @@ func createTestInput1() (ids.IdentityID, ids.AssetID, types.Int) {
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerID := baseIDs.NewIdentityID(classificationID, immutables)
 	testAssetID := baseDocuments.NewCoinAsset("OwnerID").GetCoinAssetID()
-	testValue := types.OneInt()
+	testValue := math.OneInt()
 	return testOwnerID, testAssetID, testValue
 }
 

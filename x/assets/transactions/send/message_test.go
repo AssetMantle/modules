@@ -4,6 +4,7 @@
 package send
 
 import (
+	"cosmossdk.io/math"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/documents/base"
 	"github.com/cometbft/cometbft/crypto/ed25519"
@@ -26,7 +27,7 @@ var (
 	testID      = baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)
 	coinAsset   = base.NewCoinAsset(denom)
 	coinAssetID = coinAsset.GetCoinAssetID().(*baseIDs.AssetID)
-	testValue   = types.NewInt(100).String()
+	testValue   = math.NewInt(100).String()
 )
 
 func TestMessage_ValidateBasic(t *testing.T) {

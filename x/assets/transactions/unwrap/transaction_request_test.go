@@ -4,6 +4,7 @@
 package unwrap
 
 import (
+	"cosmossdk.io/math"
 	"fmt"
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
@@ -30,7 +31,7 @@ var (
 	classificationID         = baseIDs.NewClassificationID(immutables, mutables)
 	fromID                   = baseIDs.NewIdentityID(classificationID, immutables).(*baseIDs.IdentityID)
 	coinAsset                = baseDocuments.NewCoinAsset("stake")
-	testRate                 = types.NewInt(100)
+	testRate                 = math.NewInt(100)
 	assetID                  = coinAsset.GetCoinAssetID().(*baseIDs.AssetID)
 	coin                     = types.NewCoin(coinAsset.GetDenom(), testRate)
 	coins                    = types.NewCoins(coin)

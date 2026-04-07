@@ -4,6 +4,7 @@
 package modify
 
 import (
+	"cosmossdk.io/math"
 	"fmt"
 	"reflect"
 	"testing"
@@ -40,8 +41,8 @@ var (
 	testOrderID              = baseIDs.NewOrderID(testClassificationID, immutables).(*baseIDs.OrderID)
 	commonTransactionRequest = helpers.PrototypeCommonTransactionRequest()
 	expiresIn                = int64(60)
-	makerSplit               = types.NewInt(60)
-	takerSplit               = types.NewInt(60)
+	makerSplit               = math.NewInt(60)
+	takerSplit               = math.NewInt(60)
 )
 
 func Test_newTransactionRequest(t *testing.T) {

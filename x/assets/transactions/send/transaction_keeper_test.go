@@ -28,9 +28,9 @@ import (
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/schema/types/base"
-	tendermintDB "github.com/cometbft/cometbft-db"
+	cosmosDB "github.com/cosmos/cosmos-db"
 	"github.com/cometbft/cometbft/crypto/ed25519"
-	"github.com/cometbft/cometbft/libs/log"
+	"cosmossdk.io/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"cosmossdk.io/store"
 	storeTypes "cosmossdk.io/store/types"
@@ -102,7 +102,7 @@ var (
 	randomAsset   = randomAssetGenerator(nil, nil)
 	randomAssetID = baseIDs.NewAssetID(randomAsset.GetClassificationID(), randomAsset.GetImmutables()).(*baseIDs.AssetID)
 
-	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
+	moduleStoreKey = storeTypes.NewKVStoreKey(constants.ModuleName)
 
 	authenticateAuxiliaryKeeper         = new(MockAuxiliaryKeeper)
 	authenticateAuxiliaryFailureAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
@@ -137,12 +137,12 @@ var (
 	transferAuxiliaryAuxiliary      = new(MockAuxiliary)
 	_                               = transferAuxiliaryAuxiliary.On("GetKeeper").Return(transferAuxiliaryKeeper)
 
-	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
-	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
+	paramsStoreKey           = storeTypes.NewKVStoreKey(paramsTypes.StoreKey)
+	paramsTransientStoreKeys = storeTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
 
 	setContext = func() sdkTypes.Context {
-		memDB := tendermintDB.NewMemDB()
-		commitMultiStore := store.NewCommitMultiStore(memDB)
+		memDB := cosmosDB.NewMemDB()
+		commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), nil)
 		commitMultiStore.MountStoreWithDB(moduleStoreKey, storeTypes.StoreTypeIAVL, memDB)
 		commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, memDB)
 		commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)

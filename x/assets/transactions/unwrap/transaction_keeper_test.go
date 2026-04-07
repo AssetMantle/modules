@@ -24,9 +24,9 @@ import (
 	"github.com/AssetMantle/schema/parameters/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
-	tendermintDB "github.com/cometbft/cometbft-db"
+	cosmosDB "github.com/cosmos/cosmos-db"
 	"github.com/cometbft/cometbft/crypto/ed25519"
-	"github.com/cometbft/cometbft/libs/log"
+	"cosmossdk.io/log"
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"cosmossdk.io/store"
 	storeTypes "cosmossdk.io/store/types"
@@ -83,7 +83,7 @@ const (
 )
 
 var (
-	moduleStoreKey = sdkTypes.NewKVStoreKey(constants.ModuleName)
+	moduleStoreKey = storeTypes.NewKVStoreKey(constants.ModuleName)
 
 	newCollectionFaliure = "notfound"
 
@@ -101,15 +101,15 @@ var (
 	burnAuxiliary             = new(MockAuxiliary)
 	_                         = burnAuxiliary.On("GetKeeper").Return(burnAuxiliaryKeeper)
 
-	paramsStoreKey           = sdkTypes.NewKVStoreKey(paramsTypes.StoreKey)
-	paramsTransientStoreKeys = sdkTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
+	paramsStoreKey           = storeTypes.NewKVStoreKey(paramsTypes.StoreKey)
+	paramsTransientStoreKeys = storeTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
 
 	codec = baseHelpers.TestCodec()
-	authStoreKey             = sdkTypes.NewKVStoreKey(authTypes.StoreKey)
+	authStoreKey             = storeTypes.NewKVStoreKey(authTypes.StoreKey)
 	moduleAccountPermissions = map[string][]string{TestMinterModuleName: {authTypes.Minter}, constants.ModuleName: nil}
 	AuthKeeper               = authKeeper.NewAccountKeeper(codec, authStoreKey, authTypes.ProtoBaseAccount, moduleAccountPermissions, sdkTypes.GetConfig().GetBech32AccountAddrPrefix(), authTypes.NewModuleAddress(govTypes.ModuleName).String())
 
-	bankStoreKey         = sdkTypes.NewKVStoreKey(bankTypes.StoreKey)
+	bankStoreKey         = storeTypes.NewKVStoreKey(bankTypes.StoreKey)
 	blacklistedAddresses = map[string]bool{authTypes.NewModuleAddress(TestMinterModuleName).String(): false, authTypes.NewModuleAddress(constants.ModuleName).String(): false}
 	BankKeeper           = bankKeeper.NewBaseKeeper(codec, bankStoreKey, AuthKeeper, blacklistedAddresses, authTypes.NewModuleAddress(govTypes.ModuleName).String())
 
@@ -134,8 +134,8 @@ var (
 )
 
 func setContext() sdkTypes.Context {
-	memDB := tendermintDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB)
+	memDB := cosmosDB.NewMemDB()
+	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), nil)
 	commitMultiStore.MountStoreWithDB(moduleStoreKey, storeTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(authStoreKey, storeTypes.StoreTypeIAVL, memDB)
 	commitMultiStore.MountStoreWithDB(bankStoreKey, storeTypes.StoreTypeIAVL, memDB)

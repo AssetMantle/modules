@@ -4,6 +4,7 @@
 package immediate
 
 import (
+	"cosmossdk.io/math"
 	"fmt"
 	"reflect"
 	"testing"
@@ -41,8 +42,8 @@ var (
 	takerAssetID                  = baseDocuments.NewCoinAsset("TakerAssetId").GetCoinAssetID().(*baseIDs.AssetID)
 	commonTransactionRequest      = helpers.PrototypeCommonTransactionRequest()
 	expiresIn                     = int64(60)
-	makerSplit                    = types.NewInt(60)
-	takerSplit                    = types.NewInt(60)
+	makerSplit                    = math.NewInt(60)
+	takerSplit                    = math.NewInt(60)
 )
 
 func Test_newTransactionRequest(t *testing.T) {

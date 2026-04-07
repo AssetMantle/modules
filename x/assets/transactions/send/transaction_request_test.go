@@ -4,6 +4,7 @@
 package send
 
 import (
+	"cosmossdk.io/math"
 	"fmt"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"reflect"
@@ -22,7 +23,7 @@ var (
 	fromAccAddress, _        = types.AccAddressFromBech32(fromAddress.String())
 	commonTransactionRequest = helpers.PrototypeCommonTransactionRequest()
 	fromID                   = baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)
-	testRate                 = types.OneInt()
+	testRate                 = math.OneInt()
 )
 
 func Test_newTransactionRequest(t *testing.T) {

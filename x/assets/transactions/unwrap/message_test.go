@@ -4,6 +4,7 @@
 package unwrap
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
@@ -17,7 +18,7 @@ import (
 var (
 	testAddress = types.AccAddress(ed25519.GenPrivKey().PubKey().Address()).String()
 	testID      = baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)
-	testCoins   = types.NewCoins(types.NewCoin(denom, types.NewInt(100)))
+	testCoins   = types.NewCoins(types.NewCoin(denom, math.NewInt(100)))
 )
 
 const (
@@ -44,7 +45,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 			&Message{
 				From:   testAddress,
 				FromID: testID,
-				Coins:  types.Coins{types.Coin{Denom: denom + "1", Amount: types.NewInt(100)}, types.Coin{Denom: denom + "2", Amount: types.NewInt(100)}},
+				Coins:  types.Coins{types.Coin{Denom: denom + "1", Amount: math.NewInt(100)}, types.Coin{Denom: denom + "2", Amount: math.NewInt(100)}},
 			},
 			nil,
 		},
@@ -53,7 +54,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 			&Message{
 				From:   testAddress,
 				FromID: testID,
-				Coins:  types.Coins{types.Coin{Denom: denom, Amount: types.NewInt(100)}, types.Coin{Denom: denom, Amount: types.NewInt(100)}},
+				Coins:  types.Coins{types.Coin{Denom: denom, Amount: math.NewInt(100)}, types.Coin{Denom: denom, Amount: math.NewInt(100)}},
 			},
 			constants.InvalidMessage,
 		},
@@ -63,17 +64,17 @@ func TestMessage_ValidateBasic(t *testing.T) {
 				From:   testAddress,
 				FromID: testID,
 				Coins: types.Coins{
-					types.Coin{Denom: denom, Amount: types.NewInt(100)},
-					types.Coin{Denom: denom + "01", Amount: types.NewInt(100)},
-					types.Coin{Denom: denom + "02", Amount: types.NewInt(100)},
-					types.Coin{Denom: denom + "03", Amount: types.NewInt(100)},
-					types.Coin{Denom: denom + "04", Amount: types.NewInt(100)},
-					types.Coin{Denom: denom + "05", Amount: types.NewInt(100)},
-					types.Coin{Denom: denom + "06", Amount: types.NewInt(100)},
-					types.Coin{Denom: denom + "07", Amount: types.NewInt(100)},
-					types.Coin{Denom: denom + "08", Amount: types.NewInt(100)},
-					types.Coin{Denom: denom + "09", Amount: types.NewInt(100)},
-					types.Coin{Denom: denom + "10", Amount: types.NewInt(100)},
+					types.Coin{Denom: denom, Amount: math.NewInt(100)},
+					types.Coin{Denom: denom + "01", Amount: math.NewInt(100)},
+					types.Coin{Denom: denom + "02", Amount: math.NewInt(100)},
+					types.Coin{Denom: denom + "03", Amount: math.NewInt(100)},
+					types.Coin{Denom: denom + "04", Amount: math.NewInt(100)},
+					types.Coin{Denom: denom + "05", Amount: math.NewInt(100)},
+					types.Coin{Denom: denom + "06", Amount: math.NewInt(100)},
+					types.Coin{Denom: denom + "07", Amount: math.NewInt(100)},
+					types.Coin{Denom: denom + "08", Amount: math.NewInt(100)},
+					types.Coin{Denom: denom + "09", Amount: math.NewInt(100)},
+					types.Coin{Denom: denom + "10", Amount: math.NewInt(100)},
 				},
 			},
 			constants.InvalidMessage,
@@ -84,8 +85,8 @@ func TestMessage_ValidateBasic(t *testing.T) {
 				From:   testAddress,
 				FromID: testID,
 				Coins: types.Coins{
-					types.Coin{Denom: denom + "1", Amount: types.NewInt(100)},
-					types.Coin{Denom: denom, Amount: types.NewInt(100)},
+					types.Coin{Denom: denom + "1", Amount: math.NewInt(100)},
+					types.Coin{Denom: denom, Amount: math.NewInt(100)},
 				},
 			},
 			constants.InvalidMessage,
@@ -118,7 +119,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 			message: &Message{
 				From:   testAddress,
 				FromID: testID,
-				Coins:  types.Coins{types.Coin{Denom: denom, Amount: types.NewInt(-100)}},
+				Coins:  types.Coins{types.Coin{Denom: denom, Amount: math.NewInt(-100)}},
 			},
 			wantErr: constants.InvalidMessage,
 		},
@@ -127,7 +128,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 			message: &Message{
 				From:   testAddress,
 				FromID: testID,
-				Coins:  types.Coins{types.Coin{Denom: "", Amount: types.NewInt(100)}},
+				Coins:  types.Coins{types.Coin{Denom: "", Amount: math.NewInt(100)}},
 			},
 			wantErr: constants.InvalidMessage,
 		},

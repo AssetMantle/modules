@@ -4,6 +4,7 @@
 package utilities
 
 import (
+	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/x/splits/record"
 	"github.com/AssetMantle/schema/documents/base"
 	"reflect"
@@ -27,7 +28,7 @@ func TestGetTotalSupply(t *testing.T) {
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testOwnerIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
 	testAssetID := base.NewCoinAsset("OwnerID").GetCoinAssetID()
-	testRate := types.NewInt(10)
+	testRate := math.NewInt(10)
 	split := baseTypes.NewSplit(testRate)
 	context, testMapper := createTestInput1(t)
 	testSplits := testMapper.NewCollection(types.WrapSDKContext(context)).Add(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split))

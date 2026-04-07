@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	baseIDs "github.com/AssetMantle/schema/ids/base"
-	dbm "github.com/cometbft/cometbft-db"
+	dbm "github.com/cosmos/cosmos-db"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers/base"

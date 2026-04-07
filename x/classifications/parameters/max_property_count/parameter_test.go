@@ -4,6 +4,8 @@
 package max_property_count
 
 import (
+	"fmt"
+	"github.com/AssetMantle/schema/parameters"
 	"cosmossdk.io/math"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"testing"
@@ -16,7 +18,7 @@ import (
 
 func Test_validator(t *testing.T) {
 	type args struct {
-		i interface{}
+		i interface{} // accepts Parameter or invalid types for negative testing
 	}
 	tests := []struct {
 		name      string
@@ -38,7 +40,14 @@ func Test_validator(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := validator(tt.args.i); (err != nil) != tt.wantError {
+			p, ok := tt.args.i.(parameters.Parameter)
+			var err error
+			if ok {
+				err = validator(p)
+			} else {
+				err = fmt.Errorf("invalid parameter type %T", tt.args.i)
+			}
+			if (err != nil) != tt.wantError {
 				t.Errorf("validator() error = %v, wantErr %v", err, tt.wantError)
 			}
 		})
