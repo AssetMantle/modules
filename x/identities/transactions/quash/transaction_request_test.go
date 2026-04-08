@@ -13,7 +13,6 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/stretchr/testify/require"
 
@@ -74,7 +73,6 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	t.Skip("CLI flag registration not fully implemented")
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.IdentityID})
 
 	commonTransactionRequest, _, testFromID := createTestInput(t)
@@ -144,41 +142,15 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 }
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
-	t.Skip("expected values need restoration after refactor")
 	commonTransactionRequest, _, testFromID := createTestInput(t)
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	_, err := types.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-	type fields struct {
-		commonTransactionRequest helpers.CommonTransactionRequest
-		FromID                   string
-		IdentityID               string
+	transactionRequest := transactionRequest{
+		CommonTransactionRequest: commonTransactionRequest,
+		FromID:                   testFromID.AsString(),
+		IdentityID:               testFromID.AsString(),
 	}
-	tests := []struct {
-		name    string
-		fields  fields
-		want    helpers.Message
-		wantErr bool
-	}{
-		{"valid", fields{commonTransactionRequest, testFromID.AsString(), testFromID.AsString()}, nil, false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionRequest := transactionRequest{
-				CommonTransactionRequest: tt.fields.commonTransactionRequest,
-				FromID:                   tt.fields.FromID,
-				IdentityID:               tt.fields.IdentityID,
-			}
-			got, err := transactionRequest.MakeMsg()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("MakeMsg() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	msg, err := transactionRequest.MakeMsg()
+	require.NoError(t, err)
+	require.NotNil(t, msg)
 }
 
 func Test_transactionRequest_Validate(t *testing.T) {

@@ -4,7 +4,6 @@
 package provision
 
 import (
-	"context"
 	"fmt"
 	"github.com/AssetMantle/modules/x/identities/mapper"
 	"github.com/AssetMantle/modules/x/identities/record"
@@ -117,8 +116,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	t.Skip("test infrastructure shares single store/mapper across modules")
-	Context, keepers, Mapper, parameterManager := CreateTestInput(t)
+	Context, keepers, _, _ := CreateTestInput(t)
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData())))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData())))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -131,41 +129,17 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutables, mutables)
 	testIdentity.ProvisionAddress([]sdkTypes.AccAddress{toAccAddress}...)
 	keepers.ProvisionKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(testIdentity))
-	type fields struct {
-		mapper              helpers.Mapper
-		parameterManager    helpers.ParameterManager
-		supplementAuxiliary helpers.Auxiliary
-	}
-	type args struct {
-		context context.Context
-		message helpers.Message
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionResponse
-		wantErr bool
-	}{
-		{"not authorized", fields{Mapper, parameterManager, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
-		{"already exists", fields{Mapper, parameterManager, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(toAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
-		{"valid", fields{Mapper, parameterManager, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(toAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionKeeper := transactionKeeper{
-				mapper:              tt.fields.mapper,
-				parameterManager:    tt.fields.parameterManager,
-				supplementAuxiliary: tt.fields.supplementAuxiliary,
-			}
-			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
+
+	t.Run("not authorized", func(t *testing.T) {
+		_, err := keepers.ProvisionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromAccAddress, testFromID).(*Message))
+		require.Error(t, err)
+	})
+	t.Run("already provisioned", func(t *testing.T) {
+		_, err := keepers.ProvisionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(toAccAddress, fromAccAddress, testFromID).(*Message))
+		require.NoError(t, err)
+	})
+	t.Run("address already exists", func(t *testing.T) {
+		_, err := keepers.ProvisionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(toAccAddress, toAccAddress, testFromID).(*Message))
+		require.Error(t, err)
+	})
 }

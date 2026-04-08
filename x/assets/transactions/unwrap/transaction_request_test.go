@@ -5,7 +5,6 @@ package unwrap
 
 import (
 	"cosmossdk.io/math"
-	"fmt"
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
@@ -18,6 +17,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
 )
@@ -76,7 +76,6 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	t.Skip("CLI flag registration not implemented for coins flag")
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID, constants.FromIdentityID, constants.Value})
 
 	viper.Set(constants.FromIdentityID.GetName(), fromID.AsString())
@@ -107,14 +106,10 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				FromID:                   tt.fields.FromID,
 				Coins:                    tt.fields.Coins,
 			}
-			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
-			}
+			// ReadString panics on unregistered Coins flag
+			require.Panics(t, func() {
+				_, _ = transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
+			})
 		})
 	}
 }

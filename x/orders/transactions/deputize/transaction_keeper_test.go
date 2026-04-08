@@ -4,16 +4,17 @@
 package deputize
 
 import (
-	"context"
 	"fmt"
 	"github.com/AssetMantle/modules/x/orders/mapper"
-	"github.com/AssetMantle/modules/x/orders/record"
 	storeTypes "cosmossdk.io/store/types"
 	"reflect"
 	"testing"
 
+	"github.com/AssetMantle/modules/helpers/base/testutil"
+
+	"github.com/stretchr/testify/mock"
+
 	baseData "github.com/AssetMantle/schema/data/base"
-	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
@@ -129,61 +130,27 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 }
 
 func Test_transactionKeeper_Transact1(t *testing.T) {
-	t.Skip("test infrastructure shares single store/mapper across modules")
-	Context, keepers, Mapper, parameterManager := CreateTestInput(t)
-	mutableMetaProperties := baseLists.NewPropertyList(
-		baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()),
-	)
+	Context, _, Mapper, parameterManager := CreateTestInput(t)
+
+	authAux, authAuxKeeper := testutil.NewMockAuxiliaryPair()
+	authAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	depAux, depAuxKeeper := testutil.NewMockAuxiliaryPair()
+	depAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")
+	require.NoError(t, err)
 	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData()))
+	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
 	immutablesMeta := baseQualified.NewImmutables(immutableMetaProperties)
 	mutablesMeta := baseQualified.NewMutables(mutableMetaProperties)
 	testClassificationID := baseIDs.NewClassificationID(immutablesMeta, mutablesMeta)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutablesMeta)
-	mutableMetaProperties.Mutate(
-		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerID"), baseData.NewIDData(testFromID)),
-		baseProperties.NewMetaProperty(baseIDs.NewStringID("makerID"), baseData.NewIDData(testFromID)))
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutablesMeta, mutablesMeta)
-	testIdentity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
-	testOrder := baseDocuments.NewOrder(testClassificationID, immutablesMeta, mutablesMeta)
-	keepers.DeputizeKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(testOrder))
-	type fields struct {
-		mapper                helpers.Mapper
-		parameterManager      helpers.ParameterManager
-		authenticateAuxiliary helpers.Auxiliary
-		deputizeAuxiliary     helpers.Auxiliary
-	}
-	type args struct {
-		context context.Context
-		message helpers.Message
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionResponse
-		wantErr bool
-	}{
-		{"valid", fields{Mapper, parameterManager, authenticateAuxiliary, deputizeAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testFromID, testClassificationID, mutableMetaProperties, true, true, true, true, true).(*Message)}, newTransactionResponse(), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionKeeper := transactionKeeper{
-				mapper:                tt.fields.mapper,
-				parameterManager:      tt.fields.parameterManager,
-				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
-				deputizeAuxiliary:     tt.fields.deputizeAuxiliary,
-			}
-			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
+
+	tk := transactionKeeper{mapper: Mapper, parameterManager: parameterManager, authenticateAuxiliary: authAux, deputizeAuxiliary: depAux}
+
+	t.Run("valid", func(t *testing.T) {
+		got, err := tk.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testFromID, testClassificationID, mutableMetaProperties, true, true, true, true, true).(*Message))
+		require.NoError(t, err)
+		require.NotNil(t, got)
+	})
 }

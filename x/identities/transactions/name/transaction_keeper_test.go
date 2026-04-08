@@ -47,7 +47,6 @@ func CreateTestInput(t *testing.T) (context.Context, helpers.Mapper, helpers.Par
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	t.Skip("test infrastructure shares single store/mapper across modules")
 	Context, Mapper, _ := CreateTestInput(t)
 	type fields struct {
 		mapper helpers.Mapper

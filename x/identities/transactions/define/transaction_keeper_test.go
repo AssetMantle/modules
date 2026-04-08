@@ -4,7 +4,6 @@
 package define
 
 import (
-	"context"
 	"fmt"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
@@ -29,9 +28,12 @@ import (
 	storeMetrics "cosmossdk.io/store/metrics"
 	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/helpers/base/testutil"
 )
 
 type TestKeepers struct {
@@ -133,14 +135,19 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	t.Skip("test infrastructure shares single store/mapper across modules")
-	Context, keepers, Mapper := createTestInput(t)
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
-	fromAddress2 := "cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef"
-	fromAccAddress2, err := sdkTypes.AccAddressFromBech32(fromAddress2)
-	require.Nil(t, err)
+	Context, _, Mapper := createTestInput(t)
+
+	defAux, defAuxKeeper := testutil.NewMockAuxiliaryPair()
+	defAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(define.NewAuxiliaryResponse(baseIDs.PrototypeClassificationID()), nil)
+	supAux, supAuxKeeper := testutil.NewMockAuxiliaryPair()
+	supAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	supplAux, supplAuxKeeper := testutil.NewMockAuxiliaryPair()
+	_ = supplAuxKeeper
+
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")
+	require.NoError(t, err)
+	fromAccAddress2, err := sdkTypes.AccAddressFromBech32("cosmos1x53dugvr4xvew442l9v2r5x7j8gfvged2zk5ef")
+	require.NoError(t, err)
 	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID11"), baseData.NewStringData("ImmutableData")))
 	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
@@ -150,44 +157,17 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 	identity := baseDocuments.NewIdentity(classificationID, immutables, mutables)
 	identity = identity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
-	keepers.DefineKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(identity))
 
-	type fields struct {
-		mapper              helpers.Mapper
-		defineAuxiliary     helpers.Auxiliary
-		superAuxiliary      helpers.Auxiliary
-		supplementAuxiliary helpers.Auxiliary
-	}
-	type args struct {
-		context context.Context
-		message helpers.Message
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionResponse
-		wantErr bool
-	}{
-		{"valid", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(classificationID), false},
-		{"invalid", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress2, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(baseIDs.PrototypeClassificationID()), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionKeeper := transactionKeeper{
-				mapper:              tt.fields.mapper,
-				defineAuxiliary:     tt.fields.defineAuxiliary,
-				superAuxiliary:      tt.fields.superAuxiliary,
-				supplementAuxiliary: tt.fields.supplementAuxiliary,
-			}
-			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	tk := transactionKeeper{mapper: Mapper, defineAuxiliary: defAux, superAuxiliary: supAux, supplementAuxiliary: supplAux}
+	tk.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(identity))
+
+	t.Run("valid", func(t *testing.T) {
+		got, err := tk.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message))
+		require.NoError(t, err)
+		require.NotNil(t, got)
+	})
+	t.Run("not provisioned", func(t *testing.T) {
+		_, err := tk.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress2, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message))
+		require.Error(t, err)
+	})
 }

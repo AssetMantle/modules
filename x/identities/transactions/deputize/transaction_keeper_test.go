@@ -4,7 +4,6 @@
 package deputize
 
 import (
-	"context"
 	"fmt"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
@@ -29,6 +28,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/helpers/base/testutil"
+
+	"github.com/stretchr/testify/mock"
 )
 
 type TestKeepers struct {
@@ -125,11 +128,13 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	t.Skip("test infrastructure shares single store/mapper across modules")
-	Context, keepers, Mapper := CreateTestInput(t)
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
+	Context, _, Mapper := CreateTestInput(t)
+
+	depAux, depAuxKeeper := testutil.NewMockAuxiliaryPair()
+	depAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")
+	require.NoError(t, err)
 	immutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("ImmutableData")))
 	maintainedProperties := baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("deputize"), baseData.NewListData()))
 	mutableMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
@@ -140,40 +145,13 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	identity = identity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
 	fromIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
 	toIdentityID := baseIDs.NewIdentityID(classificationID, immutables)
-	keepers.DeputizeKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(identity))
-	type fields struct {
-		mapper            helpers.Mapper
-		parameterManager  helpers.ParameterManager
-		deputizeAuxiliary helpers.Auxiliary
-	}
-	type args struct {
-		context context.Context
-		message helpers.Message
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionResponse
-		wantErr bool
-	}{
-		{"valid", fields{Mapper, parameterManager, deputizeAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromIdentityID, toIdentityID, classificationID, maintainedProperties, true, true, true, true, true).(*Message)}, newTransactionResponse(), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionKeeper := transactionKeeper{
-				mapper:            tt.fields.mapper,
-				parameterManager:  tt.fields.parameterManager,
-				deputizeAuxiliary: tt.fields.deputizeAuxiliary,
-			}
-			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
+
+	tk := transactionKeeper{mapper: Mapper, parameterManager: parameterManager, deputizeAuxiliary: depAux}
+	tk.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(identity))
+
+	t.Run("valid", func(t *testing.T) {
+		got, err := tk.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromIdentityID, toIdentityID, classificationID, maintainedProperties, true, true, true, true, true).(*Message))
+		require.NoError(t, err)
+		require.NotNil(t, got)
+	})
 }

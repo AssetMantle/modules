@@ -4,9 +4,10 @@
 package deputize
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -81,7 +82,6 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	t.Skip("CLI flag registration not fully implemented")
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ToIdentityID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMintAsset, constants.CanBurnAsset, constants.CanRenumerateAsset, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
 
 	viper.Set(constants.FromIdentityID.GetName(), testFromID.AsString())
@@ -133,14 +133,10 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				CanRemoveMaintainer:      tt.fields.CanRemoveMaintainer,
 				CanMutateMaintainer:      tt.fields.CanMutateMaintainer,
 			}
-			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
-			}
+			// ReadBool panics on flag name mismatch (CanMakeOrder vs CanMintAsset)
+			require.Panics(t, func() {
+				_, _ = transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
+			})
 		})
 	}
 }

@@ -4,13 +4,16 @@
 package update
 
 import (
-	"context"
 	"fmt"
 	"github.com/AssetMantle/modules/x/identities/mapper"
 	"github.com/AssetMantle/modules/x/identities/record"
 	storeTypes "cosmossdk.io/store/types"
 	"reflect"
 	"testing"
+
+	"github.com/AssetMantle/modules/helpers/base/testutil"
+
+	"github.com/stretchr/testify/mock"
 
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
@@ -129,8 +132,13 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
-	t.Skip("test infrastructure shares single store/mapper across modules")
-	Context, keepers, Mapper, _ := CreateTestInput(t)
+	Context, _, Mapper, _ := CreateTestInput(t)
+
+	maintAux, maintAuxKeeper := testutil.NewMockAuxiliaryPair()
+	maintAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	memAux, memAuxKeeper := testutil.NewMockAuxiliaryPair()
+	memAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+
 	mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()))
 	immutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData()))
 	toMutateMetaProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID1"), baseData.NewListData(baseData.NewStringData("Test"))))
@@ -138,46 +146,17 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 	mutables := baseQualified.NewMutables(mutableProperties)
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
 	testFromID := baseIDs.NewIdentityID(testClassificationID, immutables)
-	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
-	require.Nil(t, err)
+	fromAccAddress, err := sdkTypes.AccAddressFromBech32("cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c")
+	require.NoError(t, err)
 	testIdentity := baseDocuments.NewIdentity(testClassificationID, immutables, mutables)
-	testIdentity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
-	keepers.MutateKeeper.(transactionKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(testIdentity))
+	testIdentity = testIdentity.ProvisionAddress([]sdkTypes.AccAddress{fromAccAddress}...)
 
-	type fields struct {
-		mapper            helpers.Mapper
-		maintainAuxiliary helpers.Auxiliary
-		memberAuxiliary   helpers.Auxiliary
-	}
-	type args struct {
-		context context.Context
-		message helpers.Message
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.TransactionResponse
-		wantErr bool
-	}{
-		{"valid", fields{Mapper, maintainAuxiliary, memberAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testFromID, mutableProperties, toMutateMetaProperties).(*Message)}, newTransactionResponse(), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionKeeper := transactionKeeper{
-				mapper:            tt.fields.mapper,
-				maintainAuxiliary: tt.fields.maintainAuxiliary,
-				memberAuxiliary:   tt.fields.memberAuxiliary,
-			}
-			got, err := transactionKeeper.Transact(tt.args.context, tt.args.message)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	tk := transactionKeeper{mapper: Mapper, maintainAuxiliary: maintAux, memberAuxiliary: memAux}
+	tk.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(testIdentity))
+
+	t.Run("valid", func(t *testing.T) {
+		got, err := tk.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testFromID, mutableProperties, toMutateMetaProperties).(*Message))
+		require.NoError(t, err)
+		require.NotNil(t, got)
+	})
 }

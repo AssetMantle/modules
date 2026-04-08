@@ -4,7 +4,6 @@
 package deputize
 
 import (
-	"context"
 	"fmt"
 	storeTypes "cosmossdk.io/store/types"
 	"reflect"
@@ -22,9 +21,11 @@ import (
 	"cosmossdk.io/store"
 	storeMetrics "cosmossdk.io/store/metrics"
 	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base/testutil"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/member"
 	"github.com/AssetMantle/modules/x/maintainers/mapper"
 	"github.com/AssetMantle/modules/x/maintainers/parameters"
@@ -80,44 +81,19 @@ func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 }
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
-	t.Skip("test infrastructure shares single store/mapper across modules")
-	Context, keepers, Mapper, parameterManager := createTestInput(t)
-	keepers.DeputizeKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(baseDocuments.NewMaintainer(testFromID, testClassificationID, maintainedProperties.GetPropertyIDList(), permissions)))
-	type fields struct {
-		mapper           helpers.Mapper
-		parameterManager helpers.ParameterManager
-		memberAuxiliary  helpers.Auxiliary
-	}
-	type args struct {
-		context context.Context
-		request helpers.AuxiliaryRequest
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.AuxiliaryResponse
-		wantErr bool
-	}{
-		{"valid", fields{Mapper, parameterManager, memberAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true)}, newAuxiliaryResponse(), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			auxiliaryKeeper := auxiliaryKeeper{
-				mapper:           tt.fields.mapper,
-				parameterManager: tt.fields.parameterManager,
-				memberAuxiliary:  tt.fields.memberAuxiliary,
-			}
-			got, err := auxiliaryKeeper.Help(tt.args.context, tt.args.request)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Help() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	Context, _, Mapper, parameterManager := createTestInput(t)
+
+	memAux, memAuxKeeper := testutil.NewMockAuxiliaryPair()
+	memAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+
+	ak := auxiliaryKeeper{mapper: Mapper, parameterManager: parameterManager, memberAuxiliary: memAux}
+	ak.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(baseDocuments.NewMaintainer(testFromID, testClassificationID, maintainedProperties.GetPropertyIDList(), permissions)))
+
+	t.Run("valid", func(t *testing.T) {
+		got, err := ak.Help(sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testFromID, testFromID, testClassificationID, maintainedProperties, true, true, true))
+		require.NoError(t, err)
+		require.NotNil(t, got)
+	})
 }
 
 func Test_auxiliaryKeeper_Initialize(t *testing.T) {

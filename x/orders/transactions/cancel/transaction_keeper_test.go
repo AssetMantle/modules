@@ -147,7 +147,6 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 }
 
 func Test_transactionKeeper_Transact1(t *testing.T) {
-	t.Skip("test infrastructure shares single store/mapper across modules, causing type assertion panics")
 	Context, keepers, _, _ := CreateTestInput(t)
 	mutableMetaProperties := baseLists.NewPropertyList(
 		baseProperties.NewMetaProperty(baseIDs.NewStringID("authentication"), baseData.NewListData()),

@@ -4,7 +4,6 @@
 package revoke
 
 import (
-	"context"
 	"fmt"
 	storeTypes "cosmossdk.io/store/types"
 	"reflect"
@@ -77,42 +76,18 @@ func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 }
 
 func Test_auxiliaryKeeper_Help(t *testing.T) {
-	t.Skip("test infrastructure shares single store/mapper across modules")
-	Context, keepers, Mapper, _ := createTestInput(t)
+	Context, keepers, _, _ := createTestInput(t)
 	keepers.RevokeKeeper.(auxiliaryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(baseDocuments.NewMaintainer(testFromID, testClassificationID, maintainedProperties.GetPropertyIDList(), permissions)))
 
-	type fields struct {
-		mapper helpers.Mapper
-	}
-	type args struct {
-		context context.Context
-		request helpers.AuxiliaryRequest
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    helpers.AuxiliaryResponse
-		wantErr bool
-	}{
-		{"valid", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testFromID, testFromID, testClassificationID)}, newAuxiliaryResponse(), false},
-		{"entity not found", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testFromID, testFromID, baseIDs.PrototypeClassificationID())}, newAuxiliaryResponse(), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			auxiliaryKeeper := auxiliaryKeeper{
-				mapper: tt.fields.mapper,
-			}
-			got, err := auxiliaryKeeper.Help(tt.args.context, tt.args.request)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Help() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	t.Run("valid", func(t *testing.T) {
+		got, err := keepers.RevokeKeeper.Help(sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testFromID, testFromID, testClassificationID))
+		require.NoError(t, err)
+		require.NotNil(t, got)
+	})
+	t.Run("entity not found", func(t *testing.T) {
+		_, err := keepers.RevokeKeeper.Help(sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testFromID, testFromID, baseIDs.PrototypeClassificationID()))
+		require.Error(t, err)
+	})
 }
 func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	_, _, Mapper, parameterManager := createTestInput(t)

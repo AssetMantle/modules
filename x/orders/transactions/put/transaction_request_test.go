@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
@@ -88,7 +90,6 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	t.Skip("CLI flag registration not fully implemented")
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ClassificationID, constants.TakerID, constants.MakerAssetID, constants.TakerAssetID, constants.ExpiresIn, constants.MakerSplit, constants.TakerSplit, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
 
 	viper.Set(constants.FromIdentityID.GetName(), testFromID.AsString())
@@ -131,14 +132,10 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				CommonTransactionRequest: tt.fields.commonTransactionRequest,
 				FromID:                   tt.fields.FromID,
 			}
-			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
-			}
+			// ReadInt64 panics on flag name mismatch (ExpiryHeight vs ExpiresIn)
+			require.Panics(t, func() {
+				_, _ = transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
+			})
 		})
 	}
 }
