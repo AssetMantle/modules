@@ -14,7 +14,11 @@ import (
 	"github.com/AssetMantle/modules/x/assets/mapper"
 	"github.com/AssetMantle/modules/x/assets/parameters"
 	recordassets "github.com/AssetMantle/modules/x/assets/record"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/unbond"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/x/splits/auxiliaries/purge"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
@@ -28,6 +32,7 @@ import (
 	baseType "github.com/AssetMantle/schema/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"math/rand"
 	"testing"
 	"github.com/stretchr/testify/assert"
@@ -394,4 +399,24 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				s.unbondAuxiliaryKeeper.AssertExpectations(t)
 		})
 	}
+}
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, transactionKeeper{}, got)
+}
+
+func Test_transactionKeeper_Initialize(t *testing.T) {
+	moduleStoreKey := storeTypes.NewKVStoreKey(constants.ModuleName)
+	m := mapper.Prototype().Initialize(moduleStoreKey)
+	pm := parameters.Prototype().Initialize(moduleStoreKey)
+
+	authenticateAux, _ := testutil.NewNamedMockAuxiliaryPair(authenticate.Auxiliary.GetName())
+	authorizeAux, _ := testutil.NewNamedMockAuxiliaryPair(authorize.Auxiliary.GetName())
+	purgeAux, _ := testutil.NewNamedMockAuxiliaryPair(purge.Auxiliary.GetName())
+	supplementAux, _ := testutil.NewNamedMockAuxiliaryPair(supplement.Auxiliary.GetName())
+	unbondAux, _ := testutil.NewNamedMockAuxiliaryPair(unbond.Auxiliary.GetName())
+
+	keeper := keeperPrototype().Initialize(m, pm, []interface{}{authenticateAux, authorizeAux, purgeAux, supplementAux, unbondAux})
+	require.NotNil(t, keeper)
 }

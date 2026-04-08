@@ -26,11 +26,12 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"math/rand"
 	"strconv"
 	"testing"
-	"github.com/stretchr/testify/assert"
 )
 
 type testSetup struct {
@@ -264,4 +265,24 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, transactionKeeper{}, got)
+}
+
+func Test_transactionKeeper_Initialize(t *testing.T) {
+	moduleStoreKey := storeTypes.NewKVStoreKey(constants.ModuleName)
+	ctx, keepers, _ := testutil.NewTestContextWithBankAuth(t, constants.ModuleName, moduleStoreKey)
+	_ = ctx
+
+	m := mapper.Prototype().Initialize(moduleStoreKey)
+	pm := parameters.Prototype().Initialize(moduleStoreKey)
+
+	authenticateAux, _ := testutil.NewNamedMockAuxiliaryPair(authenticate.Auxiliary.GetName())
+	mintAux, _ := testutil.NewNamedMockAuxiliaryPair(mint.Auxiliary.GetName())
+
+	keeper := keeperPrototype().Initialize(m, pm, []interface{}{keepers.BankKeeper, authenticateAux, mintAux})
+	require.NotNil(t, keeper)
 }

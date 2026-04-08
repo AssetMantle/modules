@@ -40,3 +40,29 @@ func TestNewMockAuxiliaryPair_multipleAuxiliaries(t *testing.T) {
 	assert.Same(t, authKeeper, auth.GetKeeper())
 	assert.Same(t, bondKeeper, bond.GetKeeper())
 }
+
+func TestNewNamedMockAuxiliaryPair(t *testing.T) {
+	aux, keeper := NewNamedMockAuxiliaryPair("authenticate")
+
+	assert.Equal(t, "authenticate", aux.GetName())
+	assert.Same(t, keeper, aux.GetKeeper())
+
+	// set up a mock expectation on the keeper
+	keeper.On("Help", mock.Anything, mock.Anything).
+		Return(new(helpers.AuxiliaryResponse), nil).Once()
+
+	resp, err := keeper.Help(context.Background(), nil)
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+
+	keeper.AssertExpectations(t)
+	aux.AssertExpectations(t)
+}
+
+func TestNewNamedMockAuxiliaryPair_differentNames(t *testing.T) {
+	auth, _ := NewNamedMockAuxiliaryPair("authenticate")
+	bond, _ := NewNamedMockAuxiliaryPair("bond")
+
+	assert.Equal(t, "authenticate", auth.GetName())
+	assert.Equal(t, "bond", bond.GetName())
+}

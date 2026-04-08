@@ -14,7 +14,9 @@ import (
 	"github.com/AssetMantle/modules/x/assets/parameters"
 	recordassets "github.com/AssetMantle/modules/x/assets/record"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	splitsRenumerate "github.com/AssetMantle/modules/x/splits/auxiliaries/renumerate"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
@@ -28,9 +30,10 @@ import (
 	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/mock"
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 type testSetup struct {
@@ -296,4 +299,23 @@ func TestTransactionKeeperTransact(t *testing.T) {
 
 		})
 	}
+}
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, transactionKeeper{}, got)
+}
+
+func Test_transactionKeeper_Initialize(t *testing.T) {
+	moduleStoreKey := storeTypes.NewKVStoreKey(constants.ModuleName)
+	m := mapper.Prototype().Initialize(moduleStoreKey)
+	pm := parameters.Prototype().Initialize(moduleStoreKey)
+
+	authenticateAux, _ := testutil.NewNamedMockAuxiliaryPair(authenticate.Auxiliary.GetName())
+	authorizeAux, _ := testutil.NewNamedMockAuxiliaryPair(authorize.Auxiliary.GetName())
+	renumerateAux, _ := testutil.NewNamedMockAuxiliaryPair(splitsRenumerate.Auxiliary.GetName())
+	supplementAux, _ := testutil.NewNamedMockAuxiliaryPair(supplement.Auxiliary.GetName())
+
+	keeper := keeperPrototype().Initialize(m, pm, []interface{}{authenticateAux, authorizeAux, renumerateAux, supplementAux})
+	require.NotNil(t, keeper)
 }

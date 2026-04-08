@@ -108,3 +108,17 @@ func Test_auxiliaryKeeper_Help_mixed_properties(t *testing.T) {
 	propertyList := GetPropertiesFromResponse(response)
 	assert.Len(t, propertyList.Get(), 2)
 }
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, auxiliaryKeeper{}, got)
+}
+
+func Test_auxiliaryKeeper_Initialize(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	m := mapper.Prototype().Initialize(storeKey)
+	pm := parameters.Prototype().Initialize(storeKey)
+
+	keeper := keeperPrototype().Initialize(m, pm, []interface{}{})
+	require.NotNil(t, keeper)
+}

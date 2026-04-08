@@ -21,9 +21,11 @@ import (
 	"cosmossdk.io/store"
 	storeMetrics "cosmossdk.io/store/metrics"
 	storeTypes "cosmossdk.io/store/types"
+	"github.com/AssetMantle/modules/x/identities/parameters"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 const (
@@ -122,4 +124,17 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, auxiliaryKeeper{}, got)
+}
+
+func Test_auxiliaryKeeper_Initialize(t *testing.T) {
+	m := mapper.Prototype().Initialize(moduleStoreKey)
+	pm := parameters.Prototype().Initialize(moduleStoreKey)
+
+	keeper := keeperPrototype().Initialize(m, pm, []interface{}{})
+	require.NotNil(t, keeper)
 }

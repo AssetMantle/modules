@@ -22,11 +22,13 @@ import (
 	storeMetrics "cosmossdk.io/store/metrics"
 	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/AssetMantle/modules/x/metas/parameters"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"math/rand"
 	"strconv"
 	"testing"
-	"github.com/stretchr/testify/assert"
 )
 
 type mockAuxiliaryRequest struct {
@@ -276,4 +278,17 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, auxiliaryKeeper{}, got)
+}
+
+func Test_auxiliaryKeeper_Initialize(t *testing.T) {
+	m := mapper.Prototype().Initialize(moduleStoreKey)
+	pm := parameters.Prototype().Initialize(moduleStoreKey)
+
+	keeper := keeperPrototype().Initialize(m, pm, []interface{}{})
+	require.NotNil(t, keeper)
 }

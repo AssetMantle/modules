@@ -31,9 +31,10 @@ import (
 	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"math/rand"
 	"testing"
-	"github.com/stretchr/testify/assert"
 )
 
 // mockAuxiliaryRequest
@@ -239,4 +240,17 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, auxiliaryKeeper{}, got)
+}
+
+func Test_auxiliaryKeeper_Initialize(t *testing.T) {
+	m := mapper.Prototype().Initialize(moduleStoreKey)
+	pm := parameters.Prototype().Initialize(moduleStoreKey)
+
+	keeper := keeperPrototype().Initialize(m, pm, []interface{}{})
+	require.NotNil(t, keeper)
 }

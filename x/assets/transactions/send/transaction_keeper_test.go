@@ -15,6 +15,7 @@ import (
 	"github.com/AssetMantle/modules/x/assets/parameters"
 	"github.com/AssetMantle/modules/x/assets/record"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/identities/auxiliaries/compliance"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -30,10 +31,11 @@ import (
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/schema/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"math/rand"
 	"testing"
-	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -282,4 +284,23 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, transactionKeeper{}, got)
+}
+
+func Test_transactionKeeper_Initialize(t *testing.T) {
+	moduleStoreKey := storeTypes.NewKVStoreKey(constants.ModuleName)
+	m := mapper.Prototype().Initialize(moduleStoreKey)
+	pm := parameters.Prototype().Initialize(moduleStoreKey)
+
+	authenticateAux, _ := testutil.NewNamedMockAuxiliaryPair(authenticate.Auxiliary.GetName())
+	complianceAux, _ := testutil.NewNamedMockAuxiliaryPair(compliance.Auxiliary.GetName())
+	supplementAux, _ := testutil.NewNamedMockAuxiliaryPair(supplement.Auxiliary.GetName())
+	transferAux, _ := testutil.NewNamedMockAuxiliaryPair(transfer.Auxiliary.GetName())
+
+	keeper := keeperPrototype().Initialize(m, pm, []interface{}{authenticateAux, complianceAux, supplementAux, transferAux})
+	require.NotNil(t, keeper)
 }

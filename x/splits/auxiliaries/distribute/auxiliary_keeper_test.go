@@ -131,3 +131,19 @@ func Test_auxiliaryKeeper_Help_insufficient_funder_balance(t *testing.T) {
 	_, err := keeper.Help(ctx, request)
 	assert.Error(t, err, "insufficient funder balance should fail")
 }
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, auxiliaryKeeper{}, got)
+}
+
+func Test_auxiliaryKeeper_Initialize(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	paramStoreKey := storeTypes.NewKVStoreKey("testParams")
+
+	m := splitsMapper.Prototype().Initialize(storeKey)
+	pm := splitsParameters.Prototype().Initialize(paramStoreKey)
+
+	keeper := keeperPrototype().Initialize(m, pm, []interface{}{})
+	require.NotNil(t, keeper)
+}

@@ -191,3 +191,15 @@ func Test_keeperPrototype(t *testing.T) {
 		})
 	}
 }
+
+func Test_transactionKeeper_Initialize(t *testing.T) {
+	moduleStoreKey := storeTypes.NewKVStoreKey(constants.ModuleName)
+	m := mapper.Prototype().Initialize(moduleStoreKey)
+	pm := parameters.Prototype().Initialize(moduleStoreKey)
+
+	authenticateAux, _ := testutil.NewNamedMockAuxiliaryPair(authenticate.Auxiliary.GetName())
+	deputizeAux, _ := testutil.NewNamedMockAuxiliaryPair(deputize.Auxiliary.GetName())
+
+	keeper := keeperPrototype().Initialize(m, pm, []interface{}{authenticateAux, deputizeAux})
+	require.NotNil(t, keeper)
+}

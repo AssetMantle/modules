@@ -15,7 +15,11 @@ import (
 	"github.com/AssetMantle/modules/x/assets/mapper"
 	"github.com/AssetMantle/modules/x/assets/parameters"
 	"github.com/AssetMantle/modules/x/assets/record"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
+	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/authorize"
+	splitsMint "github.com/AssetMantle/modules/x/splits/auxiliaries/mint"
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/documents"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
@@ -29,10 +33,11 @@ import (
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/AssetMantle/schema/properties"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"math/rand"
 	"testing"
-	"github.com/stretchr/testify/assert"
 )
 
 type testSetup struct {
@@ -345,4 +350,24 @@ func TestTransactionKeeperTransact(t *testing.T) {
 
 		})
 	}
+}
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, transactionKeeper{}, got)
+}
+
+func Test_transactionKeeper_Initialize(t *testing.T) {
+	moduleStoreKey := storeTypes.NewKVStoreKey(constants.ModuleName)
+	m := mapper.Prototype().Initialize(moduleStoreKey)
+	pm := parameters.Prototype().Initialize(moduleStoreKey)
+
+	authenticateAux, _ := testutil.NewNamedMockAuxiliaryPair(authenticate.Auxiliary.GetName())
+	authorizeAux, _ := testutil.NewNamedMockAuxiliaryPair(authorize.Auxiliary.GetName())
+	bondAux, _ := testutil.NewNamedMockAuxiliaryPair(bond.Auxiliary.GetName())
+	conformAux, _ := testutil.NewNamedMockAuxiliaryPair(conform.Auxiliary.GetName())
+	mintAux, _ := testutil.NewNamedMockAuxiliaryPair(splitsMint.Auxiliary.GetName())
+
+	keeper := keeperPrototype().Initialize(m, pm, []interface{}{authenticateAux, authorizeAux, bondAux, conformAux, mintAux})
+	require.NotNil(t, keeper)
 }

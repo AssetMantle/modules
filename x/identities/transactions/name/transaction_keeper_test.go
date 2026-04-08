@@ -78,3 +78,15 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		})
 	}
 }
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, transactionKeeper{}, got)
+}
+
+func Test_transactionKeeper_Initialize(t *testing.T) {
+	_, Mapper, parameterManager := CreateTestInput(t)
+
+	keeper := keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{})
+	require.NotNil(t, keeper)
+}

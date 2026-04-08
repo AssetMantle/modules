@@ -10,6 +10,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/mapper"
+	"github.com/AssetMantle/modules/x/assets/parameters"
 	permissionHelper "github.com/AssetMantle/modules/x/assets/utilities"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/define"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
@@ -20,6 +21,7 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"math/rand"
@@ -184,4 +186,22 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, transactionKeeper{}, got)
+}
+
+func Test_transactionKeeper_Initialize(t *testing.T) {
+	moduleStoreKey := storeTypes.NewKVStoreKey(constants.ModuleName)
+	m := mapper.Prototype().Initialize(moduleStoreKey)
+	pm := parameters.Prototype().Initialize(moduleStoreKey)
+
+	defineAux, _ := testutil.NewNamedMockAuxiliaryPair(define.Auxiliary.GetName())
+	superAux, _ := testutil.NewNamedMockAuxiliaryPair(super.Auxiliary.GetName())
+	authenticateAux, _ := testutil.NewNamedMockAuxiliaryPair(authenticate.Auxiliary.GetName())
+
+	keeper := keeperPrototype().Initialize(m, pm, []interface{}{defineAux, superAux, authenticateAux})
+	require.NotNil(t, keeper)
 }

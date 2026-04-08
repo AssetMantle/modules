@@ -102,3 +102,17 @@ func Test_auxiliaryKeeper_Help_sanctions_required(t *testing.T) {
 	assert.Error(t, err, "sanctions requirement should fail for default identity")
 	assert.Contains(t, err.Error(), "sanctions")
 }
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, auxiliaryKeeper{}, got)
+}
+
+func Test_auxiliaryKeeper_Initialize(t *testing.T) {
+	keeper, _, pm, _ := setupKeeper(t)
+	_ = pm
+
+	require.NotNil(t, keeper)
+	// setupKeeper already calls keeperPrototype().Initialize(m, pm, []interface{}{})
+	// so this validates the Initialize path
+}

@@ -58,3 +58,16 @@ func NewMockAuxiliaryPair() (*MockAuxiliary, *MockAuxiliaryKeeper) {
 	auxiliary.On("GetKeeper").Return(keeper)
 	return auxiliary, keeper
 }
+
+// NewNamedMockAuxiliaryPair creates a MockAuxiliary and MockAuxiliaryKeeper
+// pair with GetKeeper and GetName already wired. The name should match the
+// name returned by the real auxiliary's GetName method (e.g.,
+// authenticate.Auxiliary.GetName()). This is needed when passing mock
+// auxiliaries through a keeper's Initialize method, which dispatches by name.
+func NewNamedMockAuxiliaryPair(name string) (*MockAuxiliary, *MockAuxiliaryKeeper) {
+	keeper := new(MockAuxiliaryKeeper)
+	auxiliary := new(MockAuxiliary)
+	auxiliary.On("GetKeeper").Return(keeper)
+	auxiliary.On("GetName").Return(name)
+	return auxiliary, keeper
+}

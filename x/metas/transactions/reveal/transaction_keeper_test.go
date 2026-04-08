@@ -79,3 +79,17 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		})
 	}
 }
+
+func Test_keeperPrototype(t *testing.T) {
+	got := keeperPrototype()
+	assert.Equal(t, transactionKeeper{}, got)
+}
+
+func Test_transactionKeeper_Initialize(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	Mapper := mapper.Prototype().Initialize(storeKey)
+	parameterManager := parameters.Prototype().Initialize(storeKey)
+
+	keeper := keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{})
+	require.NotNil(t, keeper)
+}
