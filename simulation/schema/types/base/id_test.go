@@ -4,6 +4,8 @@ import (
 	"math/rand"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenerateRandomID(t *testing.T) {
@@ -28,9 +30,8 @@ func TestGenerateRandomID(t *testing.T) {
 					t.Errorf("GenerateRandomID() recover = %v, wantPanic = %v", r, tt.wantPanic)
 				}
 			}()
-			if got := GenerateRandomID(tt.args.r); !reflect.DeepEqual(reflect.TypeOf(got).String(), tt.want) {
-				t.Errorf("GenerateRandomID() = %v, want %v", reflect.TypeOf(got).String(), tt.want)
-			}
+			got := GenerateRandomID(tt.args.r)
+			assert.Equal(t, tt.want, reflect.TypeOf(got).String())
 		})
 	}
 }
@@ -57,9 +58,8 @@ func TestGenerateRandomIDWithDec(t *testing.T) {
 					t.Errorf("GenerateRandomIDWithDec() recover = %v, wantPanic = %v", r, tt.wantPanic)
 				}
 			}()
-			if got := GenerateRandomIDWithDec(tt.args.r); !reflect.DeepEqual(reflect.TypeOf(got).String(), tt.want) {
-				t.Errorf("GenerateRandomIDWithDec() = %v, want %v", reflect.TypeOf(got).String(), tt.want)
-			}
+			got := GenerateRandomIDWithDec(tt.args.r)
+			assert.Equal(t, tt.want, reflect.TypeOf(got).String())
 		})
 	}
 }
@@ -87,9 +87,8 @@ func TestGenerateRandomIDWithInt64(t *testing.T) {
 					t.Errorf("GenerateRandomIDWithInt64() recover = %v, wantPanic = %v", r, tt.wantPanic)
 				}
 			}()
-			if got := GenerateRandomIDWithInt64(tt.args.r); !reflect.DeepEqual(reflect.TypeOf(got).String(), tt.want) {
-				t.Errorf("GenerateRandomIDWithInt64() = %v, want %v", reflect.TypeOf(got).String(), got)
-			}
+			got := GenerateRandomIDWithInt64(tt.args.r)
+			assert.Equal(t, tt.want, reflect.TypeOf(got).String())
 		})
 	}
 }

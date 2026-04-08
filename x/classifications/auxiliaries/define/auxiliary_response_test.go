@@ -5,7 +5,6 @@ package define
 
 import (
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
-	"reflect"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -16,6 +15,7 @@ import (
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/stretchr/testify/assert"
 )
 
 func createTestInput1() ids.ClassificationID {
@@ -43,9 +43,7 @@ func TestGetClassificationIDFromResponse(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := GetClassificationIDFromResponse(tt.args.response)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetClassificationIDFromResponse() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got, "GetClassificationIDFromResponse() got")
 		})
 	}
 }
@@ -66,9 +64,8 @@ func Test_newAuxiliaryResponse(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewAuxiliaryResponse(tt.args.classificationID); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewAuxiliaryResponse() = %v, want %v", got, tt.want)
-			}
+			got := NewAuxiliaryResponse(tt.args.classificationID)
+			assert.Equal(t, tt.want, got, "NewAuxiliaryResponse()")
 		})
 	}
 }

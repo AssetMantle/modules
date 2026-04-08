@@ -4,10 +4,10 @@
 package queries
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/modules/x/assets/queries/asset"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPrototype(t *testing.T) {
@@ -21,9 +21,8 @@ func TestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); !reflect.DeepEqual(got.GetQuery(tt.getString).GetServicePath(), tt.want) {
-				t.Errorf("Prototype() = %v, want %v", got, tt.want)
-			}
+			got := Prototype()
+			assert.Equal(t, tt.want, got.GetQuery(tt.getString).GetServicePath())
 		})
 	}
 }

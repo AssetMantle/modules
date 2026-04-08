@@ -5,7 +5,6 @@ package meta
 
 import (
 	"github.com/AssetMantle/modules/x/metas/key"
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -16,6 +15,7 @@ import (
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -37,9 +37,8 @@ func Test_newQueryRequest(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newQueryRequest(tt.args.dataID); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newQueryRequest() = %v, want %v", got, tt.want)
-			}
+			got := newQueryRequest(tt.args.dataID)
+			assert.Equal(t, tt.want, got, "newQueryRequest()")
 		})
 	}
 }
@@ -73,9 +72,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got, "FromCLI() got")
 		})
 	}
 }
@@ -113,9 +110,8 @@ func Test_requestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := requestPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("requestPrototype() = %v, want %v", got, tt.want)
-			}
+			got := requestPrototype()
+			assert.Equal(t, tt.want, got, "requestPrototype()")
 		})
 	}
 }

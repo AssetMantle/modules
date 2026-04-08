@@ -5,12 +5,12 @@ package mappable
 
 import (
 	"cosmossdk.io/math"
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/schema/types"
 	baseTypes "github.com/AssetMantle/schema/types/base"
 "github.com/AssetMantle/modules/helpers"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -31,9 +31,8 @@ func TestNewMappable(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMappable(tt.args.split); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewMappable() = %v, want %v", got, tt.want)
-			}
+			got := NewMappable(tt.args.split)
+			assert.Equal(t, tt.want, got, "NewMappable()")
 		})
 	}
 }
@@ -47,9 +46,8 @@ func TestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Prototype() = %v, want %v", got, tt.want)
-			}
+			got := Prototype()
+			assert.Equal(t, tt.want, got, "Prototype()")
 		})
 	}
 }

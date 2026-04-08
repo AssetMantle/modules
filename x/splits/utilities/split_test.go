@@ -7,7 +7,6 @@ import (
 	"cosmossdk.io/math"
 	"fmt"
 	storeTypes "cosmossdk.io/store/types"
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/modules/x/splits/record"
@@ -24,6 +23,7 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/helpers/base/testutil"
 	"github.com/AssetMantle/modules/x/splits/mapper"
+	"github.com/stretchr/testify/assert"
 )
 
 func createTestInput1(t *testing.T) (sdkTypes.Context, helpers.Mapper) {
@@ -67,9 +67,7 @@ func TestAddSplits(t *testing.T) {
 				t.Errorf("AddSplits() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("AddSplits() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, fmt.Sprint(tt.want), fmt.Sprint(got), "AddSplits()")
 		})
 	}
 }
@@ -108,9 +106,7 @@ func TestSubtractSplits(t *testing.T) {
 				t.Errorf("SubtractSplits() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("SubtractSplits() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, fmt.Sprint(tt.want), fmt.Sprint(got), "SubtractSplits()")
 		})
 	}
 }

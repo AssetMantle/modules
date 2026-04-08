@@ -5,7 +5,6 @@ package purge
 
 import (
 	"cosmossdk.io/math"
-	"reflect"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -16,6 +15,7 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/stretchr/testify/assert"
 )
 
 func createTestInput1() (ids.IdentityID, ids.AssetID, math.Int) {
@@ -46,9 +46,8 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewAuxiliaryRequest(tt.args.ownerID, tt.args.assetID, tt.args.value); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewAuxiliaryRequest() = %v, want %v", got, tt.want)
-			}
+			got := NewAuxiliaryRequest(tt.args.ownerID, tt.args.assetID, tt.args.value)
+			assert.Equal(t, tt.want, got, "NewAuxiliaryRequest()")
 		})
 	}
 }

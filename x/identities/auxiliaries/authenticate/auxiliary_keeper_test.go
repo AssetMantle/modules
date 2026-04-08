@@ -24,8 +24,8 @@ import (
 	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
-	"reflect"
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 type MockAuxiliary struct {
@@ -147,9 +147,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 
 			got, err := AuxiliaryKeeper.Help(sdkTypes.WrapSDKContext(Context), tt.request)
 
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Help() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got, "Help() got")
 
 			if err != nil && tt.wantErr == nil || err == nil && tt.wantErr != nil || err != nil && tt.wantErr != nil && !tt.wantErr.Is(err) {
 				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)

@@ -7,7 +7,6 @@ import (
 	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/x/splits/record"
 	"github.com/AssetMantle/schema/documents/base"
-	"reflect"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -20,6 +19,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetTotalSupply(t *testing.T) {
@@ -45,9 +45,8 @@ func TestGetTotalSupply(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetTotalSupply(tt.args.collection, tt.args.assetID); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetTotalSupply() = %v, want %v", got, tt.want)
-			}
+			got := GetTotalSupply(tt.args.collection, tt.args.assetID)
+			assert.Equal(t, tt.want, got, "GetTotalSupply()")
 		})
 	}
 }

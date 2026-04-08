@@ -4,11 +4,11 @@
 package auxiliaries
 
 import (
-	"reflect"
 	"testing"
 
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPrototype(t *testing.T) {
@@ -21,9 +21,8 @@ func TestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype().GetAuxiliary("authenticate").GetName(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Prototype() = %v, want %v", got, tt.want)
-			}
+			got := Prototype().GetAuxiliary("authenticate").GetName()
+			assert.Equal(t, tt.want, got, "Prototype()")
 		})
 	}
 }

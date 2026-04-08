@@ -5,12 +5,12 @@ package take
 
 import (
 	"cosmossdk.io/math"
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -36,9 +36,8 @@ func Test_messagePrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := messagePrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messagePrototype() = %v, want %v", got, tt.want)
-			}
+			got := messagePrototype()
+			assert.Equal(t, tt.want, got, "messagePrototype()")
 		})
 	}
 }
@@ -60,9 +59,8 @@ func Test_message_GetSigners(t *testing.T) {
 				TakerSplit: tt.fields.TakerSplit.String(),
 				OrderID:    tt.fields.OrderID,
 			}
-			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
+			got := message.GetSigners()
+			assert.Equal(t, tt.want, got, "GetSigners()")
 		})
 	}
 }
@@ -101,9 +99,8 @@ func Test_NewMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.takerSplit, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
-			}
+			got := NewMessage(tt.args.from, tt.args.fromID, tt.args.takerSplit, tt.args.orderID)
+			assert.Equal(t, tt.want, got, "NewMessage()")
 		})
 	}
 }

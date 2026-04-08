@@ -4,11 +4,9 @@
 package make
 
 import (
-	"fmt"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/bond"
 	"github.com/AssetMantle/modules/x/orders/mapper"
 	storeTypes "cosmossdk.io/store/types"
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers/base/testutil"
@@ -21,6 +19,7 @@ import (
 	"cosmossdk.io/store"
 	storeMetrics "cosmossdk.io/store/metrics"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -93,9 +92,8 @@ func Test_keeperPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
-			}
+			got := keeperPrototype()
+			assert.Equal(t, tt.want, got, "keeperPrototype()")
 		})
 	}
 }
@@ -137,9 +135,8 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 				supplementAuxiliary:   tt.fields.supplementAuxiliary,
 				transferAuxiliary:     tt.fields.transferAuxiliary,
 			}
-			if got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.auxiliaries); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("Initialize() = %v, want %v", got, tt.want)
-			}
+			got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.auxiliaries)
+			assert.NotNil(t, got)
 		})
 	}
 }

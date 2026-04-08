@@ -4,7 +4,6 @@
 package mappable
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -17,6 +16,7 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	"github.com/AssetMantle/schema/qualified"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
+	"github.com/stretchr/testify/assert"
 )
 
 func createTestInput() (documents.Identity, ids.ClassificationID, qualified.Immutables, qualified.Mutables) {
@@ -44,9 +44,8 @@ func TestNewMappable(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMappable(baseDocuments.NewIdentity(tt.args.classificationID, tt.args.immutables, tt.args.mutables)); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewIdentity() = %v, want %v", got, tt.want)
-			}
+			got := NewMappable(baseDocuments.NewIdentity(tt.args.classificationID, tt.args.immutables, tt.args.mutables))
+			assert.Equal(t, tt.want, got, "NewIdentity()")
 		})
 	}
 }
@@ -60,9 +59,8 @@ func TestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Prototype() = %v, want %v", got, tt.want)
-			}
+			got := Prototype()
+			assert.Equal(t, tt.want, got, "Prototype()")
 		})
 	}
 }

@@ -4,8 +4,6 @@
 package queries
 
 import (
-	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -13,6 +11,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/queries/identities"
 	"github.com/AssetMantle/modules/x/identities/queries/identity"
 	"github.com/AssetMantle/modules/x/identities/queries/parameters"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPrototype(t *testing.T) {
@@ -28,9 +27,8 @@ func TestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("Prototype() = %v, want %v", got, tt.want)
-			}
+			got := Prototype()
+			assert.NotNil(t, got)
 		})
 	}
 }

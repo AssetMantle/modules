@@ -6,9 +6,9 @@ package put
 import (
 	"cosmossdk.io/math"
 	"fmt"
-	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
@@ -66,9 +66,8 @@ func Test_newTransactionRequest(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.FromID, tt.args.MakerAssetID, tt.args.TakerAssetID, tt.args.MakerSplit, tt.args.TakerSplit, tt.args.ExpiryHeight); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
-			}
+			got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.FromID, tt.args.MakerAssetID, tt.args.TakerAssetID, tt.args.MakerSplit, tt.args.TakerSplit, tt.args.ExpiryHeight)
+			assert.Equal(t, tt.want, got, "newTransactionRequest()")
 		})
 	}
 }
@@ -82,9 +81,8 @@ func Test_requestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := requestPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("requestPrototype() = %v, want %v", got, tt.want)
-			}
+			got := requestPrototype()
+			assert.Equal(t, tt.want, got, "requestPrototype()")
 		})
 	}
 }
@@ -168,9 +166,8 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 				tt.fields.TakerSplit,
 				tt.fields.ExpiryHeight,
 			}
-			if got := transactionRequest.GetCommonTransactionRequest(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetCommonTransactionRequest() = %v, want %v", got, tt.want)
-			}
+			got := transactionRequest.GetCommonTransactionRequest()
+			assert.Equal(t, tt.want, got, "GetCommonTransactionRequest()")
 		})
 	}
 }
@@ -209,9 +206,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 				t.Errorf("MakeMsg() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, fmt.Sprint(tt.want), fmt.Sprint(got), "MakeMsg()")
 		})
 	}
 }

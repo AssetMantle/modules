@@ -4,7 +4,6 @@
 package conform
 
 import (
-	"reflect"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -16,6 +15,7 @@ import (
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewAuxiliaryRequest(t *testing.T) {
@@ -36,9 +36,8 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewAuxiliaryRequest(tt.args.classificationID, tt.args.immutables, tt.args.mutables); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewAuxiliaryRequest() = %v, want %v", got, tt.want)
-			}
+			got := NewAuxiliaryRequest(tt.args.classificationID, tt.args.immutables, tt.args.mutables)
+			assert.Equal(t, tt.want, got, "NewAuxiliaryRequest()")
 		})
 	}
 }

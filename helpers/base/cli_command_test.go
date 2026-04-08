@@ -4,7 +4,6 @@
 package base
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -45,9 +44,8 @@ func TestNewCLICommand(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewCLICommand(tt.args.use, tt.args.short, tt.args.long, tt.args.cliFlagList); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewCLICommand() = %v, want %v", got, tt.want)
-			}
+			got := NewCLICommand(tt.args.use, tt.args.short, tt.args.long, tt.args.cliFlagList)
+			assert.Equal(t, tt.want, got, "NewCLICommand()")
 		})
 	}
 }
@@ -79,9 +77,8 @@ func Test_cliCommand_CreateCommand(t *testing.T) {
 				long:        tt.fields.long,
 				cliFlagList: tt.fields.cliFlagList,
 			}
-			if got := cliCommand.CreateCommand(tt.args.runE); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("CreateCommand() = %v, want %v", got, tt.want)
-			}
+			got := cliCommand.CreateCommand(tt.args.runE)
+			assert.Equal(t, tt.want, got, "CreateCommand()")
 		})
 	}
 }
@@ -116,9 +113,8 @@ func Test_cliCommand_ReadBaseReq(t *testing.T) {
 				long:        tt.fields.long,
 				cliFlagList: tt.fields.cliFlagList,
 			}
-			if got := cliCommand.ReadCommonTransactionRequest(tt.args.context); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ReadCommonTransactionRequest() = %v, want %v", got, tt.want)
-			}
+			got := cliCommand.ReadCommonTransactionRequest(tt.args.context)
+			assert.Equal(t, tt.want, got, "ReadCommonTransactionRequest()")
 		})
 	}
 }

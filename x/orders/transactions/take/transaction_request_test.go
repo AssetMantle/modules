@@ -6,7 +6,6 @@ package take
 import (
 	"cosmossdk.io/math"
 	"fmt"
-	"reflect"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -21,6 +20,7 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	"github.com/AssetMantle/modules/helpers/constants"
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -52,9 +52,8 @@ func Test_newTransactionRequest(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.fromID, tt.args.takerSplit, tt.args.orderID); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
-			}
+			got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.fromID, tt.args.takerSplit, tt.args.orderID)
+			assert.Equal(t, tt.want, got, "newTransactionRequest()")
 		})
 	}
 }
@@ -68,9 +67,8 @@ func Test_requestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := requestPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("requestPrototype() = %v, want %v", got, tt.want)
-			}
+			got := requestPrototype()
+			assert.Equal(t, tt.want, got, "requestPrototype()")
 		})
 	}
 }
@@ -113,9 +111,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, fmt.Sprint(tt.want), fmt.Sprint(got), "FromCLI()")
 		})
 	}
 }
@@ -142,9 +138,8 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 				TakerSplit:               tt.fields.TakerSplit,
 				OrderID:                  tt.fields.OrderID,
 			}
-			if got := transactionRequest.GetCommonTransactionRequest(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetCommonTransactionRequest() = %v, want %v", got, tt.want)
-			}
+			got := transactionRequest.GetCommonTransactionRequest()
+			assert.Equal(t, tt.want, got, "GetCommonTransactionRequest()")
 		})
 	}
 }
@@ -177,9 +172,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 				t.Errorf("MakeMsg() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("MakeMsg() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got, "MakeMsg() got")
 		})
 	}
 }

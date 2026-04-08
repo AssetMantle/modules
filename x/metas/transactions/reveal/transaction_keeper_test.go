@@ -6,7 +6,6 @@ package reveal
 import (
 	"context"
 	storeTypes "cosmossdk.io/store/types"
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -16,6 +15,7 @@ import (
 	"github.com/AssetMantle/modules/x/metas/record"
 	"github.com/AssetMantle/schema/data/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -75,9 +75,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 				t.Errorf("Transact() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Transact() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got, "Transact() got")
 		})
 	}
 }

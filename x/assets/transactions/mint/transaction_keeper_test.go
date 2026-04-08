@@ -31,8 +31,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
 	"math/rand"
-	"reflect"
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 type testSetup struct {
@@ -341,9 +341,8 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				t.Errorf("unexpected error: %v", err)
 			}
 
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Error("unexpected response")
-			}
+			assert.Equal(t, tt.want, got)
+
 		})
 	}
 }

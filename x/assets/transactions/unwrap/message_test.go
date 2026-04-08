@@ -11,8 +11,8 @@ import (
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cosmos/cosmos-sdk/types"
-	"reflect"
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -153,9 +153,8 @@ func Test_messagePrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := messagePrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messagePrototype() = %v, want %v", got, tt.want)
-			}
+			got := messagePrototype()
+			assert.Equal(t, tt.want, got, "messagePrototype()")
 		})
 	}
 }
@@ -180,9 +179,8 @@ func Test_message_GetSigners(t *testing.T) {
 				FromID: tt.fields.FromID,
 				Coins:  tt.fields.Coins,
 			}
-			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
+			got := message.GetSigners()
+			assert.Equal(t, tt.want, got, "GetSigners()")
 		})
 	}
 }
@@ -202,9 +200,8 @@ func Test_NewMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.coins); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
-			}
+			got := NewMessage(tt.args.from, tt.args.fromID, tt.args.coins)
+			assert.Equal(t, tt.want, got, "NewMessage()")
 		})
 	}
 }

@@ -4,7 +4,6 @@
 package parameters
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -12,6 +11,7 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/parameters/bond_rate"
 	"github.com/AssetMantle/modules/x/classifications/parameters/define_enabled"
 	"github.com/AssetMantle/modules/x/classifications/parameters/max_property_count"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPrototype(t *testing.T) {
@@ -24,9 +24,8 @@ func TestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Prototype() = %v, want %v", got, tt.want)
-			}
+			got := Prototype()
+			assert.Equal(t, tt.want, got, "Prototype()")
 		})
 	}
 }

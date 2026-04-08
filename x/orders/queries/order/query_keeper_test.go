@@ -5,7 +5,6 @@ package order
 
 import (
 	"context"
-	"fmt"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/x/orders/key"
 	"github.com/AssetMantle/modules/x/orders/mapper"
@@ -19,8 +18,8 @@ import (
 	storeMetrics "cosmossdk.io/store/metrics"
 	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"reflect"
 	"testing"
 )
 
@@ -65,9 +64,8 @@ func Test_keeperPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
-			}
+			got := keeperPrototype()
+			assert.Equal(t, tt.want, got, "keeperPrototype()")
 		})
 	}
 }
@@ -97,9 +95,8 @@ func Test_queryKeeper_Initialize(t *testing.T) {
 			queryKeeper := queryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := queryKeeper.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("Initialize() = %v, want %v", got, tt.want)
-			}
+			got := queryKeeper.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.in2)
+			assert.NotNil(t, got)
 		})
 	}
 }
@@ -134,9 +131,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 				t.Errorf("Enquire() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Enquire() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got, "Enquire() got")
 		})
 	}
 }

@@ -4,7 +4,6 @@
 package revoke
 
 import (
-	"reflect"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -14,6 +13,7 @@ import (
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/client"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -51,9 +51,8 @@ func Test_newTransactionRequest(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.fromID, tt.args.toID, tt.args.classificationID); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("newTransactionRequest() = %v, want %v", got, tt.want)
-			}
+			got := newTransactionRequest(tt.args.commonTransactionRequest, tt.args.fromID, tt.args.toID, tt.args.classificationID)
+			assert.Equal(t, tt.want, got, "newTransactionRequest()")
 		})
 	}
 }
@@ -67,9 +66,8 @@ func Test_requestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := requestPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("requestPrototype() = %v, want %v", got, tt.want)
-			}
+			got := requestPrototype()
+			assert.Equal(t, tt.want, got, "requestPrototype()")
 		})
 	}
 }
@@ -110,9 +108,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FromCLI() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got, "FromCLI() got")
 		})
 	}
 }
@@ -140,9 +136,8 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 				ToID:                     tt.fields.ToID,
 				ClassificationID:         tt.fields.ClassificationID,
 			}
-			if got := transactionRequest.GetCommonTransactionRequest(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetCommonTransactionRequest() = %v, want %v", got, tt.want)
-			}
+			got := transactionRequest.GetCommonTransactionRequest()
+			assert.Equal(t, tt.want, got, "GetCommonTransactionRequest()")
 		})
 	}
 }

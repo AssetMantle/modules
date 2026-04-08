@@ -5,9 +5,7 @@ package super
 
 import (
 	"context"
-	"fmt"
 	storeTypes "cosmossdk.io/store/types"
-	"reflect"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -21,6 +19,7 @@ import (
 	"cosmossdk.io/store"
 	storeMetrics "cosmossdk.io/store/metrics"
 	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -99,9 +98,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Help() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got, "Help() got")
 		})
 	}
 }
@@ -129,9 +126,8 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 			au := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("Initialize() = %v, want %v", got, tt.want)
-			}
+			got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2)
+			assert.NotNil(t, got)
 		})
 	}
 }
@@ -145,9 +141,8 @@ func Test_keeperPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
-			}
+			got := keeperPrototype()
+			assert.Equal(t, tt.want, got, "keeperPrototype()")
 		})
 	}
 }

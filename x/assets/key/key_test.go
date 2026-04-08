@@ -11,8 +11,8 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	"reflect"
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -45,9 +45,8 @@ func TestNewKey(t *testing.T) {
 					t.Errorf("error = %v, wantErr %v", r, tt.wantErr)
 				}
 			}()
-			if got := NewKey(tt.args.assetID); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewKey() = %v, want %v", got, tt.want)
-			}
+			got := NewKey(tt.args.assetID)
+			assert.Equal(t, tt.want, got, "NewKey()")
 		})
 	}
 }
@@ -61,9 +60,8 @@ func TestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Prototype() = %v, want %v", got, tt.want)
-			}
+			got := Prototype()
+			assert.Equal(t, tt.want, got, "Prototype()")
 		})
 	}
 }
@@ -111,9 +109,8 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 			key := &Key{
 				AssetID: tt.fields.AssetID,
 			}
-			if got := key.GeneratePrefixedStoreKeyBytes(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GeneratePrefixedStoreKeyBytes() = %v, want %v", got, tt.want)
-			}
+			got := key.GeneratePrefixedStoreKeyBytes()
+			assert.Equal(t, tt.want, got, "GeneratePrefixedStoreKeyBytes()")
 		})
 	}
 }

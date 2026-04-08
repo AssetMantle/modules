@@ -5,9 +5,9 @@ package balances
 
 import (
 	storeTypes "cosmossdk.io/store/types"
-	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/x/splits/mapper"
@@ -48,9 +48,8 @@ func Test_keeperPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
-			}
+			got := keeperPrototype()
+			assert.Equal(t, tt.want, got, "keeperPrototype()")
 		})
 	}
 }

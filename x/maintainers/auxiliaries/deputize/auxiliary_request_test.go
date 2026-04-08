@@ -4,13 +4,13 @@
 package deputize
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/schema/ids"
 	"github.com/AssetMantle/schema/lists"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewAuxiliaryRequest(t *testing.T) {
@@ -34,9 +34,8 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewAuxiliaryRequest(tt.args.fromID, tt.args.toID, tt.args.maintainedClassificationID, tt.args.maintainedProperties, tt.args.canAddMaintainer, tt.args.canRemoveMaintainer, tt.args.canMutateMaintainer, tt.args.permissionIDs...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewAuxiliaryRequest() = %v, want %v", got, tt.want)
-			}
+			got := NewAuxiliaryRequest(tt.args.fromID, tt.args.toID, tt.args.maintainedClassificationID, tt.args.maintainedProperties, tt.args.canAddMaintainer, tt.args.canRemoveMaintainer, tt.args.canMutateMaintainer, tt.args.permissionIDs...)
+			assert.Equal(t, tt.want, got, "NewAuxiliaryRequest()")
 		})
 	}
 }

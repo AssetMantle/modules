@@ -7,7 +7,6 @@ import (
 	"cosmossdk.io/math"
 	"context"
 	storeTypes "cosmossdk.io/store/types"
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -23,6 +22,7 @@ import (
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	baseTypes "github.com/AssetMantle/schema/types/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
 )
 
 type TestKeepers struct {
@@ -53,9 +53,8 @@ func Test_keeperPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
-			}
+			got := keeperPrototype()
+			assert.Equal(t, tt.want, got, "keeperPrototype()")
 		})
 	}
 }
@@ -127,9 +126,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 				t.Errorf("Enquire() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Enquire() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got, "Enquire() got")
 		})
 	}
 }

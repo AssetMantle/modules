@@ -4,13 +4,13 @@
 package utilities
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/schema/lists"
 	"github.com/AssetMantle/schema/lists/base"
 
 	"github.com/AssetMantle/modules/x/maintainers/constants"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSetPermissions(t *testing.T) {
@@ -31,9 +31,8 @@ func TestSetPermissions(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := SetModulePermissions(tt.args.canAddMaintainer, tt.args.canMutateMaintainer, tt.args.canRemoveMaintainer); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("SetModulePermissions() = %v, want %v", got, tt.want)
-			}
+			got := SetModulePermissions(tt.args.canAddMaintainer, tt.args.canMutateMaintainer, tt.args.canRemoveMaintainer)
+			assert.Equal(t, tt.want, got, "SetModulePermissions()")
 		})
 	}
 }

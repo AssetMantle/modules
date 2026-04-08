@@ -4,7 +4,6 @@
 package revoke
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/schema/ids"
@@ -12,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -34,9 +34,8 @@ func Test_messagePrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := messagePrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messagePrototype() = %v, want %v", got, tt.want)
-			}
+			got := messagePrototype()
+			assert.Equal(t, tt.want, got, "messagePrototype()")
 		})
 	}
 }
@@ -58,9 +57,8 @@ func Test_message_GetSigners(t *testing.T) {
 				ToID:             tt.fields.ToID,
 				ClassificationID: tt.fields.ClassificationID,
 			}
-			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
+			got := message.GetSigners()
+			assert.Equal(t, tt.want, got, "GetSigners()")
 		})
 	}
 }
@@ -106,9 +104,8 @@ func Test_NewMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.toID, tt.args.classificationID); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
-			}
+			got := NewMessage(tt.args.from, tt.args.fromID, tt.args.toID, tt.args.classificationID)
+			assert.Equal(t, tt.want, got, "NewMessage()")
 		})
 	}
 }

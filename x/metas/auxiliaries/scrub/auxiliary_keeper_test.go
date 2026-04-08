@@ -6,7 +6,6 @@ package scrub
 import (
 	"context"
 	storeTypes "cosmossdk.io/store/types"
-	"reflect"
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -15,6 +14,7 @@ import (
 	"github.com/AssetMantle/modules/helpers/base/testutil"
 	"github.com/AssetMantle/modules/x/metas/mapper"
 	"github.com/AssetMantle/modules/x/metas/parameters"
+	"github.com/stretchr/testify/assert"
 )
 
 type TestKeepers struct {
@@ -64,9 +64,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Help() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got, "Help() got")
 		})
 	}
 }

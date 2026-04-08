@@ -28,8 +28,8 @@ import (
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
 	"math/rand"
-	"reflect"
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 const (
@@ -154,9 +154,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 				splitBefore = mappable.GetSplit(AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).FetchRecord(key.NewKey(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID))).GetMappable())
 			}
 			got, err := AuxiliaryKeeper.Help(sdkTypes.WrapSDKContext(Context), tt.request)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Help() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got, "Help() got")
 
 			if err != nil && tt.wantErr == nil || err == nil && tt.wantErr != nil || err != nil && tt.wantErr != nil && !tt.wantErr.Is(err) {
 				t.Errorf("\n want error: \n %v \n got error: \n %v", err, tt.wantErr)

@@ -4,12 +4,12 @@
 package mappable
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/schema/data"
 	"github.com/AssetMantle/schema/data/base"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewMappable(t *testing.T) {
@@ -25,9 +25,8 @@ func TestNewMappable(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMappable(tt.args.data); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewMappable() = %v, want %v", got, tt.want)
-			}
+			got := NewMappable(tt.args.data)
+			assert.Equal(t, tt.want, got, "NewMappable()")
 		})
 	}
 }
@@ -41,9 +40,8 @@ func TestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Prototype() = %v, want %v", got, tt.want)
-			}
+			got := Prototype()
+			assert.Equal(t, tt.want, got, "Prototype()")
 		})
 	}
 }

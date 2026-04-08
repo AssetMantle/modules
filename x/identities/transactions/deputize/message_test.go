@@ -4,7 +4,6 @@
 package deputize
 
 import (
-	"reflect"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -15,6 +14,7 @@ import (
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -58,9 +58,8 @@ func Test_messagePrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := messagePrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("messagePrototype() = %v, want %v", got, tt.want)
-			}
+			got := messagePrototype()
+			assert.Equal(t, tt.want, got, "messagePrototype()")
 		})
 	}
 }
@@ -88,9 +87,8 @@ func Test_message_GetSigners(t *testing.T) {
 				CanRemoveMaintainer:  tt.fields.CanRemoveMaintainer,
 				CanMutateMaintainer:  tt.fields.CanMutateMaintainer,
 			}
-			if got := message.GetSigners(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetSigners() = %v, want %v", got, tt.want)
-			}
+			got := message.GetSigners()
+			assert.Equal(t, tt.want, got, "GetSigners()")
 		})
 	}
 }
@@ -150,9 +148,8 @@ func Test_NewMessage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMessage(tt.args.from, tt.args.fromID, tt.args.toID, tt.args.classificationID, tt.args.maintainedProperties, tt.args.CanIssueIdentity, tt.args.CanQuashIdentity, tt.args.CanAddMaintainer, tt.args.CanRemoveMaintainer, tt.args.CanMutateMaintainer); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewMessage() = %v, want %v", got, tt.want)
-			}
+			got := NewMessage(tt.args.from, tt.args.fromID, tt.args.toID, tt.args.classificationID, tt.args.maintainedProperties, tt.args.CanIssueIdentity, tt.args.CanQuashIdentity, tt.args.CanAddMaintainer, tt.args.CanRemoveMaintainer, tt.args.CanMutateMaintainer)
+			assert.Equal(t, tt.want, got, "NewMessage()")
 		})
 	}
 }

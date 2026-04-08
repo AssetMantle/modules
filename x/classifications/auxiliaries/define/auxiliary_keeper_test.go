@@ -6,7 +6,6 @@ package define
 import (
 	"context"
 	storeTypes "cosmossdk.io/store/types"
-	"reflect"
 	"testing"
 
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
@@ -17,6 +16,7 @@ import (
 	"github.com/AssetMantle/modules/helpers/base/testutil"
 	"github.com/AssetMantle/modules/x/classifications/mapper"
 	"github.com/AssetMantle/modules/x/classifications/parameters"
+	"github.com/stretchr/testify/assert"
 )
 
 type TestKeepers struct {
@@ -48,9 +48,8 @@ func Test_keeperPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
-			}
+			got := keeperPrototype()
+			assert.Equal(t, tt.want, got, "keeperPrototype()")
 		})
 	}
 }

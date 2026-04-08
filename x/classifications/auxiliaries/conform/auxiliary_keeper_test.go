@@ -6,7 +6,6 @@ package conform
 import (
 	"context"
 	storeTypes "cosmossdk.io/store/types"
-	"reflect"
 	"testing"
 
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -22,6 +21,7 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/mapper"
 	"github.com/AssetMantle/modules/x/classifications/parameters"
 	"github.com/AssetMantle/modules/x/classifications/record"
+	"github.com/stretchr/testify/assert"
 )
 
 type TestKeepers struct {
@@ -81,9 +81,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 				t.Errorf("Help() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Help() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got, "Help() got")
 		})
 	}
 }
@@ -126,9 +124,8 @@ func Test_keeperPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := keeperPrototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("keeperPrototype() = %v, want %v", got, tt.want)
-			}
+			got := keeperPrototype()
+			assert.Equal(t, tt.want, got, "keeperPrototype()")
 		})
 	}
 }

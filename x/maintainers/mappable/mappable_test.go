@@ -4,7 +4,6 @@
 package mappable
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -15,6 +14,7 @@ import (
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
+	"github.com/stretchr/testify/assert"
 )
 
 func createTestData() documents.Maintainer {
@@ -40,9 +40,8 @@ func TestNewMappable(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMappable(tt.args.maintainer); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewMappable() = %v, want %v", got, tt.want)
-			}
+			got := NewMappable(tt.args.maintainer)
+			assert.Equal(t, tt.want, got, "NewMappable()")
 		})
 	}
 }
@@ -56,9 +55,8 @@ func TestPrototype(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Prototype(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Prototype() = %v, want %v", got, tt.want)
-			}
+			got := Prototype()
+			assert.Equal(t, tt.want, got, "Prototype()")
 		})
 	}
 }
