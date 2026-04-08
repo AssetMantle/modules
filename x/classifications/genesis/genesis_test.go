@@ -6,8 +6,14 @@ package genesis
 import (
 	"testing"
 
+	storeTypes "cosmossdk.io/store/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/base/testutil"
+	"github.com/AssetMantle/modules/x/classifications/mapper"
+	"github.com/AssetMantle/modules/x/classifications/parameters"
 )
 
 func TestPrototype(t *testing.T) {
@@ -35,4 +41,63 @@ func TestGetParameterList(t *testing.T) {
 	g := Prototype()
 	pl := g.GetParameterList()
 	assert.NotNil(t, pl)
+}
+
+func TestValidateBasic(t *testing.T) {
+	g := Prototype()
+	pm := parameters.Prototype()
+	assert.NoError(t, g.ValidateBasic(pm))
+}
+
+func TestGenesis_Encode_Decode_roundtrip(t *testing.T) {
+	g := Prototype()
+	codec := baseHelpers.CodecPrototype()
+	encoded := g.Encode(codec.GetProtoCodec())
+	require.NotNil(t, encoded)
+	require.Greater(t, len(encoded), 0)
+
+	decoded := g.Decode(codec.GetProtoCodec(), encoded)
+	require.NotNil(t, decoded)
+	assert.Equal(t, len(g.GetRecords()), len(decoded.GetRecords()))
+}
+
+func TestGenesis_Import_Export_roundtrip(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	paramStoreKey := storeTypes.NewKVStoreKey("testParams")
+	ctx := testutil.NewTestContext(t, storeKey, paramStoreKey)
+
+	m := mapper.Prototype().Initialize(storeKey)
+	pm := parameters.Prototype().Initialize(paramStoreKey)
+
+	g := Prototype()
+	g.Import(ctx, m, pm)
+
+	exported := g.Export(ctx, m, pm)
+	assert.NotNil(t, exported)
+	assert.Equal(t, len(g.GetRecords()), len(exported.GetRecords()))
+}
+
+func TestGenesis_SetRecords_SetParameters(t *testing.T) {
+	g := Prototype()
+	g = g.SetRecords(g.GetRecords())
+	g = g.SetParameters(g.GetParameterList())
+	assert.NotNil(t, g)
+	assert.NotNil(t, g.GetRecords())
+	assert.NotNil(t, g.GetParameterList())
+}
+
+func TestGenesis_Initialize(t *testing.T) {
+	g := Prototype()
+	initialized := g.Initialize(g.GetRecords(), g.GetParameterList())
+	assert.NotNil(t, initialized)
+	assert.NotNil(t, initialized.GetRecords())
+	assert.NotNil(t, initialized.GetParameterList())
+}
+
+func TestGenesis_Initialize_empty_records(t *testing.T) {
+	g := Prototype()
+	initialized := g.Initialize(nil, g.GetParameterList())
+	assert.NotNil(t, initialized)
+	assert.NotNil(t, initialized.GetParameterList())
+	assert.NotNil(t, initialized.GetRecords())
 }

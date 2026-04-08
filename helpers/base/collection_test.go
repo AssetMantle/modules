@@ -163,3 +163,101 @@ func Test_collection_get_mappables(t *testing.T) {
 
 	var _ helpers.Mappable = mappables[0]
 }
+
+func Test_collection_iterate_all(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
+
+	data1 := baseData.NewStringData("iterAll1")
+	data2 := baseData.NewStringData("iterAll2")
+	coll.Add(metasRecord.NewRecord(data1))
+	coll.Add(metasRecord.NewRecord(data2))
+
+	count := 0
+	result := coll.IterateAll(func(record helpers.Record) bool {
+		count++
+		return true // accumulate
+	})
+	assert.Equal(t, 2, count)
+	assert.Len(t, result.Get(), 2)
+}
+
+func Test_collection_iterate(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
+
+	data1 := baseData.NewStringData("iter1")
+	data2 := baseData.NewStringData("iter2")
+	coll.Add(metasRecord.NewRecord(data1))
+	coll.Add(metasRecord.NewRecord(data2))
+
+	count := 0
+	partialKey := metasKey.Prototype()
+	coll.Iterate(partialKey, func(record helpers.Record) bool {
+		count++
+		return false
+	})
+	assert.GreaterOrEqual(t, count, 2)
+}
+
+func Test_collection_fetch_record(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
+
+	data := baseData.NewStringData("fetchRecord")
+	rec := metasRecord.NewRecord(data)
+	coll.Add(rec)
+
+	fetched := coll.FetchRecord(rec.GetKey())
+	require.NotNil(t, fetched)
+	assert.Equal(t, rec.GetKey(), fetched.GetKey())
+}
+
+func Test_collection_fetch_paginated(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
+
+	data1 := baseData.NewStringData("page1")
+	data2 := baseData.NewStringData("page2")
+	data3 := baseData.NewStringData("page3")
+	coll.Add(metasRecord.NewRecord(data1))
+	coll.Add(metasRecord.NewRecord(data2))
+	coll.Add(metasRecord.NewRecord(data3))
+
+	partialKey := metasKey.Prototype()
+	paginated := coll.FetchPaginated(partialKey, 2)
+	records := paginated.Get()
+	assert.LessOrEqual(t, len(records), 2)
+	assert.Greater(t, len(records), 0)
+}
+
+func Test_collection_iterate_paginated(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
+
+	data1 := baseData.NewStringData("iterPage1")
+	data2 := baseData.NewStringData("iterPage2")
+	data3 := baseData.NewStringData("iterPage3")
+	coll.Add(metasRecord.NewRecord(data1))
+	coll.Add(metasRecord.NewRecord(data2))
+	coll.Add(metasRecord.NewRecord(data3))
+
+	count := 0
+	partialKey := metasKey.Prototype()
+	coll.IteratePaginated(partialKey, 2, func(record helpers.Record) bool {
+		count++
+		return false
+	})
+	assert.LessOrEqual(t, count, 2)
+	assert.Greater(t, count, 0)
+}
