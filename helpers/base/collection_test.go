@@ -1,163 +1,165 @@
 // Copyright [2021] - [2025], AssetMantle Pte. Ltd. and the code contributors
 // SPDX-License-Identifier: Apache-2.0
 
-package base
+package base_test
 
 import (
-	"context"
-	"github.com/AssetMantle/modules/helpers"
-	storeTypes "cosmossdk.io/store/types"
-	"github.com/cosmos/cosmos-sdk/types/kv"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	storeTypes "cosmossdk.io/store/types"
+	baseData "github.com/AssetMantle/schema/data/base"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/AssetMantle/modules/helpers"
+	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/base/testutil"
+	metasKey "github.com/AssetMantle/modules/x/metas/key"
+	metasMappable "github.com/AssetMantle/modules/x/metas/mappable"
+	metasRecord "github.com/AssetMantle/modules/x/metas/record"
 )
 
-type MockRecord struct {
-	key helpers.Key
+func Test_collection_add_fetch_roundtrip(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
+
+	data := baseData.NewStringData("testValue")
+	rec := metasRecord.NewRecord(data)
+	coll = coll.Add(rec)
+
+	fetched := coll.Fetch(rec.GetKey())
+	records := fetched.Get()
+	require.Len(t, records, 1)
+	assert.Equal(t, rec.GetKey(), records[0].GetKey())
 }
 
-func (mr MockRecord) GetKey() helpers.Key {
-	return mr.key
-}
+func Test_collection_remove_deletes(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
 
-func (mr MockRecord) GetMappable() helpers.Mappable {
-	return nil
-}
+	data := baseData.NewStringData("toRemove")
+	rec := metasRecord.NewRecord(data)
+	coll = coll.Add(rec)
+	coll = coll.Remove(rec)
 
-func (mr MockRecord) WithKey(helpers.Key) helpers.Record {
-	return nil
-}
+	// After removal, Get returns empty slice
+	assert.Empty(t, coll.Get())
 
-func (mr MockRecord) ReadFromIterator(storeTypes.Iterator) helpers.Record {
-	return nil
-}
-
-func (mr MockRecord) Read(storeTypes.KVStore) helpers.Record {
-	return nil
-}
-
-func (mr MockRecord) Write(storeTypes.KVStore) helpers.Record {
-	return nil
-}
-
-func (mr MockRecord) Delete(storeTypes.KVStore) {
-}
-
-type MockMapper struct {
-}
-
-func (mm MockMapper) NewCollection(_ context.Context) helpers.Collection {
-	return nil
-}
-
-func (mm MockMapper) StoreDecoder(_ kv.Pair, _ kv.Pair) string {
-	return ""
-}
-
-func (mm MockMapper) Initialize(_ *storeTypes.KVStoreKey) helpers.Mapper {
-	return nil
-}
-
-func (mm MockMapper) Read(context.Context, helpers.Key) helpers.Record {
-	return nil
-}
-
-func (mm MockMapper) Upsert(context.Context, helpers.Record) {
-}
-
-func (mm MockMapper) IterateAll(context.Context, func(helpers.Record) bool) {
-}
-
-func (mm MockMapper) FetchAll(context.Context) []helpers.Record {
-	return nil
-}
-
-func (mm MockMapper) Delete(context.Context, helpers.Key) {
-}
-
-func (mm MockMapper) Iterate(context.Context, helpers.Key, func(helpers.Record) bool) {
-}
-
-func (mm MockMapper) IteratePaginated(context.Context, helpers.Key, int32, func(helpers.Record) bool) {
-}
-
-func TestMutate(t *testing.T) {
-	tt := []struct {
-		name     string
-		mapper   helpers.Mapper
-		input    helpers.Record
-		expected helpers.Collection
-	}{
-		{
-			name:     "Empty records",
-			mapper:   MockMapper{},
-			input:    MockRecord{},
-			expected: collection{records: []helpers.Record{}, mapper: MockMapper{}, context: nil},
-		},
-	}
-
-	for _, tc := range tt {
-		t.Run(tc.name, func(t *testing.T) {
-			c := collection{
-				records: []helpers.Record{},
-				mapper:  tc.mapper,
-				context: nil,
-			}
-
-			output := c.Mutate(tc.input)
-
-			for i := range output.Get() {
-				if output.Get()[i].GetKey() != tc.expected.Get()[i].GetKey() {
-					t.Errorf("Record key not match. Got %v, wants %v", output.Get()[i].GetKey(), tc.expected.Get()[i].GetKey())
-				}
-			}
-		})
+	// Re-fetch from store should return prototype (no data)
+	fetched := coll.Fetch(rec.GetKey())
+	records := fetched.Get()
+	for _, r := range records {
+		mappable := r.GetMappable()
+		if mappable != nil {
+			readData := metasMappable.GetData(mappable)
+			assert.Nil(t, readData, "removed record should have nil data")
+		}
 	}
 }
 
-func Test_collection_Initialize(t *testing.T) {
-	type fields struct {
-		records []helpers.Record
-		mapper  helpers.Mapper
-		context context.Context
-	}
-	type args struct {
-		context context.Context
-		mapper  helpers.Mapper
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.Collection
-	}{
-		{
-			name: "Test collection Initialize",
-			fields: fields{
-				records: []helpers.Record{},
-				mapper:  nil,
-				context: context.Background(),
-			},
-			args: args{
-				context: context.Background(),
-				mapper:  nil,
-			},
-			want: collection{
-				records: []helpers.Record{},
-				mapper:  nil,
-				context: context.Background(),
-			},
-		},
-	}
+func Test_collection_mutate_updates_existing(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			collection := collection{
-				records: tt.fields.records,
-				mapper:  tt.fields.mapper,
-				context: tt.fields.context,
-			}
-			assert.Equalf(t, tt.want, collection.Initialize(tt.args.context, tt.args.mapper), "Initialize(%v, %v)", tt.args.context, tt.args.mapper)
-		})
-	}
+	data := baseData.NewStringData("original")
+	rec := metasRecord.NewRecord(data)
+	coll = coll.Add(rec)
+
+	coll = coll.Mutate(rec)
+	records := coll.Get()
+	require.Len(t, records, 1)
+	assert.Equal(t, rec.GetKey(), records[0].GetKey())
+}
+
+func Test_collection_fetch_partial_key_iterates(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
+
+	data1 := baseData.NewStringData("item1")
+	data2 := baseData.NewStringData("item2")
+	coll.Add(metasRecord.NewRecord(data1))
+	coll.Add(metasRecord.NewRecord(data2))
+
+	partialKey := metasKey.Prototype()
+	require.True(t, partialKey.IsPartial())
+
+	fetched := coll.Fetch(partialKey)
+	records := fetched.Get()
+	assert.GreaterOrEqual(t, len(records), 2, "partial key fetch should return multiple records")
+}
+
+func Test_collection_get_returns_records(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
+
+	data := baseData.NewStringData("getValue")
+	rec := metasRecord.NewRecord(data)
+	coll = coll.Add(rec)
+
+	got := coll.Get()
+	require.Len(t, got, 1)
+}
+
+func Test_collection_get_mappable_nil_for_missing(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
+
+	missingKey := metasKey.NewKey(baseIDs.GenerateDataID(baseData.NewStringData("missing")))
+	mappable := coll.GetMappable(missingKey)
+	assert.Nil(t, mappable, "GetMappable for missing key should return nil")
+}
+
+func Test_collection_initialize(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+
+	coll := m.NewCollection(ctx)
+	require.NotNil(t, coll)
+	assert.Empty(t, coll.Get())
+}
+
+func Test_collection_fetch_all(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
+
+	data1 := baseData.NewStringData("all1")
+	data2 := baseData.NewStringData("all2")
+	coll.Add(metasRecord.NewRecord(data1))
+	coll.Add(metasRecord.NewRecord(data2))
+
+	fetchedAll := coll.FetchAll()
+	records := fetchedAll.Get()
+	assert.Len(t, records, 2)
+}
+
+func Test_collection_get_mappables(t *testing.T) {
+	storeKey := storeTypes.NewKVStoreKey("test")
+	ctx := testutil.NewTestContext(t, storeKey)
+	m := baseHelpers.NewMapper(metasRecord.Prototype).Initialize(storeKey)
+	coll := m.NewCollection(ctx)
+
+	data := baseData.NewStringData("mappableTest")
+	rec := metasRecord.NewRecord(data)
+	coll = coll.Add(rec)
+
+	mappables := coll.GetMappables()
+	require.Len(t, mappables, 1)
+
+	var _ helpers.Mappable = mappables[0]
 }
