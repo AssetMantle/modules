@@ -46,7 +46,7 @@ func Test_newQueryRequest(t *testing.T) {
 
 func Test_queryRequest_FromCLI(t *testing.T) {
 	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.DataID})
-	viper.Set(constants.DataID.GetName(), testKey)
+	viper.Set(constants.DataID.GetName(), testDataID.AsString())
 	type fields struct {
 		Key *key.Key
 	}

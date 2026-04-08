@@ -146,12 +146,13 @@ var (
 
 	genesisAddress   = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
 	_                = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
-	parameterManager = parameters.Prototype().Initialize(moduleStoreKey).
+	parameterManager, _ = parameters.Prototype().Initialize(moduleStoreKey).
 				Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))).
 				Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true)))).
 				Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true)))).
 				Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(true)))).
-				Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom)))))
+				Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))).
+				Update(Context)
 
 	TransactionKeeper = transactionKeeper{
 		mapper:                mapper.Prototype().Initialize(moduleStoreKey),
@@ -221,7 +222,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				mutableProps:     baseLists.NewPropertyList(),
 			},
 			setup: func(t *testing.T) {
-				parameterManager.Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(false))))
+				parameterManager.Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(false)))).Update(sdkTypes.WrapSDKContext(Context))
 			},
 			wantErr: errorConstants.NotAuthorized,
 		},
@@ -235,7 +236,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				mutableProps:     baseLists.NewPropertyList(),
 			},
 			setup: func(t *testing.T) {
-				parameterManager.Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true))))
+				parameterManager.Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true)))).Update(sdkTypes.WrapSDKContext(Context))
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
 			},
 			wantErr: errorConstants.MockError,
@@ -362,6 +363,14 @@ func TestTransactionKeeperTransact(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			authorizeAuxiliaryKeeper.ExpectedCalls = nil
+			authorizeAuxiliaryKeeper.Calls = nil
+			conformAuxiliaryKeeper.ExpectedCalls = nil
+			conformAuxiliaryKeeper.Calls = nil
+			mintAuxiliaryKeeper.ExpectedCalls = nil
+			mintAuxiliaryKeeper.Calls = nil
+			bondAuxiliaryKeeper.ExpectedCalls = nil
+			bondAuxiliaryKeeper.Calls = nil
 
 			tt.setup(t)
 			got, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(

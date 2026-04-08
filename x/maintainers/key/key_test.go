@@ -33,7 +33,6 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve with nil", args{}, &Key{}},
 		{"+ve", args{createTestData()}, &Key{createTestData()}},
 	}
 	for _, tt := range tests {

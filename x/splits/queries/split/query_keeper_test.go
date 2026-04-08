@@ -118,6 +118,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 	splitID := baseIDs.NewSplitID(testAssetID, testOwnerIdentityID)
 	testRate := math.OneInt()
 	split := baseTypes.NewSplit(testRate)
+	Mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(record.NewRecord(splitID, split))
 	type fields struct {
 		mapper helpers.Mapper
 	}

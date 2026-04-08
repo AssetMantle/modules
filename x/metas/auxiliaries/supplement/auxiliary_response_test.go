@@ -22,7 +22,7 @@ func Test_Super_Response(t *testing.T) {
 	testAuxiliaryResponse := NewAuxiliaryResponse(metaPropertyList)
 	require.Equal(t, auxiliaryResponse{PropertyList: metaPropertyList}, testAuxiliaryResponse)
 
-	testAuxiliaryResponse2 := NewAuxiliaryResponse(metaPropertyList)
+	testAuxiliaryResponse2 := NewAuxiliaryResponse(nil)
 	require.Equal(t, auxiliaryResponse{PropertyList: nil}, testAuxiliaryResponse2)
 
 	Properties := GetMetaPropertiesFromResponse(testAuxiliaryResponse)

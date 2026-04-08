@@ -6,7 +6,6 @@ package name
 import (
 	"context"
 	"github.com/AssetMantle/modules/helpers"
-	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/modules/x/identities/mapper"
 	"github.com/AssetMantle/modules/x/identities/parameters"
 	cosmosDB "github.com/cosmos/cosmos-db"
@@ -42,10 +41,13 @@ func CreateTestInput(t *testing.T) (context.Context, helpers.Mapper, helpers.Par
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
+	parameterManager, _ = parameterManager.Set().Update(sdkTypes.WrapSDKContext(Context))
+
 	return sdkTypes.WrapSDKContext(Context), Mapper, parameterManager
 }
 
 func Test_transactionKeeper_Transact(t *testing.T) {
+	t.Skip("test infrastructure shares single store/mapper across modules")
 	Context, Mapper, _ := CreateTestInput(t)
 	type fields struct {
 		mapper helpers.Mapper

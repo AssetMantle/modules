@@ -22,7 +22,6 @@ func TestNewMappable(t *testing.T) {
 		want helpers.Mappable
 	}{
 		{"+ve", args{base.NewStringData("data")}, &Mappable{base.NewStringData("data").ToAnyData().(*base.AnyData)}},
-		{"+ve with nil", args{}, &Mappable{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

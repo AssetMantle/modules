@@ -47,6 +47,8 @@ func CreateTestInput(t *testing.T) (context.Context, TestKeepers) {
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
+	parameterManager, _ = parameterManager.Set().Update(sdkTypes.WrapSDKContext(Context))
+
 	keepers := TestKeepers{
 		MetasKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.TransactionKeeper),
 	}

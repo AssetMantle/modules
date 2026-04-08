@@ -89,7 +89,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testOwnerIdentityID, testAssetID, testRate)}, newAuxiliaryResponse(), false},
-		{"+ve Entity Not Found", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), testAssetID, testRate)}, newAuxiliaryResponse(), false},
+		{"+ve Entity Not Found", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), testAssetID, testRate)}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

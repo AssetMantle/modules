@@ -162,7 +162,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, fromID.AsString(), testAssetID.AsString(), mutableMetaPropertiesString, mutablePropertiesString}, NewMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties1, mutableProperties1.ScrubData()), false},
+		{"+ve", fields{commonTransactionRequest.SetFrom(fromAddress), fromID.AsString(), testAssetID.AsString(), mutableMetaPropertiesString, mutablePropertiesString}, NewMessage(fromAccAddress, fromID, testAssetID, mutableMetaProperties1, mutableProperties1.ScrubData()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -198,7 +198,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, fromID.AsString(), testAssetID.AsString(), mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{commonTransactionRequest.SetFrom(fromAddress), fromID.AsString(), testAssetID.AsString(), mutableMetaPropertiesString, mutablePropertiesString}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

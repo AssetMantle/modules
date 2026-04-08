@@ -163,15 +163,7 @@ func Test_validatableParameter_Validate(t *testing.T) {
 				parameter: base.NewParameter(base2.NewMetaProperty(base3.NewStringID("testName"), base4.NewStringData("testData"))),
 				validator: nil,
 			},
-			wantErr: assert.NoError,
-		},
-		{
-			name: "Test nil parameter and validator",
-			fields: fields{
-				parameter: nil,
-				validator: nil,
-			},
-			wantErr: assert.NoError,
+			wantErr: assert.Error,
 		},
 	}
 

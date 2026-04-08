@@ -6,6 +6,7 @@ package authorize
 import (
 	"context"
 	storeTypes "cosmossdk.io/store/types"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -131,7 +132,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 			au := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(got, tt.want) {
+			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
 				t.Errorf("Initialize() = %v, want %v", got, tt.want)
 			}
 		})

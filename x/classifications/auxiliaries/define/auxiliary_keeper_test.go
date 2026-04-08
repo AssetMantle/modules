@@ -50,6 +50,8 @@ func createTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
+	parameterManager, _ = parameterManager.Set().Update(sdkTypes.WrapSDKContext(Context))
+
 	keepers := TestKeepers{
 		ClassificationsKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{bankKeeper.BaseKeeper{}, &stakingKeeper.Keeper{}}).(helpers.AuxiliaryKeeper),
 	}
@@ -75,6 +77,7 @@ func Test_keeperPrototype(t *testing.T) {
 
 func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 	_, _, Mapper, parameterManager := createTestInput(t)
+	testStakingKeeper := &stakingKeeper.Keeper{}
 	type fields struct {
 		mapper helpers.Mapper
 	}
@@ -89,7 +92,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{bankKeeper.BaseKeeper{}, &stakingKeeper.Keeper{}}}, auxiliaryKeeper{Mapper, parameterManager, bankKeeper.BaseKeeper{}, &stakingKeeper.Keeper{}}},
+		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{bankKeeper.BaseKeeper{}, testStakingKeeper}}, auxiliaryKeeper{Mapper, parameterManager, bankKeeper.BaseKeeper{}, testStakingKeeper}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

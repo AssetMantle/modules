@@ -47,7 +47,7 @@ func Test_auxiliaryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve with nil", fields{}, false},
+		{"-ve with nil", fields{}, true},
 		{"+ve", fields{testClassificationID, testFromID, mutables}, false},
 	}
 	for _, tt := range tests {

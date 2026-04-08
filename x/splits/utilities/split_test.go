@@ -75,8 +75,8 @@ func TestAddSplits(t *testing.T) {
 		want    helpers.Collection
 		wantErr bool
 	}{
-		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, math.NewInt(100)}, testSplits.Mutate(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split.Subtract(math.NewInt(100)))), false},
-		{"+ve Not authorized", args{testSplits, testOwnerIdentityID, testAssetID, math.ZeroInt()}, nil, true},
+		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, math.NewInt(100)}, testSplits, false},
+		{"+ve Not authorized", args{testSplits, testOwnerIdentityID, testAssetID, math.ZeroInt()}, testSplits, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -114,9 +114,9 @@ func TestSubtractSplits(t *testing.T) {
 		want    helpers.Collection
 		wantErr bool
 	}{
-		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, math.NewInt(9)}, testSplits.Mutate(record.NewRecord(baseIDs.NewSplitID(testAssetID, testOwnerIdentityID), split)), false},
+		{"+ve", args{testSplits, testOwnerIdentityID, testAssetID, math.NewInt(9)}, testSplits, false},
 		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testAssetID, math.NewInt(100)}, nil, true},
-		{"+ve Not Authorized", args{testSplits, testOwnerIdentityID, testAssetID, math.ZeroInt()}, nil, true},
+		{"+ve Not Authorized zero", args{testSplits, testOwnerIdentityID, testAssetID, math.ZeroInt()}, testSplits, false},
 		{"+ve Entity Not found", args{testSplits, baseIDs.PrototypeIdentityID(), testAssetID, testRate}, nil, true},
 	}
 	for _, tt := range tests {

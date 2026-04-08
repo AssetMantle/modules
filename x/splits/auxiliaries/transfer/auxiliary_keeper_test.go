@@ -118,8 +118,9 @@ var (
 
 	Context = setContext()
 
-	parameterManager = parameters.Prototype().Initialize(moduleStoreKey).
-				Set(baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(true))))
+	parameterManager, _ = parameters.Prototype().Initialize(moduleStoreKey).
+				Set(baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(true)))).
+				Update(Context)
 
 	_ = AuxiliaryKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).
 		Add(record.NewRecord(baseIDs.NewSplitID(testCoinAssetID, testFromIdentityID), baseTypes.NewSplit(math.NewInt(GenesisSupply))))
@@ -215,7 +216,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		{
 			"transfer not enabled",
 			func() {
-				parameterManager.Set(baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(false))))
+				parameterManager.Set(baseParameters.NewParameter(baseProperties.NewMetaProperty(transfer_enabled.ID, baseData.NewBooleanData(false)))).Update(sdkTypes.WrapSDKContext(Context))
 			},
 			NewAuxiliaryRequest(testFromIdentityID, testToIdentityID, testCoinAssetID, testSendAmount),
 			nil,

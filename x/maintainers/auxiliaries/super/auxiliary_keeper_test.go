@@ -61,6 +61,8 @@ func createTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, 
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
+	parameterManager, _ = parameterManager.Set().Update(sdkTypes.WrapSDKContext(Context))
+
 	keepers := TestKeepers{
 		SuperKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
@@ -85,7 +87,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse(), false},
-		{"+ve Already exists", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse(), false},
+		{"+ve Already exists", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

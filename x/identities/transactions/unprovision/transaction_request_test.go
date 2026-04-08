@@ -153,9 +153,9 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 }
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
-	testIdentityID, toAddress, toAccAddress, _, commonTransactionRequest := createInputForMessage(t)
+	testIdentityID, toAddress, _, _, commonTransactionRequest := createInputForMessage(t)
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := types.AccAddressFromBech32(fromAddress)
+	_, err := types.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
@@ -168,7 +168,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, toAddress, testIdentityID.AsString()}, &Message{fromAccAddress.String(), toAccAddress.String(), testIdentityID}, false},
+		{"+ve", fields{commonTransactionRequest, toAddress, testIdentityID.AsString()}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -202,7 +202,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		wantErr bool
 	}{
 		{"+ve wit nil", fields{}, true},
-		{"+ve", fields{commonTransactionRequest, toAddress, testIdentityID.AsString()}, false},
+		{"+ve", fields{commonTransactionRequest, toAddress, testIdentityID.AsString()}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

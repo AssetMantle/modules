@@ -21,7 +21,7 @@ func Test_Define_Request(t *testing.T) {
 
 	testAuxiliaryRequest := NewAuxiliaryRequest(sdkTypes.AccAddress{}, immutables, mutables)
 
-	require.Equal(t, auxiliaryRequest{Immutables: immutables, Mutables: mutables}, testAuxiliaryRequest)
-	require.Equal(t, nil, testAuxiliaryRequest.Validate())
+	require.Equal(t, auxiliaryRequest{AccAddress: sdkTypes.AccAddress{}, Immutables: immutables, Mutables: mutables}, testAuxiliaryRequest)
+	require.NotNil(t, testAuxiliaryRequest.Validate())
 
 }

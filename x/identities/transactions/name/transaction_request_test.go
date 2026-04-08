@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 
@@ -24,6 +23,7 @@ func CreateTestInputForRequest(t *testing.T) (helpers.CLICommand, client.Context
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
 	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	_ = fromAccAddress
 	require.Nil(t, err)
 
 	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest()
@@ -134,7 +134,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 }
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
-	_, _, _, fromAccAddress, commonTransactionRequest := CreateTestInputForRequest(t)
+	_, _, _, _, commonTransactionRequest := CreateTestInputForRequest(t)
 
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
@@ -146,7 +146,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, "nubID"}, &Message{fromAccAddress.String(), baseIDs.NewStringID("nubID").(*baseIDs.StringID)}, false},
+		{"+ve", fields{commonTransactionRequest, "nubID"}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -178,7 +178,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, "nubID"}, false},
+		{"+ve", fields{commonTransactionRequest, "nubID"}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

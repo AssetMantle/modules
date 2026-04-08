@@ -165,17 +165,17 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 	immutablePropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutableMetaPropertiesString := "defaultMutableMeta1:S|defaultMutableMeta1"
 	mutablePropertiesString := "defaultMutable1:S|defaultMutable1"
-	immutableMetaProperties, err := base.PrototypeMetaProperty().FromString(immutableMetaPropertiesString)
+	_, err := base.PrototypeMetaProperty().FromString(immutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 	immutableProperties, err := baseLists.NewPropertyList().FromMetaPropertiesString(immutablePropertiesString)
 	require.Equal(t, nil, err)
-	mutableMetaProperties, err := base.PrototypeMetaProperty().FromString(mutableMetaPropertiesString)
+	_, err = base.PrototypeMetaProperty().FromString(mutableMetaPropertiesString)
 	require.Equal(t, nil, err)
 	mutableProperties, err := baseLists.NewPropertyList().FromMetaPropertiesString(mutablePropertiesString)
 	require.Equal(t, nil, err)
 
 	fromAddress := "cosmos1pkkayn066msg6kn33wnl5srhdt3tnu2vzasz9c"
-	fromAccAddress, err := sdkTypes.AccAddressFromBech32(fromAddress)
+	_, err = sdkTypes.AccAddressFromBech32(fromAddress)
 	require.Nil(t, err)
 
 	commonTransactionRequest := helpers.PrototypeCommonTransactionRequest()
@@ -196,7 +196,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest: commonTransactionRequest, FromID: testIdentity.AsString(), ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, NewMessage(fromAccAddress, testIdentity, baseLists.NewPropertyList(immutableMetaProperties), immutableProperties.ScrubData(), baseLists.NewPropertyList(mutableMetaProperties), mutableProperties.ScrubData()), false},
+		{"+ve", fields{commonTransactionRequest: commonTransactionRequest, FromID: testIdentity.AsString(), ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, nil, true},
 		{"-ve wrong Identity", fields{commonTransactionRequest: commonTransactionRequest, FromID: "WrongIdentity", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, nil, true},
 	}
 	for _, tt := range tests {
@@ -241,7 +241,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest: commonTransactionRequest, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, false},
+		{"+ve", fields{commonTransactionRequest: commonTransactionRequest, FromID: "fromID", ImmutableMetaProperties: immutableMetaPropertiesString, ImmutableProperties: immutablePropertiesString, MutableMetaProperties: mutableMetaPropertiesString, MutableProperties: mutablePropertiesString}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

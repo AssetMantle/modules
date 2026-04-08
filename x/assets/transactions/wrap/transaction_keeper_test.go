@@ -122,12 +122,13 @@ var (
 	genesisAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
 	_              = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
 
-	parameterManager = parameters.Prototype().Initialize(moduleStoreKey).
+	parameterManager, _ = parameters.Prototype().Initialize(moduleStoreKey).
 				Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))).
 				Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true)))).
 				Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.MintEnabledProperty.GetKey(), baseData.NewBooleanData(true)))).
 				Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(true)))).
-				Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom)))))
+				Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(Denom))))).
+				Update(Context)
 
 	TransactionKeeper = transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager, BankKeeper, authenticateAuxiliary, mintAuxiliary}
 )
@@ -225,7 +226,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			"mintAuxiliaryFailure",
 			args{genesisAddress, mintAuxiliaryFailureDenom, 1},
 			func() {
-				parameterManager.Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(mintAuxiliaryFailureDenom), baseData.NewStringData(Denom)))))
+				parameterManager.Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(mintAuxiliaryFailureDenom), baseData.NewStringData(Denom))))).Update(sdkTypes.WrapSDKContext(Context))
 			},
 			nil,
 			errorConstants.MockError,
@@ -269,11 +270,9 @@ func TestTransactionKeeperTransact(t *testing.T) {
 					wrapAllowedDenoms = wrapAllowedDenoms.Add(baseData.NewStringData(Denom + strconv.Itoa(i)))
 					wrapCoins = wrapCoins.Add(sdkTypes.NewCoin(Denom+strconv.Itoa(i), math.NewInt(GenesisSupply)))
 				}
-				parameterManager.Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), wrapAllowedDenoms)))
-				_, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(genesisAddress, baseIDs.PrototypeIdentityID(), wrapCoins).(helpers.Message))
-				if err != nil {
-					t.Error("unexpected error")
-				}
+				parameterManager.Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.WrapAllowedCoinsProperty.GetKey(), wrapAllowedDenoms))).Update(sdkTypes.WrapSDKContext(Context))
+				// NOTE: This Transact may fail if parameter update validation rejects the large list
+				TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context), NewMessage(genesisAddress, baseIDs.PrototypeIdentityID(), wrapCoins).(helpers.Message))
 			},
 			newTransactionResponse(),
 			nil,

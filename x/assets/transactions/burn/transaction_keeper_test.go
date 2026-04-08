@@ -10,7 +10,6 @@ import (
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	recordassets "github.com/AssetMantle/modules/x/assets/record"
-	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	"github.com/AssetMantle/schema/ids"
@@ -216,7 +215,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				assetID: assetID,
 			},
 			setup: func() {
-				parameterManager.Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(false))))
+				parameterManager.Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(false)))).Update(sdkTypes.WrapSDKContext(Context))
 				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 			},
 			want:    nil,
@@ -230,8 +229,9 @@ func TestTransactionKeeperTransact(t *testing.T) {
 				assetID: assetID,
 			},
 			setup: func() {
-				parameterManager.Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true))))
+				parameterManager.Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.BurnEnabledProperty.GetKey(), baseData.NewBooleanData(true)))).Update(sdkTypes.WrapSDKContext(Context))
 				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(asset))
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				purgeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				unbondAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
@@ -261,7 +261,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			},
 			setup: func() {
 				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(asset))
-				authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(&Message{From: genesisAddress.String(), FromID: baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)})).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.NotAuthorized).Once()
 			},
 			want:    nil,
@@ -276,7 +276,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			},
 			setup: func() {
 				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(asset))
-				authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(&Message{From: genesisAddress.String(), FromID: baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)})).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 			},
 			want:    nil,
 			wantErr: errorConstants.EntityNotFound,
@@ -409,7 +409,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			},
 			setup: func() {
 				TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(asset))
-				authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(&Message{From: genesisAddress.String(), FromID: baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)})).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				purgeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				authorizeAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 				unbondAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
@@ -420,6 +420,17 @@ func TestTransactionKeeperTransact(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			authenticateAuxiliaryKeeper.ExpectedCalls = nil
+			authenticateAuxiliaryKeeper.Calls = nil
+			authorizeAuxiliaryKeeper.ExpectedCalls = nil
+			authorizeAuxiliaryKeeper.Calls = nil
+			purgeAuxiliaryKeeper.ExpectedCalls = nil
+			purgeAuxiliaryKeeper.Calls = nil
+			supplementAuxiliaryKeeper.ExpectedCalls = nil
+			supplementAuxiliaryKeeper.Calls = nil
+			unbondAuxiliaryKeeper.ExpectedCalls = nil
+			unbondAuxiliaryKeeper.Calls = nil
+
 			tt.setup()
 
 			got, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context),

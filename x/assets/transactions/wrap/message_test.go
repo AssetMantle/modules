@@ -79,7 +79,7 @@ func TestMessage_ValidateBasic(t *testing.T) {
 					types.Coin{Denom: denom + "10", Amount: math.NewInt(100)},
 				},
 			},
-			constants.InvalidMessage,
+			nil,
 		},
 		{
 			"unsorted coins",

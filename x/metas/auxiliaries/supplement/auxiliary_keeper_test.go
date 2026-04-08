@@ -131,8 +131,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			"nil properties",
 			func() {},
 			NewAuxiliaryRequest(nil),
-			NewAuxiliaryResponse(base.NewPropertyList()),
 			nil,
+			errorConstants.InvalidRequest,
 		},
 		{
 			"one property",
@@ -159,8 +159,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 			"nil with properties",
 			func() {},
 			NewAuxiliaryRequest(nil, testScrubbedProperties[0], nil, testScrubbedProperties[1], nil),
-			NewAuxiliaryResponse(base.NewPropertyList(testUnScrubbedProperties[0], testUnScrubbedProperties[1])),
 			nil,
+			errorConstants.InvalidRequest,
 		},
 		{
 			"prototype property with properties",

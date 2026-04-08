@@ -55,6 +55,8 @@ func createTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mappe
 		ChainID: "test",
 	}, false, log.NewNopLogger())
 
+	parameterManager, _ = parameterManager.Set().Update(sdkTypes.WrapSDKContext(Context))
+
 	keepers := TestKeepers{
 		ConformKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{}).(helpers.AuxiliaryKeeper),
 	}
@@ -85,9 +87,9 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		want    helpers.AuxiliaryResponse
 		wantErr bool
 	}{
-		{"+ve Entity Not Found", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testClassificationID1, immutables1, mutables1)}, newAuxiliaryResponse(), false},
+		{"+ve Entity Not Found", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testClassificationID1, immutables1, mutables1)}, nil, true},
 		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse(), false},
-		{"+ve Incorrect Format", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, immutables1, mutables)}, newAuxiliaryResponse(), false},
+		{"+ve Incorrect Format", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, immutables1, mutables)}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

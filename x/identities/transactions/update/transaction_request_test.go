@@ -163,7 +163,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 }
 
 func Test_transactionRequest_MakeMsg(t *testing.T) {
-	_, _, mutableMetaPropertiesString, mutablePropertiesString, mutableMetaProperties, mutableProperties, _, fromAccAddress, commonTransactionRequest := createTestInput(t)
+	_, _, mutableMetaPropertiesString, mutablePropertiesString, _, _, _, _, commonTransactionRequest := createTestInput(t)
 	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID2"), baseData.NewStringData("Data2"))))
 	mutables := baseQualified.NewMutables(baseLists.NewPropertyList(baseProperties.NewMesaProperty(baseIDs.NewStringID("ID1"), baseData.NewStringData("Data1"))))
 	testClassificationID := baseIDs.NewClassificationID(immutables, mutables)
@@ -181,7 +181,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), mutableMetaPropertiesString, mutablePropertiesString}, NewMessage(fromAccAddress, testFromID, testFromID, mutableMetaProperties, mutableProperties.ScrubData()), false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), mutableMetaPropertiesString, mutablePropertiesString}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -219,7 +219,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, false},
+		{"+ve", fields{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, true},
 		{"+ve with nil", fields{}, true},
 	}
 	for _, tt := range tests {

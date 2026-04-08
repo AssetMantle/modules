@@ -21,7 +21,7 @@ import (
 
 var (
 	fromAccAddress, _        = types.AccAddressFromBech32(fromAddress.String())
-	commonTransactionRequest = helpers.PrototypeCommonTransactionRequest().SetFrom(fromAddress.String())
+	commonTransactionRequest = helpers.PrototypeCommonTransactionRequest()
 	fromID                   = baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)
 	testRate                 = math.OneInt()
 )
@@ -159,7 +159,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, fromID.AsString(), fromID.AsString(), assetID.AsString(), testRate.String()}, NewMessage(fromAccAddress, fromID, fromID, assetID, testRate), false},
+		{"+ve", fields{commonTransactionRequest.SetFrom(fromAddress.String()), fromID.AsString(), fromID.AsString(), assetID.AsString(), testRate.String()}, NewMessage(fromAccAddress, fromID, fromID, assetID, testRate), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -195,7 +195,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, fromID.AsString(), fromID.AsString(), assetID.AsString(), testRate.String()}, false},
+		{"+ve", fields{commonTransactionRequest.SetFrom(fromAddress.String()), fromID.AsString(), fromID.AsString(), assetID.AsString(), testRate.String()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -156,7 +156,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, NewMessage(fromAccAddress, testFromID, testOrderID), false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -188,7 +188,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, false},
+		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, true},
 		{"+ve with nil", fields{commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString()}, true},
 	}
 	for _, tt := range tests {

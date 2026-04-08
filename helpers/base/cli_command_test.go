@@ -105,7 +105,7 @@ func Test_cliCommand_ReadBaseReq(t *testing.T) {
 		want   helpers.CommonTransactionRequest
 	}{
 
-		{"+ve", fields{"", "", "", testCliFlagList}, args{client.Context{ChainID: "chainID"}}, helpers.PrototypeCommonTransactionRequest()},
+		{"+ve", fields{"", "", "", testCliFlagList}, args{client.Context{ChainID: "chainID"}}, helpers.CommonTransactionRequest{ChainID: "chainID"}},
 		{"-ve for nil", fields{"", "", "", nil}, args{client.Context{ChainID: ""}}, helpers.PrototypeCommonTransactionRequest()},
 	}
 	for _, tt := range tests {
