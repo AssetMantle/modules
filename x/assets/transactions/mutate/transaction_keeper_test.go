@@ -4,10 +4,9 @@
 package mutate
 
 import (
-	"cosmossdk.io/math"
-	"context"
+	storeTypes "cosmossdk.io/store/types"
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
+	"github.com/AssetMantle/modules/helpers/base/testutil"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/mapper"
@@ -15,134 +14,81 @@ import (
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/conform"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/maintainers/auxiliaries/maintain"
+	"github.com/AssetMantle/schema/documents"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/schema/lists"
 	baseLists "github.com/AssetMantle/schema/lists/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
-	cosmosDB "github.com/cosmos/cosmos-db"
-	"github.com/cometbft/cometbft/crypto/ed25519"
-	"cosmossdk.io/log"
-	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"cosmossdk.io/store"
-	storeMetrics "cosmossdk.io/store/metrics"
-	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	addressCodec "github.com/cosmos/cosmos-sdk/codec/address"
-	"github.com/cosmos/cosmos-sdk/runtime"
-	authKeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	authTypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	govTypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	paramsTypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/mock"
 	"reflect"
 	"testing"
 )
 
-type MockAuxiliary struct {
-	mock.Mock
+type testSetup struct {
+	Context                            sdkTypes.Context
+	genesisAddress                     sdkTypes.AccAddress
+	TransactionKeeper                  transactionKeeper
+	authenticateAuxiliaryFailureAddress sdkTypes.AccAddress
+	testAsset                          documents.Asset
+	testNewAssetID                     *baseIDs.AssetID
+	maintainFailureID                  ids.IdentityID
+	maintainFailureClassificationID    ids.ClassificationID
+	maintainAuxiliaryKeeper            *testutil.MockAuxiliaryKeeper
+	conformAuxiliaryKeeper             *testutil.MockAuxiliaryKeeper
 }
 
-var _ helpers.Auxiliary = (*MockAuxiliary)(nil)
+func setupTest(t *testing.T) *testSetup {
+	t.Helper()
 
-func (mockAuxiliary *MockAuxiliary) GetName() string { panic(mockAuxiliary) }
-func (mockAuxiliary *MockAuxiliary) GetKeeper() helpers.AuxiliaryKeeper {
-	args := mockAuxiliary.Called()
-	return args.Get(0).(helpers.AuxiliaryKeeper)
-}
-func (mockAuxiliary *MockAuxiliary) Initialize(_ helpers.Mapper, _ helpers.ParameterManager, _ ...interface{}) helpers.Auxiliary {
-	panic(mockAuxiliary)
-}
+	moduleStoreKey := storeTypes.NewKVStoreKey(constants.ModuleName)
+	ctx, _, genesisAddress := testutil.NewTestContextWithBankAuth(t, constants.ModuleName, moduleStoreKey)
 
-type MockAuxiliaryKeeper struct {
-	mock.Mock
-}
+	authenticateAuxiliaryKeeper := new(testutil.MockAuxiliaryKeeper)
+	authenticateAuxiliaryFailureAddress := testutil.TestAddress()
+	authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(&Message{From: authenticateAuxiliaryFailureAddress.String(), FromID: baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)})).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
+	authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	authenticateAuxiliary := new(testutil.MockAuxiliary)
+	authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
 
-var _ helpers.AuxiliaryKeeper = (*MockAuxiliaryKeeper)(nil)
+	testAsset := baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, mutables), baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))
+	testNewAssetID := baseIDs.NewAssetID(testAsset.GetClassificationID(), testAsset.GetImmutables()).(*baseIDs.AssetID)
 
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, auxiliaryRequest helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
-	args := mockAuxiliaryKeeper.Called(context, auxiliaryRequest)
-	return args.Get(0).(helpers.AuxiliaryResponse), args.Error(1)
-}
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, i []interface{}) helpers.Keeper {
-	args := mockAuxiliaryKeeper.Called(mapper, parameterManager, i)
-	return args.Get(0).(helpers.Keeper)
-}
+	maintainFailureClassificationID := testAsset.GetClassificationID()
+	maintainAuxiliaryKeeper := new(testutil.MockAuxiliaryKeeper)
+	maintainFailureID := baseIDs.NewIdentityID(classificationID, immutables)
+	maintainAuxiliary := new(testutil.MockAuxiliary)
+	maintainAuxiliary.On("GetKeeper").Return(maintainAuxiliaryKeeper)
 
-const (
-	TestMinterModuleName = "testMinter"
-	Denom                = "stake"
-	ChainID              = "testChain"
-	GenesisSupply        = 1000000000000
-)
+	conformAuxiliaryKeeper := new(testutil.MockAuxiliaryKeeper)
+	conformAuxiliary := new(testutil.MockAuxiliary)
+	conformAuxiliary.On("GetKeeper").Return(conformAuxiliaryKeeper)
 
-var (
-	moduleStoreKey = storeTypes.NewKVStoreKey(constants.ModuleName)
-
-	authenticateAuxiliaryKeeper         = new(MockAuxiliaryKeeper)
-	authenticateAuxiliaryFailureAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
-	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, authenticate.NewAuxiliaryRequest(&Message{From: authenticateAuxiliaryFailureAddress.String(), FromID: baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)})).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
-	_                                   = authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-	authenticateAuxiliary               = new(MockAuxiliary)
-	_                                   = authenticateAuxiliary.On("GetKeeper").Return(authenticateAuxiliaryKeeper)
-
-	maintainFailureClassificationID = testAsset.GetClassificationID()
-	maintainAuxiliaryKeeper         = new(MockAuxiliaryKeeper)
-	maintainFailureID               = baseIDs.NewIdentityID(classificationID, immutables)
-	maintainAuxiliary               = new(MockAuxiliary)
-	_                               = maintainAuxiliary.On("GetKeeper").Return(maintainAuxiliaryKeeper)
-
-	conformAuxiliaryKeeper = new(MockAuxiliaryKeeper)
-	conformAuxiliary       = new(MockAuxiliary)
-	_                      = conformAuxiliary.On("GetKeeper").Return(conformAuxiliaryKeeper)
-
-	testAsset      = baseDocuments.NewAsset(baseIDs.NewClassificationID(immutables, mutables), baseQualified.NewImmutables(baseLists.NewPropertyList()), baseQualified.NewMutables(baseLists.NewPropertyList()))
-	testNewAssetID = baseIDs.NewAssetID(testAsset.GetClassificationID(), testAsset.GetImmutables()).(*baseIDs.AssetID)
-
-	paramsStoreKey           = storeTypes.NewKVStoreKey(paramsTypes.StoreKey)
-	paramsTransientStoreKeys = storeTypes.NewTransientStoreKey(paramsTypes.TStoreKey)
-
-	codec = base.TestCodec()
-
-	authStoreKey             = storeTypes.NewKVStoreKey(authTypes.StoreKey)
-	moduleAccountPermissions = map[string][]string{TestMinterModuleName: {authTypes.Minter}, constants.ModuleName: nil}
-	AuthKeeper               = authKeeper.NewAccountKeeper(codec, runtime.NewKVStoreService(authStoreKey), authTypes.ProtoBaseAccount, moduleAccountPermissions, addressCodec.NewBech32Codec(sdkTypes.GetConfig().GetBech32AccountAddrPrefix()), sdkTypes.GetConfig().GetBech32AccountAddrPrefix(), authTypes.NewModuleAddress(govTypes.ModuleName).String())
-
-	bankStoreKey         = storeTypes.NewKVStoreKey(bankTypes.StoreKey)
-	blacklistedAddresses = map[string]bool{authTypes.NewModuleAddress(TestMinterModuleName).String(): false, authTypes.NewModuleAddress(constants.ModuleName).String(): false}
-	BankKeeper           = bankKeeper.NewBaseKeeper(codec, runtime.NewKVStoreService(bankStoreKey), AuthKeeper, blacklistedAddresses, authTypes.NewModuleAddress(govTypes.ModuleName).String(), log.NewNopLogger())
-
-	Context = setContext()
-
-	coinSupply = sdkTypes.NewCoins(sdkTypes.NewCoin(Denom, math.NewInt(GenesisSupply)))
-	_          = BankKeeper.MintCoins(Context, TestMinterModuleName, coinSupply)
-
-	genesisAddress = sdkTypes.AccAddress(ed25519.GenPrivKey().PubKey().Address())
-	_              = BankKeeper.SendCoinsFromModuleToAccount(Context, TestMinterModuleName, genesisAddress, coinSupply)
-
-	TransactionKeeper = transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey),
+	TransactionKeeper := transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey),
 		authenticateAuxiliary,
 		maintainAuxiliary,
 		conformAuxiliary,
 	}
-)
 
-func setContext() sdkTypes.Context {
-	memDB := cosmosDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), storeMetrics.NewNoOpMetrics())
-	commitMultiStore.MountStoreWithDB(moduleStoreKey, storeTypes.StoreTypeIAVL, nil)
-	commitMultiStore.MountStoreWithDB(authStoreKey, storeTypes.StoreTypeIAVL, nil)
-	commitMultiStore.MountStoreWithDB(bankStoreKey, storeTypes.StoreTypeIAVL, nil)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, nil)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
-	_ = commitMultiStore.LoadLatestVersion()
-	return sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{ChainID: ChainID}, false, log.NewNopLogger())
+	return &testSetup{
+		Context:                            ctx,
+		genesisAddress:                     genesisAddress,
+		TransactionKeeper:                  TransactionKeeper,
+		authenticateAuxiliaryFailureAddress: authenticateAuxiliaryFailureAddress,
+		testAsset:                          testAsset,
+		testNewAssetID:                     testNewAssetID,
+		maintainFailureID:                  maintainFailureID,
+		maintainFailureClassificationID:    maintainFailureClassificationID,
+		maintainAuxiliaryKeeper:            maintainAuxiliaryKeeper,
+		conformAuxiliaryKeeper:             conformAuxiliaryKeeper,
+	}
 }
 
 func TestTransactionKeeperTransact(t *testing.T) {
+	s := setupTest(t)
+
 	type args struct {
 		from             sdkTypes.AccAddress
 		fromID           ids.IdentityID
@@ -161,15 +107,15 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		{
 			"MutateTransactionKeeeperSuccess",
 			args{
-				from:             genesisAddress,
+				from:             s.genesisAddress,
 				fromID:           baseIDs.PrototypeIdentityID(),
-				assetID:          testNewAssetID,
+				assetID:          s.testNewAssetID,
 				mutableMetaProps: baseLists.NewPropertyList(),
 				mutableProps:     baseLists.NewPropertyList(),
 			},
 			func() {
-				conformAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
-				maintainAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.conformAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.maintainAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 			},
 			newTransactionResponse(),
 			nil,
@@ -177,15 +123,15 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		{
 			"MutateValidAsset",
 			args{
-				from:             genesisAddress,
+				from:             s.genesisAddress,
 				fromID:           baseIDs.PrototypeIdentityID(),
-				assetID:          testNewAssetID,
+				assetID:          s.testNewAssetID,
 				mutableMetaProps: baseLists.NewPropertyList(),
 				mutableProps:     baseLists.NewPropertyList(),
 			},
 			func() {
-				conformAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
-				maintainAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.conformAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.maintainAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
 			},
 			newTransactionResponse(),
 			nil,
@@ -193,7 +139,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		{
 			"EntityNotFoundError",
 			args{
-				from:             genesisAddress,
+				from:             s.genesisAddress,
 				fromID:           baseIDs.PrototypeIdentityID(),
 				assetID:          baseIDs.PrototypeAssetID(),
 				mutableMetaProps: baseLists.NewPropertyList(),
@@ -206,7 +152,7 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		{
 			"AuthenticateAuxiliaryFailure",
 			args{
-				from:             authenticateAuxiliaryFailureAddress,
+				from:             s.authenticateAuxiliaryFailureAddress,
 				fromID:           baseIDs.PrototypeIdentityID(),
 				assetID:          baseIDs.PrototypeAssetID(),
 				mutableMetaProps: baseLists.NewPropertyList(),
@@ -219,14 +165,14 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		{
 			"MaintainAuxiliaryFailure",
 			args{
-				from:             genesisAddress,
-				fromID:           maintainFailureID,
-				assetID:          testNewAssetID,
+				from:             s.genesisAddress,
+				fromID:           s.maintainFailureID,
+				assetID:          s.testNewAssetID,
 				mutableMetaProps: baseLists.NewPropertyList(),
 				mutableProps:     baseLists.NewPropertyList(),
 			},
 			func() {
-				maintainAuxiliaryKeeper.On("Help", mock.Anything, maintain.NewAuxiliaryRequest(maintainFailureClassificationID, maintainFailureID, baseQualified.NewMutables(baseLists.NewPropertyList()))).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
+				s.maintainAuxiliaryKeeper.On("Help", mock.Anything, maintain.NewAuxiliaryRequest(s.maintainFailureClassificationID, s.maintainFailureID, baseQualified.NewMutables(baseLists.NewPropertyList()))).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 			},
 			nil,
 			errorConstants.MockError,
@@ -234,15 +180,15 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		{
 			"ConformAuxiliaryFailure",
 			args{
-				from:             genesisAddress,
+				from:             s.genesisAddress,
 				fromID:           baseIDs.PrototypeIdentityID(),
-				assetID:          testNewAssetID,
+				assetID:          s.testNewAssetID,
 				mutableMetaProps: baseLists.NewPropertyList(),
 				mutableProps:     baseLists.NewPropertyList(),
 			},
 			func() {
-				maintainAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
-				conformAuxiliaryKeeper.On("Help", mock.Anything, conform.NewAuxiliaryRequest(testAsset.GetClassificationID(), testAsset.GetImmutables(), baseQualified.NewMutables(baseLists.NewPropertyList()))).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
+				s.maintainAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.conformAuxiliaryKeeper.On("Help", mock.Anything, conform.NewAuxiliaryRequest(s.testAsset.GetClassificationID(), s.testAsset.GetImmutables(), baseQualified.NewMutables(baseLists.NewPropertyList()))).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
 			},
 			nil,
 			errorConstants.MockError,
@@ -253,9 +199,9 @@ func TestTransactionKeeperTransact(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.setup()
 
-			TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Add(recordassets.NewRecord(testAsset))
+			s.TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(s.Context)).Add(recordassets.NewRecord(s.testAsset))
 
-			got, err := TransactionKeeper.Transact(sdkTypes.WrapSDKContext(Context),
+			got, err := s.TransactionKeeper.Transact(sdkTypes.WrapSDKContext(s.Context),
 				NewMessage(tt.args.from,
 					tt.args.fromID,
 					tt.args.assetID,

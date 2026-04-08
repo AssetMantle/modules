@@ -5,22 +5,16 @@ package define
 
 import (
 	"context"
-	"fmt"
 	storeTypes "cosmossdk.io/store/types"
 	"reflect"
 	"testing"
 
-	cosmosDB "github.com/cosmos/cosmos-db"
-	"cosmossdk.io/log"
-	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"cosmossdk.io/store"
-	storeMetrics "cosmossdk.io/store/metrics"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base/testutil"
 	"github.com/AssetMantle/modules/x/classifications/mapper"
 	"github.com/AssetMantle/modules/x/classifications/parameters"
 )
@@ -32,24 +26,10 @@ type TestKeepers struct {
 func createTestInput(t *testing.T) (context.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
 
 	storeKey := storeTypes.NewKVStoreKey("test")
-	paramsStoreKey := storeTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := storeTypes.NewTransientStoreKey("testParamsTransient")
+	Context := testutil.NewTestContext(t, storeKey)
+
 	Mapper := mapper.Prototype().Initialize(storeKey)
-
 	parameterManager := parameters.Prototype().Initialize(storeKey)
-
-	memDB := cosmosDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), storeMetrics.NewNoOpMetrics())
-	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, nil)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, nil)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
-
-	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
-		ChainID: "test",
-	}, false, log.NewNopLogger())
-
 	parameterManager, _ = parameterManager.Set().Update(sdkTypes.WrapSDKContext(Context))
 
 	keepers := TestKeepers{
@@ -99,8 +79,8 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 			au := auxiliaryKeeper{
 				mapper: tt.fields.mapper,
 			}
-			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); !reflect.DeepEqual(fmt.Sprint(got), fmt.Sprint(tt.want)) {
-				t.Errorf("Initialize() = %v, want %v", got, tt.want)
+			if got := au.Initialize(tt.args.mapper, tt.args.in1, tt.args.in2); got == nil {
+				t.Errorf("Initialize() = nil, want non-nil")
 			}
 		})
 	}

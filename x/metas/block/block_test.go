@@ -8,37 +8,18 @@ import (
 	storeTypes "cosmossdk.io/store/types"
 	"testing"
 
-	cosmosDB "github.com/cosmos/cosmos-db"
-	"cosmossdk.io/log"
-	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"cosmossdk.io/store"
-	storeMetrics "cosmossdk.io/store/metrics"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base/testutil"
 	"github.com/AssetMantle/modules/x/metas/mapper"
 	"github.com/AssetMantle/modules/x/metas/parameters"
 )
 
 func CreateTestInput(t *testing.T) context.Context {
 	storeKey := storeTypes.NewKVStoreKey("test")
-	paramsStoreKey := storeTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := storeTypes.NewTransientStoreKey("testParamsTransient")
-
-	memDB := cosmosDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), storeMetrics.NewNoOpMetrics())
-	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, nil)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, nil)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
-
-	context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
-		ChainID: "test",
-	}, false, log.NewNopLogger())
-
-	return sdkTypes.WrapSDKContext(context)
+	ctx := testutil.NewTestContext(t, storeKey)
+	return sdkTypes.WrapSDKContext(ctx)
 }
 
 func Test_Block_Methods(t *testing.T) {

@@ -5,6 +5,11 @@ package burn
 
 import (
 	"cosmossdk.io/math"
+	storeTypes "cosmossdk.io/store/types"
+	"math/rand"
+	"reflect"
+	"testing"
+
 	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/utilities/random"
@@ -24,12 +29,8 @@ import (
 	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"cosmossdk.io/store"
 	storeMetrics "cosmossdk.io/store/metrics"
-	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
-	"math/rand"
-	"reflect"
-	"testing"
 )
 
 const (
