@@ -18,7 +18,7 @@ func Test_Kafka_DB(t *testing.T) {
 	require.Panics(t, func() {
 		var legacyAmino = base.CodecPrototype().GetLegacyAmino()
 		ticketID := TicketID(random.GenerateUniqueIdentifier("name"))
-		kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome)
+		kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome, nil)
 		setTicketIDtoDB(ticketID, kafkaDB, legacyAmino, []byte{})
 		addResponseToDB(ticketID, baseIDs.NewStringID("").Bytes(), kafkaDB, legacyAmino)
 		require.Equal(t, baseIDs.NewStringID("").Bytes(), getResponseFromDB(ticketID, kafkaDB, legacyAmino))

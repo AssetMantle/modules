@@ -6,7 +6,7 @@ package queuing
 import (
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/IBM/sarama"
-	dbm "github.com/cometbft/cometbft-db"
+	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -100,7 +100,7 @@ type kafkaState struct {
 
 // newKafkaState : returns a kafka state
 func newKafkaState(nodeList []string) *kafkaState {
-	kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome)
+	kafkaDB, _ := dbm.NewGoLevelDB("KafkaDB", defaultCLIHome, nil)
 	admin := kafkaAdmin(nodeList)
 	producer := newProducer(nodeList)
 	consumer := newConsumer(nodeList)

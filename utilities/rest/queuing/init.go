@@ -6,8 +6,13 @@ package queuing
 import (
 	"time"
 
+	"github.com/AssetMantle/modules/helpers"
 	"github.com/cosmos/cosmos-sdk/client"
 )
+
+func init() {
+	helpers.QueueOrBroadcastFunc = QueueOrBroadcastTransaction
+}
 
 func InitializeKafka(nodeList []string, context client.Context) {
 	KafkaState = *newKafkaState(nodeList)

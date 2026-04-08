@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/AssetMantle/modules/utilities/rest"
-	"github.com/AssetMantle/modules/utilities/rest/queuing"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -93,7 +92,7 @@ func (transaction transaction) RESTRequestHandler(context client.Context) http.H
 			return
 		}
 
-		if rest.CheckInternalServerError(responseWriter, queuing.QueueOrBroadcastTransaction(context.WithOutput(responseWriter), commonTransactionRequest, msg)) {
+		if rest.CheckInternalServerError(responseWriter, helpers.QueueOrBroadcastTransaction(context.WithOutput(responseWriter), commonTransactionRequest, msg)) {
 			return
 		}
 	}
