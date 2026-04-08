@@ -4,7 +4,6 @@
 package authenticate
 
 import (
-	"context"
 	"github.com/AssetMantle/modules/helpers"
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/utilities/random"
@@ -23,40 +22,9 @@ import (
 	storeMetrics "cosmossdk.io/store/metrics"
 	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/mock"
 	"testing"
 	"github.com/stretchr/testify/assert"
 )
-
-type MockAuxiliary struct {
-	mock.Mock
-}
-
-var _ helpers.Auxiliary = (*MockAuxiliary)(nil)
-
-func (mockAuxiliary *MockAuxiliary) GetName() string { panic(mockAuxiliary) }
-func (mockAuxiliary *MockAuxiliary) GetKeeper() helpers.AuxiliaryKeeper {
-	args := mockAuxiliary.Called()
-	return args.Get(0).(helpers.AuxiliaryKeeper)
-}
-func (mockAuxiliary *MockAuxiliary) Initialize(_ helpers.Mapper, _ helpers.ParameterManager, _ ...interface{}) helpers.Auxiliary {
-	panic(mockAuxiliary)
-}
-
-type MockAuxiliaryKeeper struct {
-	mock.Mock
-}
-
-var _ helpers.AuxiliaryKeeper = (*MockAuxiliaryKeeper)(nil)
-
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Help(context context.Context, request helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
-	args := mockAuxiliaryKeeper.Called(context, request)
-	return args.Get(0).(helpers.AuxiliaryResponse), args.Error(1)
-}
-func (mockAuxiliaryKeeper *MockAuxiliaryKeeper) Initialize(m2 helpers.Mapper, manager helpers.ParameterManager, i []interface{}) helpers.Keeper {
-	args := mockAuxiliaryKeeper.Called(m2, manager, i)
-	return args.Get(0).(helpers.Keeper)
-}
 
 const (
 	ChainID = "testChain"

@@ -83,7 +83,20 @@ test-unit:
 test-race:
 	@VERSION=$(VERSION) go test -mod=readonly -race $(PACKAGES_NOSIMULATION)
 
-.PHONY: test test-all test-ledger-mock test-ledger test-unit test-race
+test-quick:
+	@go test ./... -count=1
+
+test-no-skip:
+	@if grep -r 't\.Skip' --include='*_test.go' x/ helpers/ utilities/ simulation/; then \
+		echo "ERROR: Skipped tests found"; exit 1; \
+	fi
+	@echo "No skipped tests found."
+
+test-coverage:
+	@go test ./... -count=1 -coverprofile=coverage.out
+	@go tool cover -func=coverage.out | tail -1
+
+.PHONY: test test-all test-ledger-mock test-ledger test-unit test-race test-quick test-no-skip test-coverage
 
 run-simulations: test-sim-custom-genesis-fast test-sim-nondeterminism test-sim-import-export test-sim-after-import test-sim-custom-genesis-multi-seed test-sim-multi-seed-long test-sim-multi-seed-short test-sim-benchmark-invariants
 
