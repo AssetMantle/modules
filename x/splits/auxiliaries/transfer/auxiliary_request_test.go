@@ -41,8 +41,8 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 		args args
 		want helpers.AuxiliaryRequest
 	}{
-		{"+ve", args{testOwnerID, testOwnerID, testAssetID, testValue}, NewAuxiliaryRequest(testOwnerID, testOwnerID, testAssetID, testValue)},
-		{"+ve with nil", args{testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAssetID(), testValue}, NewAuxiliaryRequest(testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAssetID(), testValue)},
+		{"valid", args{testOwnerID, testOwnerID, testAssetID, testValue}, NewAuxiliaryRequest(testOwnerID, testOwnerID, testAssetID, testValue)},
+		{"nil inputs", args{testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAssetID(), testValue}, NewAuxiliaryRequest(testOwnerID, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeAssetID(), testValue)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -66,7 +66,7 @@ func Test_auxiliaryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testOwnerID, testOwnerID, testAssetID, testValue}, false},
+		{"valid", fields{testOwnerID, testOwnerID, testAssetID, testValue}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -57,7 +57,7 @@ func Test_block_Begin(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateAssetsTestInput(t)}},
+		{"valid", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateAssetsTestInput(t)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -84,7 +84,7 @@ func Test_block_End(t *testing.T) {
 		args   args
 	}{
 
-		{"+ve", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateAssetsTestInput(t)}},
+		{"valid", fields{mapper.Prototype(), parameters.Prototype()}, args{CreateAssetsTestInput(t)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -116,7 +116,7 @@ func Test_block_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Block
 	}{
-		{"+ve", fields{testMapper, testParameter}, args{testMapper, testParameter, []interface{}{}}, testBlock},
+		{"valid", fields{testMapper, testParameter}, args{testMapper, testParameter, []interface{}{}}, testBlock},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -137,7 +137,7 @@ func TestPrototype(t *testing.T) {
 		want helpers.Block
 	}{
 
-		{"+ve", block{}},
+		{"valid", block{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

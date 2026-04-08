@@ -21,7 +21,7 @@ func TestNewMappable(t *testing.T) {
 		args args
 		want helpers.Mappable
 	}{
-		{"+ve", args{base.NewStringData("data")}, &Mappable{base.NewStringData("data").ToAnyData().(*base.AnyData)}},
+		{"valid", args{base.NewStringData("data")}, &Mappable{base.NewStringData("data").ToAnyData().(*base.AnyData)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -37,7 +37,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		{"+ve", &Mappable{}},
+		{"valid", &Mappable{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

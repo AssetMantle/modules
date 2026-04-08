@@ -80,7 +80,7 @@ func Test_block_End(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{"-ve without block height", fields{Mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{context}},
+		{"missing block height", fields{Mapper, parameters.Prototype(), supplementAuxiliary, transferAuxiliary, scrubAuxiliary}, args{context}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

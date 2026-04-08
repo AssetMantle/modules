@@ -60,7 +60,7 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight)},
+		{"valid", args{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -76,7 +76,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", transactionRequest{}},
+		{"valid", transactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -123,7 +123,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight), false},
+		{"valid", fields{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -158,7 +158,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   helpers.CommonTransactionRequest
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, commonTransactionRequest},
+		{"valid", fields{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -194,7 +194,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, nil, true},
+		{"valid", fields{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -234,7 +234,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, true},
+		{"valid", fields{commonTransactionRequest, testFromID.AsString(), makerAssetID.AsString(), takerAssetID.AsString(), makerSplit.String(), takerSplit.String(), expiryHeight}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -64,7 +64,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.AuxiliaryKeeper
 	}{
-		{"+ve", auxiliaryKeeper{}},
+		{"valid", auxiliaryKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -92,7 +92,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{bankKeeper.BaseKeeper{}, testStakingKeeper}}, auxiliaryKeeper{Mapper, parameterManager, bankKeeper.BaseKeeper{}, testStakingKeeper}},
+		{"valid", fields{Mapper}, args{Mapper, parameterManager, []interface{}{bankKeeper.BaseKeeper{}, testStakingKeeper}}, auxiliaryKeeper{Mapper, parameterManager, bankKeeper.BaseKeeper{}, testStakingKeeper}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

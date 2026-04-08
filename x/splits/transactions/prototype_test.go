@@ -17,7 +17,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Transactions
 	}{
-		{"+ve", baseHelpers.NewTransactions()},
+		{"valid", baseHelpers.NewTransactions()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

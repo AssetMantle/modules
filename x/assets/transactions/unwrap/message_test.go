@@ -149,7 +149,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", &Message{}},
+		{"valid", &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -171,7 +171,7 @@ func Test_message_GetSigners(t *testing.T) {
 		fields fields
 		want   []types.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress.String(), fromID, coins}, []types.AccAddress{fromAccAddress}},
+		{"valid", fields{fromAccAddress.String(), fromID, coins}, []types.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -198,7 +198,7 @@ func Test_NewMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		{"+ve", args{fromAccAddress, fromID, coins}, &Message{fromAccAddress.String(), fromID, coins}},
+		{"valid", args{fromAccAddress, fromID, coins}, &Message{fromAccAddress.String(), fromID, coins}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

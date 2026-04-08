@@ -20,7 +20,7 @@ func TestPrototype(t *testing.T) {
 		want helpers.ParameterManager
 	}{
 
-		{"+ve", baseHelpers.NewParameterManager(issue_enabled.ValidatableParameter, max_provision_address_count.ValidatableParameter, quash_enabled.ValidatableParameter)},
+		{"valid", baseHelpers.NewParameterManager(issue_enabled.ValidatableParameter, max_provision_address_count.ValidatableParameter, quash_enabled.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

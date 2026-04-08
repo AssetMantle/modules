@@ -47,7 +47,7 @@ func TestRandomBool(t *testing.T) {
 	}{
 		// TODO: check for nil case
 		{"test panic case", args{nil}, true},
-		{"+ve case", args{rand.New(rand.NewSource(7))}, false},
+		{"valid case", args{rand.New(rand.NewSource(7))}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

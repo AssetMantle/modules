@@ -32,7 +32,7 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{testOrderID}, &Key{OrderID: testOrderID}},
+		{"valid", args{testOrderID}, &Key{OrderID: testOrderID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -48,7 +48,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", &Key{baseIDs.PrototypeOrderID().(*baseIDs.OrderID)}},
+		{"valid", &Key{baseIDs.PrototypeOrderID().(*baseIDs.OrderID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -72,7 +72,7 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{testOrderID}, args{&Key{testOrderID}}, true},
+		{"valid", fields{testOrderID}, args{&Key{testOrderID}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -95,7 +95,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{testOrderID}, (&Key{testOrderID}).GeneratePrefixedStoreKeyBytes()},
+		{"valid", fields{testOrderID}, (&Key{testOrderID}).GeneratePrefixedStoreKeyBytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -118,7 +118,7 @@ func Test_key_IsPartial(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		{"+ve", fields{testOrderID}, false},
+		{"valid", fields{testOrderID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

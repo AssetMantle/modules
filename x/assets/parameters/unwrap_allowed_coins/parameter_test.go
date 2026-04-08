@@ -24,13 +24,13 @@ func Test_validator(t *testing.T) {
 		args      args
 		wantError bool
 	}{
-		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, true},
-		{"+ve", args{Parameter}, false},
-		{"-ve InvalidParameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
-		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
-		{"+ve valid listData", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("wrapAllowedCoins"), baseData.NewListData(baseData.NewIDData(baseDocuments.NewCoinAsset("stake").GetCoinAssetID()))))}, true},
-		{"+ve with incorrect ID", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewHeightData(base.NewHeight(0))))}, true},
-		{"-ve nil", args{}, true},
+		{"incorrect format", args{baseIDs.NewStringID("")}, true},
+		{"valid", args{Parameter}, false},
+		{"invalid parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
+		{"wrong data type", args{baseData.NewStringData("stringData")}, true},
+		{"valid list data parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("wrapAllowedCoins"), baseData.NewListData(baseData.NewIDData(baseDocuments.NewCoinAsset("stake").GetCoinAssetID()))))}, true},
+		{"incorrect parameter ID", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewHeightData(base.NewHeight(0))))}, true},
+		{"nil input", args{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

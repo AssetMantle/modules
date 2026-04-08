@@ -75,7 +75,7 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Test dependency on issue #95: https://github.com/AssetMantle/modules/issues/95
-		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, identityID)}, newAuxiliaryResponse(), false},
+		{"valid", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, identityID)}, newAuxiliaryResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -125,7 +125,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, nil}, auxiliaryKeeper{Mapper}}, // TODO: type & data same but doesn't match
+		{"valid", fields{Mapper}, args{Mapper, parameterManager, nil}, auxiliaryKeeper{Mapper}}, // TODO: type & data same but doesn't match
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -144,7 +144,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.AuxiliaryKeeper
 	}{
-		{"+ve", auxiliaryKeeper{}},
+		{"valid", auxiliaryKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

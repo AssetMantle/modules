@@ -31,7 +31,7 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve", args{testIdentityID}, newQueryRequest(testIdentityID)},
+		{"valid", args{testIdentityID}, newQueryRequest(testIdentityID)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -61,7 +61,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testIdentityID.(*baseIDs.IdentityID)}, args{cliCommand, client.Context{}.WithCodec(base.CodecPrototype())}, newQueryRequest(testIdentityID), false},
+		{"valid", fields{testIdentityID.(*baseIDs.IdentityID)}, args{cliCommand, client.Context{}.WithCodec(base.CodecPrototype())}, newQueryRequest(testIdentityID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -90,7 +90,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testIdentityID.(*baseIDs.IdentityID)}, false},
+		{"valid", fields{testIdentityID.(*baseIDs.IdentityID)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -109,7 +109,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		{"+ve", &QueryRequest{}},
+		{"valid", &QueryRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

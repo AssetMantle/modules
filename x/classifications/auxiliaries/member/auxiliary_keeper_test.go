@@ -86,9 +86,9 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		want    helpers.AuxiliaryResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse(), false},
-		{"+ve Entity Not found", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID1, immutables, mutables)}, nil, true},
-		{"+ve IncorrectFormat", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, immutables1, mutables)}, nil, true},
+		{"valid", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, immutables, mutables)}, newAuxiliaryResponse(), false},
+		{"entity not found", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID1, immutables, mutables)}, nil, true},
+		{"incorrect format", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(classificationID, immutables1, mutables)}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -123,7 +123,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper}},
+		{"valid", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -142,7 +142,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.AuxiliaryKeeper
 	}{
-		{"+ve", auxiliaryKeeper{}},
+		{"valid", auxiliaryKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

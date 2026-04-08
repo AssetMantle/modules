@@ -37,7 +37,7 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{commonTransactionRequest, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false}, transactionRequest{commonTransactionRequest, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false}},
+		{"valid", args{commonTransactionRequest, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false}, transactionRequest{commonTransactionRequest, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -53,7 +53,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", transactionRequest{}},
+		{"valid", transactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -91,7 +91,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve",
+		{"valid",
 			fields{commonTransactionRequest: helpers.PrototypeCommonTransactionRequest(), FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
 			args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())},
 			transactionRequest{CommonTransactionRequest: helpers.PrototypeCommonTransactionRequest(), FromID: "", ToID: "", ClassificationID: "", MaintainedProperties: "", CanIssueIdentity: false, CanQuashIdentity: false, CanAddMaintainer: false, CanRemoveMaintainer: false, CanMutateMaintainer: false},
@@ -141,7 +141,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   helpers.CommonTransactionRequest
 	}{
-		{"+ve", fields{commonTransactionRequest, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false}, commonTransactionRequest},
+		{"valid", fields{commonTransactionRequest, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, false}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -187,7 +187,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), "maintainedProperty:S|maintainedProperty", false, false, false, false, true}, nil, true}, // TODO: issue==> getting MetaDataError that is not expected
+		{"valid", fields{commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), testClassificationID.AsString(), "maintainedProperty:S|maintainedProperty", false, false, false, false, true}, nil, true}, // TODO: issue==> getting MetaDataError that is not expected
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -232,7 +232,7 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, true}, true},
+		{"valid", fields{commonTransactionRequest, "fromID", "toID", "classificationID", maintainedProperty, false, false, false, false, true}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

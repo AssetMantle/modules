@@ -250,7 +250,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionKeeper
 	}{
-		{"+ve", transactionKeeper{}},
+		{"valid", transactionKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

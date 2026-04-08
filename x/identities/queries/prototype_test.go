@@ -20,7 +20,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Queries
 	}{
-		{"+ve", baseHelpers.NewQueries(
+		{"valid", baseHelpers.NewQueries(
 			identity.Query,
 			identities.Query,
 			parameters.Query,

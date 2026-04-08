@@ -79,7 +79,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve", fields{keepers.MetasKeeper.(transactionKeeper).mapper, keepers.MetasKeeper.(transactionKeeper).parameterManager}, args{Context, NewMessage(defaultAddr, newFact).(*Message)}, newTransactionResponse(), false},
+		{"valid", fields{keepers.MetasKeeper.(transactionKeeper).mapper, keepers.MetasKeeper.(transactionKeeper).parameterManager}, args{Context, NewMessage(defaultAddr, newFact).(*Message)}, newTransactionResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

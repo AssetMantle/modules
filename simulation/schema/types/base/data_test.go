@@ -19,7 +19,7 @@ func TestGenerateRandomData(t *testing.T) {
 		wantPanic bool
 	}{
 		// TODO: check for nil case
-		{"+ve case", args{rand.New(rand.NewSource(7))}, false},
+		{"valid case", args{rand.New(rand.NewSource(7))}, false},
 		{"nil case", args{nil}, true},
 	}
 	for _, tt := range tests {

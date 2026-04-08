@@ -74,7 +74,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionKeeper
 	}{
-		{"+ve", transactionKeeper{}},
+		{"valid", transactionKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -102,7 +102,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{supplementAuxiliary}}, transactionKeeper{Mapper, parameterManager, supplementAuxiliary}},
+		{"valid", fields{Mapper}, args{Mapper, parameterManager, []interface{}{supplementAuxiliary}}, transactionKeeper{Mapper, parameterManager, supplementAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -147,9 +147,9 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve Not Authorized", fields{Mapper, parameterManager, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
-		{"+ve already Exists", fields{Mapper, parameterManager, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(toAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
-		{"+ve", fields{Mapper, parameterManager, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(toAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
+		{"not authorized", fields{Mapper, parameterManager, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
+		{"already exists", fields{Mapper, parameterManager, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(toAccAddress, fromAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
+		{"valid", fields{Mapper, parameterManager, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(toAccAddress, toAccAddress, testFromID).(*Message)}, newTransactionResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

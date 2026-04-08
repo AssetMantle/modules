@@ -22,7 +22,7 @@ func TestPrototype(t *testing.T) {
 		want      helpers.ParameterManager
 		wantError error
 	}{
-		{"+ve", baseHelpers.NewParameterManager(burn_enabled.ValidatableParameter, mint_enabled.ValidatableParameter, renumerate_enabled.ValidatableParameter, unwrap_allowed_coins.ValidatableParameter, wrap_allowed_coins.ValidatableParameter), nil},
+		{"valid", baseHelpers.NewParameterManager(burn_enabled.ValidatableParameter, mint_enabled.ValidatableParameter, renumerate_enabled.ValidatableParameter, unwrap_allowed_coins.ValidatableParameter, wrap_allowed_coins.ValidatableParameter), nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

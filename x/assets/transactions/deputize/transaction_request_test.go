@@ -47,7 +47,7 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{commonTransactionRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, transactionRequest{commonTransactionRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}},
+		{"valid", args{commonTransactionRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, transactionRequest{commonTransactionRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -63,7 +63,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", transactionRequest{}},
+		{"valid", transactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -111,7 +111,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{commonTransactionRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), mutableMetaPropertiesString, true, true, true, true, true, true}, false},
+		{"valid", fields{}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, transactionRequest{commonTransactionRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), mutableMetaPropertiesString, true, true, true, true, true, true}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -159,7 +159,7 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   helpers.CommonTransactionRequest
 	}{
-		{"+ve", fields{commonTransactionRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, commonTransactionRequest},
+		{"valid", fields{commonTransactionRequest, fromID.AsString(), fromID.AsString(), classificationID.AsString(), fmt.Sprint(mutableMetaProperties), true, true, true, true, true, true}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -203,7 +203,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest.SetFrom(fromAddress), fromID.AsString(), fromID.AsString(), classificationID.AsString(), mutableMetaPropertiesString, true, true, true, true, true, true}, NewMessage(fromAccAddress, fromID, fromID, classificationID, mutableMetaProperties1, true, true, true, true, true, true), false},
+		{"valid", fields{commonTransactionRequest.SetFrom(fromAddress), fromID.AsString(), fromID.AsString(), classificationID.AsString(), mutableMetaPropertiesString, true, true, true, true, true, true}, NewMessage(fromAccAddress, fromID, fromID, classificationID, mutableMetaProperties1, true, true, true, true, true, true), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -251,8 +251,8 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve with nil", fields{}, true},
-		{"+ve", fields{commonTransactionRequest.SetFrom(fromAddress), fromID.AsString(), fromID.AsString(), classificationID.AsString(), mutableMetaPropertiesString, true, true, true, true, true, true}, false},
+		{"nil inputs", fields{}, true},
+		{"valid", fields{commonTransactionRequest.SetFrom(fromAddress), fromID.AsString(), fromID.AsString(), classificationID.AsString(), mutableMetaPropertiesString, true, true, true, true, true, true}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

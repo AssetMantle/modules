@@ -22,7 +22,7 @@ func TestNewCLIFlag(t *testing.T) {
 		args args
 		want helpers.CLIFlag
 	}{
-		{"+ve", args{"name", "value", ",usage"}, cliFlag{"name", "value", ",usage"}},
+		{"valid", args{"name", "value", ",usage"}, cliFlag{"name", "value", ",usage"}},
 		{"nil", args{"", nil, ""}, cliFlag{"", nil, ""}},
 	}
 	for _, tt := range tests {

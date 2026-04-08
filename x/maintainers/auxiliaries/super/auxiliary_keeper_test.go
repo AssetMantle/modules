@@ -86,8 +86,8 @@ func Test_auxiliaryKeeper_Help(t *testing.T) {
 		want    helpers.AuxiliaryResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse(), false},
-		{"+ve Already exists", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, nil, true},
+		{"valid", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, newAuxiliaryResponse(), false},
+		{"already exists", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), NewAuxiliaryRequest(testClassificationID, testFromID, mutables)}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -122,7 +122,7 @@ func Test_auxiliaryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper}},
+		{"valid", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, auxiliaryKeeper{Mapper}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -141,7 +141,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.AuxiliaryKeeper
 	}{
-		{"+ve", auxiliaryKeeper{}},
+		{"valid", auxiliaryKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

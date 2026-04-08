@@ -35,8 +35,8 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{splitID}, &Key{splitID}},
-		{"+ve with nil", args{baseIDs.PrototypeSplitID()}, &Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}},
+		{"valid", args{splitID}, &Key{splitID}},
+		{"nil inputs", args{baseIDs.PrototypeSplitID()}, &Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -52,7 +52,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", &Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}},
+		{"valid", &Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -76,8 +76,8 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{splitID}, args{NewKey(splitID)}, true},
-		{"+ve", fields{splitID}, args{NewKey(baseIDs.PrototypeSplitID())}, false},
+		{"valid", fields{splitID}, args{NewKey(splitID)}, true},
+		{"valid", fields{splitID}, args{NewKey(baseIDs.PrototypeSplitID())}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -100,8 +100,8 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{splitID}, (&Key{splitID}).GeneratePrefixedStoreKeyBytes()},
-		{"+ve", fields{baseIDs.PrototypeSplitID()}, (&Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}).GeneratePrefixedStoreKeyBytes()},
+		{"valid", fields{splitID}, (&Key{splitID}).GeneratePrefixedStoreKeyBytes()},
+		{"valid", fields{baseIDs.PrototypeSplitID()}, (&Key{baseIDs.PrototypeSplitID().(*baseIDs.SplitID)}).GeneratePrefixedStoreKeyBytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -124,8 +124,8 @@ func Test_key_IsPartial(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		{"+ve", fields{splitID}, false},
-		{"+ve", fields{baseIDs.PrototypeSplitID()}, true},
+		{"valid", fields{splitID}, false},
+		{"valid", fields{baseIDs.PrototypeSplitID()}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

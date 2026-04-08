@@ -40,7 +40,7 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve", args{splitID}, newQueryRequest(splitID)},
+		{"valid", args{splitID}, newQueryRequest(splitID)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -69,7 +69,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{splitID}, args{cliCommand, client.Context{}.WithCodec(base.CodecPrototype())}, newQueryRequest(splitID), false},
+		{"valid", fields{splitID}, args{cliCommand, client.Context{}.WithCodec(base.CodecPrototype())}, newQueryRequest(splitID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,7 +97,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{splitID}, false},
+		{"valid", fields{splitID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -116,7 +116,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		{"+ve", &QueryRequest{}},
+		{"valid", &QueryRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

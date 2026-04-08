@@ -88,7 +88,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionKeeper
 	}{
-		{"+ve", transactionKeeper{}},
+		{"valid", transactionKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -120,7 +120,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper, parameterManager, conformAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, parameterManager, conformAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}},
+		{"valid", fields{Mapper, parameterManager, conformAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, parameterManager, conformAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -198,7 +198,7 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper, parameterManager, conformAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testOrderID, testRate, testRate, testHeight, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(), false},
+		{"valid", fields{Mapper, parameterManager, conformAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testOrderID, testRate, testRate, testHeight, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

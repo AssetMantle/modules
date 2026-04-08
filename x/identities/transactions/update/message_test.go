@@ -50,7 +50,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", &Message{}},
+		{"valid", &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -69,8 +69,8 @@ func Test_message_GetSigners(t *testing.T) {
 		fields fields
 		want   []types.AccAddress
 	}{
-		{"+ve with nil", fields{}, []types.AccAddress{nil}},
-		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, []types.AccAddress{testFrom}},
+		{"nil inputs", fields{}, []types.AccAddress{nil}},
+		{"valid", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, []types.AccAddress{testFrom}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -96,8 +96,8 @@ func Test_message_ValidateBasic(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve with nil", fields{}, true},
-		{"+ve", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, false},
+		{"nil inputs", fields{}, true},
+		{"valid", fields{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -129,8 +129,8 @@ func Test_NewMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		{"+ve with nil", args{fromID: baseIDs.PrototypeIdentityID(), identityID: baseIDs.PrototypeIdentityID(), mutableMetaProperties: baseLists.NewPropertyList(), mutableProperties: baseLists.NewPropertyList()}, NewMessage(nil, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), baseLists.NewPropertyList(), baseLists.NewPropertyList())},
-		{"+ve", args{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, &Message{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
+		{"nil inputs", args{fromID: baseIDs.PrototypeIdentityID(), identityID: baseIDs.PrototypeIdentityID(), mutableMetaProperties: baseLists.NewPropertyList(), mutableProperties: baseLists.NewPropertyList()}, NewMessage(nil, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), baseLists.NewPropertyList(), baseLists.NewPropertyList())},
+		{"valid", args{testFrom, testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}, &Message{testFrom.String(), testFromID, testIdentityID, testMutableMetaProperties, testMutableProperties}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -17,7 +17,7 @@ func TestPrototype(t *testing.T) {
 		want string
 	}{
 
-		{"+ve", baseHelpers.NewAuxiliaries(authenticate.Auxiliary).GetAuxiliary("authenticate").GetName()},
+		{"valid", baseHelpers.NewAuxiliaries(authenticate.Auxiliary).GetAuxiliary("authenticate").GetName()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

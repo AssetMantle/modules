@@ -32,8 +32,8 @@ func TestNewKey(t *testing.T) {
 		want    helpers.Key
 		wantErr bool
 	}{
-		{"+ve", args{testAssetID}, &Key{testAssetID}, false},
-		{"+ve empty AssedID", args{baseIDs.PrototypeAssetID()}, &Key{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, false},
+		{"valid", args{testAssetID}, &Key{testAssetID}, false},
+		{"empty asset ID", args{baseIDs.PrototypeAssetID()}, &Key{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, false},
 		{"panic case with nil", args{}, &Key{}, true},
 	}
 	for _, tt := range tests {
@@ -57,7 +57,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", &Key{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}},
+		{"valid", &Key{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -81,7 +81,7 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{testAssetID}, args{&Key{testAssetID}}, true},
+		{"valid", fields{testAssetID}, args{&Key{testAssetID}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -104,7 +104,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{testAssetID}, (&Key{testAssetID}).GeneratePrefixedStoreKeyBytes()},
+		{"valid", fields{testAssetID}, (&Key{testAssetID}).GeneratePrefixedStoreKeyBytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -127,8 +127,8 @@ func Test_key_IsPartial(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		{"+ve", fields{testAssetID}, false},
-		{"+ve", fields{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, true},
+		{"valid", fields{testAssetID}, false},
+		{"valid", fields{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

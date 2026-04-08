@@ -17,7 +17,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.ParameterManager
 	}{
-		{"+ve", baseHelpers.NewParameterManager(deputize_allowed.ValidatableParameter)},
+		{"valid", baseHelpers.NewParameterManager(deputize_allowed.ValidatableParameter)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

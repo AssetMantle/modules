@@ -93,7 +93,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionKeeper
 	}{
-		{"+ve", transactionKeeper{}},
+		{"valid", transactionKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -126,7 +126,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper, parameterManager, authenticateAuxiliary, authorizeAuxiliary, supplementAuxiliary, transferAuxiliary, unbondAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, parameterManager, authenticateAuxiliary, authorizeAuxiliary, supplementAuxiliary, transferAuxiliary, unbondAuxiliary}},
+		{"valid", fields{Mapper, parameterManager, authenticateAuxiliary, authorizeAuxiliary, supplementAuxiliary, transferAuxiliary, unbondAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, parameterManager, authenticateAuxiliary, authorizeAuxiliary, supplementAuxiliary, transferAuxiliary, unbondAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -200,9 +200,9 @@ func Test_transactionKeeper_Transact1(t *testing.T) {
 		// NOTE: These tests are disabled because the test infrastructure shares a single store/mapper
 		// across all modules, causing type assertion panics when authenticate auxiliary tries to use
 		// the orders mapper as an identities mapper.
-		// {"+ve Not Authorized", ...},
-		// {"+ve", ...},
-		// {"+ve entity Not Found", ...},
+		// {"not authorized", ...},
+		// {"valid", ...},
+		// {"entity not found", ...},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -33,8 +33,8 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve", args{testMaintainerID}, &QueryRequest{testKey}},
-		{"+ve with nil", args{testMaintainerID1}, &QueryRequest{testKey1}},
+		{"valid", args{testMaintainerID}, &QueryRequest{testKey}},
+		{"nil inputs", args{testMaintainerID1}, &QueryRequest{testKey1}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -62,7 +62,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testKey}, args{cliCommand, client.Context{}}, &QueryRequest{testKey}, false},
+		{"valid", fields{testKey}, args{cliCommand, client.Context{}}, &QueryRequest{testKey}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -90,8 +90,8 @@ func Test_queryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testKey}, false},
-		{"+ve with nil", fields{testKey1}, false},
+		{"valid", fields{testKey}, false},
+		{"nil inputs", fields{testKey1}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -110,7 +110,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		{"+ve", &QueryRequest{}},
+		{"valid", &QueryRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

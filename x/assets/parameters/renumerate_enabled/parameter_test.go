@@ -23,15 +23,15 @@ func Test_validator(t *testing.T) {
 		args      args
 		wantError bool
 	}{
-		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, true},
-		{"+ve", args{Parameter}, false},
-		{"-ve InvalidParameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
-		{"+ve with booleanData", args{baseData.NewBooleanData(false)}, true},
-		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
-		{"+ve with true booleanData", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("renumerateEnabled"), baseData.NewBooleanData(true)))}, false},
-		{"+ve with false booleanData", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("renumerateEnabled"), baseData.NewBooleanData(false)))}, false},
-		{"+ve with incorrect ID", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewBooleanData(false)))}, true},
-		{"-ve nil", args{}, true},
+		{"incorrect format", args{baseIDs.NewStringID("")}, true},
+		{"valid", args{Parameter}, false},
+		{"invalid parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
+		{"raw boolean data", args{baseData.NewBooleanData(false)}, true},
+		{"wrong data type", args{baseData.NewStringData("stringData")}, true},
+		{"true boolean parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("renumerateEnabled"), baseData.NewBooleanData(true)))}, false},
+		{"false boolean parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("renumerateEnabled"), baseData.NewBooleanData(false)))}, false},
+		{"incorrect parameter ID", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewBooleanData(false)))}, true},
+		{"nil input", args{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

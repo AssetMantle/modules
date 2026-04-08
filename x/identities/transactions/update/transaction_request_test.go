@@ -57,8 +57,8 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, transactionRequest{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}},
-		{"-ve with nil", args{}, transactionRequest{}},
+		{"valid", args{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, transactionRequest{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}},
+		{"nil inputs error", args{}, transactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -74,7 +74,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", transactionRequest{}},
+		{"valid", transactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -105,7 +105,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand: cliCommand, context: context}, transactionRequest{cliCommand.ReadCommonTransactionRequest(context), cliCommand.ReadString(constants.FromIdentityID), cliCommand.ReadString(constants.IdentityID), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
+		{"valid", fields{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, args{cliCommand: cliCommand, context: context}, transactionRequest{cliCommand.ReadCommonTransactionRequest(context), cliCommand.ReadString(constants.FromIdentityID), cliCommand.ReadString(constants.IdentityID), cliCommand.ReadString(constants.MutableMetaProperties), cliCommand.ReadString(constants.MutableProperties)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -143,8 +143,8 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   helpers.CommonTransactionRequest
 	}{
-		{"+ve", fields{}, helpers.PrototypeCommonTransactionRequest()},
-		{"+ve", fields{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, commonTransactionRequest},
+		{"valid", fields{}, helpers.PrototypeCommonTransactionRequest()},
+		{"valid", fields{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -181,7 +181,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    sdkTypes.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), mutableMetaPropertiesString, mutablePropertiesString}, nil, true},
+		{"valid", fields{commonTransactionRequest, testFromID.AsString(), testFromID.AsString(), mutableMetaPropertiesString, mutablePropertiesString}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -219,8 +219,8 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, true},
-		{"+ve with nil", fields{}, true},
+		{"valid", fields{commonTransactionRequest, "fromID", "identityID", mutableMetaPropertiesString, mutablePropertiesString}, true},
+		{"nil inputs", fields{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

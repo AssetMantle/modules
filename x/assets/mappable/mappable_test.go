@@ -32,7 +32,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Mappable
 	}{
-		{"+ve", &Mappable{}},
+		{"valid", &Mappable{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -53,7 +53,7 @@ func TestNewMappable(t *testing.T) {
 		args args
 		want helpers.Mappable
 	}{
-		{"+ve", args{baseDocuments.NewAsset(classificationID, immutables, mutables)}, testMappable},
+		{"valid", args{baseDocuments.NewAsset(classificationID, immutables, mutables)}, testMappable},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

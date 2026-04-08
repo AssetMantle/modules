@@ -24,10 +24,10 @@ func TestSetPermissions(t *testing.T) {
 		args args
 		want lists.IDList
 	}{
-		{"+ve for can Add", args{true, false, false}, base.NewIDList().Add(constants.CanAddMaintainerPermission)},
-		{"+ve for can Mutate", args{false, true, false}, base.NewIDList().Add(constants.CanMutateMaintainerPermission)},
-		{"+ve for can Remove", args{false, false, true}, base.NewIDList().Add(constants.CanRemoveMaintainerPermission)},
-		{"+ve", args{true, true, true}, base.NewIDList().Add(constants.CanAddMaintainerPermission).Add(constants.CanMutateMaintainerPermission).Add(constants.CanRemoveMaintainerPermission)},
+		{"can add permission", args{true, false, false}, base.NewIDList().Add(constants.CanAddMaintainerPermission)},
+		{"can mutate permission", args{false, true, false}, base.NewIDList().Add(constants.CanMutateMaintainerPermission)},
+		{"can remove permission", args{false, false, true}, base.NewIDList().Add(constants.CanRemoveMaintainerPermission)},
+		{"valid", args{true, true, true}, base.NewIDList().Add(constants.CanAddMaintainerPermission).Add(constants.CanMutateMaintainerPermission).Add(constants.CanRemoveMaintainerPermission)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

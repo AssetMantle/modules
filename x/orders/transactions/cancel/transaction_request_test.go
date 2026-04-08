@@ -46,8 +46,8 @@ func Test_newTransactionRequest(t *testing.T) {
 		args args
 		want helpers.TransactionRequest
 	}{
-		{"+ve", args{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testOrderID.AsString())},
-		{"+ve", args{commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString()}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString())},
+		{"valid", args{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testOrderID.AsString())},
+		{"valid", args{commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString()}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString())},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -63,7 +63,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionRequest
 	}{
-		{"+ve", transactionRequest{}},
+		{"valid", transactionRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -95,7 +95,7 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 		want    helpers.TransactionRequest
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()), false},
+		{"valid", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, args{cliCommand, client.Context{}.WithCodec(baseHelpers.CodecPrototype())}, newTransactionRequest(commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -127,8 +127,8 @@ func Test_transactionRequest_GetBaseReq(t *testing.T) {
 		fields fields
 		want   helpers.CommonTransactionRequest
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, commonTransactionRequest},
-		{"+ve with nil", fields{commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString()}, commonTransactionRequest},
+		{"valid", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, commonTransactionRequest},
+		{"nil inputs", fields{commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString()}, commonTransactionRequest},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -156,7 +156,7 @@ func Test_transactionRequest_MakeMsg(t *testing.T) {
 		want    types.Msg
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, nil, true},
+		{"valid", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -188,8 +188,8 @@ func Test_transactionRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, true},
-		{"+ve with nil", fields{commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString()}, true},
+		{"valid", fields{commonTransactionRequest, testFromID.AsString(), testOrderID.AsString()}, true},
+		{"nil inputs", fields{commonTransactionRequest, testFromID.AsString(), testOrderID1.AsString()}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

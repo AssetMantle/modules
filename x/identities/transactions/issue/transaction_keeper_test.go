@@ -87,7 +87,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionKeeper
 	}{
-		{"+ve", transactionKeeper{}},
+		{"valid", transactionKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -118,7 +118,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper, conformAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, parameterManager, conformAuxiliary, authorizeAuxiliary, authorizeAuxiliary}},
+		{"valid", fields{Mapper, conformAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, parameterManager, conformAuxiliary, authorizeAuxiliary, authorizeAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -173,8 +173,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		wantErr bool
 	}{
 		// NOTE: When test individually run 2nd test will fail
-		{"+ve", fields{Mapper, parameterManager, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(baseIDs.PrototypeIdentityID()), false},
-		{"+ve Entity Already Exists", fields{Mapper, parameterManager, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(baseIDs.PrototypeIdentityID()), false},
+		{"valid", fields{Mapper, parameterManager, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(baseIDs.PrototypeIdentityID()), false},
+		{"entity already exists", fields{Mapper, parameterManager, authenticateAuxiliary, conformAuxiliary, authorizeAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, fromIdentityID, classificationID, immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(baseIDs.PrototypeIdentityID()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

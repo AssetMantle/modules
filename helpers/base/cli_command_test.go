@@ -40,7 +40,7 @@ func TestNewCLICommand(t *testing.T) {
 		want helpers.CLICommand
 	}{
 
-		{"+ve", args{"", "", "", testCliFlagList}, cliCommand{"", "", "", testCliFlagList}},
+		{"valid", args{"", "", "", testCliFlagList}, cliCommand{"", "", "", testCliFlagList}},
 		{"nil", args{"", "", "", nil}, cliCommand{"", "", "", nil}},
 	}
 	for _, tt := range tests {
@@ -105,8 +105,8 @@ func Test_cliCommand_ReadBaseReq(t *testing.T) {
 		want   helpers.CommonTransactionRequest
 	}{
 
-		{"+ve", fields{"", "", "", testCliFlagList}, args{client.Context{ChainID: "chainID"}}, helpers.CommonTransactionRequest{ChainID: "chainID"}},
-		{"-ve for nil", fields{"", "", "", nil}, args{client.Context{ChainID: ""}}, helpers.PrototypeCommonTransactionRequest()},
+		{"valid", fields{"", "", "", testCliFlagList}, args{client.Context{ChainID: "chainID"}}, helpers.CommonTransactionRequest{ChainID: "chainID"}},
+		{"nil input", fields{"", "", "", nil}, args{client.Context{ChainID: ""}}, helpers.PrototypeCommonTransactionRequest()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -142,7 +142,7 @@ func Test_cliCommand_ReadBool(t *testing.T) {
 		want   bool
 	}{
 
-		{"+ve", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name4", false, ",usage")}, false},
+		{"valid", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name4", false, ",usage")}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -181,11 +181,11 @@ func Test_cliCommand_ReadInt(t *testing.T) {
 		shouldPanic bool
 	}{
 
-		{"-ve flag name not an int flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", "value", ",usage")}, 0, true},
-		{"-ve unregistered flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", 1, ",usage")}, 1, true},
-		{"+ve", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name3", 123, ",usage")}, 0, false},
-		{"-ve should panic", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name4", struct{}{}, ",usage")}, 0, true},
-		// {"-ve should not panic", fields{"", "", "", nil}, args{NewCLIFlag("name4", 123, ",usage")}, 0, false},
+		{"flag name not int", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", "value", ",usage")}, 0, true},
+		{"unregistered flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", 1, ",usage")}, 1, true},
+		{"valid", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name3", 123, ",usage")}, 0, false},
+		{"should panic", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name4", struct{}{}, ",usage")}, 0, true},
+		// {"should not panic", fields{"", "", "", nil}, args{NewCLIFlag("name4", 123, ",usage")}, 0, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -225,11 +225,11 @@ func Test_cliCommand_ReadInt64(t *testing.T) {
 		shouldPanic bool
 	}{
 
-		{"-ve flag name not an int64 flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", "value", ",usage")}, 1, true},
-		{"-ve unregistered flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name2", int64(1), ",usage")}, 1, true},
-		{"+ve", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name2", int64(-1), ",usage")}, 0, false},
-		{"-ve should panic", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name4", struct{}{}, ",usage")}, 0, true},
-		{"-ve should panic for nil", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name2", nil, ",usage")}, 0, true},
+		{"flag name not int64", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", "value", ",usage")}, 1, true},
+		{"unregistered flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name2", int64(1), ",usage")}, 1, true},
+		{"valid", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name2", int64(-1), ",usage")}, 0, false},
+		{"should panic", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name4", struct{}{}, ",usage")}, 0, true},
+		{"panic on nil", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name2", nil, ",usage")}, 0, true},
 	}
 
 	for _, tt := range tests {
@@ -270,11 +270,11 @@ func Test_cliCommand_ReadString(t *testing.T) {
 		shouldPanic bool
 	}{
 
-		{"+ve", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", "value", ",usage")}, "", false},
-		{"-ve unregistered flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", "value1", ",usage")}, "", true},
-		{"-ve should panic", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name3", 1, ",usage")}, "0", true},
-		{"-ve flag name not a string flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name2", int64(-1), ",usage")}, "0", true},
-		{"-ve should panic for nil", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name2", nil, ",usage")}, "0", true}}
+		{"valid", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", "value", ",usage")}, "", false},
+		{"unregistered flag", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name", "value1", ",usage")}, "", true},
+		{"should panic", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name3", 1, ",usage")}, "0", true},
+		{"flag name not string", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name2", int64(-1), ",usage")}, "0", true},
+		{"panic on nil", fields{"", "", "", testCLiFlagList}, args{NewCLIFlag("name2", nil, ",usage")}, "0", true}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cliCommand := cliCommand{

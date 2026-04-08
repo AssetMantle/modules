@@ -32,8 +32,8 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve with nil", args{baseIDs.PrototypeDataID().(*baseIDs.DataID)}, &QueryRequest{key.NewKey(baseIDs.PrototypeDataID().(*baseIDs.DataID)).(*key.Key)}},
-		{"+ve", args{testDataID}, &QueryRequest{testKey}},
+		{"nil inputs", args{baseIDs.PrototypeDataID().(*baseIDs.DataID)}, &QueryRequest{key.NewKey(baseIDs.PrototypeDataID().(*baseIDs.DataID)).(*key.Key)}},
+		{"valid", args{testDataID}, &QueryRequest{testKey}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -61,7 +61,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testKey}, args{cliCommand, client.Context{}}, newQueryRequest(testDataID), false},
+		{"valid", fields{testKey}, args{cliCommand, client.Context{}}, newQueryRequest(testDataID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -89,8 +89,8 @@ func Test_queryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testKey}, false},
-		{"+ve", fields{key.NewKey(baseIDs.PrototypeDataID()).(*key.Key)}, false},
+		{"valid", fields{testKey}, false},
+		{"valid", fields{key.NewKey(baseIDs.PrototypeDataID()).(*key.Key)}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -109,7 +109,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		{"+ve", &QueryRequest{}},
+		{"valid", &QueryRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

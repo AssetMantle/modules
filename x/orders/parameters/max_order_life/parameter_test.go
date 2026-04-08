@@ -24,18 +24,18 @@ func Test_validator(t *testing.T) {
 		args      args
 		wantError bool
 	}{
-		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, true},
-		{"+ve", args{Parameter}, false},
-		{"-ve InvalidParameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
-		{"+ve with zero heightData", args{baseData.NewHeightData(base.NewHeight(0))}, true},
-		{"+ve with positive heightData", args{baseData.NewHeightData(base.NewHeight(1))}, true},
-		{"+ve with negative heightData", args{baseData.NewHeightData(base.NewHeight(-1))}, true},
-		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
-		{"+ve with zero heightDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(0))))}, false},
-		{"+ve with positive heightDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(1))))}, false},
-		{"+ve with negative heightDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(-1))))}, false},
-		{"+ve with incorrect ID", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewHeightData(base.NewHeight(0))))}, true},
-		{"-ve nil", args{}, true},
+		{"incorrect format", args{baseIDs.NewStringID("")}, true},
+		{"valid", args{Parameter}, false},
+		{"invalid parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
+		{"raw zero height data", args{baseData.NewHeightData(base.NewHeight(0))}, true},
+		{"raw positive height data", args{baseData.NewHeightData(base.NewHeight(1))}, true},
+		{"raw negative height data", args{baseData.NewHeightData(base.NewHeight(-1))}, true},
+		{"wrong data type", args{baseData.NewStringData("stringData")}, true},
+		{"zero height parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(0))))}, false},
+		{"valid positive height parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(1))))}, false},
+		{"negative height parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("maxOrderLife"), baseData.NewHeightData(base.NewHeight(-1))))}, false},
+		{"incorrect parameter ID", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewHeightData(base.NewHeight(0))))}, true},
+		{"nil input", args{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

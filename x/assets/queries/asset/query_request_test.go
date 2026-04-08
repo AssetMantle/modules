@@ -37,8 +37,8 @@ func Test_newQueryRequest(t *testing.T) {
 		args args
 		want helpers.QueryRequest
 	}{
-		{"+ve", args{testAssetID}, newQueryRequest(testAssetID)},
-		{"+ve", args{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID))},
+		{"valid", args{testAssetID}, newQueryRequest(testAssetID)},
+		{"valid", args{baseIDs.PrototypeAssetID().(*baseIDs.AssetID)}, newQueryRequest(baseIDs.PrototypeAssetID().(*baseIDs.AssetID))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -67,7 +67,7 @@ func Test_queryRequest_FromCLI(t *testing.T) {
 		want    helpers.QueryRequest
 		wantErr bool
 	}{
-		{"+ve", fields{testKey}, args{cliCommand, client.Context{}.WithCodec(base.CodecPrototype())}, newQueryRequest(testAssetID), false},
+		{"valid", fields{testKey}, args{cliCommand, client.Context{}.WithCodec(base.CodecPrototype())}, newQueryRequest(testAssetID), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -95,7 +95,7 @@ func Test_queryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{testKey}, false},
+		{"valid", fields{testKey}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -114,7 +114,7 @@ func Test_requestPrototype(t *testing.T) {
 		name string
 		want helpers.QueryRequest
 	}{
-		{"+ve", &QueryRequest{}},
+		{"valid", &QueryRequest{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

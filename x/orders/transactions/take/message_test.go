@@ -31,7 +31,7 @@ func Test_messagePrototype(t *testing.T) {
 		name string
 		want helpers.Message
 	}{
-		{"+ve", &Message{}},
+		{"valid", &Message{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -49,7 +49,7 @@ func Test_message_GetSigners(t *testing.T) {
 		fields fields
 		want   []types.AccAddress
 	}{
-		{"+ve", fields{fromAccAddress.String(), testFromID, takerSplit, testOrderID}, []types.AccAddress{fromAccAddress}},
+		{"valid", fields{fromAccAddress.String(), testFromID, takerSplit, testOrderID}, []types.AccAddress{fromAccAddress}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -74,8 +74,8 @@ func Test_message_ValidateBasic(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"-ve with nil", fields{}, true},
-		{"+ve", fields{fromAccAddress.String(), testFromID, takerSplit, testOrderID}, false},
+		{"nil inputs error", fields{}, true},
+		{"valid", fields{fromAccAddress.String(), testFromID, takerSplit, testOrderID}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -111,7 +111,7 @@ func Test_NewMessage(t *testing.T) {
 		args args
 		want types.Msg
 	}{
-		{"+ve", args{fromAccAddress, testFromID, takerSplit, testOrderID}, &Message{fromAccAddress.String(), testFromID, takerSplit.String(), testOrderID}},
+		{"valid", args{fromAccAddress, testFromID, takerSplit, testOrderID}, &Message{fromAccAddress.String(), testFromID, takerSplit.String(), testOrderID}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

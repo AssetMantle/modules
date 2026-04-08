@@ -33,7 +33,7 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{createTestData()}, &Key{createTestData()}},
+		{"valid", args{createTestData()}, &Key{createTestData()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -49,7 +49,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", &Key{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}},
+		{"valid", &Key{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -73,8 +73,8 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{createTestData()}, args{NewKey(createTestData())}, true},
-		{"-ve", fields{createTestData()}, args{NewKey(baseIDs.PrototypeMaintainerID())}, false},
+		{"valid", fields{createTestData()}, args{NewKey(createTestData())}, true},
+		{"invalid", fields{createTestData()}, args{NewKey(baseIDs.PrototypeMaintainerID())}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,8 +97,8 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{createTestData()}, (&Key{createTestData()}).GeneratePrefixedStoreKeyBytes()},
-		{"-ve", fields{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}, (&Key{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}).GeneratePrefixedStoreKeyBytes()},
+		{"valid", fields{createTestData()}, (&Key{createTestData()}).GeneratePrefixedStoreKeyBytes()},
+		{"invalid", fields{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}, (&Key{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}).GeneratePrefixedStoreKeyBytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -121,8 +121,8 @@ func Test_key_IsPartial(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		{"+ve", fields{createTestData()}, false},
-		{"-ve", fields{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}, true},
+		{"valid", fields{createTestData()}, false},
+		{"invalid", fields{baseIDs.PrototypeMaintainerID().(*baseIDs.MaintainerID)}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

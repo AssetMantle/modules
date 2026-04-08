@@ -90,7 +90,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionKeeper
 	}{
-		{"+ve", transactionKeeper{}},
+		{"valid", transactionKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -122,7 +122,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper, parameterManager, authenticateAuxiliary, burnAuxiliary, supplementAuxiliary, transferAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, parameterManager, authenticateAuxiliary, burnAuxiliary, supplementAuxiliary, transferAuxiliary}},
+		{"valid", fields{Mapper, parameterManager, authenticateAuxiliary, burnAuxiliary, supplementAuxiliary, transferAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, parameterManager, authenticateAuxiliary, burnAuxiliary, supplementAuxiliary, transferAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -194,9 +194,9 @@ func Test_transactionKeeper_Transact1(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve Not Authorized", fields{Mapper, parameterManager, authenticateAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID2, testRate, testOrderID).(*Message)}, newTransactionResponse(), false},
-		{"+ve", fields{Mapper, parameterManager, authenticateAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testRate, testOrderID).(*Message)}, newTransactionResponse(), false},
-		{"+ve Entity Not Found", fields{Mapper, parameterManager, authenticateAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testRate, testOrderID2).(*Message)}, newTransactionResponse(), false},
+		{"not authorized", fields{Mapper, parameterManager, authenticateAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID2, testRate, testOrderID).(*Message)}, newTransactionResponse(), false},
+		{"valid", fields{Mapper, parameterManager, authenticateAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testRate, testOrderID).(*Message)}, newTransactionResponse(), false},
+		{"entity not found", fields{Mapper, parameterManager, authenticateAuxiliary, supplementAuxiliary, transferAuxiliary, authenticateAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, testFromID, testRate, testOrderID2).(*Message)}, newTransactionResponse(), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

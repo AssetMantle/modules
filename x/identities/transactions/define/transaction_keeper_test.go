@@ -85,7 +85,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.TransactionKeeper
 	}{
-		{"+ve", transactionKeeper{}},
+		{"valid", transactionKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -115,7 +115,7 @@ func Test_transactionKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}},
+		{"valid", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -169,8 +169,8 @@ func Test_transactionKeeper_Transact(t *testing.T) {
 		want    helpers.TransactionResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(classificationID), false},
-		{"-ve", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress2, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(baseIDs.PrototypeClassificationID()), false},
+		{"valid", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(classificationID), false},
+		{"invalid", fields{Mapper, defineAuxiliary, superAuxiliary, supplementAuxiliary}, args{sdkTypes.WrapSDKContext(Context), NewMessage(fromAccAddress2, baseIDs.NewIdentityID(classificationID, immutables), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties).(*Message)}, newTransactionResponse(baseIDs.PrototypeClassificationID()), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

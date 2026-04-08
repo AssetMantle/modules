@@ -32,7 +32,7 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{createTestInput()}, &Key{createTestInput()}},
+		{"valid", args{createTestInput()}, &Key{createTestInput()}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -48,7 +48,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", &Key{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}},
+		{"valid", &Key{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -72,8 +72,8 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{createTestInput()}, args{&Key{createTestInput()}}, true},
-		{"+ve", fields{createTestInput()}, args{Prototype()}, false},
+		{"valid", fields{createTestInput()}, args{&Key{createTestInput()}}, true},
+		{"valid", fields{createTestInput()}, args{Prototype()}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -96,7 +96,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{createTestInput()}, (&Key{createTestInput()}).GeneratePrefixedStoreKeyBytes()},
+		{"valid", fields{createTestInput()}, (&Key{createTestInput()}).GeneratePrefixedStoreKeyBytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -119,8 +119,8 @@ func Test_key_IsPartial(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		{"+ve", fields{createTestInput()}, false},
-		{"-ve", fields{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}, true},
+		{"valid", fields{createTestInput()}, false},
+		{"invalid", fields{baseIDs.PrototypeClassificationID().(*baseIDs.ClassificationID)}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

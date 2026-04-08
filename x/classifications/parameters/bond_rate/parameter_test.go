@@ -24,18 +24,18 @@ func Test_validator(t *testing.T) {
 		args      args
 		wantError bool
 	}{
-		{"-ve incorrectFormat", args{baseIDs.NewStringID("")}, true},
-		{"+ve", args{Parameter}, false},
-		{"-ve InvalidParameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
-		{"+ve with zero NumberData", args{baseData.NewNumberData(math.ZeroInt())}, true},
-		{"+ve with positive NumberData", args{baseData.NewNumberData(math.OneInt())}, true},
-		{"+ve with negative NumberData", args{baseData.NewNumberData(math.NewInt(-1))}, true},
-		{"-ve with different type of Data", args{baseData.NewStringData("stringData")}, true},
-		{"+ve with positive NumberDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(math.OneInt())))}, false},
-		{"+ve with negative NumberDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(math.NewInt(-1))))}, true},
-		{"+ve with zero NumberDataParam", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(math.ZeroInt())))}, false},
-		{"+ve with incorrect ID", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewNumberData(math.ZeroInt())))}, true},
-		{"-ve nil", args{}, true},
+		{"incorrect format", args{baseIDs.NewStringID("")}, true},
+		{"valid", args{Parameter}, false},
+		{"invalid parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID(""), baseData.NewStringData("")))}, true},
+		{"raw zero number data", args{baseData.NewNumberData(math.ZeroInt())}, true},
+		{"raw positive number data", args{baseData.NewNumberData(math.OneInt())}, true},
+		{"raw negative number data", args{baseData.NewNumberData(math.NewInt(-1))}, true},
+		{"wrong data type", args{baseData.NewStringData("stringData")}, true},
+		{"valid positive number parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(math.OneInt())))}, false},
+		{"invalid negative number parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(math.NewInt(-1))))}, true},
+		{"zero number parameter", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("bondRate"), baseData.NewNumberData(math.ZeroInt())))}, false},
+		{"incorrect parameter ID", args{baseParameters.NewParameter(baseProperties.NewMetaProperty(baseIDs.NewStringID("ID"), baseData.NewNumberData(math.ZeroInt())))}, true},
+		{"nil input", args{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

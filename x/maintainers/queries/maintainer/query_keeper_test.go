@@ -78,7 +78,7 @@ func Test_keeperPrototype(t *testing.T) {
 		name string
 		want helpers.QueryKeeper
 	}{
-		{"+ve", queryKeeper{}},
+		{"valid", queryKeeper{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -105,7 +105,7 @@ func Test_queryKeeper_Initialize(t *testing.T) {
 		args   args
 		want   helpers.Keeper
 	}{
-		{"+ve", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, queryKeeper{Mapper}},
+		{"valid", fields{Mapper}, args{Mapper, parameterManager, []interface{}{}}, queryKeeper{Mapper}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -138,7 +138,7 @@ func Test_queryKeeper_Enquire(t *testing.T) {
 		want    helpers.QueryResponse
 		wantErr bool
 	}{
-		{"+ve", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), newQueryRequest(testMaintainerID)}, newQueryResponse(keepers.MaintainerKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Fetch(key.NewKey(testMaintainerID)).FetchRecord(key.NewKey(testMaintainerID))), false},
+		{"valid", fields{Mapper}, args{sdkTypes.WrapSDKContext(Context), newQueryRequest(testMaintainerID)}, newQueryResponse(keepers.MaintainerKeeper.(queryKeeper).mapper.NewCollection(sdkTypes.WrapSDKContext(Context)).Fetch(key.NewKey(testMaintainerID)).FetchRecord(key.NewKey(testMaintainerID))), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

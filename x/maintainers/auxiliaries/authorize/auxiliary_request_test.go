@@ -37,7 +37,7 @@ func TestNewAuxiliaryRequest(t *testing.T) {
 		args args
 		want helpers.AuxiliaryRequest
 	}{
-		{"+ve", args{classificationID, identityID, []ids.StringID{}}, auxiliaryRequest{classificationID, identityID, nil}},
+		{"valid", args{classificationID, identityID, []ids.StringID{}}, auxiliaryRequest{classificationID, identityID, nil}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -58,8 +58,8 @@ func Test_auxiliaryRequest_Validate(t *testing.T) {
 		fields  fields
 		wantErr bool
 	}{
-		{"+ve", fields{classificationID, identityID}, false},
-		{"-ve with nil", fields{}, true},
+		{"valid", fields{classificationID, identityID}, false},
+		{"nil inputs error", fields{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

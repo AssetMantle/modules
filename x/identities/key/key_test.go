@@ -35,7 +35,7 @@ func TestNewKey(t *testing.T) {
 		args args
 		want helpers.Key
 	}{
-		{"+ve", args{testIdentity}, &Key{IdentityID: testIdentity}},
+		{"valid", args{testIdentity}, &Key{IdentityID: testIdentity}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -51,7 +51,7 @@ func TestPrototype(t *testing.T) {
 		name string
 		want helpers.Key
 	}{
-		{"+ve", &Key{baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)}},
+		{"valid", &Key{baseIDs.PrototypeIdentityID().(*baseIDs.IdentityID)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -76,10 +76,10 @@ func Test_key_Equals(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{"+ve", fields{nil}, args{&Key{nil}}, true},
-		{"-ve", fields{nil}, args{&Key{testIdentity}}, false},
-		{"-ve", fields{testIdentity}, args{&Key{nil}}, false},
-		{"+ve", fields{testIdentity}, args{&Key{testIdentity}}, true},
+		{"valid", fields{nil}, args{&Key{nil}}, true},
+		{"invalid", fields{nil}, args{&Key{testIdentity}}, false},
+		{"invalid", fields{testIdentity}, args{&Key{nil}}, false},
+		{"valid", fields{testIdentity}, args{&Key{testIdentity}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -104,7 +104,7 @@ func Test_key_GenerateStoreKeyBytes(t *testing.T) {
 		fields fields
 		want   []byte
 	}{
-		{"+ve", fields{testIdentity}, (&Key{testIdentity}).GeneratePrefixedStoreKeyBytes()},
+		{"valid", fields{testIdentity}, (&Key{testIdentity}).GeneratePrefixedStoreKeyBytes()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -129,7 +129,7 @@ func Test_key_IsPartial(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		{"+ve", fields{testIdentity}, false},
+		{"valid", fields{testIdentity}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
