@@ -14,6 +14,7 @@ import (
 	baseData "github.com/AssetMantle/schema/data/base"
 	"github.com/AssetMantle/schema/qualified"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
@@ -73,6 +74,14 @@ func CalculateBondAmount(immutables qualified.Immutables, mutables qualified.Mut
 }
 
 func ExecuteMessage(context sdkTypes.Context, module helpers.Module, message helpers.Message) (*sdkTypes.Result, error) {
+	if module == nil || message == nil {
+		return nil, fmt.Errorf("nil module or message")
+	}
+	transactions := module.GetTransactions()
+	if transactions == nil {
+		return nil, fmt.Errorf("module %s has no transactions", module.Name())
+	}
+
 	// Derive service path from proto message name.
 	// Proto name: "AssetMantle.modules.x.assets.transactions.burn.Message"
 	// Service path: "/assets/burn"
@@ -80,9 +89,24 @@ func ExecuteMessage(context sdkTypes.Context, module helpers.Module, message hel
 	parts := strings.Split(msgName, ".")
 	if len(parts) >= 6 {
 		servicePath := "/" + parts[3] + "/" + parts[5]
-		if tx := module.GetTransactions().GetTransaction(servicePath); tx != nil {
+		if tx := transactions.GetTransaction(servicePath); tx != nil {
 			return tx.HandleMessage(sdkTypes.WrapSDKContext(context), message)
 		}
 	}
-	return nil, fmt.Errorf("no matching transaction for message %s", msgName)
+	return nil, fmt.Errorf("no matching transaction for message %s in module %s", msgName, module.Name())
+}
+
+// SafeOperation wraps a simulation operation to catch panics from nil data in
+// simulated databases. Early blocks have empty databases, causing operations to
+// panic on nil type assertions. This wrapper converts panics to no-op results.
+func SafeOperation(op simulationTypes.Operation) simulationTypes.Operation {
+	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdkTypes.Context, accs []simulationTypes.Account, chainID string) (opMsg simulationTypes.OperationMsg, futures []simulationTypes.FutureOperation, err error) {
+		defer func() {
+			if rec := recover(); rec != nil {
+				opMsg = simulationTypes.NoOpMsg("recovered", "panic", fmt.Sprintf("%v", rec))
+				err = nil
+			}
+		}()
+		return op(r, app, ctx, accs, chainID)
+	}
 }

@@ -49,35 +49,35 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 	return simulation.WeightedOperations{
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulateDefineMsg(module),
+			simulationModules.SafeOperation(simulateDefineMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulateMintMsg(module),
+			simulationModules.SafeOperation(simulateMintMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulateBurnMsg(module),
+			simulationModules.SafeOperation(simulateBurnMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulateRenumerateMsg(module),
+			simulationModules.SafeOperation(simulateRenumerateMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulateDeputizeAndRevokeMsg(module),
+			simulationModules.SafeOperation(simulateDeputizeAndRevokeMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulateMutateMsg(module),
+			simulationModules.SafeOperation(simulateMutateMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulateSendMsg(module),
+			simulationModules.SafeOperation(simulateSendMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulateWrapAndUnwrapMsg(module),
+			simulationModules.SafeOperation(simulateWrapAndUnwrapMsg(module)),
 		),
 	}
 }

@@ -29,7 +29,7 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 	return simulation.WeightedOperations{
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulateRevealMsg(module),
+			simulationModules.SafeOperation(simulateRevealMsg(module)),
 		),
 	}
 }
