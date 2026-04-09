@@ -5,8 +5,10 @@ package simulation
 
 import (
 	"cosmossdk.io/math"
-	"github.com/modern-go/reflect2"
+	"fmt"
+	goGoProto "github.com/cosmos/gogoproto/proto"
 	"math/rand"
+	"strings"
 
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -61,6 +63,16 @@ func CalculateBondAmount(immutables qualified.Immutables, mutables qualified.Mut
 }
 
 func ExecuteMessage(context sdkTypes.Context, module helpers.Module, message helpers.Message) (*sdkTypes.Result, error) {
-	//TODO figure out an easier way to pick a transaction handle message from modules
-	return module.GetTransactions().GetTransaction(reflect2.TypeOf(message).String()).HandleMessage(sdkTypes.WrapSDKContext(context), message)
+	// Derive service path from proto message name.
+	// Proto name: "AssetMantle.modules.x.assets.transactions.burn.Message"
+	// Service path: "/assets/burn"
+	msgName := goGoProto.MessageName(message)
+	parts := strings.Split(msgName, ".")
+	if len(parts) >= 6 {
+		servicePath := "/" + parts[3] + "/" + parts[5]
+		if tx := module.GetTransactions().GetTransaction(servicePath); tx != nil {
+			return tx.HandleMessage(sdkTypes.WrapSDKContext(context), message)
+		}
+	}
+	return nil, fmt.Errorf("no matching transaction for message %s", msgName)
 }
