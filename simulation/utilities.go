@@ -57,9 +57,19 @@ func GetGenesisProperties(r *rand.Rand) (qualified.Immutables, qualified.Mutable
 func CalculateBondAmount(immutables qualified.Immutables, mutables qualified.Mutables) data.NumberData {
 	totalWeight := math.ZeroInt()
 	for _, property := range append(immutables.GetImmutablePropertyList().Get(), mutables.GetMutablePropertyList().Get()...) {
-		totalWeight = totalWeight.Add(property.Get().GetBondWeight())
+		if inner := property.Get(); inner != nil {
+			totalWeight = totalWeight.Add(inner.GetBondWeight())
+		}
 	}
-	return baseData.NewNumberData(bond_rate.Parameter.GetMetaProperty().GetData().Get().(data.NumberData).Get().Mul(totalWeight))
+
+	bondRateData := bond_rate.Parameter.GetMetaProperty().GetData()
+	if bondRateData == nil || bondRateData.Get() == nil {
+		return baseData.NewNumberData(totalWeight)
+	}
+	if numData, ok := bondRateData.Get().(data.NumberData); ok {
+		return baseData.NewNumberData(numData.Get().Mul(totalWeight))
+	}
+	return baseData.NewNumberData(totalWeight)
 }
 
 func ExecuteMessage(context sdkTypes.Context, module helpers.Module, message helpers.Message) (*sdkTypes.Result, error) {
