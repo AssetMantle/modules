@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/json"
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdkCodecTypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -19,7 +20,7 @@ type ModuleManager interface {
 	AddTxCommands(*cobra.Command)
 	AddQueryCommands(*cobra.Command)
 
-	InitGenesis(sdkTypes.Context, codec.JSONCodec, map[string]json.RawMessage) error
+	InitGenesis(sdkTypes.Context, codec.JSONCodec, map[string]json.RawMessage) (*abci.ResponseInitChain, error)
 	ExportGenesisForModules(sdkTypes.Context, codec.JSONCodec, []string) (map[string]json.RawMessage, error)
 
 	RegisterServices(module.Configurator)

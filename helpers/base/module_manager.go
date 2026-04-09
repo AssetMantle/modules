@@ -2,6 +2,7 @@ package base
 
 import (
 	"encoding/json"
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/AssetMantle/modules/helpers"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkCodec "github.com/cosmos/cosmos-sdk/codec"
@@ -54,9 +55,8 @@ func (moduleManager moduleManager) AddQueryCommands(rootQueryCmd *cobra.Command)
 		}
 	}
 }
-func (moduleManager moduleManager) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, genesisData map[string]json.RawMessage) error {
-	_, err := moduleManager.getManager().InitGenesis(context, jsonCodec, genesisData)
-	return err
+func (moduleManager moduleManager) InitGenesis(context sdkTypes.Context, jsonCodec sdkCodec.JSONCodec, genesisData map[string]json.RawMessage) (*abci.ResponseInitChain, error) {
+	return moduleManager.getManager().InitGenesis(context, jsonCodec, genesisData)
 }
 func (moduleManager moduleManager) GetVersionMap() sdkModuleTypes.VersionMap {
 	return moduleManager.getManager().GetVersionMap()
