@@ -21,7 +21,10 @@ func GenerateRandomMetaProperty(r *rand.Rand) properties.Property {
 	return baseProperties.NewMetaProperty(baseIDs.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(99))), GenerateRandomData(r, int(math.Abs(float64(r.Intn(99))))))
 }
 func GenerateRandomMetaPropertyWithoutData(r *rand.Rand) properties.Property {
-	return baseProperties.NewMetaProperty(baseIDs.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(99))), GenerateRandomPrototypeData(r, int(math.Abs(float64(r.Int())))))
+	// Use MesaProperty (stores DataID hash only) instead of MetaProperty with prototype data.
+	// MetaProperty with prototype data has nil internal AnyID.Impl which panics
+	// when GenerateHashID calls GetDataID().
+	return GenerateRandomMesaProperty(r)
 }
 func GenerateRandomProperty(r *rand.Rand) properties.Property {
 	if random.GenerateRandomBool() {

@@ -2,3 +2,4 @@ vendor
 .vscode
 .idea
 .DS_Storecoverage.out
+coverage.out
