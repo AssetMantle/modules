@@ -32,7 +32,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		&bondRateData,
 		simulationState.Rand,
 		func(rand *rand.Rand) {
-			bondRateData = baseData.NewNumberData(math.NewInt(int64(rand.Intn(99))))
+			bondRateData = baseData.NewNumberData(math.NewInt(int64(rand.Intn(98) + 1)))
 		},
 	)
 
@@ -42,7 +42,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		&maxPropertyCountData,
 		simulationState.Rand,
 		func(rand *rand.Rand) {
-			maxPropertyCountData = baseData.NewNumberData(math.NewInt(int64(rand.Intn(99))))
+			maxPropertyCountData = baseData.NewNumberData(math.NewInt(int64(rand.Intn(43) + 1)))
 		},
 	)
 
