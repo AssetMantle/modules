@@ -46,13 +46,34 @@ func (mapper mapper) FetchAll(context context.Context) []helpers.Record {
 	return records
 }
 func (mapper mapper) Iterate(context context.Context, key helpers.Key, accumulator func(helpers.Record) bool) {
-	kvStorePrefixIterator := storeTypes.KVStorePrefixIterator(prefixStore.NewStore(sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey), key.GenerateStorePrefixBytes()), key.GenerateStoreKeyBytes())
+	store := sdkTypes.UnwrapSDKContext(context).KVStore(mapper.kvStoreKey)
+	prefixBytes := key.GenerateStorePrefixBytes()
+	keyBytes := key.GenerateStoreKeyBytes()
 
-	for ; kvStorePrefixIterator.Valid(); kvStorePrefixIterator.Next() {
-		if accumulator(mapper.recordPrototype().ReadFromIterator(kvStorePrefixIterator)) {
-			if err := kvStorePrefixIterator.Close(); err != nil {
-				sdkTypes.UnwrapSDKContext(context).Logger().Debug(err.Error())
-			}
+	// SDK v0.50 panics on empty iterator keys in KVStorePrefixIterator.
+	// When key bytes are empty (IterateAll / partial key), use Iterator(nil, nil)
+	// on the prefix store to iterate all entries under that prefix.
+	// When both prefix and key bytes are empty (full prototype), iterate the raw
+	// store but skip the parameters store prefix (0x01) which shares the same
+	// KV store.
+	var iter storeTypes.Iterator
+	skipParams := false
+	if len(prefixBytes) == 0 && len(keyBytes) == 0 {
+		iter = store.Iterator(nil, nil)
+		skipParams = true
+	} else if len(keyBytes) == 0 {
+		iter = prefixStore.NewStore(store, prefixBytes).Iterator(nil, nil)
+	} else {
+		iter = storeTypes.KVStorePrefixIterator(prefixStore.NewStore(store, prefixBytes), keyBytes)
+	}
+
+	defer iter.Close()
+
+	for ; iter.Valid(); iter.Next() {
+		if skipParams && bytes.Equal(iter.Key(), parametersStorePrefix) {
+			continue
+		}
+		if accumulator(mapper.recordPrototype().ReadFromIterator(iter)) {
 			break
 		}
 	}
