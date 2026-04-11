@@ -9,16 +9,12 @@ import (
 	"testing"
 
 	assetsSimulator "github.com/AssetMantle/modules/x/assets/simulator"
-	"github.com/AssetMantle/modules/x/classifications/constants"
+	"github.com/AssetMantle/modules/x/identities/constants"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func Test_newSimulator(t *testing.T) {
-	require.Equal(t, newSimulator(), simulator{})
-}
 
 func setupGenesisState(t *testing.T) module.SimulationState {
 	t.Helper()
@@ -30,6 +26,7 @@ func setupGenesisState(t *testing.T) module.SimulationState {
 		GenState:  make(map[string]json.RawMessage),
 		AppParams: make(simulationTypes.AppParams),
 	}
+	// Identities depends on assets simulated database
 	assetsSimulator.Prototype().RandomizedGenesisState(&simState)
 	return simState
 }
@@ -55,9 +52,7 @@ func TestWeightedOperations(t *testing.T) {
 	s := newSimulator()
 	ops := s.WeightedOperations(simState, nil)
 
-	// Classifications only has govern tx — nil is correct.
-	// Module logic is exercised transitively by other modules' operations.
-	require.Nil(t, ops)
+	require.Len(t, ops, 7)
 }
 
 func TestParamChangeList(t *testing.T) {

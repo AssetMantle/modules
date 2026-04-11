@@ -9,16 +9,13 @@ import (
 	"testing"
 
 	assetsSimulator "github.com/AssetMantle/modules/x/assets/simulator"
-	"github.com/AssetMantle/modules/x/classifications/constants"
+	identitiesSimulator "github.com/AssetMantle/modules/x/identities/simulator"
+	"github.com/AssetMantle/modules/x/splits/constants"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func Test_newSimulator(t *testing.T) {
-	require.Equal(t, newSimulator(), simulator{})
-}
 
 func setupGenesisState(t *testing.T) module.SimulationState {
 	t.Helper()
@@ -31,6 +28,7 @@ func setupGenesisState(t *testing.T) module.SimulationState {
 		AppParams: make(simulationTypes.AppParams),
 	}
 	assetsSimulator.Prototype().RandomizedGenesisState(&simState)
+	identitiesSimulator.Prototype().RandomizedGenesisState(&simState)
 	return simState
 }
 
@@ -55,7 +53,7 @@ func TestWeightedOperations(t *testing.T) {
 	s := newSimulator()
 	ops := s.WeightedOperations(simState, nil)
 
-	// Classifications only has govern tx — nil is correct.
+	// Splits only has govern tx — nil is correct.
 	// Module logic is exercised transitively by other modules' operations.
 	require.Nil(t, ops)
 }
@@ -65,12 +63,10 @@ func TestParamChangeList(t *testing.T) {
 	s := newSimulator()
 	changes := s.ParamChangeList(r)
 
-	require.Len(t, changes, 2)
-	for _, change := range changes {
-		assert.Equal(t, constants.ModuleName, change.Subspace())
-		simValue := change.SimValue()(r)
-		assert.NotEmpty(t, simValue)
-	}
+	require.Len(t, changes, 1)
+	assert.Equal(t, constants.ModuleName, changes[0].Subspace())
+	simValue := changes[0].SimValue()(r)
+	assert.NotEmpty(t, simValue)
 }
 
 func TestProposalMessages(t *testing.T) {

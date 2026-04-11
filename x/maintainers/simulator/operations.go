@@ -11,6 +11,9 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 )
 
+// WeightedOperations returns nil because the maintainers module only exposes a
+// govern transaction. Maintainer logic is exercised transitively when other
+// modules' operations trigger maintainers auxiliaries (authorize, deputize, etc.).
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
 	var weightMsg int
 

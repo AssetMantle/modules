@@ -11,6 +11,10 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 )
 
+// WeightedOperations returns nil because the classifications module only exposes
+// a govern transaction (parameter changes via governance proposals). Classification
+// logic is exercised transitively when other modules' operations trigger
+// classifications auxiliaries (define, bond, conform, etc.).
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
 	var weightMsg int
 

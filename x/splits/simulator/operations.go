@@ -11,6 +11,9 @@ import (
 	"github.com/AssetMantle/modules/helpers"
 )
 
+// WeightedOperations returns nil because the splits module only exposes a govern
+// transaction. Split logic is exercised transitively when other modules' operations
+// trigger splits auxiliaries (mint, burn, transfer, etc.).
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
 	var weightMsg int
 
