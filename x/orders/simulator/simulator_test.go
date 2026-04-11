@@ -53,7 +53,7 @@ func TestWeightedOperations(t *testing.T) {
 	s := newSimulator()
 	ops := s.WeightedOperations(simState, nil)
 
-	require.Len(t, ops, 4)
+	require.Len(t, ops, 9)
 }
 
 func TestParamChangeList(t *testing.T) {
