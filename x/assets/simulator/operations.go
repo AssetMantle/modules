@@ -40,6 +40,8 @@ import (
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
 	var weightMsg int
 
+	simulationModules.SimTxConfig = simulationState.TxConfig
+
 	simulationState.AppParams.GetOrGenerate(OpWeightMsg, &weightMsg, nil,
 		func(_ *rand.Rand) {
 			weightMsg = DefaultWeightMsg
@@ -84,9 +86,6 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 
 func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		var err error
-		var result *sdkTypes.Result
-		var message *define.Message
 		var identityIDString string
 		account, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		identityMap := identities.GetIDData(account.Address.String())
@@ -95,8 +94,8 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 			break
 		}
 		identityID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
-		message = GenerateDefineMessage(account.Address, identityID.(ids.IdentityID), rand).(*define.Message)
-		result, err = simulationModules.ExecuteMessage(context, module, message)
+		message := GenerateDefineMessage(account.Address, identityID.(ids.IdentityID), rand).(*define.Message)
+		result, err := simulationModules.ExecuteMessage(context, module, message)
 		if err != nil {
 			return simulationTypes.NewOperationMsg(message, false, "error executing define message"), nil, nil
 		}

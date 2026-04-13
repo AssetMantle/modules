@@ -4,6 +4,7 @@
 package simulation
 
 import (
+	"context"
 	"cosmossdk.io/math"
 	"fmt"
 	goGoProto "github.com/cosmos/gogoproto/proto"
@@ -15,8 +16,10 @@ import (
 	"github.com/AssetMantle/schema/qualified"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
@@ -26,7 +29,18 @@ import (
 var (
 	Immutables qualified.Immutables = &baseQualified.Immutables{}
 	Mutables   qualified.Mutables   = &baseQualified.Mutables{}
+
+	// SimTxConfig and SimAccountKeeper are set by module WeightedOperations
+	// from SimulationState and the node's application. Used by DeliverSimTx
+	// to create properly signed transactions delivered through the full ABCI flow.
+	SimTxConfig     client.TxConfig
+	SimAccountKeeper AccountKeeper
 )
+
+// AccountKeeper defines the interface for looking up accounts during simulation.
+type AccountKeeper interface {
+	GetAccount(ctx context.Context, addr sdkTypes.AccAddress) sdkTypes.AccountI
+}
 
 func RandomBool(r *rand.Rand) bool {
 	return r.Intn(2) == 0
@@ -94,6 +108,43 @@ func ExecuteMessage(context sdkTypes.Context, module helpers.Module, message hel
 		}
 	}
 	return nil, fmt.Errorf("no matching transaction for message %s in module %s", msgName, module.Name())
+}
+
+// DeliverSimTx creates a properly signed transaction and delivers it through the
+// full ABCI flow (AnteHandler, authentication, etc.). This is the correct way to
+// execute messages during simulation — unlike ExecuteMessage which bypasses the
+// transaction pipeline. Returns OperationMsg with success/failure indication.
+func DeliverSimTx(r *rand.Rand, app *baseapp.BaseApp, ctx sdkTypes.Context, account simulationTypes.Account, msg sdkTypes.Msg, moduleName string) (simulationTypes.OperationMsg, error) {
+	if SimTxConfig == nil || SimAccountKeeper == nil {
+		return simulationTypes.NoOpMsg(moduleName, sdkTypes.MsgTypeURL(msg), "sim infrastructure not set"), fmt.Errorf("SimTxConfig or SimAccountKeeper not initialized")
+	}
+
+	acc := SimAccountKeeper.GetAccount(ctx, account.Address)
+	if acc == nil {
+		return simulationTypes.NoOpMsg(moduleName, sdkTypes.MsgTypeURL(msg), "account not found"), fmt.Errorf("account %s not found", account.Address)
+	}
+
+	tx, err := simtestutil.GenSignedMockTx(
+		r,
+		SimTxConfig,
+		[]sdkTypes.Msg{msg},
+		sdkTypes.NewCoins(sdkTypes.NewInt64Coin(sdkTypes.DefaultBondDenom, 0)),
+		simtestutil.DefaultGenTxGas,
+		ctx.ChainID(),
+		[]uint64{acc.GetAccountNumber()},
+		[]uint64{acc.GetSequence()},
+		account.PrivKey,
+	)
+	if err != nil {
+		return simulationTypes.NoOpMsg(moduleName, sdkTypes.MsgTypeURL(msg), "unable to generate mock tx"), err
+	}
+
+	_, _, err = app.SimDeliver(SimTxConfig.TxEncoder(), tx)
+	if err != nil {
+		return simulationTypes.NoOpMsg(moduleName, sdkTypes.MsgTypeURL(msg), err.Error()), nil
+	}
+
+	return simulationTypes.NewOperationMsg(msg, true, ""), nil
 }
 
 // SafeOperation wraps a simulation operation to catch panics from nil data in
