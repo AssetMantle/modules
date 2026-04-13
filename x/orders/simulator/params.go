@@ -5,7 +5,6 @@ package simulator
 
 import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
-	goMath "math"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"math/rand"
@@ -19,7 +18,7 @@ func (simulator) ParamChangeList(_ *rand.Rand) []simulationTypes.LegacyParamChan
 		simulation.NewSimLegacyParamChange(constants.ModuleName,
 			string(max_order_life.Parameter.GetMetaProperty().GetID().Bytes()),
 			func(r *rand.Rand) string {
-				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(goMath.MaxInt))
+				bytes, err := baseHelpers.CodecPrototype().GetLegacyAmino().MarshalJSON(rand.Intn(10000) + 100)
 				if err != nil {
 					panic(err)
 				}
