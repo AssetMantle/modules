@@ -108,20 +108,36 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 }
 func simulateIssueMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		var err error
-		var result *sdkTypes.Result
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		message := GetIssueMessage(from, to, rand)
-		if message == nil {
-			return simulationTypes.NewOperationMsg(&issue.Message{}, false, "error in issue message"), nil, nil
-		}
-		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("identities", "issue", "no identity data"), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
+		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+
+		// Define a new classification first, then issue under it.
+		immutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
+		immutableProps := baseTypes.GenerateRandomPropertyList(rand)
+		mutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
+		mutableProps := baseTypes.GenerateRandomPropertyList(rand)
+
+		defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID), immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
+		_, err = simulationModules.ExecuteMessage(context, module, defineMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NoOpMsg("identities", "issue", "define failed: "+err.Error()), nil, nil
+		}
+
+		immutables := baseQualified.NewImmutables(immutableMetaProps.Add(baseLists.AnyPropertiesToProperties(immutableProps.Get()...)...))
+		mutables := baseQualified.NewMutables(mutableMetaProps.Add(baseLists.AnyPropertiesToProperties(mutableProps.Get()...)...))
+		classificationID := baseIDs.NewClassificationID(immutables, mutables)
+
+		issueMessage := issue.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
+		result, err := simulationModules.ExecuteMessage(context, module, issueMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NoOpMsg("identities", "issue", "issue failed: "+err.Error()), nil, nil
+		}
+		return simulationTypes.NewOperationMsg(issueMessage, true, string(result.Data)), nil, nil
 	}
 }
 func simulateProvisionAndUnprovisionMsg(module helpers.Module) simulationTypes.Operation {
@@ -312,11 +328,13 @@ func GetIssueMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes
 	if mappable.Identity == nil {
 		return nil
 	}
+	// Regenerate immutable property values with same keys but new random data to
+	// produce unique identity IDs while conforming to the classification's structure.
 	for _, i := range mappable.GetIdentity().Get().GetImmutables().GetImmutablePropertyList().Get() {
 		if i.IsMeta() {
 			immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
 		} else {
-			immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
+			immutableProperties = immutableProperties.Add(baseProperties.NewMesaProperty(i.Get().GetKey(), baseTypes.GenerateRandomData(rand, rand.Intn(8)))).(*baseLists.PropertyList)
 		}
 	}
 	for _, i := range mappable.GetIdentity().Get().GetMutables().GetMutablePropertyList().Get() {

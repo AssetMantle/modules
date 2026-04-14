@@ -218,11 +218,13 @@ func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 	if mappable.Order == nil {
 		return nil
 	}
+	// Regenerate immutable property values with same keys but new random data to
+	// produce unique order IDs while conforming to the classification's structure.
 	for _, i := range mappable.GetOrder().Get().GetImmutables().GetImmutablePropertyList().Get() {
 		if i.IsMeta() {
 			immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
 		} else {
-			immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
+			immutableProperties = immutableProperties.Add(baseProperties.NewMesaProperty(i.Get().GetKey(), baseTypes.GenerateRandomData(rand, rand.Intn(8)))).(*baseLists.PropertyList)
 		}
 	}
 	for _, i := range mappable.GetOrder().Get().GetMutables().GetMutablePropertyList().Get() {
@@ -417,7 +419,7 @@ func GetImmediateMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkT
 		if i.IsMeta() {
 			immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
 		} else {
-			immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
+			immutableProperties = immutableProperties.Add(baseProperties.NewMesaProperty(i.Get().GetKey(), baseTypes.GenerateRandomData(rand, rand.Intn(8)))).(*baseLists.PropertyList)
 		}
 	}
 	for _, i := range orderMappable.GetOrder().Get().GetMutables().GetMutablePropertyList().Get() {

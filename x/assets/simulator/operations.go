@@ -101,20 +101,46 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 }
 func simulateMintMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		var err error
-		var result *sdkTypes.Result
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		message := GetMintMessage(from, to, rand)
-		if message == nil {
-			return simulationTypes.NewOperationMsg(&mint.Message{}, false, "error in mint message"), nil, nil
-		}
-		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("assets", "mint", "no identity data"), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
+		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+
+		toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "mint", "no identity data"), nil, nil
+		}
+		toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
+
+		// Define a new classification first, then mint under it.
+		// The conform auxiliary requires exact immutable property match, so we must
+		// use the same properties for both define and mint.
+		immutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
+		immutableProps := baseTypes.GenerateRandomPropertyList(rand)
+		mutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
+		mutableProps := baseTypes.GenerateRandomPropertyList(rand)
+
+		defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID), immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
+		_, err = simulationModules.ExecuteMessage(context, module, defineMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "mint", "define failed: "+err.Error()), nil, nil
+		}
+
+		// Derive the classificationID from the defined properties (same as the keeper does).
+		immutables := baseQualified.NewImmutables(immutableMetaProps.Add(baseLists.AnyPropertiesToProperties(immutableProps.Get()...)...))
+		mutables := baseQualified.NewMutables(mutableMetaProps.Add(baseLists.AnyPropertiesToProperties(mutableProps.Get()...)...))
+		classificationID := baseIDs.NewClassificationID(immutables, mutables)
+
+		mintMessage := mint.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID, immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
+		result, err := simulationModules.ExecuteMessage(context, module, mintMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "mint", "mint failed: "+err.Error()), nil, nil
+		}
+		return simulationTypes.NewOperationMsg(mintMessage, true, string(result.Data)), nil, nil
 	}
 }
 func simulateRenumerateMsg(module helpers.Module) simulationTypes.Operation {
@@ -306,20 +332,14 @@ func GetMintMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 	if mappable.Asset == nil {
 		return nil
 	}
-	for _, i := range mappable.GetAsset().Get().GetImmutables().GetImmutablePropertyList().Get() {
-		if i.IsMeta() {
-			immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
-		} else {
-			immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
-		}
-	}
-	for _, i := range mappable.GetAsset().Get().GetMutables().GetMutablePropertyList().Get() {
-		if i.IsMeta() {
-			mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
-		} else {
-			mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
-		}
-	}
+	// Generate completely new random properties for a fresh classification+mint.
+	// The conform auxiliary requires immutables to match the classification exactly,
+	// so we cannot mint under an existing classification with different properties.
+	// Instead, the simulateMintMsg operation defines first, then mints.
+	immutableMetaProperties = baseTypes.GenerateRandomMetaPropertyList(rand).(*baseLists.PropertyList)
+	immutableProperties = baseTypes.GenerateRandomPropertyList(rand).(*baseLists.PropertyList)
+	mutableMetaProperties = baseTypes.GenerateRandomMetaPropertyList(rand).(*baseLists.PropertyList)
+	mutableProperties = baseTypes.GenerateRandomPropertyList(rand).(*baseLists.PropertyList)
 	return mint.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
 }
 
