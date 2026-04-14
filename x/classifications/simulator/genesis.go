@@ -42,7 +42,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		&maxPropertyCountData,
 		simulationState.Rand,
 		func(rand *rand.Rand) {
-			maxPropertyCountData = baseData.NewNumberData(math.NewInt(int64(rand.Intn(43) + 1)))
+			maxPropertyCountData = baseData.NewNumberData(math.NewInt(int64(rand.Intn(22) + 22)))
 		},
 	)
 
