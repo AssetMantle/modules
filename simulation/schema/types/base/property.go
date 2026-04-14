@@ -7,18 +7,16 @@ import (
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	"github.com/AssetMantle/schema/properties"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
-	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"math"
 	"math/rand"
 
 	"github.com/AssetMantle/modules/utilities/random"
 )
 
 func GenerateRandomMesaProperty(r *rand.Rand) properties.Property {
-	return baseProperties.NewMesaProperty(baseIDs.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(99))), GenerateRandomData(r, int(math.Abs(float64(r.Int())))))
+	return baseProperties.NewMesaProperty(baseIDs.NewStringID(RandValidStringID(r)), GenerateRandomData(r, r.Intn(8)))
 }
 func GenerateRandomMetaProperty(r *rand.Rand) properties.Property {
-	return baseProperties.NewMetaProperty(baseIDs.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(99))), GenerateRandomData(r, int(math.Abs(float64(r.Intn(99))))))
+	return baseProperties.NewMetaProperty(baseIDs.NewStringID(RandValidStringID(r)), GenerateRandomData(r, r.Intn(8)))
 }
 func GenerateRandomMetaPropertyWithoutData(r *rand.Rand) properties.Property {
 	// Use MesaProperty (stores DataID hash only) instead of MetaProperty with prototype data.

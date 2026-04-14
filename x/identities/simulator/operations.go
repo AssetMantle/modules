@@ -92,12 +92,10 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 		var err error
 		var result *sdkTypes.Result
 		var message *define.Message
-		var identityIDString string
 		account, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		identityMap := identities.GetIDData(account.Address.String())
-		for _, id := range identityMap {
-			identityIDString = id
-			break
+		identityIDString, err := simulationModules.LookupIdentityID(account.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("identities", "define", "no identity data"), nil, nil
 		}
 		identityID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 		message = GenerateDefineMessage(account.Address, identityID.(ids.IdentityID), rand).(*define.Message)
@@ -130,13 +128,11 @@ func simulateProvisionAndUnprovisionMsg(module helpers.Module) simulationTypes.O
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var identityIDString string
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		identityMap := identities.GetIDData(from.Address.String())
-		for _, id := range identityMap {
-			identityIDString = id
-			break
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("identities", "provision", "no identity data"), nil, nil
 		}
 		identityID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
@@ -157,36 +153,31 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var classificationIDString, identityIDString string
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		fromIDMap := identities.GetIDData(from.Address.String())
 
-		if fromIDMap == nil {
-			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "address not found"), nil, nil
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("identities", "deputize", "no identity data"), nil, nil
 		}
 
-		for class, id := range fromIDMap {
-			identityIDString = id
+		// For identities module, classification comes from the identity map (key = classification)
+		fromIDMap := identities.GetIDData(from.Address.String())
+		var classificationIDString string
+		for class := range fromIDMap {
 			classificationIDString = class
 			break
-
 		}
 
 		classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
-		toIDMap := identities.GetIDData(to.Address.String())
 
-		if toIDMap == nil {
-			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "address not found"), nil, nil
+		toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("identities", "deputize", "no identity data"), nil, nil
 		}
 
-		for _, id := range toIDMap {
-			identityIDString = id
-			break
-		}
-
-		toID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+		toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 		Mappable := &mappable.Mappable{}
 		baseHelpers.CodecPrototype().Unmarshal(identities.GetMappableBytes(classificationIDString), Mappable)
 		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID), Mappable.Identity.Mutables.PropertyList, true, true, true, true, true)
@@ -231,12 +222,18 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var classificationIDString, identityIDString string
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("identities", "mutate", "no identity data"), nil, nil
+		}
+
+		// For identities module, classification comes from the identity map (key = classification)
 		identityMap := identities.GetIDData(from.Address.String())
-		for class, id := range identityMap {
-			identityIDString = id
+		var classificationIDString string
+		for class := range identityMap {
 			classificationIDString = class
 			break
 		}
@@ -292,15 +289,19 @@ func GenerateDefineMessage(from sdkTypes.AccAddress, identityID ids.IdentityID, 
 	return define.NewMessage(from, identityID, baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r), baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r)).(helpers.Message)
 }
 func GetIssueMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.Msg {
-	var classificationIDString, identityIDString string
+	identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+	if err != nil {
+		return nil
+	}
+	fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
+	// For identities module, classification comes from the identity map (key = classification)
 	identityMap := identities.GetIDData(from.Address.String())
-	for class, id := range identityMap {
-		identityIDString = id
+	var classificationIDString string
+	for class := range identityMap {
 		classificationIDString = class
 		break
 	}
-	fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 	classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
 	mappable := &mappable.Mappable{}
 	baseHelpers.CodecPrototype().Unmarshal(identities.GetMappableBytes(classificationIDString), mappable)

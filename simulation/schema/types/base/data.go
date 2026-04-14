@@ -41,7 +41,8 @@ func GenerateRandomDataForTypeID(r *rand.Rand, id ids.StringID) data.Data {
 		return GenerateRandomData(r, 7)
 	}
 
-	return nil
+	// Fallback: return string data for unrecognized type IDs
+	return baseData.NewStringData(RandValidStringID(r))
 }
 
 func GenerateRandomData(r *rand.Rand, randomPositiveInt int) data.Data {
@@ -49,7 +50,7 @@ func GenerateRandomData(r *rand.Rand, randomPositiveInt int) data.Data {
 	case 0:
 		return baseData.NewIDData(GenerateRandomID(r))
 	case 1:
-		return baseData.NewStringData(simulationTypes.RandStringOfLength(r, r.Intn(99)))
+		return baseData.NewStringData(RandValidStringID(r))
 	case 2:
 		return baseData.NewDecData(simulationTypes.RandomDecAmount(r, math.LegacyNewDec(99)))
 	case 3:
@@ -95,7 +96,7 @@ func GenerateRandomCoinListString(listCount int) string {
 	list := baseData.NewListData(baseData.NewIDData(base.NewStringID("stake").ToAnyID()))
 
 	for i := 0; i < listCount; i++ {
-		list.Add(baseData.NewIDData(base.NewStringID(simulationTypes.RandStringOfLength(r, r.Intn(127)))))
+		list.Add(baseData.NewIDData(base.NewStringID(RandValidStringID(r))))
 	}
 	return list.AsString()
 }

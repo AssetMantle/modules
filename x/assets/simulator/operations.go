@@ -22,7 +22,6 @@ import (
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
-	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
 	"github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/assets/transactions/burn"
 	"github.com/AssetMantle/modules/x/assets/transactions/define"
@@ -86,18 +85,16 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 
 func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		var identityIDString string
 		account, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		identityMap := identities.GetIDData(account.Address.String())
-		for _, id := range identityMap {
-			identityIDString = id
-			break
+		identityIDString, err := simulationModules.LookupIdentityID(account.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "define", "no identity data"), nil, nil
 		}
 		identityID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 		message := GenerateDefineMessage(account.Address, identityID.(ids.IdentityID), rand).(*define.Message)
 		result, err := simulationModules.ExecuteMessage(context, module, message)
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, "error executing define message"), nil, nil
+			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
 	}
@@ -175,43 +172,28 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var classificationIDString, identityIDString string
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		fromIDMap := identities.GetIDData(from.Address.String())
 
-		if fromIDMap == nil {
-			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "address not found"), nil, nil
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "deputize", "no identity data"), nil, nil
 		}
 
-		for _, id := range fromIDMap {
-			identityIDString = id
-			break
-
-		}
-
-		assetMap := assets.GetAssetData(from.Address.String())
-
-		for class, _ := range assetMap {
-			classificationIDString = class
-			break
-
+		classificationIDString, err := simulationModules.LookupClassificationID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "deputize", "no asset data"), nil, nil
 		}
 
 		classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
-		toIDMap := identities.GetIDData(to.Address.String())
 
-		if toIDMap == nil {
-			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "address not found"), nil, nil
+		toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "deputize", "no identity data"), nil, nil
 		}
 
-		for _, id := range toIDMap {
-			identityIDString = id
-			break
-		}
-
-		toID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+		toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 		mappable := &mappable.Mappable{}
 		base.CodecPrototype().Unmarshal(assets.GetMappableBytes(classificationIDString), mappable)
 		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID), mappable.Asset.Mutables.PropertyList, true, true, true, true, true, true)
@@ -231,27 +213,24 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var classificationIDString, identityIDString string
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		fromIDMap := identities.GetIDData(from.Address.String())
-		for _, id := range fromIDMap {
-			identityIDString = id
-			break
+
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "mutate", "no identity data"), nil, nil
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		toIDMap := identities.GetIDData(to.Address.String())
-		for _, id := range toIDMap {
-			identityIDString = id
-			break
+		toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "mutate", "no identity data"), nil, nil
 		}
-		toID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+		toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 
-		assetMap := assets.GetAssetData(from.Address.String())
-		for class, _ := range assetMap {
-			classificationIDString = class
-			break
+		classificationIDString, err := simulationModules.LookupClassificationID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "mutate", "no asset data"), nil, nil
 		}
 		classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
 
@@ -301,26 +280,21 @@ func GenerateDefineMessage(from sdkTypes.AccAddress, identityID ids.IdentityID, 
 	return define.NewMessage(from, identityID, baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r), baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r)).(helpers.Message)
 }
 func GetMintMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.Msg {
-	var classificationIDString, identityIDString string
-
-	fromIDMap := identities.GetIDData(from.Address.String())
-	for _, id := range fromIDMap {
-		identityIDString = id
-		break
+	identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+	if err != nil {
+		return nil
 	}
 	fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-	toIDMap := identities.GetIDData(to.Address.String())
-	for _, id := range toIDMap {
-		identityIDString = id
-		break
+	toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
+	if err != nil {
+		return nil
 	}
-	toID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+	toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 
-	assetMap := assets.GetAssetData(from.Address.String())
-	for class, _ := range assetMap {
-		classificationIDString = class
-		break
+	classificationIDString, err := simulationModules.LookupClassificationID(from.Address.String())
+	if err != nil {
+		return nil
 	}
 	classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
 	mappable := &mappable.Mappable{}
@@ -353,29 +327,25 @@ func simulateSendMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var assetIDString, identityIDString string
 
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		fromIDMap := identities.GetIDData(from.Address.String())
 
-		for _, id := range fromIDMap {
-			identityIDString = id
-			break
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "send", "no identity data"), nil, nil
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		toIDMap := identities.GetIDData(to.Address.String())
-		for _, id := range toIDMap {
-			identityIDString = id
-			break
+		toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "send", "no identity data"), nil, nil
 		}
-		toID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+		toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 
-		assetMap := assets.GetAssetData(from.Address.String())
-		for _, id := range assetMap {
-			assetIDString = id
-			break
+		assetIDString, err := simulationModules.LookupAssetID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "send", "no asset data"), nil, nil
 		}
 
 		assetID, _ := baseIDs.PrototypeAssetID().FromString(assetIDString)
@@ -392,14 +362,12 @@ func simulateWrapAndUnwrapMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var identityIDString string
 
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		fromIDMap := identities.GetIDData(from.Address.String())
 
-		for _, id := range fromIDMap {
-			identityIDString = id
-			break
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "wrap", "no identity data"), nil, nil
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 

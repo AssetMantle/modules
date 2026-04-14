@@ -23,8 +23,6 @@ import (
 	"github.com/AssetMantle/modules/helpers/base"
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
-	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
 	"github.com/AssetMantle/modules/simulation/simulated_database/orders"
 	"github.com/AssetMantle/modules/x/orders/mappable"
 	"github.com/AssetMantle/modules/x/orders/transactions/cancel"
@@ -92,14 +90,12 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		var err error
 		var result *sdkTypes.Result
-		var identityIDString string
 
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		fromIDMap := identities.GetIDData(from.Address.String())
 
-		for _, id := range fromIDMap {
-			identityIDString = id
-			break
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("orders", "define", "no identity data"), nil, nil
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 		message := GenerateDefineMessage(from.Address, fromID.(ids.IdentityID), rand)
@@ -189,37 +185,28 @@ func simulateTakeMsg(module helpers.Module) simulationTypes.Operation {
 }
 
 func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.Msg {
-	var identityIDString, classificationIDString, assetIDString string
-
-	fromIDMap := identities.GetIDData(from.Address.String())
-	for _, id := range fromIDMap {
-		identityIDString = id
-		break
+	identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+	if err != nil {
+		return nil
 	}
 	fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-	toIDMap := identities.GetIDData(to.Address.String())
-	for _, id := range toIDMap {
-		identityIDString = id
-		break
+	toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
+	if err != nil {
+		return nil
 	}
+	toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 
-	toID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
-
-	orderMap := orders.GetOrderData(from.Address.String())
-	for class, _ := range orderMap {
-		classificationIDString = class
-		break
+	classificationIDString, err := simulationModules.LookupOrderClassificationID(from.Address.String())
+	if err != nil {
+		return nil
 	}
-
 	classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
 
-	assetMap := assets.GetAssetData(from.Address.String())
-
-	for _, id := range assetMap {
-		assetIDString = id
+	assetIDString, err := simulationModules.LookupAssetID(from.Address.String())
+	if err != nil {
+		return nil
 	}
-
 	assetID, _ := baseIDs.PrototypeAssetID().FromString(assetIDString)
 
 	mappable := &mappable.Mappable{}
@@ -250,35 +237,24 @@ func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 }
 func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		var classificationIDString, identityIDString string
-
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		fromIDMap := identities.GetIDData(from.Address.String())
-		if fromIDMap == nil {
-			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "address not found"), nil, nil
-		}
-		for _, id := range fromIDMap {
-			identityIDString = id
-			break
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("orders", "deputize", "no identity data"), nil, nil
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		toIDMap := identities.GetIDData(to.Address.String())
-		if toIDMap == nil {
-			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "address not found"), nil, nil
+		toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("orders", "deputize", "no identity data"), nil, nil
 		}
-		for _, id := range toIDMap {
-			identityIDString = id
-			break
-		}
-		toID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+		toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 
-		orderMap := orders.GetOrderData(from.Address.String())
-		for class := range orderMap {
-			classificationIDString = class
-			break
+		classificationIDString, err := simulationModules.LookupOrderClassificationID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("orders", "deputize", "no order data"), nil, nil
 		}
 		classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
 
@@ -289,7 +265,7 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		}
 
 		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID), orderMappable.Order.Mutables.PropertyList, true, true, true, true, true)
-		_, err := simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
+		_, err = simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NewOperationMsg(deputizeMessage, false, err.Error()), nil, nil
 		}
@@ -363,11 +339,9 @@ func simulateModifyMsg(module helpers.Module) simulationTypes.Operation {
 
 		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(makeMessage.(*make.Message).ImmutableProperties.Get()...)...)))
 
-		var identityIDString string
-		fromIDMap := identities.GetIDData(from.Address.String())
-		for _, id := range fromIDMap {
-			identityIDString = id
-			break
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("orders", "modify", "no identity data"), nil, nil
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
@@ -381,19 +355,17 @@ func simulateModifyMsg(module helpers.Module) simulationTypes.Operation {
 }
 func simulatePutMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		var identityIDString, assetIDString string
-
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		fromIDMap := identities.GetIDData(from.Address.String())
-		for _, id := range fromIDMap {
-			identityIDString = id
-			break
+
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("orders", "put", "no identity data"), nil, nil
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		assetMap := assets.GetAssetData(from.Address.String())
-		for _, id := range assetMap {
-			assetIDString = id
+		assetIDString, err := simulationModules.LookupAssetID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("orders", "put", "no asset data"), nil, nil
 		}
 		assetID, _ := baseIDs.PrototypeAssetID().FromString(assetIDString)
 
@@ -408,32 +380,27 @@ func simulatePutMsg(module helpers.Module) simulationTypes.Operation {
 }
 
 func GetImmediateMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.Msg {
-	var identityIDString, classificationIDString, assetIDString string
-
-	fromIDMap := identities.GetIDData(from.Address.String())
-	for _, id := range fromIDMap {
-		identityIDString = id
-		break
+	identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+	if err != nil {
+		return nil
 	}
 	fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-	toIDMap := identities.GetIDData(to.Address.String())
-	for _, id := range toIDMap {
-		identityIDString = id
-		break
+	toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
+	if err != nil {
+		return nil
 	}
-	toID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+	toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 
-	orderMap := orders.GetOrderData(from.Address.String())
-	for class := range orderMap {
-		classificationIDString = class
-		break
+	classificationIDString, err := simulationModules.LookupOrderClassificationID(from.Address.String())
+	if err != nil {
+		return nil
 	}
 	classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
 
-	assetMap := assets.GetAssetData(from.Address.String())
-	for _, id := range assetMap {
-		assetIDString = id
+	assetIDString, err := simulationModules.LookupAssetID(from.Address.String())
+	if err != nil {
+		return nil
 	}
 	assetID, _ := baseIDs.PrototypeAssetID().FromString(assetIDString)
 

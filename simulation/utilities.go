@@ -23,6 +23,9 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
+	assetsDB "github.com/AssetMantle/modules/simulation/simulated_database/assets"
+	identitiesDB "github.com/AssetMantle/modules/simulation/simulated_database/identities"
+	ordersDB "github.com/AssetMantle/modules/simulation/simulated_database/orders"
 	"github.com/AssetMantle/modules/x/classifications/parameters/bond_rate"
 )
 
@@ -150,6 +153,57 @@ func DeliverSimTx(r *rand.Rand, app *baseapp.BaseApp, ctx sdkTypes.Context, acco
 // SafeOperation wraps a simulation operation to catch panics from nil data in
 // simulated databases. Early blocks have empty databases, causing operations to
 // panic on nil type assertions. This wrapper converts panics to no-op results.
+// ErrSimDBMiss is returned when a simulated database lookup finds no data for an account.
+var ErrSimDBMiss = fmt.Errorf("simulated database miss")
+
+// LookupIdentityID returns the first identity ID string for the given address, or error if none exists.
+func LookupIdentityID(address string) (string, error) {
+	idMap := identitiesDB.GetIDData(address)
+	if idMap == nil {
+		return "", ErrSimDBMiss
+	}
+	for _, id := range idMap {
+		return id, nil
+	}
+	return "", ErrSimDBMiss
+}
+
+// LookupAssetID returns the first asset ID string for the given address, or error if none exists.
+func LookupAssetID(address string) (string, error) {
+	assetMap := assetsDB.GetAssetData(address)
+	if assetMap == nil {
+		return "", ErrSimDBMiss
+	}
+	for _, id := range assetMap {
+		return id, nil
+	}
+	return "", ErrSimDBMiss
+}
+
+// LookupClassificationID returns the first classification ID string for the given address's assets, or error if none exists.
+func LookupClassificationID(address string) (string, error) {
+	assetMap := assetsDB.GetAssetData(address)
+	if assetMap == nil {
+		return "", ErrSimDBMiss
+	}
+	for class := range assetMap {
+		return class, nil
+	}
+	return "", ErrSimDBMiss
+}
+
+// LookupOrderClassificationID returns the first order classification ID string for the given address, or error if none exists.
+func LookupOrderClassificationID(address string) (string, error) {
+	orderMap := ordersDB.GetOrderData(address)
+	if orderMap == nil {
+		return "", ErrSimDBMiss
+	}
+	for class := range orderMap {
+		return class, nil
+	}
+	return "", ErrSimDBMiss
+}
+
 func SafeOperation(op simulationTypes.Operation) simulationTypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdkTypes.Context, accs []simulationTypes.Account, chainID string) (opMsg simulationTypes.OperationMsg, futures []simulationTypes.FutureOperation, err error) {
 		defer func() {
