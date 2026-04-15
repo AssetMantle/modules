@@ -32,7 +32,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		transfer_enabled.ID.AsString(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = baseData.NewDecData(math.LegacyNewDecWithPrec(int64(rand.Intn(99)), 2)) },
+		func(rand *rand.Rand) { Data = baseData.NewBooleanData(true) },
 	)
 
 	records := make([]helpers.Record, 2*len(assets.ClassificationIDMappableBytesMap))

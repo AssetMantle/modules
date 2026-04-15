@@ -4,7 +4,6 @@
 package simulator
 
 import (
-	"cosmossdk.io/math"
 	goMath "math"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
@@ -28,7 +27,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		reveal_enabled.ID.AsString(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = baseData.NewDecData(math.LegacyNewDecWithPrec(int64(rand.Intn(99)), 2)) },
+		func(rand *rand.Rand) { Data = baseData.NewBooleanData(true) },
 	)
 
 	records := make([]helpers.Record, simulationState.Rand.Intn(99))

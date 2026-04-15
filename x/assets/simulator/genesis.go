@@ -20,7 +20,6 @@ import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
-	"github.com/AssetMantle/modules/utilities/random"
 	"github.com/AssetMantle/modules/x/assets/constants"
 	"github.com/AssetMantle/modules/x/assets/genesis"
 	"github.com/AssetMantle/modules/x/assets/mappable"
@@ -36,7 +35,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		burn_enabled.ID.AsString(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = baseData.NewBooleanData(random.GenerateRandomBool()) },
+		func(rand *rand.Rand) { Data = baseData.NewBooleanData(true) },
 	)
 
 	records := make([]helpers.Record, len(simulationState.Accounts))

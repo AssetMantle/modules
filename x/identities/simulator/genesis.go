@@ -34,7 +34,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		max_provision_address_count.ID.AsString(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = baseData.NewDecData(math.LegacyNewDecWithPrec(int64(rand.Intn(99)), 2)) },
+		func(rand *rand.Rand) { Data = baseData.NewNumberData(math.NewInt(int64(rand.Intn(15) + 2))) },
 	)
 
 	records := make([]helpers.Record, len(assets.ClassificationIDMappableBytesMap))
