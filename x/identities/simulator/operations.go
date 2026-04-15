@@ -6,11 +6,9 @@ package simulator
 import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	baseData "github.com/AssetMantle/schema/data/base"
-	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
-	"github.com/AssetMantle/schema/properties"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	"github.com/AssetMantle/schema/properties/constants"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
@@ -118,38 +116,33 @@ func simulateIssueMsg(module helpers.Module) simulationTypes.Operation {
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		// Define a new classification first, then issue under it.
+		// Generate fresh random properties for define + issue.
 		immutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
 		immutableProps := baseTypes.GenerateRandomPropertyList(rand)
-		mutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand).Add(constants.BondAmountProperty)
+		mutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
 		mutableProps := baseTypes.GenerateRandomPropertyList(rand)
 
-		defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID), immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
+		// Step 1: Define classification with BondAmountProperty in mutable meta.
+		defineMutMeta := baseLists.NewPropertyList(constants.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutableMetaProps.Get()...)...)
+		defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID), immutableMetaProps, immutableProps, defineMutMeta, mutableProps)
 		_, err = simulationModules.ExecuteMessage(context, module, defineMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NoOpMsg("identities", "issue", "define failed: "+err.Error()), nil, nil
 		}
 
+		// Compute classificationID matching what the define keeper stores.
+		// Define adds AuthenticationProperty to mutables.
 		immutables := baseQualified.NewImmutables(immutableMetaProps.Add(baseLists.AnyPropertiesToProperties(immutableProps.Get()...)...))
-		// The define keeper adds AuthenticationProperty to mutables before creating
-		// the classification, so we must include it when computing classificationID.
-		mutables := baseQualified.NewMutables(mutableMetaProps.Add(baseLists.AnyPropertiesToProperties(mutableProps.Add(constants.AuthenticationProperty).Get()...)...))
-		classificationID := baseIDs.NewClassificationID(immutables, mutables)
+		classifMutables := baseQualified.NewMutables(defineMutMeta.Add(baseLists.AnyPropertiesToProperties(mutableProps.Add(constants.AuthenticationProperty).Get()...)...))
+		classificationID := baseIDs.NewClassificationID(immutables, classifMutables)
 
-		// The issue keeper requires AuthenticationProperty with at least 1 address.
-		// Use ProvisionAddress on a test identity to get the correct property format.
-		testMutables := baseQualified.NewMutables(mutableMetaProps.Add(baseLists.AnyPropertiesToProperties(mutableProps.Add(constants.AuthenticationProperty).Get()...)...).Add(constants.BondAmountProperty))
-		testIdentity := baseDocuments.NewIdentity(classificationID, immutables, testMutables).ProvisionAddress(from.Address)
-		authProp := testIdentity.GetProperty(constants.AuthenticationProperty.GetID())
-
-		mutableMetaPropsWithAuth := mutableMetaProps
-		if authProp != nil && authProp.IsMeta() {
-			mutableMetaPropsWithAuth = mutableMetaProps.Add(authProp.Get().(properties.MetaProperty))
-		}
-		// The issue keeper also requires BondAmountProperty in mutables.
-		mutableMetaPropsWithAuth = mutableMetaPropsWithAuth.Add(constants.BondAmountProperty)
-		issueMessage := issue.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, immutableMetaProps, immutableProps, mutableMetaPropsWithAuth, mutableProps)
-
+		// Step 2: Issue identity. Provide AuthenticationProperty with address + BondAmountProperty.
+		authPropWithAddr := baseProperties.NewMetaProperty(
+			constants.AuthenticationProperty.GetKey(),
+			baseData.NewListData(baseData.NewAccAddressData(from.Address)),
+		)
+		issueMutMeta := baseLists.NewPropertyList(constants.BondAmountProperty, authPropWithAddr).Add(baseLists.AnyPropertiesToProperties(mutableMetaProps.Get()...)...)
+		issueMessage := issue.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, immutableMetaProps, immutableProps, issueMutMeta, mutableProps)
 		result, err := simulationModules.ExecuteMessage(context, module, issueMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NoOpMsg("identities", "issue", "issue failed: "+err.Error()), nil, nil
