@@ -134,7 +134,13 @@ func simulateIssueMsg(module helpers.Module) simulationTypes.Operation {
 		mutables := baseQualified.NewMutables(mutableMetaProps.Add(baseLists.AnyPropertiesToProperties(mutableProps.Add(constants.AuthenticationProperty).Get()...)...))
 		classificationID := baseIDs.NewClassificationID(immutables, mutables)
 
-		issueMessage := issue.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
+		// The issue keeper requires AuthenticationProperty with at least 1 address.
+		// Include it as a meta property in mutableMetaProps with the sender's address.
+		mutableMetaPropsWithAuth := mutableMetaProps.Add(
+			baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(),
+				baseData.NewListData(baseData.NewAccAddressData(from.Address))),
+		)
+		issueMessage := issue.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, immutableMetaProps, immutableProps, mutableMetaPropsWithAuth, mutableProps)
 		result, err := simulationModules.ExecuteMessage(context, module, issueMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NoOpMsg("identities", "issue", "issue failed: "+err.Error()), nil, nil
