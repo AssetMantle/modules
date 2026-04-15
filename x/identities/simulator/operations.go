@@ -339,7 +339,7 @@ func GetIssueMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes
 	}
 	for _, i := range mappable.GetIdentity().Get().GetMutables().GetMutablePropertyList().Get() {
 		if i.IsMeta() {
-			mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
+			mutableMetaProperties = mutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
 		} else {
 			mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
 		}

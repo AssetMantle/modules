@@ -109,79 +109,97 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 }
 func simulateMakeMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		var err error
-		var result *sdkTypes.Result
-
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		message := GetMakeMessage(from, to, rand)
-		if message == nil {
-			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message"), nil, nil
+		makeMsg, _ := DefineAndMake(context, module, from, to, rand)
+		if makeMsg == nil {
+			return simulationTypes.NoOpMsg("orders", "make", "define+make failed"), nil, nil
 		}
-
-		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
-		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
-		}
-		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
+		return simulationTypes.NewOperationMsg(makeMsg, true, ""), nil, nil
 	}
 }
 func simulateCancelMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		var err error
-		var result *sdkTypes.Result
-
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		makeMessage := GetMakeMessage(from, to, rand)
-		if makeMessage == nil {
-			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message"), nil, nil
+		makeMsg, orderID := DefineAndMake(context, module, from, to, rand)
+		if makeMsg == nil {
+			return simulationTypes.NoOpMsg("orders", "cancel", "define+make failed"), nil, nil
 		}
 
-		result, err = simulationModules.ExecuteMessage(context, module, makeMessage.(helpers.Message))
+		cancelMessage := cancel.NewMessage(from.Address, makeMsg.(*make.Message).FromID, orderID)
+		result, err := simulationModules.ExecuteMessage(context, module, cancelMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(makeMessage, false, err.Error()), nil, nil
-		}
-
-		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(makeMessage.(*make.Message).ImmutableProperties.Get()...)...)))
-
-		cancelMessage := cancel.NewMessage(from.Address, makeMessage.(*make.Message).FromID, orderID)
-		result, err = simulationModules.ExecuteMessage(context, module, cancelMessage.(helpers.Message))
-		if err != nil {
-			return simulationTypes.NewOperationMsg(cancelMessage, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("orders", "cancel", err.Error()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(cancelMessage, true, string(result.Data)), nil, nil
 	}
 }
 func simulateTakeMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		var err error
-		var result *sdkTypes.Result
-
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		makeMessage := GetMakeMessage(from, to, rand)
-		if makeMessage == nil {
-			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message"), nil, nil
+		makeMsg, orderID := DefineAndMake(context, module, from, to, rand)
+		if makeMsg == nil {
+			return simulationTypes.NoOpMsg("orders", "take", "define+make failed"), nil, nil
 		}
 
-		result, err = simulationModules.ExecuteMessage(context, module, makeMessage.(helpers.Message))
+		takeMessage := take.NewMessage(to.Address, makeMsg.(*make.Message).TakerID, math.NewInt(1), orderID)
+		result, err := simulationModules.ExecuteMessage(context, module, takeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(makeMessage, false, err.Error()), nil, nil
-		}
-
-		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(makeMessage.(*make.Message).ImmutableProperties.Get()...)...)))
-
-		takeMessage := take.NewMessage(to.Address, makeMessage.(*make.Message).TakerID, math.NewInt(1), orderID)
-		result, err = simulationModules.ExecuteMessage(context, module, takeMessage.(helpers.Message))
-		if err != nil {
-			return simulationTypes.NewOperationMsg(takeMessage, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("orders", "take", err.Error()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(takeMessage, true, string(result.Data)), nil, nil
 	}
+}
+
+// DefineAndMake defines a new order classification and creates an order under it.
+// Returns the make message and the order ID, or nil on failure.
+func DefineAndMake(context sdkTypes.Context, module helpers.Module, from, to simulationTypes.Account, rand *rand.Rand) (sdkTypes.Msg, ids.OrderID) {
+	identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+	if err != nil {
+		return nil, nil
+	}
+	fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+
+	toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
+	if err != nil {
+		return nil, nil
+	}
+	toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
+
+	assetIDString, err := simulationModules.LookupAssetID(from.Address.String())
+	if err != nil {
+		return nil, nil
+	}
+	assetID, _ := baseIDs.PrototypeAssetID().FromString(assetIDString)
+
+	immutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
+	immutableProps := baseTypes.GenerateRandomPropertyList(rand)
+	mutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
+	mutableProps := baseTypes.GenerateRandomPropertyList(rand)
+
+	defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID), immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
+	_, err = simulationModules.ExecuteMessage(context, module, defineMessage.(helpers.Message))
+	if err != nil {
+		return nil, nil
+	}
+
+	immutables := baseQualified.NewImmutables(immutableMetaProps.Add(baseLists.AnyPropertiesToProperties(immutableProps.Get()...)...))
+	mutables := baseQualified.NewMutables(mutableMetaProps.Add(baseLists.AnyPropertiesToProperties(mutableProps.Get()...)...))
+	classificationID := baseIDs.NewClassificationID(immutables, mutables)
+
+	makeMsg := make.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, toID.(ids.IdentityID), assetID.(ids.AssetID), baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), baseTypesGo.NewHeight(int64(rand.Intn(100)+10)), math.NewInt(1), math.NewInt(1), immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
+	_, err = simulationModules.ExecuteMessage(context, module, makeMsg.(helpers.Message))
+	if err != nil {
+		return nil, nil
+	}
+
+	orderID := baseIDs.NewOrderID(classificationID, immutables)
+	return makeMsg, orderID
 }
 
 func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.Msg {
@@ -229,7 +247,7 @@ func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.
 	}
 	for _, i := range mappable.GetOrder().Get().GetMutables().GetMutablePropertyList().Get() {
 		if i.IsMeta() {
-			mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
+			mutableMetaProperties = mutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
 		} else {
 			mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
 		}
@@ -285,24 +303,15 @@ func simulateGetMsg(module helpers.Module) simulationTypes.Operation {
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		makeMessage := GetMakeMessage(from, to, rand)
-		if makeMessage == nil {
-			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message"), nil, nil
+		makeMsg, orderID := DefineAndMake(context, module, from, to, rand)
+		if makeMsg == nil {
+			return simulationTypes.NoOpMsg("orders", "get", "define+make failed"), nil, nil
 		}
 
-		_, err := simulationModules.ExecuteMessage(context, module, makeMessage.(helpers.Message))
-		if err != nil {
-			return simulationTypes.NewOperationMsg(makeMessage, false, err.Error()), nil, nil
-		}
-
-		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(makeMessage.(*make.Message).ImmutableProperties.Get()...)...)))
-
-		// The taker identity (TakerID) belongs to the `to` account, so use
-		// to.Address as the signer and TakerID as the fromID for authentication.
-		getMessage := get.NewMessage(to.Address, makeMessage.(*make.Message).TakerID, orderID)
+		getMessage := get.NewMessage(to.Address, makeMsg.(*make.Message).TakerID, orderID)
 		result, err := simulationModules.ExecuteMessage(context, module, getMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(getMessage, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("orders", "get", err.Error()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(getMessage, true, string(result.Data)), nil, nil
 	}
@@ -312,16 +321,46 @@ func simulateImmediateMsg(module helpers.Module) simulationTypes.Operation {
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		message := GetImmediateMessage(from, to, rand)
-		if message == nil {
-			return simulationTypes.NewOperationMsg(&immediate.Message{}, false, "error in immediate message"), nil, nil
+		// Immediate uses the same define+make pattern but with immediate.NewMessage
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("orders", "immediate", "no identity data"), nil, nil
+		}
+		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+
+		toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("orders", "immediate", "no identity data"), nil, nil
+		}
+		toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
+
+		assetIDString, err := simulationModules.LookupAssetID(from.Address.String())
+		if err != nil {
+			return simulationTypes.NoOpMsg("orders", "immediate", "no asset data"), nil, nil
+		}
+		assetID, _ := baseIDs.PrototypeAssetID().FromString(assetIDString)
+
+		immutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
+		immutableProps := baseTypes.GenerateRandomPropertyList(rand)
+		mutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
+		mutableProps := baseTypes.GenerateRandomPropertyList(rand)
+
+		defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID), immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
+		_, err = simulationModules.ExecuteMessage(context, module, defineMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NoOpMsg("orders", "immediate", "define failed"), nil, nil
 		}
 
-		result, err := simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
+		immutables := baseQualified.NewImmutables(immutableMetaProps.Add(baseLists.AnyPropertiesToProperties(immutableProps.Get()...)...))
+		mutables := baseQualified.NewMutables(mutableMetaProps.Add(baseLists.AnyPropertiesToProperties(mutableProps.Get()...)...))
+		classificationID := baseIDs.NewClassificationID(immutables, mutables)
+
+		immediateMsg := immediate.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, toID.(ids.IdentityID), assetID.(ids.AssetID), baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), baseTypesGo.NewHeight(int64(rand.Intn(100)+10)), math.NewInt(1), math.NewInt(1), immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
+		result, err := simulationModules.ExecuteMessage(context, module, immediateMsg.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("orders", "immediate", err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
+		return simulationTypes.NewOperationMsg(immediateMsg, true, string(result.Data)), nil, nil
 	}
 }
 func simulateModifyMsg(module helpers.Module) simulationTypes.Operation {
@@ -329,17 +368,10 @@ func simulateModifyMsg(module helpers.Module) simulationTypes.Operation {
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		makeMessage := GetMakeMessage(from, to, rand)
-		if makeMessage == nil {
-			return simulationTypes.NewOperationMsg(&make.Message{}, false, "error in make message"), nil, nil
+		makeMsg, orderID := DefineAndMake(context, module, from, to, rand)
+		if makeMsg == nil {
+			return simulationTypes.NoOpMsg("orders", "modify", "define+make failed"), nil, nil
 		}
-
-		_, err := simulationModules.ExecuteMessage(context, module, makeMessage.(helpers.Message))
-		if err != nil {
-			return simulationTypes.NewOperationMsg(makeMessage, false, err.Error()), nil, nil
-		}
-
-		orderID := baseIDs.NewOrderID(makeMessage.(*make.Message).ClassificationID, baseQualified.NewImmutables(makeMessage.(*make.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(makeMessage.(*make.Message).ImmutableProperties.Get()...)...)))
 
 		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
 		if err != nil {
@@ -347,10 +379,10 @@ func simulateModifyMsg(module helpers.Module) simulationTypes.Operation {
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		modifyMessage := modify.NewMessage(from.Address, fromID.(ids.IdentityID), orderID, math.NewInt(1), math.NewInt(1), baseTypesGo.NewHeight(int64(rand.Intn(100)+10)), makeMessage.(*make.Message).MutableMetaProperties, makeMessage.(*make.Message).MutableProperties)
+		modifyMessage := modify.NewMessage(from.Address, fromID.(ids.IdentityID), orderID, math.NewInt(1), math.NewInt(1), baseTypesGo.NewHeight(int64(rand.Intn(100)+10)), makeMsg.(*make.Message).MutableMetaProperties, makeMsg.(*make.Message).MutableProperties)
 		result, err := simulationModules.ExecuteMessage(context, module, modifyMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(modifyMessage, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("orders", "modify", err.Error()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(modifyMessage, true, string(result.Data)), nil, nil
 	}
@@ -424,7 +456,7 @@ func GetImmediateMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkT
 	}
 	for _, i := range orderMappable.GetOrder().Get().GetMutables().GetMutablePropertyList().Get() {
 		if i.IsMeta() {
-			mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
+			mutableMetaProperties = mutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
 		} else {
 			mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
 		}
