@@ -273,6 +273,13 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
+		// Define a new classification (creates maintainer with super permissions),
+		// then deputize the `to` identity under it.
+		makeMsg, _ := DefineAndMake(context, module, from, to, rand)
+		if makeMsg == nil {
+			return simulationTypes.NoOpMsg("orders", "deputize", "define+make failed"), nil, nil
+		}
+
 		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
 		if err != nil {
 			return simulationTypes.NoOpMsg("orders", "deputize", "no identity data"), nil, nil
@@ -285,28 +292,19 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		}
 		toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 
-		classificationIDString, err := simulationModules.LookupOrderClassificationID(from.Address.String())
-		if err != nil {
-			return simulationTypes.NoOpMsg("orders", "deputize", "no order data"), nil, nil
-		}
-		classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
+		classificationID := makeMsg.(*make.Message).ClassificationID
+		mutableProps := makeMsg.(*make.Message).MutableMetaProperties
 
-		orderMappable := &mappable.Mappable{}
-		base.CodecPrototype().Unmarshal(orders.GetMappableBytes(classificationIDString), orderMappable)
-		if orderMappable.Order == nil {
-			return simulationTypes.NewOperationMsg(&deputize.Message{}, false, "nil order"), nil, nil
-		}
-
-		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID), orderMappable.Order.Mutables.PropertyList, true, true, true, true, true)
+		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID, mutableProps, true, true, true, true, true)
 		_, err = simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(deputizeMessage, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("orders", "deputize", err.Error()), nil, nil
 		}
 
-		revokeMessage := revoke.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID))
+		revokeMessage := revoke.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID)
 		result, err := simulationModules.ExecuteMessage(context, module, revokeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(revokeMessage, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("orders", "revoke", err.Error()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(revokeMessage, true, string(result.Data)), nil, nil
 	}

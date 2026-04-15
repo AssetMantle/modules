@@ -32,7 +32,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		&bondRateData,
 		simulationState.Rand,
 		func(rand *rand.Rand) {
-			bondRateData = baseData.NewNumberData(math.NewInt(int64(rand.Intn(98) + 1)))
+			bondRateData = baseData.NewNumberData(math.NewInt(0))
 		},
 	)
 

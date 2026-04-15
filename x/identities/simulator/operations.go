@@ -6,6 +6,7 @@ package simulator
 import (
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
 	baseData "github.com/AssetMantle/schema/data/base"
+
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
@@ -116,38 +117,46 @@ func simulateIssueMsg(module helpers.Module) simulationTypes.Operation {
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		// Generate fresh random properties for define + issue.
-		immutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
-		immutableProps := baseTypes.GenerateRandomPropertyList(rand)
-		mutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
-		mutableProps := baseTypes.GenerateRandomPropertyList(rand)
+		// IMPORTANT: PropertyList.Add mutates in place. Snapshot all random
+		// properties as slices first and build INDEPENDENT PropertyLists for
+		// each step to prevent shared-state corruption.
+		immMetaSnap := baseTypes.GenerateRandomMetaPropertyList(rand).Get()
+		immSnap := baseTypes.GenerateRandomPropertyList(rand).Get()
+		mutMetaSnap := baseTypes.GenerateRandomMetaPropertyList(rand).Get()
+		mutSnap := baseTypes.GenerateRandomPropertyList(rand).Get()
 
 		// Step 1: Define classification with BondAmountProperty in mutable meta.
-		defineMutMeta := baseLists.NewPropertyList(constants.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutableMetaProps.Get()...)...)
-		defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID), immutableMetaProps, immutableProps, defineMutMeta, mutableProps)
-		_, err = simulationModules.ExecuteMessage(context, module, defineMessage.(helpers.Message))
+		defineMsg := define.NewMessage(from.Address, fromID.(ids.IdentityID),
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...),
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immSnap...)...),
+			baseLists.NewPropertyList(constants.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(mutSnap...)...))
+		_, err = simulationModules.ExecuteMessage(context, module, defineMsg.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NoOpMsg("identities", "issue", "define failed: "+err.Error()), nil, nil
 		}
 
-		// Compute classificationID matching what the define keeper stores.
-		// Define adds AuthenticationProperty to mutables.
-		immutables := baseQualified.NewImmutables(immutableMetaProps.Add(baseLists.AnyPropertiesToProperties(immutableProps.Get()...)...))
-		classifMutables := baseQualified.NewMutables(defineMutMeta.Add(baseLists.AnyPropertiesToProperties(mutableProps.Add(constants.AuthenticationProperty).Get()...)...))
-		classificationID := baseIDs.NewClassificationID(immutables, classifMutables)
+		// Compute classificationID (fresh lists, no mutation from define).
+		immutables := baseQualified.NewImmutables(
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...).Add(baseLists.AnyPropertiesToProperties(immSnap...)...))
+		classifMuts := baseLists.NewPropertyList(constants.BondAmountProperty, constants.AuthenticationProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...).Add(baseLists.AnyPropertiesToProperties(mutSnap...)...)
+		classificationID := baseIDs.NewClassificationID(immutables, baseQualified.NewMutables(classifMuts))
 
-		// Step 2: Issue identity. Provide AuthenticationProperty with address + BondAmountProperty.
+		// Step 2: Issue (fresh lists, no shared state with define/classifID).
 		authPropWithAddr := baseProperties.NewMetaProperty(
 			constants.AuthenticationProperty.GetKey(),
 			baseData.NewListData(baseData.NewAccAddressData(from.Address)),
 		)
-		issueMutMeta := baseLists.NewPropertyList(constants.BondAmountProperty, authPropWithAddr).Add(baseLists.AnyPropertiesToProperties(mutableMetaProps.Get()...)...)
-		issueMessage := issue.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, immutableMetaProps, immutableProps, issueMutMeta, mutableProps)
-		result, err := simulationModules.ExecuteMessage(context, module, issueMessage.(helpers.Message))
+		issueMsg := issue.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID,
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...),
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immSnap...)...),
+			baseLists.NewPropertyList(constants.BondAmountProperty, authPropWithAddr).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(mutSnap...)...))
+		result, err := simulationModules.ExecuteMessage(context, module, issueMsg.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NoOpMsg("identities", "issue", "issue failed: "+err.Error()), nil, nil
 		}
-		return simulationTypes.NewOperationMsg(issueMessage, true, string(result.Data)), nil, nil
+		return simulationTypes.NewOperationMsg(issueMsg, true, string(result.Data)), nil, nil
 	}
 }
 func simulateProvisionAndUnprovisionMsg(module helpers.Module) simulationTypes.Operation {
