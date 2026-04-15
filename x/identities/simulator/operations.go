@@ -129,7 +129,9 @@ func simulateIssueMsg(module helpers.Module) simulationTypes.Operation {
 		}
 
 		immutables := baseQualified.NewImmutables(immutableMetaProps.Add(baseLists.AnyPropertiesToProperties(immutableProps.Get()...)...))
-		mutables := baseQualified.NewMutables(mutableMetaProps.Add(baseLists.AnyPropertiesToProperties(mutableProps.Get()...)...))
+		// The define keeper adds AuthenticationProperty to mutables before creating
+		// the classification, so we must include it when computing classificationID.
+		mutables := baseQualified.NewMutables(mutableMetaProps.Add(baseLists.AnyPropertiesToProperties(mutableProps.Add(constants.AuthenticationProperty).Get()...)...))
 		classificationID := baseIDs.NewClassificationID(immutables, mutables)
 
 		issueMessage := issue.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)

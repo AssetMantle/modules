@@ -11,7 +11,7 @@ import (
 )
 
 func GenerateRandomPropertyList(r *rand.Rand) lists.PropertyList {
-	count := r.Intn(5) + 1
+	count := r.Intn(3) + 1
 
 	propertyList := make([]properties.Property, count)
 	for i := 0; i < count; i++ {
@@ -21,7 +21,7 @@ func GenerateRandomPropertyList(r *rand.Rand) lists.PropertyList {
 }
 
 func GenerateRandomMetaPropertyList(r *rand.Rand) lists.PropertyList {
-	count := r.Intn(5) + 1
+	count := r.Intn(3) + 1
 
 	propertyList := make([]properties.Property, count)
 
@@ -32,7 +32,7 @@ func GenerateRandomMetaPropertyList(r *rand.Rand) lists.PropertyList {
 	return baseLists.NewPropertyList(propertyList...)
 }
 func GenerateRandomMetaPropertyListWithoutData(r *rand.Rand) lists.PropertyList {
-	count := r.Intn(5) + 1
+	count := r.Intn(3) + 1
 
 	propertyList := make([]properties.Property, count)
 

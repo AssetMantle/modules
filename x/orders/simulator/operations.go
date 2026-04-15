@@ -25,6 +25,7 @@ import (
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/simulation/simulated_database/orders"
 	"github.com/AssetMantle/modules/x/orders/mappable"
+	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	"github.com/AssetMantle/modules/x/orders/transactions/cancel"
 	"github.com/AssetMantle/modules/x/orders/transactions/define"
 	"github.com/AssetMantle/modules/x/orders/transactions/deputize"
@@ -188,8 +189,20 @@ func DefineAndMake(context sdkTypes.Context, module helpers.Module, from, to sim
 		return nil, nil
 	}
 
-	immutables := baseQualified.NewImmutables(immutableMetaProps.Add(baseLists.AnyPropertiesToProperties(immutableProps.Get()...)...))
-	mutables := baseQualified.NewMutables(mutableMetaProps.Add(baseLists.AnyPropertiesToProperties(mutableProps.Get()...)...))
+	// The orders define keeper adds 6 immutable + 2 mutable properties.
+	// We must include them when computing the classificationID.
+	immutables := baseQualified.NewImmutables(immutableMetaProps.Add(baseLists.AnyPropertiesToProperties(immutableProps.Add(
+		constantProperties.ExchangeRateProperty.ToAnyProperty(),
+		constantProperties.CreationHeightProperty.ToAnyProperty(),
+		constantProperties.MakerAssetIDProperty.ToAnyProperty(),
+		constantProperties.TakerAssetIDProperty.ToAnyProperty(),
+		constantProperties.MakerIDProperty.ToAnyProperty(),
+		constantProperties.TakerIDProperty.ToAnyProperty(),
+	).Get()...)...))
+	mutables := baseQualified.NewMutables(mutableMetaProps.Add(baseLists.AnyPropertiesToProperties(mutableProps.Add(
+		constantProperties.ExpiryHeightProperty.ToAnyProperty(),
+		constantProperties.MakerSplitProperty.ToAnyProperty(),
+	).Get()...)...))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 
 	makeMsg := make.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, toID.(ids.IdentityID), assetID.(ids.AssetID), baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), baseTypesGo.NewHeight(int64(rand.Intn(100)+10)), math.NewInt(1), math.NewInt(1), immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
