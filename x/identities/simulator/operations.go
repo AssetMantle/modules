@@ -165,6 +165,11 @@ func simulateProvisionAndUnprovisionMsg(module helpers.Module) simulationTypes.O
 		var result *sdkTypes.Result
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
+
+		if from.Address.Equals(to.Address) {
+			return simulationTypes.NoOpMsg("identities", "provision", "from and to are the same address"), nil, nil
+		}
+
 		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
 		if err != nil {
 			return simulationTypes.NoOpMsg("identities", "provision", "no identity data"), nil, nil
@@ -174,12 +179,12 @@ func simulateProvisionAndUnprovisionMsg(module helpers.Module) simulationTypes.O
 		provisionMessage := provision.NewMessage(from.Address, to.Address, identityID.(ids.IdentityID))
 		result, err = simulationModules.ExecuteMessage(context, module, provisionMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(provisionMessage, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("identities", "provision", err.Error()), nil, nil
 		}
 		unprovisionMessage := unprovision.NewMessage(from.Address, to.Address, identityID.(ids.IdentityID))
 		result, err = simulationModules.ExecuteMessage(context, module, unprovisionMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(unprovisionMessage, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("identities", "unprovision", err.Error()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(unprovisionMessage, true, string(result.Data)), nil, nil
 	}

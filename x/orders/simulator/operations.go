@@ -422,7 +422,7 @@ func simulatePutMsg(module helpers.Module) simulationTypes.Operation {
 		}
 		assetID, _ := baseIDs.PrototypeAssetID().FromString(assetIDString)
 
-		expiryHeight := baseTypesGo.NewHeight(context.BlockHeight() + int64(rand.Intn(1000)+100))
+		expiryHeight := baseTypesGo.NewHeight(context.BlockHeight() + int64(rand.Intn(50)+10))
 		message := put.NewMessage(from.Address, fromID.(ids.IdentityID), assetID.(ids.AssetID), baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), math.NewInt(1), math.NewInt(1), expiryHeight)
 		result, err := simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {

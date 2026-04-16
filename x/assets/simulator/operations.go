@@ -18,11 +18,8 @@ import (
 	"math/rand"
 
 	"github.com/AssetMantle/modules/helpers"
-	"github.com/AssetMantle/modules/helpers/base"
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
-	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
-	"github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/assets/transactions/burn"
 	"github.com/AssetMantle/modules/x/assets/transactions/define"
 	"github.com/AssetMantle/modules/x/assets/transactions/deputize"
@@ -161,8 +158,6 @@ func simulateBurnMsg(module helpers.Module) simulationTypes.Operation {
 }
 func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		var err error
-		var result *sdkTypes.Result
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
@@ -170,32 +165,34 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		if err != nil {
 			return simulationTypes.NoOpMsg("assets", "deputize", "no identity data"), nil, nil
 		}
-
-		classificationIDString, err := simulationModules.LookupClassificationID(from.Address.String())
-		if err != nil {
-			return simulationTypes.NoOpMsg("assets", "deputize", "no asset data"), nil, nil
-		}
-
-		classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
 		toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
 		if err != nil {
 			return simulationTypes.NoOpMsg("assets", "deputize", "no identity data"), nil, nil
 		}
-
 		toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
-		mappable := &mappable.Mappable{}
-		base.CodecPrototype().Unmarshal(assets.GetMappableBytes(classificationIDString), mappable)
-		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID), mappable.Asset.Mutables.PropertyList, true, true, true, true, true, true)
-		result, err = simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
-		if err != nil {
-			return simulationTypes.NewOperationMsg(deputizeMessage, false, err.Error()), nil, nil
+
+		mintMsg, _ := DefineAndMint(context, module, from, to, rand)
+		if mintMsg == nil {
+			return simulationTypes.NoOpMsg("assets", "deputize", "define+mint failed"), nil, nil
 		}
-		revokeMessage := revoke.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID.(ids.ClassificationID))
-		result, err = simulationModules.ExecuteMessage(context, module, revokeMessage.(helpers.Message))
+
+		mintMessage := mintMsg.(*mint.Message)
+		classificationID := mintMessage.ClassificationID
+
+		// Pass empty maintained properties — the deputize grants permissions
+		// (canMint, canBurn, etc.) regardless of specific property access.
+		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID, baseLists.NewPropertyList(), true, true, true, true, true, true)
+		_, err = simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(revokeMessage, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("assets", "deputize", err.Error()), nil, nil
+		}
+
+		revokeMessage := revoke.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID)
+		result, err := simulationModules.ExecuteMessage(context, module, revokeMessage.(helpers.Message))
+		if err != nil {
+			return simulationTypes.NoOpMsg("assets", "revoke", err.Error()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(revokeMessage, true, string(result.Data)), nil, nil
 	}
