@@ -230,88 +230,49 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 }
 func simulateQuashMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		var err error
-		var result *sdkTypes.Result
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		message := GetIssueMessage(from, to, rand)
-		if message == nil {
-			return simulationTypes.NewOperationMsg(&issue.Message{}, false, "error in issue message"), nil, nil
-		}
-		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
+		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("identities", "quash", "no identity data"), nil, nil
 		}
-		id := baseIDs.NewIdentityID(message.(*issue.Message).ClassificationID, baseQualified.NewImmutables(message.(*issue.Message).ImmutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(message.(*issue.Message).ImmutableProperties.Get()...)...)))
-		quashMessage := quash.NewMessage(from.Address, message.(*issue.Message).FromID, id)
+		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		result, err = simulationModules.ExecuteMessage(context, module, quashMessage.(helpers.Message))
+		issueMsg, issuedID := DefineAndIssue(context, module, from, rand)
+		if issueMsg == nil {
+			return simulationTypes.NoOpMsg("identities", "quash", "define+issue failed"), nil, nil
+		}
+
+		quashMessage := quash.NewMessage(from.Address, fromID.(ids.IdentityID), issuedID)
+		result, err := simulationModules.ExecuteMessage(context, module, quashMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(quashMessage, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("identities", "quash", err.Error()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(quashMessage, true, string(result.Data)), nil, nil
 	}
 }
 func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
-		var err error
-		var result *sdkTypes.Result
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
 		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
 		if err != nil {
 			return simulationTypes.NoOpMsg("identities", "mutate", "no identity data"), nil, nil
 		}
-
-		// For identities module, classification comes from the identity map (key = classification)
-		identityMap := identities.GetIDData(from.Address.String())
-		var classificationIDString string
-		for class := range identityMap {
-			classificationIDString = class
-			break
-		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
-		classificationID, _ := baseIDs.PrototypeClassificationID().FromString(classificationIDString)
-		Mappable := &mappable.Mappable{}
-		baseHelpers.CodecPrototype().Unmarshal(identities.GetMappableBytes(classificationIDString), Mappable)
-		immutableMetaProperties := baseLists.NewPropertyList()
-		immutableProperties := baseLists.NewPropertyList()
-		mutableMetaProperties := baseLists.NewPropertyList().Add(baseProperties.NewMetaProperty(constants.AuthenticationProperty.GetKey(), baseData.NewListData(baseData.NewAccAddressData(to.Address))))
-		mutableProperties := baseLists.NewPropertyList()
-		updatedProperties := baseLists.NewPropertyList()
-		if Mappable.Identity == nil {
-			return simulationTypes.NewOperationMsg(&issue.Message{}, false, "invalid identity"), nil, nil
-		}
-		for _, i := range Mappable.GetIdentity().Get().GetImmutables().GetImmutablePropertyList().Get() {
-			if i.IsMeta() {
-				immutableMetaProperties = immutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
-			} else {
-				immutableProperties = immutableProperties.Add(i).(*baseLists.PropertyList)
-			}
-		}
-		for _, i := range Mappable.GetIdentity().Get().GetMutables().GetMutablePropertyList().Get() {
-			if i.IsMeta() {
-				mutableMetaProperties = mutableMetaProperties.Add(i).(*baseLists.PropertyList)
-				updatedProperties = mutableMetaProperties.Add(baseProperties.NewMetaProperty(i.Get().GetKey(), baseTypes.GenerateRandomDataForTypeID(rand, i.Get().(*baseProperties.MetaProperty).GetData().GetTypeID()))).(*baseLists.PropertyList)
-			} else {
-				mutableProperties = mutableProperties.Add(i).(*baseLists.PropertyList)
-			}
+
+		_, issuedID := DefineAndIssue(context, module, from, rand)
+		if issuedID == nil {
+			return simulationTypes.NoOpMsg("identities", "mutate", "define+issue failed"), nil, nil
 		}
 
-		message := issue.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID.(ids.ClassificationID), immutableMetaProperties, immutableProperties, mutableMetaProperties, mutableProperties)
+		updatedProperties := baseTypes.GenerateRandomMetaPropertyList(rand)
+		mutableProperties := baseTypes.GenerateRandomPropertyList(rand)
 
-		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
-		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
-		}
-		issuedID := baseIDs.NewIdentityID(classificationID.(ids.ClassificationID), baseQualified.NewImmutables(immutableMetaProperties.Add(baseLists.AnyPropertiesToProperties(immutableProperties.Get()...)...)))
 		mutateMessage := update.NewMessage(from.Address, fromID.(ids.IdentityID), issuedID, updatedProperties, mutableProperties)
-
-		result, err = simulationModules.ExecuteMessage(context, module, mutateMessage.(helpers.Message))
+		result, err := simulationModules.ExecuteMessage(context, module, mutateMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(mutateMessage, false, err.Error()), nil, nil
+			return simulationTypes.NoOpMsg("identities", "mutate", err.Error()), nil, nil
 		}
 		return simulationTypes.NewOperationMsg(mutateMessage, true, string(result.Data)), nil, nil
 	}
@@ -323,6 +284,54 @@ func GenerateNameMessage(from sdkTypes.AccAddress, Name ids.StringID) helpers.Me
 func GenerateDefineMessage(from sdkTypes.AccAddress, identityID ids.IdentityID, r *rand.Rand) helpers.Message {
 	return define.NewMessage(from, identityID, baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r), baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r)).(helpers.Message)
 }
+// DefineAndIssue defines a new identity classification and issues an identity under it.
+// Uses PropertyList snapshots to prevent in-place mutation corruption.
+// Returns the issue message and identity ID, or nil on failure.
+func DefineAndIssue(context sdkTypes.Context, module helpers.Module, from simulationTypes.Account, rand *rand.Rand) (sdkTypes.Msg, ids.IdentityID) {
+	identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
+	if err != nil {
+		return nil, nil
+	}
+	fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
+
+	immMetaSnap := baseTypes.GenerateRandomMetaPropertyList(rand).Get()
+	immSnap := baseTypes.GenerateRandomPropertyList(rand).Get()
+	mutMetaSnap := baseTypes.GenerateRandomMetaPropertyList(rand).Get()
+	mutSnap := baseTypes.GenerateRandomPropertyList(rand).Get()
+
+	defineMsg := define.NewMessage(from.Address, fromID.(ids.IdentityID),
+		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...),
+		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immSnap...)...),
+		baseLists.NewPropertyList(constants.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
+		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(mutSnap...)...))
+	_, err = simulationModules.ExecuteMessage(context, module, defineMsg.(helpers.Message))
+	if err != nil {
+		return nil, nil
+	}
+
+	immutables := baseQualified.NewImmutables(
+		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...).Add(baseLists.AnyPropertiesToProperties(immSnap...)...))
+	classifMuts := baseLists.NewPropertyList(constants.BondAmountProperty, constants.AuthenticationProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...).Add(baseLists.AnyPropertiesToProperties(mutSnap...)...)
+	classificationID := baseIDs.NewClassificationID(immutables, baseQualified.NewMutables(classifMuts))
+
+	authPropWithAddr := baseProperties.NewMetaProperty(
+		constants.AuthenticationProperty.GetKey(),
+		baseData.NewListData(baseData.NewAccAddressData(from.Address)),
+	)
+	issueMsg := issue.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID,
+		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...),
+		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immSnap...)...),
+		baseLists.NewPropertyList(constants.BondAmountProperty, authPropWithAddr).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
+		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(mutSnap...)...))
+	_, err = simulationModules.ExecuteMessage(context, module, issueMsg.(helpers.Message))
+	if err != nil {
+		return nil, nil
+	}
+
+	identityID := baseIDs.NewIdentityID(classificationID, immutables)
+	return issueMsg, identityID
+}
+
 func GetIssueMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.Msg {
 	identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
 	if err != nil {
