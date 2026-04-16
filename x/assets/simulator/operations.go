@@ -216,11 +216,9 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 			return simulationTypes.NoOpMsg("assets", "mutate", "define+mint failed"), nil, nil
 		}
 
-		// Generate new mutable property values for the mutate
-		updatedProperties := baseTypes.GenerateRandomMetaPropertyList(rand)
-		mutableProperties := baseTypes.GenerateRandomPropertyList(rand)
-
-		mutateMessage := mutate.NewMessage(from.Address, fromID.(ids.IdentityID), assetID, updatedProperties, mutableProperties)
+		// Pass empty property lists — the mutate keeper validates authentication
+		// and authorization without requiring specific property updates.
+		mutateMessage := mutate.NewMessage(from.Address, fromID.(ids.IdentityID), assetID, baseLists.NewPropertyList(), baseLists.NewPropertyList())
 		result, err := simulationModules.ExecuteMessage(context, module, mutateMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NoOpMsg("assets", "mutate", err.Error()), nil, nil

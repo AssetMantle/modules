@@ -266,10 +266,7 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 			return simulationTypes.NoOpMsg("identities", "mutate", "define+issue failed"), nil, nil
 		}
 
-		updatedProperties := baseTypes.GenerateRandomMetaPropertyList(rand)
-		mutableProperties := baseTypes.GenerateRandomPropertyList(rand)
-
-		mutateMessage := update.NewMessage(from.Address, fromID.(ids.IdentityID), issuedID, updatedProperties, mutableProperties)
+		mutateMessage := update.NewMessage(from.Address, fromID.(ids.IdentityID), issuedID, baseLists.NewPropertyList(), baseLists.NewPropertyList())
 		result, err := simulationModules.ExecuteMessage(context, module, mutateMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NoOpMsg("identities", "mutate", err.Error()), nil, nil
