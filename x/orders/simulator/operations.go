@@ -5,6 +5,7 @@ package simulator
 
 import (
 	"cosmossdk.io/math"
+	baseData "github.com/AssetMantle/schema/data/base"
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -185,11 +186,18 @@ func DefineAndMake(context sdkTypes.Context, module helpers.Module, from, to sim
 	mutMetaSnap := baseTypes.GenerateRandomMetaPropertyList(rand).Get()
 	mutSnap := baseTypes.GenerateRandomPropertyList(rand).Get()
 
-	// Include TakerSplitProperty in define's mutable meta (order ValidateBasic requires it)
+	// TakerSplitProperty must reveal a non-zero value: order keeper's get path
+	// transfers `order.GetTakerSplit()` of takerAssetID from taker to maker.
+	// Prototype's zero data causes the transfer aux to error with
+	// "value must be greater than zero".
+	// BondAmountProperty: make keeper line 109 requires it in mutables, and
+	// classifications/auxiliaries/define adds it to the on-chain classification
+	// when missing — so local classificationID must include it to match.
+	revealedTakerSplit := baseProperties.NewMetaProperty(constantProperties.TakerSplitProperty.GetKey(), baseData.NewNumberData(math.NewInt(1)))
 	defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID),
 		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...),
 		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immSnap...)...),
-		baseLists.NewPropertyList(constantProperties.TakerSplitProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
+		baseLists.NewPropertyList(revealedTakerSplit, constantProperties.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
 		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(mutSnap...)...))
 	_, err = simulationModules.ExecuteMessage(context, module, defineMessage.(helpers.Message))
 	if err != nil {
@@ -203,23 +211,26 @@ func DefineAndMake(context sdkTypes.Context, module helpers.Module, from, to sim
 			constantProperties.MakerAssetIDProperty, constantProperties.TakerAssetIDProperty,
 			constantProperties.MakerIDProperty, constantProperties.TakerIDProperty))
 	mutables := baseQualified.NewMutables(
-		baseLists.NewPropertyList(constantProperties.TakerSplitProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...).Add(baseLists.AnyPropertiesToProperties(mutSnap...)...).Add(
+		baseLists.NewPropertyList(revealedTakerSplit, constantProperties.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...).Add(baseLists.AnyPropertiesToProperties(mutSnap...)...).Add(
 			constantProperties.ExpiryHeightProperty, constantProperties.MakerSplitProperty))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 
-	// Make message with fresh lists and TakerSplitProperty in mutable meta
+	// Make message with fresh lists, TakerSplit + BondAmount in mutable meta
 	makeMsg := make.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, toID.(ids.IdentityID), assetID.(ids.AssetID),
 		baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), baseTypesGo.NewHeight(int64(rand.Intn(100)+10)), math.NewInt(1), math.NewInt(1),
 		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...),
 		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immSnap...)...),
-		baseLists.NewPropertyList(constantProperties.TakerSplitProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
+		baseLists.NewPropertyList(revealedTakerSplit, constantProperties.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
 		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(mutSnap...)...))
-	_, err = simulationModules.ExecuteMessage(context, module, makeMsg.(helpers.Message))
+	result, err := simulationModules.ExecuteMessage(context, module, makeMsg.(helpers.Message))
 	if err != nil {
 		return nil, nil
 	}
 
-	orderID := baseIDs.NewOrderID(classificationID, immutables)
+	// Parse orderID from response (keeper computes it from runtime data values
+	// like ExchangeRate/CreationHeight; local immutables don't have those).
+	orderIDProto, _ := baseIDs.PrototypeOrderID().FromString(string(result.Data))
+	orderID, _ := orderIDProto.(ids.OrderID)
 	return makeMsg, orderID
 }
 
@@ -301,9 +312,12 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 
 		classificationID := makeMsg.(*make.Message).ClassificationID
-		mutableProps := makeMsg.(*make.Message).MutableMetaProperties
 
-		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID, mutableProps, true, true, true, true, true)
+		// Pass empty maintained properties — super maintainer's mutable list
+		// excludes BondAmount/Authentication (super aux strips them), so
+		// passing message.MutableMetaProperties (which includes BondAmount)
+		// would fail the MaintainsProperty check in maintainer/deputize aux.
+		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID, baseLists.NewPropertyList(), true, true, true, true, true)
 		_, err = simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NoOpMsg("orders", "deputize", err.Error()), nil, nil
@@ -359,22 +373,41 @@ func simulateImmediateMsg(module helpers.Module) simulationTypes.Operation {
 		}
 		assetID, _ := baseIDs.PrototypeAssetID().FromString(assetIDString)
 
-		immutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
-		immutableProps := baseTypes.GenerateRandomPropertyList(rand)
-		mutableMetaProps := baseTypes.GenerateRandomMetaPropertyList(rand)
-		mutableProps := baseTypes.GenerateRandomPropertyList(rand)
+		// Snapshot to prevent PropertyList.Add mutation across steps.
+		immMetaSnap := baseTypes.GenerateRandomMetaPropertyList(rand).Get()
+		immSnap := baseTypes.GenerateRandomPropertyList(rand).Get()
+		mutMetaSnap := baseTypes.GenerateRandomMetaPropertyList(rand).Get()
+		mutSnap := baseTypes.GenerateRandomPropertyList(rand).Get()
 
-		defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID), immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
+		// TakerSplit revealed with non-zero data — required for downstream
+		// transfers; see DefineAndMake for full explanation.
+		revealedTakerSplit := baseProperties.NewMetaProperty(constantProperties.TakerSplitProperty.GetKey(), baseData.NewNumberData(math.NewInt(1)))
+		defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID),
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...),
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immSnap...)...),
+			baseLists.NewPropertyList(revealedTakerSplit, constantProperties.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(mutSnap...)...))
 		_, err = simulationModules.ExecuteMessage(context, module, defineMessage.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NoOpMsg("orders", "immediate", "define failed"), nil, nil
 		}
 
-		immutables := baseQualified.NewImmutables(immutableMetaProps.Add(baseLists.AnyPropertiesToProperties(immutableProps.Get()...)...))
-		mutables := baseQualified.NewMutables(mutableMetaProps.Add(baseLists.AnyPropertiesToProperties(mutableProps.Get()...)...))
+		immutables := baseQualified.NewImmutables(
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...).Add(baseLists.AnyPropertiesToProperties(immSnap...)...).Add(
+				constantProperties.ExchangeRateProperty, constantProperties.CreationHeightProperty,
+				constantProperties.MakerAssetIDProperty, constantProperties.TakerAssetIDProperty,
+				constantProperties.MakerIDProperty, constantProperties.TakerIDProperty))
+		mutables := baseQualified.NewMutables(
+			baseLists.NewPropertyList(revealedTakerSplit, constantProperties.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...).Add(baseLists.AnyPropertiesToProperties(mutSnap...)...).Add(
+				constantProperties.ExpiryHeightProperty, constantProperties.MakerSplitProperty))
 		classificationID := baseIDs.NewClassificationID(immutables, mutables)
 
-		immediateMsg := immediate.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, toID.(ids.IdentityID), assetID.(ids.AssetID), baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), baseTypesGo.NewHeight(int64(rand.Intn(100)+10)), math.NewInt(1), math.NewInt(1), immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
+		immediateMsg := immediate.NewMessage(from.Address, fromID.(ids.IdentityID), classificationID, toID.(ids.IdentityID), assetID.(ids.AssetID),
+			baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), baseTypesGo.NewHeight(int64(rand.Intn(100)+10)), math.NewInt(1), math.NewInt(1),
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...),
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immSnap...)...),
+			baseLists.NewPropertyList(revealedTakerSplit, constantProperties.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
+			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(mutSnap...)...))
 		result, err := simulationModules.ExecuteMessage(context, module, immediateMsg.(helpers.Message))
 		if err != nil {
 			return simulationTypes.NoOpMsg("orders", "immediate", err.Error()), nil, nil

@@ -24,7 +24,6 @@ import (
 	simulationModules "github.com/AssetMantle/modules/simulation"
 	baseTypes "github.com/AssetMantle/modules/simulation/schema/types/base"
 	"github.com/AssetMantle/modules/simulation/simulated_database/identities"
-	"github.com/AssetMantle/modules/x/assets/transactions/revoke"
 	"github.com/AssetMantle/modules/x/identities/mappable"
 	"github.com/AssetMantle/modules/x/identities/transactions/define"
 	"github.com/AssetMantle/modules/x/identities/transactions/deputize"
@@ -32,6 +31,7 @@ import (
 	"github.com/AssetMantle/modules/x/identities/transactions/name"
 	"github.com/AssetMantle/modules/x/identities/transactions/provision"
 	"github.com/AssetMantle/modules/x/identities/transactions/quash"
+	"github.com/AssetMantle/modules/x/identities/transactions/revoke"
 	"github.com/AssetMantle/modules/x/identities/transactions/unprovision"
 	"github.com/AssetMantle/modules/x/identities/transactions/update"
 )

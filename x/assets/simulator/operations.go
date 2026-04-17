@@ -135,7 +135,6 @@ func simulateRenumerateMsg(module helpers.Module) simulationTypes.Operation {
 func simulateBurnMsg(module helpers.Module) simulationTypes.Operation {
 	return func(rand *rand.Rand, baseApp *baseapp.BaseApp, context sdkTypes.Context, simulationAccountList []simulationTypes.Account, chainID string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
-		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
 		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
 		if err != nil {
@@ -143,7 +142,7 @@ func simulateBurnMsg(module helpers.Module) simulationTypes.Operation {
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		_, assetID := DefineAndMint(context, module, from, to, rand)
+		_, assetID := DefineAndMint(context, module, from, from, rand)
 		if assetID == nil {
 			return simulationTypes.NoOpMsg("assets", "burn", "define+mint failed"), nil, nil
 		}
