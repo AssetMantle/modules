@@ -9,6 +9,7 @@ import (
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
+	"github.com/AssetMantle/schema/documents"
 	"github.com/AssetMantle/schema/documents/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
@@ -100,83 +101,115 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 
 	orders = orders.Add(record.NewRecord(order))
 
-	// Order execution
-	orderMutated := false
-	orderLeftOverMakerSplit := makerSplit
-
-	// TODO: remove panics from this function
-	accumulator := func(Record helpers.Record) bool {
-		executableOrder := mappable.GetOrder(Record.GetMappable())
-
-		executableOrderTakerSplitDemanded := executableOrder.GetExchangeRate().MulTruncate(executableOrder.GetMakerSplit().ToLegacyDec()).MulTruncate(math.LegacySmallestDec()).TruncateInt()
-
-		if order.GetExchangeRate().MulTruncate(executableOrder.GetExchangeRate()).MulTruncate(math.LegacySmallestDec()).MulTruncate(math.LegacySmallestDec()).LTE(math.LegacyOneDec()) {
-			switch {
-			case orderLeftOverMakerSplit.GT(executableOrderTakerSplitDemanded):
-				// sending to buyer
-				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), executableOrder.GetMakerSplit())); err != nil {
-					panic(err)
-				}
-				// sending to executableOrder
-				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), executableOrder.GetMakerID(), order.GetMakerAssetID(), executableOrderTakerSplitDemanded)); err != nil {
-					panic(err)
-				}
-
-				orderLeftOverMakerSplit = orderLeftOverMakerSplit.Sub(executableOrderTakerSplitDemanded)
-
-				orders.Remove(record.NewRecord(executableOrder))
-			case orderLeftOverMakerSplit.LT(executableOrderTakerSplitDemanded):
-				// sending to buyer
-				sendToBuyer := orderLeftOverMakerSplit.Quo(math.OneInt()).ToLegacyDec().QuoTruncate(executableOrder.GetExchangeRate()).TruncateInt()
-				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), sendToBuyer)); err != nil {
-					panic(err)
-				}
-				// sending to executableOrder
-				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), executableOrder.GetMakerID(), order.GetMakerAssetID(), orderLeftOverMakerSplit)); err != nil {
-					panic(err)
-				}
-
-				mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(executableOrder.GetMakerSplit().Sub(sendToBuyer))))
-
-				updatedOrder := base.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))
-
-				if err := updatedOrder.ValidateBasic(); err != nil {
-					panic(err)
-				}
-
-				orders.Mutate(record.NewRecord(updatedOrder))
-
-				orderLeftOverMakerSplit = math.ZeroInt()
-			default:
-				// case orderLeftOverMakerSplit.Equal(executableOrderTakerSplitDemanded):
-				// sending to buyer
-				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), executableOrder.GetMakerSplit())); err != nil {
-					panic(err)
-				}
-				// sending to seller
-				if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), executableOrder.GetMakerID(), order.GetMakerAssetID(), orderLeftOverMakerSplit)); err != nil {
-					panic(err)
-				}
-
-				orders.Remove(record.NewRecord(executableOrder))
-
-				orderLeftOverMakerSplit = math.ZeroInt()
-			}
-
-			orderMutated = true
+	// Order matching.
+	//
+	// Collect compatible resting counterparties in a read-only pass, then settle
+	// them afterwards. A KVStore iterator must not observe writes to its own
+	// store, so no transfers/removals/mutations happen inside Iterate. A
+	// counterparty offers exactly the asset this order wants and wants exactly the
+	// asset this order offers (mirror asset pair), the two exchange rates must
+	// cross, and it is never this order itself.
+	selfKey := record.NewRecord(order).GetKey()
+	var executableOrders []documents.Order
+	collectedDemand := math.ZeroInt()
+	orders.Iterate(key.NewKey(baseIDs.PrototypeOrderID()), func(Record helpers.Record) bool {
+		if selfKey.Equals(Record.GetKey()) {
+			return false
 		}
 
-		if orderLeftOverMakerSplit.Equal(math.ZeroInt()) {
-			orders.Remove(record.NewRecord(order))
-			return true
+		executableOrder := mappable.GetOrder(Record.GetMappable())
+
+		if executableOrder.GetMakerAssetID().Compare(order.GetTakerAssetID()) != 0 ||
+			executableOrder.GetTakerAssetID().Compare(order.GetMakerAssetID()) != 0 {
+			return false
+		}
+
+		if order.GetExchangeRate().MulTruncate(executableOrder.GetExchangeRate()).MulTruncate(math.LegacySmallestDec()).MulTruncate(math.LegacySmallestDec()).LTE(math.LegacyOneDec()) {
+			executableOrders = append(executableOrders, executableOrder)
+
+			// stop once the collected counterparties can fully absorb the incoming
+			// order, so an immediate order does not scan the entire book once it is
+			// fillable.
+			collectedDemand = collectedDemand.Add(executableOrder.GetExchangeRate().MulTruncate(executableOrder.GetMakerSplit().ToLegacyDec()).MulTruncate(math.LegacySmallestDec()).TruncateInt())
+			if collectedDemand.GTE(makerSplit) {
+				return true
+			}
 		}
 
 		return false
+	})
+
+	orderMutated := false
+	orderLeftOverMakerSplit := makerSplit
+
+	for _, executableOrder := range executableOrders {
+		if orderLeftOverMakerSplit.Equal(math.ZeroInt()) {
+			break
+		}
+
+		executableOrderTakerSplitDemanded := executableOrder.GetExchangeRate().MulTruncate(executableOrder.GetMakerSplit().ToLegacyDec()).MulTruncate(math.LegacySmallestDec()).TruncateInt()
+
+		switch {
+		case orderLeftOverMakerSplit.GT(executableOrderTakerSplitDemanded):
+			// sending to buyer
+			if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), executableOrder.GetMakerSplit())); err != nil {
+				return nil, err
+			}
+			// sending to executableOrder
+			if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), executableOrder.GetMakerID(), order.GetMakerAssetID(), executableOrderTakerSplitDemanded)); err != nil {
+				return nil, err
+			}
+
+			orderLeftOverMakerSplit = orderLeftOverMakerSplit.Sub(executableOrderTakerSplitDemanded)
+
+			orders.Remove(record.NewRecord(executableOrder))
+		case orderLeftOverMakerSplit.LT(executableOrderTakerSplitDemanded):
+			// sending to buyer: maker-asset units the buyer receives for its leftover taker-asset,
+			// scaled the same way take computes takerReceiveMakerSplit (split / 1e-18 / rate).
+			sendToBuyer := orderLeftOverMakerSplit.ToLegacyDec().QuoTruncate(math.LegacySmallestDec()).QuoTruncate(executableOrder.GetExchangeRate()).TruncateInt()
+			if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), sendToBuyer)); err != nil {
+				return nil, err
+			}
+			// sending to executableOrder
+			if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), executableOrder.GetMakerID(), order.GetMakerAssetID(), orderLeftOverMakerSplit)); err != nil {
+				return nil, err
+			}
+
+			mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(executableOrder.GetMakerSplit().Sub(sendToBuyer))))
+
+			updatedOrder := base.NewOrder(executableOrder.GetClassificationID(), executableOrder.GetImmutables(), executableOrder.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))
+
+			if err := updatedOrder.ValidateBasic(); err != nil {
+				return nil, err
+			}
+
+			orders.Mutate(record.NewRecord(updatedOrder))
+
+			orderLeftOverMakerSplit = math.ZeroInt()
+		default:
+			// case orderLeftOverMakerSplit.Equal(executableOrderTakerSplitDemanded):
+			// sending to buyer
+			if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), order.GetMakerID(), order.GetTakerAssetID(), executableOrder.GetMakerSplit())); err != nil {
+				return nil, err
+			}
+			// sending to seller
+			if _, err := transactionKeeper.transferAuxiliary.GetKeeper().Help(context, transfer.NewAuxiliaryRequest(constants.ModuleIdentity.GetModuleIdentityID(), executableOrder.GetMakerID(), order.GetMakerAssetID(), orderLeftOverMakerSplit)); err != nil {
+				return nil, err
+			}
+
+			orders.Remove(record.NewRecord(executableOrder))
+
+			orderLeftOverMakerSplit = math.ZeroInt()
+		}
+
+		orderMutated = true
 	}
 
-	orders.Iterate(record.NewRecord(order).GetKey(), accumulator)
-
-	if !orderLeftOverMakerSplit.Equal(math.ZeroInt()) && orderMutated {
+	if orderLeftOverMakerSplit.Equal(math.ZeroInt()) {
+		// fully filled: nothing rests
+		orders.Remove(record.NewRecord(order))
+	} else if orderMutated {
+		// partially filled: rest the remainder
 		mutableProperties := baseLists.NewPropertyList(baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(orderLeftOverMakerSplit)))
 
 		updatedOrder := base.NewOrder(order.GetClassificationID(), order.GetImmutables(), order.GetMutables().Mutate(baseLists.AnyPropertiesToProperties(mutableProperties.Get()...)...))
