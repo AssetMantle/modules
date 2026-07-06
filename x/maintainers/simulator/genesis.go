@@ -38,7 +38,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		deputize_allowed.ID.AsString(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = baseData.NewBooleanData(true) },
+		func(rand *rand.Rand) { Data = baseData.NewBooleanData(rand.Intn(2) == 0) },
 	)
 
 	records := make([]helpers.Record, 3*len(simulatorAssets.ClassificationIDMappableBytesMap))

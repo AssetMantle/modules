@@ -4,46 +4,31 @@
 package simulation
 
 import (
-	"context"
-	"cosmossdk.io/math"
+	"errors"
 	"fmt"
-	goGoProto "github.com/cosmos/gogoproto/proto"
 	"math/rand"
 	"strings"
 
-	"github.com/AssetMantle/schema/data"
-	baseData "github.com/AssetMantle/schema/data/base"
-	"github.com/AssetMantle/schema/qualified"
-	baseQualified "github.com/AssetMantle/schema/qualified/base"
+	"cosmossdk.io/math"
+	goGoProto "github.com/cosmos/gogoproto/proto"
+
+	"github.com/AssetMantle/schema/properties"
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 
 	"github.com/AssetMantle/modules/helpers"
-	baseSimulation "github.com/AssetMantle/modules/simulation/schema/types/base"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	assetsDB "github.com/AssetMantle/modules/simulation/simulated_database/assets"
 	identitiesDB "github.com/AssetMantle/modules/simulation/simulated_database/identities"
 	ordersDB "github.com/AssetMantle/modules/simulation/simulated_database/orders"
-	"github.com/AssetMantle/modules/x/classifications/parameters/bond_rate"
 )
 
-var (
-	Immutables qualified.Immutables = &baseQualified.Immutables{}
-	Mutables   qualified.Mutables   = &baseQualified.Mutables{}
-
-	// SimTxConfig and SimAccountKeeper are set by module WeightedOperations
-	// from SimulationState and the node's application. Used by DeliverSimTx
-	// to create properly signed transactions delivered through the full ABCI flow.
-	SimTxConfig     client.TxConfig
-	SimAccountKeeper AccountKeeper
-)
-
-// AccountKeeper defines the interface for looking up accounts during simulation.
-type AccountKeeper interface {
-	GetAccount(ctx context.Context, addr sdkTypes.AccAddress) sdkTypes.AccountI
-}
+// MaxBondRate is the inclusive upper bound of the classifications bond rate
+// randomized in simulation genesis. Operations that must reveal a bond amount
+// use it to bound rate*totalWeight from above without knowing the drawn rate.
+const MaxBondRate = 98
 
 func RandomBool(r *rand.Rand) bool {
 	return r.Intn(2) == 0
@@ -58,36 +43,6 @@ func GenerateRandomAddresses(r *rand.Rand) []sdkTypes.AccAddress {
 	}
 
 	return addresses
-}
-
-func generateGenesisProperties(r *rand.Rand) {
-	Immutables = baseQualified.NewImmutables(baseSimulation.GenerateRandomMetaPropertyListWithoutData(r))
-	Mutables = baseQualified.NewMutables(baseSimulation.GenerateRandomPropertyList(r))
-}
-
-func GetGenesisProperties(r *rand.Rand) (qualified.Immutables, qualified.Mutables) {
-	if Immutables.(*baseQualified.Immutables).PropertyList == nil {
-		generateGenesisProperties(r)
-	}
-	return Immutables, Mutables
-}
-
-func CalculateBondAmount(immutables qualified.Immutables, mutables qualified.Mutables) data.NumberData {
-	totalWeight := math.ZeroInt()
-	for _, property := range append(immutables.GetImmutablePropertyList().Get(), mutables.GetMutablePropertyList().Get()...) {
-		if inner := property.Get(); inner != nil {
-			totalWeight = totalWeight.Add(inner.GetBondWeight())
-		}
-	}
-
-	bondRateData := bond_rate.Parameter.GetMetaProperty().GetData()
-	if bondRateData == nil || bondRateData.Get() == nil {
-		return baseData.NewNumberData(totalWeight)
-	}
-	if numData, ok := bondRateData.Get().(data.NumberData); ok {
-		return baseData.NewNumberData(numData.Get().Mul(totalWeight))
-	}
-	return baseData.NewNumberData(totalWeight)
 }
 
 func ExecuteMessage(context sdkTypes.Context, module helpers.Module, message helpers.Message) (*sdkTypes.Result, error) {
@@ -113,46 +68,6 @@ func ExecuteMessage(context sdkTypes.Context, module helpers.Module, message hel
 	return nil, fmt.Errorf("no matching transaction for message %s in module %s", msgName, module.Name())
 }
 
-// DeliverSimTx creates a properly signed transaction and delivers it through the
-// full ABCI flow (AnteHandler, authentication, etc.). This is the correct way to
-// execute messages during simulation — unlike ExecuteMessage which bypasses the
-// transaction pipeline. Returns OperationMsg with success/failure indication.
-func DeliverSimTx(r *rand.Rand, app *baseapp.BaseApp, ctx sdkTypes.Context, account simulationTypes.Account, msg sdkTypes.Msg, moduleName string) (simulationTypes.OperationMsg, error) {
-	if SimTxConfig == nil || SimAccountKeeper == nil {
-		return simulationTypes.NoOpMsg(moduleName, sdkTypes.MsgTypeURL(msg), "sim infrastructure not set"), fmt.Errorf("SimTxConfig or SimAccountKeeper not initialized")
-	}
-
-	acc := SimAccountKeeper.GetAccount(ctx, account.Address)
-	if acc == nil {
-		return simulationTypes.NoOpMsg(moduleName, sdkTypes.MsgTypeURL(msg), "account not found"), fmt.Errorf("account %s not found", account.Address)
-	}
-
-	tx, err := simtestutil.GenSignedMockTx(
-		r,
-		SimTxConfig,
-		[]sdkTypes.Msg{msg},
-		sdkTypes.NewCoins(sdkTypes.NewInt64Coin(sdkTypes.DefaultBondDenom, 0)),
-		simtestutil.DefaultGenTxGas,
-		ctx.ChainID(),
-		[]uint64{acc.GetAccountNumber()},
-		[]uint64{acc.GetSequence()},
-		account.PrivKey,
-	)
-	if err != nil {
-		return simulationTypes.NoOpMsg(moduleName, sdkTypes.MsgTypeURL(msg), "unable to generate mock tx"), err
-	}
-
-	_, _, err = app.SimDeliver(SimTxConfig.TxEncoder(), tx)
-	if err != nil {
-		return simulationTypes.NoOpMsg(moduleName, sdkTypes.MsgTypeURL(msg), err.Error()), nil
-	}
-
-	return simulationTypes.NewOperationMsg(msg, true, ""), nil
-}
-
-// SafeOperation wraps a simulation operation to catch panics from nil data in
-// simulated databases. Early blocks have empty databases, causing operations to
-// panic on nil type assertions. This wrapper converts panics to no-op results.
 // ErrSimDBMiss is returned when a simulated database lookup finds no data for an account.
 var ErrSimDBMiss = fmt.Errorf("simulated database miss")
 
@@ -204,12 +119,55 @@ func LookupOrderClassificationID(address string) (string, error) {
 	return "", ErrSimDBMiss
 }
 
-func SafeOperation(op simulationTypes.Operation) simulationTypes.Operation {
+// IsBusinessRejection reports whether an error from executing a self-constructed
+// simulation message is a legitimate business-rule rejection under randomized
+// parameters and state (disabled gate, exhausted balance, random collision,
+// property cap, simulated database miss) rather than a delivery bug.
+func IsBusinessRejection(err error) bool {
+	return errors.Is(err, ErrSimDBMiss) ||
+		errors.Is(err, errorConstants.NotAuthorized) ||
+		errors.Is(err, errorConstants.InsufficientBalance) ||
+		errors.Is(err, errorConstants.EntityAlreadyExists) ||
+		errors.Is(err, errorConstants.EntityNotFound) ||
+		errors.Is(err, sdkErrors.ErrInsufficientFunds) ||
+		(errors.Is(err, errorConstants.InvalidRequest) && strings.Contains(err.Error(), "property count"))
+}
+
+// RejectionOrError converts a failed self-constructed message execution into the
+// standard operation result: a NoOp with nil error for legitimate business
+// rejections, a NoOp carrying the error (failing the simulation) for bugs.
+func RejectionOrError(moduleName, route string, err error) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
+	if IsBusinessRejection(err) {
+		return simulationTypes.NoOpMsg(moduleName, route, err.Error()), nil, nil
+	}
+	return simulationTypes.NoOpMsg(moduleName, route, err.Error()), nil, err
+}
+
+// SumBondWeights sums the bond weights of the given property snapshots plus the
+// given extra properties, mirroring the classifications define auxiliary's
+// weighing of a classification's immutable and mutable property lists.
+func SumBondWeights(snaps [][]properties.AnyProperty, extras ...properties.Property) math.Int {
+	totalWeight := math.ZeroInt()
+	for _, snap := range snaps {
+		for _, anyProperty := range snap {
+			totalWeight = totalWeight.Add(anyProperty.Get().GetBondWeight())
+		}
+	}
+	for _, property := range extras {
+		totalWeight = totalWeight.Add(property.GetBondWeight())
+	}
+	return totalWeight
+}
+
+// SafeOperation wraps a simulation operation so that a panic surfaces as a
+// simulation failure carrying the operation route and panic value, instead of
+// crashing the process. It never swallows the panic into a passing no-op.
+func SafeOperation(route string, op simulationTypes.Operation) simulationTypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdkTypes.Context, accs []simulationTypes.Account, chainID string) (opMsg simulationTypes.OperationMsg, futures []simulationTypes.FutureOperation, err error) {
 		defer func() {
 			if rec := recover(); rec != nil {
-				opMsg = simulationTypes.NoOpMsg("recovered", "panic", fmt.Sprintf("%v", rec))
-				err = nil
+				opMsg = simulationTypes.NoOpMsg("recovered", "panic", fmt.Sprintf("%s: %v", route, rec))
+				err = fmt.Errorf("panic in simulation operation %s: %v", route, rec)
 			}
 		}()
 		return op(r, app, ctx, accs, chainID)

@@ -16,6 +16,7 @@ import (
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
+	simulationModules "github.com/AssetMantle/modules/simulation"
 	"github.com/AssetMantle/modules/simulation/simulated_database/assets"
 	mappableAssets "github.com/AssetMantle/modules/x/assets/mappable"
 	"github.com/AssetMantle/modules/x/classifications/constants"
@@ -32,7 +33,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		&bondRateData,
 		simulationState.Rand,
 		func(rand *rand.Rand) {
-			bondRateData = baseData.NewNumberData(math.NewInt(0))
+			bondRateData = baseData.NewNumberData(math.NewInt(int64(rand.Intn(simulationModules.MaxBondRate) + 1)))
 		},
 	)
 
@@ -42,7 +43,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		&maxPropertyCountData,
 		simulationState.Rand,
 		func(rand *rand.Rand) {
-			maxPropertyCountData = baseData.NewNumberData(math.NewInt(int64(rand.Intn(22) + 22)))
+			maxPropertyCountData = baseData.NewNumberData(math.NewInt(int64(rand.Intn(43) + 1)))
 		},
 	)
 

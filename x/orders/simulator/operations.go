@@ -10,6 +10,7 @@ import (
 	"github.com/AssetMantle/schema/ids"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
 	baseLists "github.com/AssetMantle/schema/lists/base"
+	"github.com/AssetMantle/schema/properties"
 	baseProperties "github.com/AssetMantle/schema/properties/base"
 	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	baseTypesGo "github.com/AssetMantle/schema/types/base"
@@ -51,39 +52,39 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 	return simulation.WeightedOperations{
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateDefineMsg(module)),
+			simulationModules.SafeOperation("orders/define", simulateDefineMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateMakeMsg(module)),
+			simulationModules.SafeOperation("orders/make", simulateMakeMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateCancelMsg(module)),
+			simulationModules.SafeOperation("orders/cancel", simulateCancelMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateTakeMsg(module)),
+			simulationModules.SafeOperation("orders/take", simulateTakeMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateDeputizeAndRevokeMsg(module)),
+			simulationModules.SafeOperation("orders/deputizeAndRevoke", simulateDeputizeAndRevokeMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateGetMsg(module)),
+			simulationModules.SafeOperation("orders/get", simulateGetMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateImmediateMsg(module)),
+			simulationModules.SafeOperation("orders/immediate", simulateImmediateMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateModifyMsg(module)),
+			simulationModules.SafeOperation("orders/modify", simulateModifyMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulatePutMsg(module)),
+			simulationModules.SafeOperation("orders/put", simulatePutMsg(module)),
 		),
 	}
 }
@@ -104,7 +105,7 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
+			return simulationModules.RejectionOrError("orders", "define", err)
 		}
 		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
 	}
@@ -114,9 +115,9 @@ func simulateMakeMsg(module helpers.Module) simulationTypes.Operation {
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		makeMsg, _ := DefineAndMake(context, module, from, to, rand)
-		if makeMsg == nil {
-			return simulationTypes.NoOpMsg("orders", "make", "define+make failed"), nil, nil
+		makeMsg, _, err := DefineAndMake(context, module, from, to, rand)
+		if err != nil {
+			return simulationModules.RejectionOrError("orders", "make", err)
 		}
 		return simulationTypes.NewOperationMsg(makeMsg, true, ""), nil, nil
 	}
@@ -126,15 +127,15 @@ func simulateCancelMsg(module helpers.Module) simulationTypes.Operation {
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		makeMsg, orderID := DefineAndMake(context, module, from, to, rand)
-		if makeMsg == nil {
-			return simulationTypes.NoOpMsg("orders", "cancel", "define+make failed"), nil, nil
+		makeMsg, orderID, err := DefineAndMake(context, module, from, to, rand)
+		if err != nil {
+			return simulationModules.RejectionOrError("orders", "cancel", err)
 		}
 
 		cancelMessage := cancel.NewMessage(from.Address, makeMsg.(*make.Message).FromID, orderID)
 		result, err := simulationModules.ExecuteMessage(context, module, cancelMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("orders", "cancel", err.Error()), nil, nil
+			return simulationModules.RejectionOrError("orders", "cancel", err)
 		}
 		return simulationTypes.NewOperationMsg(cancelMessage, true, string(result.Data)), nil, nil
 	}
@@ -144,38 +145,38 @@ func simulateTakeMsg(module helpers.Module) simulationTypes.Operation {
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		makeMsg, orderID := DefineAndMake(context, module, from, to, rand)
-		if makeMsg == nil {
-			return simulationTypes.NoOpMsg("orders", "take", "define+make failed"), nil, nil
+		makeMsg, orderID, err := DefineAndMake(context, module, from, to, rand)
+		if err != nil {
+			return simulationModules.RejectionOrError("orders", "take", err)
 		}
 
 		takeMessage := take.NewMessage(to.Address, makeMsg.(*make.Message).TakerID, math.NewInt(1), orderID)
 		result, err := simulationModules.ExecuteMessage(context, module, takeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("orders", "take", err.Error()), nil, nil
+			return simulationModules.RejectionOrError("orders", "take", err)
 		}
 		return simulationTypes.NewOperationMsg(takeMessage, true, string(result.Data)), nil, nil
 	}
 }
 
 // DefineAndMake defines a new order classification and creates an order under it.
-// Returns the make message and the order ID, or nil on failure.
-func DefineAndMake(context sdkTypes.Context, module helpers.Module, from, to simulationTypes.Account, rand *rand.Rand) (sdkTypes.Msg, ids.OrderID) {
+// Returns the make message and the order ID, or the failure's error.
+func DefineAndMake(context sdkTypes.Context, module helpers.Module, from, to simulationTypes.Account, rand *rand.Rand) (sdkTypes.Msg, ids.OrderID, error) {
 	identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
 	if err != nil {
-		return nil, nil
+		return nil, nil, err
 	}
 	fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
 	toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
 	if err != nil {
-		return nil, nil
+		return nil, nil, err
 	}
 	toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 
 	assetIDString, err := simulationModules.LookupAssetID(from.Address.String())
 	if err != nil {
-		return nil, nil
+		return nil, nil, err
 	}
 	assetID, _ := baseIDs.PrototypeAssetID().FromString(assetIDString)
 
@@ -190,18 +191,28 @@ func DefineAndMake(context sdkTypes.Context, module helpers.Module, from, to sim
 	// transfers `order.GetTakerSplit()` of takerAssetID from taker to maker.
 	// Prototype's zero data causes the transfer aux to error with
 	// "value must be greater than zero".
-	// BondAmountProperty: make keeper line 109 requires it in mutables, and
-	// classifications/auxiliaries/define adds it to the on-chain classification
-	// when missing — so local classificationID must include it to match.
+	// BondAmountProperty: the make keeper requires it revealed in mutables, and
+	// its value must cover rate*totalWeight for any genesis bond rate; the
+	// orders define keeper adds the order constants below before weighing.
 	revealedTakerSplit := baseProperties.NewMetaProperty(constantProperties.TakerSplitProperty.GetKey(), baseData.NewNumberData(math.NewInt(1)))
+	bondProperty := baseProperties.NewMetaProperty(
+		constantProperties.BondAmountProperty.GetKey(),
+		baseData.NewNumberData(simulationModules.SumBondWeights(
+			[][]properties.AnyProperty{immMetaSnap, immSnap, mutMetaSnap, mutSnap},
+			constantProperties.TakerSplitProperty, constantProperties.BondAmountProperty,
+			constantProperties.ExchangeRateProperty, constantProperties.CreationHeightProperty,
+			constantProperties.MakerAssetIDProperty, constantProperties.TakerAssetIDProperty,
+			constantProperties.MakerIDProperty, constantProperties.TakerIDProperty,
+			constantProperties.ExpiryHeightProperty, constantProperties.MakerSplitProperty,
+		).MulRaw(simulationModules.MaxBondRate)))
 	defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID),
 		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...),
 		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immSnap...)...),
-		baseLists.NewPropertyList(revealedTakerSplit, constantProperties.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
+		baseLists.NewPropertyList(revealedTakerSplit, bondProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
 		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(mutSnap...)...))
 	_, err = simulationModules.ExecuteMessage(context, module, defineMessage.(helpers.Message))
 	if err != nil {
-		return nil, nil
+		return nil, nil, err
 	}
 
 	// Compute classificationID with keeper-added properties (fresh lists).
@@ -211,7 +222,7 @@ func DefineAndMake(context sdkTypes.Context, module helpers.Module, from, to sim
 			constantProperties.MakerAssetIDProperty, constantProperties.TakerAssetIDProperty,
 			constantProperties.MakerIDProperty, constantProperties.TakerIDProperty))
 	mutables := baseQualified.NewMutables(
-		baseLists.NewPropertyList(revealedTakerSplit, constantProperties.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...).Add(baseLists.AnyPropertiesToProperties(mutSnap...)...).Add(
+		baseLists.NewPropertyList(revealedTakerSplit, bondProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...).Add(baseLists.AnyPropertiesToProperties(mutSnap...)...).Add(
 			constantProperties.ExpiryHeightProperty, constantProperties.MakerSplitProperty))
 	classificationID := baseIDs.NewClassificationID(immutables, mutables)
 
@@ -220,18 +231,18 @@ func DefineAndMake(context sdkTypes.Context, module helpers.Module, from, to sim
 		baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), baseTypesGo.NewHeight(int64(rand.Intn(100)+10)), math.NewInt(1), math.NewInt(1),
 		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...),
 		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immSnap...)...),
-		baseLists.NewPropertyList(revealedTakerSplit, constantProperties.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
+		baseLists.NewPropertyList(revealedTakerSplit, bondProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
 		baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(mutSnap...)...))
 	result, err := simulationModules.ExecuteMessage(context, module, makeMsg.(helpers.Message))
 	if err != nil {
-		return nil, nil
+		return nil, nil, err
 	}
 
 	// Parse orderID from response (keeper computes it from runtime data values
 	// like ExchangeRate/CreationHeight; local immutables don't have those).
 	orderIDProto, _ := baseIDs.PrototypeOrderID().FromString(string(result.Data))
 	orderID, _ := orderIDProto.(ids.OrderID)
-	return makeMsg, orderID
+	return makeMsg, orderID, nil
 }
 
 func GetMakeMessage(from, to simulationTypes.Account, rand *rand.Rand) sdkTypes.Msg {
@@ -294,9 +305,9 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 
 		// Define a new classification (creates maintainer with super permissions),
 		// then deputize the `to` identity under it.
-		makeMsg, _ := DefineAndMake(context, module, from, to, rand)
-		if makeMsg == nil {
-			return simulationTypes.NoOpMsg("orders", "deputize", "define+make failed"), nil, nil
+		makeMsg, _, err := DefineAndMake(context, module, from, to, rand)
+		if err != nil {
+			return simulationModules.RejectionOrError("orders", "deputize", err)
 		}
 
 		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
@@ -320,13 +331,13 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID, baseLists.NewPropertyList(), true, true, true, true, true)
 		_, err = simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("orders", "deputize", err.Error()), nil, nil
+			return simulationModules.RejectionOrError("orders", "deputize", err)
 		}
 
 		revokeMessage := revoke.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID)
 		result, err := simulationModules.ExecuteMessage(context, module, revokeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("orders", "revoke", err.Error()), nil, nil
+			return simulationModules.RejectionOrError("orders", "revoke", err)
 		}
 		return simulationTypes.NewOperationMsg(revokeMessage, true, string(result.Data)), nil, nil
 	}
@@ -336,15 +347,15 @@ func simulateGetMsg(module helpers.Module) simulationTypes.Operation {
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		makeMsg, orderID := DefineAndMake(context, module, from, to, rand)
-		if makeMsg == nil {
-			return simulationTypes.NoOpMsg("orders", "get", "define+make failed"), nil, nil
+		makeMsg, orderID, err := DefineAndMake(context, module, from, to, rand)
+		if err != nil {
+			return simulationModules.RejectionOrError("orders", "get", err)
 		}
 
 		getMessage := get.NewMessage(to.Address, makeMsg.(*make.Message).TakerID, orderID)
 		result, err := simulationModules.ExecuteMessage(context, module, getMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("orders", "get", err.Error()), nil, nil
+			return simulationModules.RejectionOrError("orders", "get", err)
 		}
 		return simulationTypes.NewOperationMsg(getMessage, true, string(result.Data)), nil, nil
 	}
@@ -380,16 +391,27 @@ func simulateImmediateMsg(module helpers.Module) simulationTypes.Operation {
 		mutSnap := baseTypes.GenerateRandomPropertyList(rand).Get()
 
 		// TakerSplit revealed with non-zero data — required for downstream
-		// transfers; see DefineAndMake for full explanation.
+		// transfers; bond revealed covering rate*totalWeight for any genesis
+		// bond rate; see DefineAndMake for full explanation.
 		revealedTakerSplit := baseProperties.NewMetaProperty(constantProperties.TakerSplitProperty.GetKey(), baseData.NewNumberData(math.NewInt(1)))
+		bondProperty := baseProperties.NewMetaProperty(
+			constantProperties.BondAmountProperty.GetKey(),
+			baseData.NewNumberData(simulationModules.SumBondWeights(
+				[][]properties.AnyProperty{immMetaSnap, immSnap, mutMetaSnap, mutSnap},
+				constantProperties.TakerSplitProperty, constantProperties.BondAmountProperty,
+				constantProperties.ExchangeRateProperty, constantProperties.CreationHeightProperty,
+				constantProperties.MakerAssetIDProperty, constantProperties.TakerAssetIDProperty,
+				constantProperties.MakerIDProperty, constantProperties.TakerIDProperty,
+				constantProperties.ExpiryHeightProperty, constantProperties.MakerSplitProperty,
+			).MulRaw(simulationModules.MaxBondRate)))
 		defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID),
 			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...),
 			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immSnap...)...),
-			baseLists.NewPropertyList(revealedTakerSplit, constantProperties.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
+			baseLists.NewPropertyList(revealedTakerSplit, bondProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
 			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(mutSnap...)...))
 		_, err = simulationModules.ExecuteMessage(context, module, defineMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("orders", "immediate", "define failed"), nil, nil
+			return simulationModules.RejectionOrError("orders", "immediate", err)
 		}
 
 		immutables := baseQualified.NewImmutables(
@@ -398,7 +420,7 @@ func simulateImmediateMsg(module helpers.Module) simulationTypes.Operation {
 				constantProperties.MakerAssetIDProperty, constantProperties.TakerAssetIDProperty,
 				constantProperties.MakerIDProperty, constantProperties.TakerIDProperty))
 		mutables := baseQualified.NewMutables(
-			baseLists.NewPropertyList(revealedTakerSplit, constantProperties.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...).Add(baseLists.AnyPropertiesToProperties(mutSnap...)...).Add(
+			baseLists.NewPropertyList(revealedTakerSplit, bondProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...).Add(baseLists.AnyPropertiesToProperties(mutSnap...)...).Add(
 				constantProperties.ExpiryHeightProperty, constantProperties.MakerSplitProperty))
 		classificationID := baseIDs.NewClassificationID(immutables, mutables)
 
@@ -406,11 +428,11 @@ func simulateImmediateMsg(module helpers.Module) simulationTypes.Operation {
 			baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), baseTypesGo.NewHeight(int64(rand.Intn(100)+10)), math.NewInt(1), math.NewInt(1),
 			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immMetaSnap...)...),
 			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(immSnap...)...),
-			baseLists.NewPropertyList(revealedTakerSplit, constantProperties.BondAmountProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
+			baseLists.NewPropertyList(revealedTakerSplit, bondProperty).Add(baseLists.AnyPropertiesToProperties(mutMetaSnap...)...),
 			baseLists.NewPropertyList(baseLists.AnyPropertiesToProperties(mutSnap...)...))
 		result, err := simulationModules.ExecuteMessage(context, module, immediateMsg.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("orders", "immediate", err.Error()), nil, nil
+			return simulationModules.RejectionOrError("orders", "immediate", err)
 		}
 		return simulationTypes.NewOperationMsg(immediateMsg, true, string(result.Data)), nil, nil
 	}
@@ -420,9 +442,9 @@ func simulateModifyMsg(module helpers.Module) simulationTypes.Operation {
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		makeMsg, orderID := DefineAndMake(context, module, from, to, rand)
-		if makeMsg == nil {
-			return simulationTypes.NoOpMsg("orders", "modify", "define+make failed"), nil, nil
+		makeMsg, orderID, err := DefineAndMake(context, module, from, to, rand)
+		if err != nil {
+			return simulationModules.RejectionOrError("orders", "modify", err)
 		}
 
 		identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
@@ -434,7 +456,7 @@ func simulateModifyMsg(module helpers.Module) simulationTypes.Operation {
 		modifyMessage := modify.NewMessage(from.Address, fromID.(ids.IdentityID), orderID, math.NewInt(1), math.NewInt(1), baseTypesGo.NewHeight(int64(rand.Intn(100)+10)), makeMsg.(*make.Message).MutableMetaProperties, makeMsg.(*make.Message).MutableProperties)
 		result, err := simulationModules.ExecuteMessage(context, module, modifyMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("orders", "modify", err.Error()), nil, nil
+			return simulationModules.RejectionOrError("orders", "modify", err)
 		}
 		return simulationTypes.NewOperationMsg(modifyMessage, true, string(result.Data)), nil, nil
 	}
@@ -459,7 +481,7 @@ func simulatePutMsg(module helpers.Module) simulationTypes.Operation {
 		message := put.NewMessage(from.Address, fromID.(ids.IdentityID), assetID.(ids.AssetID), baseDocuments.NewCoinAsset("stake").GetCoinAssetID(), math.NewInt(1), math.NewInt(1), expiryHeight)
 		result, err := simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
+			return simulationModules.RejectionOrError("orders", "put", err)
 		}
 		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
 	}

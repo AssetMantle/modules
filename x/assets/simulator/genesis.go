@@ -29,13 +29,20 @@ import (
 )
 
 func (simulator) RandomizedGenesisState(simulationState *module.SimulationState) {
-	var Data data.Data
+	var mintEnabledData data.Data
+	simulationState.AppParams.GetOrGenerate(
+		mint_enabled.ID.AsString(),
+		&mintEnabledData,
+		simulationState.Rand,
+		func(rand *rand.Rand) { mintEnabledData = baseData.NewBooleanData(rand.Intn(2) == 0) },
+	)
 
+	var burnEnabledData data.Data
 	simulationState.AppParams.GetOrGenerate(
 		burn_enabled.ID.AsString(),
-		&Data,
+		&burnEnabledData,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = baseData.NewBooleanData(true) },
+		func(rand *rand.Rand) { burnEnabledData = baseData.NewBooleanData(rand.Intn(2) == 0) },
 	)
 
 	records := make([]helpers.Record, len(simulationState.Accounts))
@@ -56,7 +63,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		assets.AddMappableBytes(classificationID.AsString(), baseHelpers.CodecPrototype().MustMarshal(mappable.NewMappable(asset)))
 	}
 
-	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(mint_enabled.Parameter.Mutate(Data)))
+	genesisState := genesis.Prototype().Initialize(records, baseLists.NewParameterList(mint_enabled.Parameter.Mutate(mintEnabledData), burn_enabled.Parameter.Mutate(burnEnabledData)))
 
 	simulationState.GenState[constants.ModuleName] = baseHelpers.CodecPrototype().MustMarshalJSON(genesisState)
 }

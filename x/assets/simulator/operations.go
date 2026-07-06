@@ -36,8 +36,6 @@ import (
 func (simulator) WeightedOperations(simulationState module.SimulationState, module helpers.Module) simulation.WeightedOperations {
 	var weightMsg int
 
-	simulationModules.SimTxConfig = simulationState.TxConfig
-
 	simulationState.AppParams.GetOrGenerate(OpWeightMsg, &weightMsg, nil,
 		func(_ *rand.Rand) {
 			weightMsg = DefaultWeightMsg
@@ -47,35 +45,35 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 	return simulation.WeightedOperations{
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateDefineMsg(module)),
+			simulationModules.SafeOperation("assets/define", simulateDefineMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateMintMsg(module)),
+			simulationModules.SafeOperation("assets/mint", simulateMintMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateBurnMsg(module)),
+			simulationModules.SafeOperation("assets/burn", simulateBurnMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateRenumerateMsg(module)),
+			simulationModules.SafeOperation("assets/renumerate", simulateRenumerateMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateDeputizeAndRevokeMsg(module)),
+			simulationModules.SafeOperation("assets/deputizeAndRevoke", simulateDeputizeAndRevokeMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateMutateMsg(module)),
+			simulationModules.SafeOperation("assets/mutate", simulateMutateMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateSendMsg(module)),
+			simulationModules.SafeOperation("assets/send", simulateSendMsg(module)),
 		),
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateWrapAndUnwrapMsg(module)),
+			simulationModules.SafeOperation("assets/wrapAndUnwrap", simulateWrapAndUnwrapMsg(module)),
 		),
 	}
 }
@@ -91,7 +89,7 @@ func simulateDefineMsg(module helpers.Module) simulationTypes.Operation {
 		message := GenerateDefineMessage(account.Address, identityID.(ids.IdentityID), rand).(*define.Message)
 		result, err := simulationModules.ExecuteMessage(context, module, message)
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
+			return simulationModules.RejectionOrError("assets", "define", err)
 		}
 		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
 	}
@@ -101,9 +99,9 @@ func simulateMintMsg(module helpers.Module) simulationTypes.Operation {
 		from, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 		to, _ := simulationTypes.RandomAcc(rand, simulationAccountList)
 
-		mintMsg, _ := DefineAndMint(context, module, from, to, rand)
-		if mintMsg == nil {
-			return simulationTypes.NoOpMsg("assets", "mint", "define+mint failed"), nil, nil
+		mintMsg, _, err := DefineAndMint(context, module, from, to, rand)
+		if err != nil {
+			return simulationModules.RejectionOrError("assets", "mint", err)
 		}
 		return simulationTypes.NewOperationMsg(mintMsg, true, ""), nil, nil
 	}
@@ -119,15 +117,15 @@ func simulateRenumerateMsg(module helpers.Module) simulationTypes.Operation {
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		_, assetID := DefineAndMint(context, module, from, to, rand)
-		if assetID == nil {
-			return simulationTypes.NoOpMsg("assets", "renumerate", "define+mint failed"), nil, nil
+		_, assetID, err := DefineAndMint(context, module, from, to, rand)
+		if err != nil {
+			return simulationModules.RejectionOrError("assets", "renumerate", err)
 		}
 
 		renumerateMessage := renumerate.NewMessage(from.Address, fromID.(ids.IdentityID), assetID)
 		result, err := simulationModules.ExecuteMessage(context, module, renumerateMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("assets", "renumerate", err.Error()), nil, nil
+			return simulationModules.RejectionOrError("assets", "renumerate", err)
 		}
 		return simulationTypes.NewOperationMsg(renumerateMessage, true, string(result.Data)), nil, nil
 	}
@@ -142,15 +140,15 @@ func simulateBurnMsg(module helpers.Module) simulationTypes.Operation {
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		_, assetID := DefineAndMint(context, module, from, from, rand)
-		if assetID == nil {
-			return simulationTypes.NoOpMsg("assets", "burn", "define+mint failed"), nil, nil
+		_, assetID, err := DefineAndMint(context, module, from, from, rand)
+		if err != nil {
+			return simulationModules.RejectionOrError("assets", "burn", err)
 		}
 
 		burnMessage := burn.NewMessage(from.Address, fromID.(ids.IdentityID), assetID)
 		result, err := simulationModules.ExecuteMessage(context, module, burnMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("assets", "burn", err.Error()), nil, nil
+			return simulationModules.RejectionOrError("assets", "burn", err)
 		}
 		return simulationTypes.NewOperationMsg(burnMessage, true, string(result.Data)), nil, nil
 	}
@@ -172,9 +170,9 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		}
 		toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 
-		mintMsg, _ := DefineAndMint(context, module, from, to, rand)
-		if mintMsg == nil {
-			return simulationTypes.NoOpMsg("assets", "deputize", "define+mint failed"), nil, nil
+		mintMsg, _, err := DefineAndMint(context, module, from, to, rand)
+		if err != nil {
+			return simulationModules.RejectionOrError("assets", "deputize", err)
 		}
 
 		mintMessage := mintMsg.(*mint.Message)
@@ -185,13 +183,13 @@ func simulateDeputizeAndRevokeMsg(module helpers.Module) simulationTypes.Operati
 		deputizeMessage := deputize.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID, baseLists.NewPropertyList(), true, true, true, true, true, true)
 		_, err = simulationModules.ExecuteMessage(context, module, deputizeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("assets", "deputize", err.Error()), nil, nil
+			return simulationModules.RejectionOrError("assets", "deputize", err)
 		}
 
 		revokeMessage := revoke.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID)
 		result, err := simulationModules.ExecuteMessage(context, module, revokeMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("assets", "revoke", err.Error()), nil, nil
+			return simulationModules.RejectionOrError("assets", "revoke", err)
 		}
 		return simulationTypes.NewOperationMsg(revokeMessage, true, string(result.Data)), nil, nil
 	}
@@ -207,9 +205,9 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 		}
 		fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
-		_, assetID := DefineAndMint(context, module, from, to, rand)
-		if assetID == nil {
-			return simulationTypes.NoOpMsg("assets", "mutate", "define+mint failed"), nil, nil
+		_, assetID, err := DefineAndMint(context, module, from, to, rand)
+		if err != nil {
+			return simulationModules.RejectionOrError("assets", "mutate", err)
 		}
 
 		// Pass empty property lists — the mutate keeper validates authentication
@@ -217,7 +215,7 @@ func simulateMutateMsg(module helpers.Module) simulationTypes.Operation {
 		mutateMessage := mutate.NewMessage(from.Address, fromID.(ids.IdentityID), assetID, baseLists.NewPropertyList(), baseLists.NewPropertyList())
 		result, err := simulationModules.ExecuteMessage(context, module, mutateMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NoOpMsg("assets", "mutate", err.Error()), nil, nil
+			return simulationModules.RejectionOrError("assets", "mutate", err)
 		}
 		return simulationTypes.NewOperationMsg(mutateMessage, true, string(result.Data)), nil, nil
 	}
@@ -227,17 +225,17 @@ func GenerateDefineMessage(from sdkTypes.AccAddress, identityID ids.IdentityID, 
 	return define.NewMessage(from, identityID, baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r), baseTypes.GenerateRandomMetaPropertyList(r), baseTypes.GenerateRandomPropertyList(r)).(helpers.Message)
 }
 // DefineAndMint defines a new classification and mints an asset under it.
-// Returns the mint message and the minted asset ID, or nil on failure.
-func DefineAndMint(context sdkTypes.Context, module helpers.Module, from, to simulationTypes.Account, rand *rand.Rand) (sdkTypes.Msg, ids.AssetID) {
+// Returns the mint message and the minted asset ID, or the failure's error.
+func DefineAndMint(context sdkTypes.Context, module helpers.Module, from, to simulationTypes.Account, rand *rand.Rand) (sdkTypes.Msg, ids.AssetID, error) {
 	identityIDString, err := simulationModules.LookupIdentityID(from.Address.String())
 	if err != nil {
-		return nil, nil
+		return nil, nil, err
 	}
 	fromID, _ := baseIDs.PrototypeIdentityID().FromString(identityIDString)
 
 	toIdentityIDString, err := simulationModules.LookupIdentityID(to.Address.String())
 	if err != nil {
-		return nil, nil
+		return nil, nil, err
 	}
 	toID, _ := baseIDs.PrototypeIdentityID().FromString(toIdentityIDString)
 
@@ -249,7 +247,7 @@ func DefineAndMint(context sdkTypes.Context, module helpers.Module, from, to sim
 	defineMessage := define.NewMessage(from.Address, fromID.(ids.IdentityID), immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
 	_, err = simulationModules.ExecuteMessage(context, module, defineMessage.(helpers.Message))
 	if err != nil {
-		return nil, nil
+		return nil, nil, err
 	}
 
 	immutables := baseQualified.NewImmutables(immutableMetaProps.Add(baseLists.AnyPropertiesToProperties(immutableProps.Get()...)...))
@@ -260,10 +258,10 @@ func DefineAndMint(context sdkTypes.Context, module helpers.Module, from, to sim
 	mintMsg := mint.NewMessage(from.Address, fromID.(ids.IdentityID), toID.(ids.IdentityID), classificationID, immutableMetaProps, immutableProps, mutableMetaProps, mutableProps)
 	_, err = simulationModules.ExecuteMessage(context, module, mintMsg.(helpers.Message))
 	if err != nil {
-		return nil, nil
+		return nil, nil, err
 	}
 
-	return mintMsg, assetID
+	return mintMsg, assetID, nil
 }
 
 func simulateSendMsg(module helpers.Module) simulationTypes.Operation {
@@ -296,7 +294,7 @@ func simulateSendMsg(module helpers.Module) simulationTypes.Operation {
 
 		result, err = simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
+			return simulationModules.RejectionOrError("assets", "send", err)
 		}
 		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
 	}
@@ -318,14 +316,14 @@ func simulateWrapAndUnwrapMsg(module helpers.Module) simulationTypes.Operation {
 
 		result, err = simulationModules.ExecuteMessage(context, module, wrapMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(wrapMessage, false, err.Error()), nil, nil
+			return simulationModules.RejectionOrError("assets", "wrap", err)
 		}
 
 		unwrapMessage := unwrap.NewMessage(from.Address, fromID.(ids.IdentityID), sdkTypes.NewCoins(sdkTypes.NewCoin("stake", math.NewInt(1))))
 
 		result, err = simulationModules.ExecuteMessage(context, module, unwrapMessage.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(unwrapMessage, false, err.Error()), nil, nil
+			return simulationModules.RejectionOrError("assets", "unwrap", err)
 		}
 		return simulationTypes.NewOperationMsg(unwrapMessage, true, string(result.Data)), nil, nil
 	}

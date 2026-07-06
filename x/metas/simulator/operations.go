@@ -29,7 +29,7 @@ func (simulator) WeightedOperations(simulationState module.SimulationState, modu
 	return simulation.WeightedOperations{
 		simulation.NewWeightedOperation(
 			weightMsg,
-			simulationModules.SafeOperation(simulateRevealMsg(module)),
+			simulationModules.SafeOperation("metas/reveal", simulateRevealMsg(module)),
 		),
 	}
 }
@@ -40,7 +40,7 @@ func simulateRevealMsg(module helpers.Module) simulationTypes.Operation {
 		message := reveal.NewMessage(from.Address, base2.GenerateRandomData(rand, rand.Int()))
 		result, err := simulationModules.ExecuteMessage(context, module, message.(helpers.Message))
 		if err != nil {
-			return simulationTypes.NewOperationMsg(message, false, err.Error()), nil, nil
+			return simulationModules.RejectionOrError("metas", "reveal", err)
 		}
 		return simulationTypes.NewOperationMsg(message, true, string(result.Data)), nil, nil
 	}

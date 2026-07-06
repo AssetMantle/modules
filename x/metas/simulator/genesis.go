@@ -27,7 +27,7 @@ func (simulator) RandomizedGenesisState(simulationState *module.SimulationState)
 		reveal_enabled.ID.AsString(),
 		&Data,
 		simulationState.Rand,
-		func(rand *rand.Rand) { Data = baseData.NewBooleanData(true) },
+		func(rand *rand.Rand) { Data = baseData.NewBooleanData(rand.Intn(2) == 0) },
 	)
 
 	records := make([]helpers.Record, simulationState.Rand.Intn(99))

@@ -8,12 +8,14 @@ import (
 	"math/rand"
 	"testing"
 
-	baseQualified "github.com/AssetMantle/schema/qualified/base"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
+	sdkErrors "github.com/cosmos/cosmos-sdk/types/errors"
 	simulationTypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 )
 
 func TestGenerateRandomAddresses(t *testing.T) {
@@ -38,18 +40,19 @@ func TestRandomBool(t *testing.T) {
 	})
 }
 
-func TestSafeOperation_RecoversPanic(t *testing.T) {
+func TestSafeOperation_PanicReturnsError(t *testing.T) {
 	panickingOp := func(_ *rand.Rand, _ *baseapp.BaseApp, _ sdkTypes.Context, _ []simulationTypes.Account, _ string) (simulationTypes.OperationMsg, []simulationTypes.FutureOperation, error) {
 		panic("test panic")
 	}
 
-	safeOp := SafeOperation(panickingOp)
+	safeOp := SafeOperation("assets/define", panickingOp)
 	msg, futures, err := safeOp(rand.New(rand.NewSource(1)), nil, sdkTypes.Context{}, nil, "test-chain")
 
-	require.NoError(t, err)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "test panic")
+	assert.Contains(t, err.Error(), "assets/define")
 	assert.Nil(t, futures)
 	assert.False(t, msg.OK)
-	assert.Contains(t, msg.Comment, "test panic")
 }
 
 func TestSafeOperation_PassesThrough(t *testing.T) {
@@ -58,7 +61,7 @@ func TestSafeOperation_PassesThrough(t *testing.T) {
 		return expectedMsg, nil, nil
 	}
 
-	safeOp := SafeOperation(normalOp)
+	safeOp := SafeOperation("test/route", normalOp)
 	msg, futures, err := safeOp(rand.New(rand.NewSource(1)), nil, sdkTypes.Context{}, nil, "test-chain")
 
 	require.NoError(t, err)
@@ -78,39 +81,45 @@ func TestExecuteMessage_NilMessage(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestCalculateBondAmount_NonNil(t *testing.T) {
-	immutables := baseQualified.NewImmutables(nil)
-	mutables := baseQualified.NewMutables(nil)
+func TestIsBusinessRejection(t *testing.T) {
+	testCases := []struct {
+		name string
+		err  error
+		want bool
+	}{
+		{"gate disabled", errorConstants.NotAuthorized.Wrapf("minting is not enabled"), true},
+		{"split exhausted", errorConstants.InsufficientBalance.Wrapf("1 is less then 2"), true},
+		{"random collision", errorConstants.EntityAlreadyExists.Wrapf("name identity with ID x already exists"), true},
+		{"missing random state", errorConstants.EntityNotFound.Wrapf("split with ID x not found"), true},
+		{"bank cannot afford bond", sdkErrors.ErrInsufficientFunds.Wrapf("spendable balance too low"), true},
+		{"property cap exceeded", errorConstants.InvalidRequest.Wrapf("total property count 30 exceeds maximum 12"), true},
+		{"sim db miss", ErrSimDBMiss, true},
+		{"bond below minimum is a bug", errorConstants.InvalidRequest.Wrapf("bound amount is less than min allowed 10"), false},
+		{"generic error is a bug", fmt.Errorf("boom"), false},
+	}
 
-	result := CalculateBondAmount(immutables, mutables)
-	require.NotNil(t, result)
-	assert.NotNil(t, result.Get())
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			assert.Equal(t, testCase.want, IsBusinessRejection(testCase.err))
+		})
+	}
 }
 
-func TestGetGenesisProperties_NonNil(t *testing.T) {
-	// Reset global state for test isolation
-	Immutables = &baseQualified.Immutables{}
-	Mutables = &baseQualified.Mutables{}
+func TestRejectionOrError(t *testing.T) {
+	t.Run("business rejection becomes NoOp with nil error", func(t *testing.T) {
+		msg, futures, err := RejectionOrError("assets", "mint", errorConstants.NotAuthorized.Wrapf("minting is not enabled"))
+		require.NoError(t, err)
+		assert.Nil(t, futures)
+		assert.False(t, msg.OK)
+		assert.Contains(t, msg.Comment, "minting is not enabled")
+	})
 
-	r := rand.New(rand.NewSource(42))
-	imm, mut := GetGenesisProperties(r)
-
-	require.NotNil(t, imm)
-	require.NotNil(t, mut)
-	assert.NotNil(t, imm.GetImmutablePropertyList())
-	assert.NotNil(t, mut.GetMutablePropertyList())
-}
-
-func TestGetGenesisProperties_Idempotent(t *testing.T) {
-	// Reset global state
-	Immutables = &baseQualified.Immutables{}
-	Mutables = &baseQualified.Mutables{}
-
-	r := rand.New(rand.NewSource(42))
-	imm1, mut1 := GetGenesisProperties(r)
-	imm2, mut2 := GetGenesisProperties(r)
-
-	// Second call returns cached values (PropertyList already non-nil)
-	assert.Equal(t, fmt.Sprintf("%v", imm1), fmt.Sprintf("%v", imm2))
-	assert.Equal(t, fmt.Sprintf("%v", mut1), fmt.Sprintf("%v", mut2))
+	t.Run("delivery bug propagates the error", func(t *testing.T) {
+		bug := fmt.Errorf("no matching transaction for message")
+		msg, futures, err := RejectionOrError("assets", "mint", bug)
+		require.Error(t, err)
+		assert.Equal(t, bug, err)
+		assert.Nil(t, futures)
+		assert.False(t, msg.OK)
+	})
 }
