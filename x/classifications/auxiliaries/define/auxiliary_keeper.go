@@ -81,7 +81,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 		return NewAuxiliaryResponse(classificationID), errorConstants.EntityAlreadyExists.Wrapf("classification with ID %s already exists", classificationID.AsString())
 	}
 
-	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.AccAddress, constants.ModuleName, sdkTypes.NewCoins(sdkTypes.NewCoin(func() string { d, _ := auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)); return d }(), bondAmount.Get()))); err != nil {
+	bondDenom, errBondDenom := auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context))
+	if errBondDenom != nil {
+		return nil, errBondDenom
+	}
+	if err := auxiliaryKeeper.bankKeeper.SendCoinsFromAccountToModule(sdkTypes.UnwrapSDKContext(context), auxiliaryRequest.AccAddress, constants.ModuleName, sdkTypes.NewCoins(sdkTypes.NewCoin(bondDenom, bondAmount.Get()))); err != nil {
 		return nil, err
 	}
 

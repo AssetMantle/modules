@@ -32,7 +32,11 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, AuxiliaryRe
 		return nil, err
 	}
 
-	if err := auxiliaryKeeper.bankKeeper.BurnCoins(sdkTypes.UnwrapSDKContext(context), constants.ModuleName, sdkTypes.NewCoins(sdkTypes.NewCoin(func() string { d, _ := auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context)); return d }(), auxiliaryRequest.bondAmount))); err != nil {
+	bondDenom, errBondDenom := auxiliaryKeeper.stakingKeeper.BondDenom(sdkTypes.UnwrapSDKContext(context))
+	if errBondDenom != nil {
+		return nil, errBondDenom
+	}
+	if err := auxiliaryKeeper.bankKeeper.BurnCoins(sdkTypes.UnwrapSDKContext(context), constants.ModuleName, sdkTypes.NewCoins(sdkTypes.NewCoin(bondDenom, auxiliaryRequest.bondAmount))); err != nil {
 		return nil, err
 	}
 

@@ -66,6 +66,9 @@ type testSetup struct {
 	mesaLockAssetID                    *baseIDs.AssetID
 	unrevealedLockAssetID              *baseIDs.AssetID
 	transferAuxiliaryFailureAssetID    *baseIDs.AssetID
+	complianceAuxiliaryKeeper          *testutil.MockAuxiliaryKeeper
+	tierBlockedAssetID                 *baseIDs.AssetID
+	tierAllowedAssetID                 *baseIDs.AssetID
 }
 
 func setupTest(t *testing.T) *testSetup {
@@ -115,6 +118,18 @@ func setupTest(t *testing.T) *testSetup {
 	transferAuxiliaryAuxiliary := new(testutil.MockAuxiliary)
 	transferAuxiliaryAuxiliary.On("GetKeeper").Return(transferAuxiliaryKeeper)
 
+	// requiredTier 2 is rejected by the mock, requiredTier 1 passes; assets without requirement properties must never reach the auxiliary
+	tierBlockedAsset := randomAssetGenerator(baseProperties.NewMetaProperty(constantProperties.RequiredComplianceTierProperty.GetKey(), baseData.NewNumberData(math.NewInt(2))), nil)
+	tierBlockedAssetID := baseIDs.NewAssetID(tierBlockedAsset.GetClassificationID(), tierBlockedAsset.GetImmutables()).(*baseIDs.AssetID)
+	tierAllowedAsset := randomAssetGenerator(baseProperties.NewMetaProperty(constantProperties.RequiredComplianceTierProperty.GetKey(), baseData.NewNumberData(math.NewInt(1))), nil)
+	tierAllowedAssetID := baseIDs.NewAssetID(tierAllowedAsset.GetClassificationID(), tierAllowedAsset.GetImmutables()).(*baseIDs.AssetID)
+
+	complianceAuxiliaryKeeper := new(testutil.MockAuxiliaryKeeper)
+	complianceAuxiliaryKeeper.On("Help", mock.Anything, compliance.NewAuxiliaryRequest(baseIDs.PrototypeIdentityID(), math.NewInt(2), "", false)).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError)
+	complianceAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
+	complianceAuxiliaryAuxiliary := new(testutil.MockAuxiliary)
+	complianceAuxiliaryAuxiliary.On("GetKeeper").Return(complianceAuxiliaryKeeper)
+
 	paramsStoreKey := storeTypes.NewKVStoreKey("params")
 
 	ctx := testutil.NewTestContext(t, moduleStoreKey, paramsStoreKey)
@@ -126,7 +141,7 @@ func setupTest(t *testing.T) *testSetup {
 		Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.RenumerateEnabledProperty.GetKey(), baseData.NewBooleanData(true)))).
 		Set(base.NewParameter(baseProperties.NewMetaProperty(constantProperties.UnwrapAllowedCoinsProperty.GetKey(), baseData.NewListData(baseData.NewStringData(testutil.Denom)))))
 
-	TransactionKeeper := transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager, authenticateAuxiliary, nil, supplementAuxiliaryAuxiliary, transferAuxiliaryAuxiliary}
+	TransactionKeeper := transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager, authenticateAuxiliary, complianceAuxiliaryAuxiliary, supplementAuxiliaryAuxiliary, transferAuxiliaryAuxiliary}
 
 	TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(ctx)).
 		Add(record.NewRecord(asset)).
@@ -135,7 +150,9 @@ func setupTest(t *testing.T) *testSetup {
 		Add(record.NewRecord(immutableLockAsset)).
 		Add(record.NewRecord(mutableLockAsset)).
 		Add(record.NewRecord(mesaLockAsset)).
-		Add(record.NewRecord(unrevealedLockAsset))
+		Add(record.NewRecord(unrevealedLockAsset)).
+		Add(record.NewRecord(tierBlockedAsset)).
+		Add(record.NewRecord(tierAllowedAsset))
 
 	return &testSetup{
 		Context:                            ctx,
@@ -149,6 +166,9 @@ func setupTest(t *testing.T) *testSetup {
 		mesaLockAssetID:                    mesaLockAssetID,
 		unrevealedLockAssetID:              unrevealedLockAssetID,
 		transferAuxiliaryFailureAssetID:    transferAuxiliaryFailureAssetID,
+		complianceAuxiliaryKeeper:          complianceAuxiliaryKeeper,
+		tierBlockedAssetID:                 tierBlockedAssetID,
+		tierAllowedAssetID:                 tierAllowedAssetID,
 	}
 }
 
@@ -258,6 +278,20 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			errorConstants.MockError,
 		},
 		{
+			"sendComplianceBlocked",
+			args{fromAddress, s.tierBlockedAssetID, 1},
+			func() {},
+			nil,
+			errorConstants.MockError,
+		},
+		{
+			"sendComplianceAllowed",
+			args{fromAddress, s.tierAllowedAssetID, 1},
+			func() {},
+			newTransactionResponse(),
+			nil,
+		},
+		{
 			"sendInMultiAssetScenario",
 			args{fromAddress, assetID, 1},
 			func() {
@@ -284,6 +318,16 @@ func TestTransactionKeeperTransact(t *testing.T) {
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func TestTransactionKeeperTransactSkipsComplianceWithoutRequirements(t *testing.T) {
+	s := setupTest(t)
+
+	got, err := s.TransactionKeeper.Transact(sdkTypes.WrapSDKContext(s.Context), NewMessage(fromAddress, baseIDs.PrototypeIdentityID(), baseIDs.PrototypeIdentityID(), assetID, math.NewInt(1)).(helpers.Message))
+
+	require.NoError(t, err)
+	assert.Equal(t, newTransactionResponse(), got)
+	s.complianceAuxiliaryKeeper.AssertNotCalled(t, "Help", mock.Anything, mock.Anything)
 }
 
 func Test_keeperPrototype(t *testing.T) {

@@ -18,6 +18,7 @@ type moduleManager struct {
 	basicModules       []helpers.BasicModule
 	orderInitGenesis   []string
 	orderExportGenesis []string
+	orderPreBlockers   []string
 	orderBeginBlockers []string
 	orderEndBlockers   []string
 }
@@ -64,6 +65,13 @@ func (moduleManager moduleManager) GetVersionMap() sdkModuleTypes.VersionMap {
 func (moduleManager moduleManager) RegisterServices(configurator sdkModuleTypes.Configurator) {
 	moduleManager.getManager().RegisterServices(configurator)
 }
+func (moduleManager moduleManager) SetOrderPreBlockers(moduleName ...string) helpers.ModuleManager {
+	sdkModuleManager := moduleManager.getManager()
+	sdkModuleManager.SetOrderPreBlockers(moduleName...)
+	moduleManager.orderPreBlockers = sdkModuleManager.OrderPreBlockers
+
+	return moduleManager
+}
 func (moduleManager moduleManager) SetOrderBeginBlockers(moduleName ...string) helpers.ModuleManager {
 	sdkModuleManager := moduleManager.getManager()
 	sdkModuleManager.SetOrderBeginBlockers(moduleName...)
@@ -92,13 +100,14 @@ func (moduleManager moduleManager) SetOrderExportGenesis(moduleName ...string) h
 
 	return moduleManager
 }
-func (moduleManager moduleManager) BeginBlock(context sdkTypes.Context) error {
-	_, err := moduleManager.getManager().BeginBlock(context)
-	return err
+func (moduleManager moduleManager) PreBlock(context sdkTypes.Context) (*sdkTypes.ResponsePreBlock, error) {
+	return moduleManager.getManager().PreBlock(context)
 }
-func (moduleManager moduleManager) EndBlock(context sdkTypes.Context) error {
-	_, err := moduleManager.getManager().EndBlock(context)
-	return err
+func (moduleManager moduleManager) BeginBlock(context sdkTypes.Context) (sdkTypes.BeginBlock, error) {
+	return moduleManager.getManager().BeginBlock(context)
+}
+func (moduleManager moduleManager) EndBlock(context sdkTypes.Context) (sdkTypes.EndBlock, error) {
+	return moduleManager.getManager().EndBlock(context)
 }
 func (moduleManager moduleManager) RunMigrations(context sdkTypes.Context, configurator sdkModuleTypes.Configurator, versionMap sdkModuleTypes.VersionMap) (sdkModuleTypes.VersionMap, error) {
 	return moduleManager.getManager().RunMigrations(context, configurator, versionMap)
@@ -149,6 +158,9 @@ func (moduleManager moduleManager) getManager() *sdkModuleTypes.Manager {
 	}
 	if len(moduleManager.orderExportGenesis) > 0 {
 		manager.SetOrderExportGenesis(moduleManager.orderExportGenesis...)
+	}
+	if len(moduleManager.orderPreBlockers) > 0 {
+		manager.SetOrderPreBlockers(moduleManager.orderPreBlockers...)
 	}
 	if len(moduleManager.orderBeginBlockers) > 0 {
 		manager.SetOrderBeginBlockers(moduleManager.orderBeginBlockers...)

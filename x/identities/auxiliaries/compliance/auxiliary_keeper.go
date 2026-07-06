@@ -6,7 +6,6 @@ import (
 
 	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/documents/base"
-	constantProperties "github.com/AssetMantle/schema/properties/constants"
 	baseTypes "github.com/AssetMantle/schema/types/base"
 
 	"github.com/AssetMantle/modules/helpers"
@@ -83,7 +82,6 @@ func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, auxiliaryRe
 		)
 	}
 
-	_ = constantProperties.ComplianceTierProperty // ensure import used
 
 	return newAuxiliaryResponse(true), nil
 }

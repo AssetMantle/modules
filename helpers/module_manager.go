@@ -31,13 +31,15 @@ type ModuleManager interface {
 	RegisterInterfaces(sdkCodecTypes.InterfaceRegistry)
 	RegisterLegacyAminoCodec(*codec.LegacyAmino)
 
+	SetOrderPreBlockers(...string) ModuleManager
 	SetOrderBeginBlockers(...string) ModuleManager
 	SetOrderEndBlockers(...string) ModuleManager
 	SetOrderInitGenesis(...string) ModuleManager
 	SetOrderExportGenesis(...string) ModuleManager
 
-	BeginBlock(sdkTypes.Context) error
-	EndBlock(sdkTypes.Context) error
+	PreBlock(sdkTypes.Context) (*sdkTypes.ResponsePreBlock, error)
+	BeginBlock(sdkTypes.Context) (sdkTypes.BeginBlock, error)
+	EndBlock(sdkTypes.Context) (sdkTypes.EndBlock, error)
 
 	RunMigrations(sdkTypes.Context, module.Configurator, module.VersionMap) (module.VersionMap, error)
 }

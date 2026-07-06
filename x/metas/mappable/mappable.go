@@ -5,6 +5,7 @@ package mappable
 
 import (
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/data"
 	baseData "github.com/AssetMantle/schema/data/base"
 )
@@ -13,7 +14,7 @@ var _ helpers.Mappable = (*Mappable)(nil)
 
 func (mappable *Mappable) ValidateBasic() error {
 	if mappable.Data == nil {
-		return nil
+		return errorConstants.InvalidRequest.Wrapf("nil data")
 	}
 	return mappable.Data.ValidateBasic()
 }

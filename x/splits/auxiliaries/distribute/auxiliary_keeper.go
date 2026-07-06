@@ -20,6 +20,10 @@ type auxiliaryKeeper struct {
 
 var _ helpers.AuxiliaryKeeper = (*auxiliaryKeeper)(nil)
 
+// Help debits request.FromID by TotalAmount of DistributionID and credits the holders of AssetID pro-rata.
+// It performs NO signer authentication itself: any transaction keeper wiring this auxiliary MUST first
+// authenticate that the message signer is entitled to act as FromID (authenticate auxiliary), as the
+// other value-moving auxiliaries require.
 func (auxiliaryKeeper auxiliaryKeeper) Help(context context.Context, auxiliaryRequestI helpers.AuxiliaryRequest) (helpers.AuxiliaryResponse, error) {
 	request, ok := auxiliaryRequestI.(auxiliaryRequest)
 	if !ok {

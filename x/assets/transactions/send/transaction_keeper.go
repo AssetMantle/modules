@@ -104,14 +104,39 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 		return nil, errorConstants.NotAuthorized.Wrapf("transfer is not allowed until height %d", lockHeight.Get())
 	}
 
-	// RWA Compliance: check receiver identity meets compliance requirements
-	// Uses tier 0 (no restriction) by default — classifications can set higher tiers
-	if transactionKeeper.complianceAuxiliary != nil {
+	// RWA compliance requirements are read from the asset itself; absent or zero-valued requirements skip the check entirely, preserving legacy send behavior
+	requiredTier := math.ZeroInt()
+	requiredJurisdiction := ""
+	requireSanctionsCleared := false
+
+	if property := asset.GetProperty(propertyConstants.RequiredComplianceTierProperty.GetID()); property != nil {
+		Data, err := transactionKeeper.revealedData(context, property)
+		if err != nil {
+			return nil, err
+		}
+		requiredTier = Data.(data.NumberData).Get()
+	}
+	if property := asset.GetProperty(propertyConstants.RequiredJurisdictionProperty.GetID()); property != nil {
+		Data, err := transactionKeeper.revealedData(context, property)
+		if err != nil {
+			return nil, err
+		}
+		requiredJurisdiction = Data.(data.StringData).Get()
+	}
+	if property := asset.GetProperty(propertyConstants.RequireSanctionsClearedProperty.GetID()); property != nil {
+		Data, err := transactionKeeper.revealedData(context, property)
+		if err != nil {
+			return nil, err
+		}
+		requireSanctionsCleared = Data.(data.BooleanData).Get()
+	}
+
+	if !requiredTier.IsZero() || requiredJurisdiction != "" || requireSanctionsCleared {
 		if _, err := transactionKeeper.complianceAuxiliary.GetKeeper().Help(context, compliance.NewAuxiliaryRequest(
 			message.ToID,
-			math.ZeroInt(), // minimum tier: 0 (no restriction by default)
-			"",             // any jurisdiction
-			false,          // sanctions check not required by default
+			requiredTier,
+			requiredJurisdiction,
+			requireSanctionsCleared,
 		)); err != nil {
 			return nil, err
 		}
@@ -122,6 +147,24 @@ func (transactionKeeper transactionKeeper) Handle(context context.Context, messa
 	}
 
 	return newTransactionResponse(), nil
+}
+
+// revealedData resolves a property's data, unhashing through the supplement auxiliary when it is not carried as a revealed meta property
+func (transactionKeeper transactionKeeper) revealedData(context context.Context, property properties.AnyProperty) (data.Data, error) {
+	if property.IsMeta() {
+		return property.Get().(properties.MetaProperty).GetData().Get(), nil
+	}
+
+	auxiliaryResponse, err := transactionKeeper.supplementAuxiliary.GetKeeper().Help(context, supplement.NewAuxiliaryRequest(property))
+	if err != nil {
+		return nil, err
+	}
+
+	if revealed := supplement.GetMetaPropertiesFromResponse(auxiliaryResponse).GetProperty(property.GetID()); revealed != nil && revealed.IsMeta() {
+		return revealed.Get().(properties.MetaProperty).GetData().Get(), nil
+	}
+
+	return nil, errorConstants.MetaDataError.Wrapf("property %s is not revealed", property.GetID().AsString())
 }
 
 func (transactionKeeper transactionKeeper) Initialize(mapper helpers.Mapper, parameterManager helpers.ParameterManager, auxiliaries []interface{}) helpers.Keeper {

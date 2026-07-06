@@ -3,6 +3,7 @@ package distribute
 import (
 	"cosmossdk.io/math"
 	"github.com/AssetMantle/modules/helpers"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/schema/ids"
 )
 
@@ -15,7 +16,15 @@ type auxiliaryRequest struct {
 
 var _ helpers.AuxiliaryRequest = (*auxiliaryRequest)(nil)
 
-func (auxiliaryRequest) Validate() error {
+func (auxiliaryRequest auxiliaryRequest) Validate() error {
+	if auxiliaryRequest.AssetID == nil || auxiliaryRequest.DistributionID == nil || auxiliaryRequest.FromID == nil {
+		return errorConstants.InvalidRequest.Wrapf("asset ID, distribution ID and from ID must all be set")
+	}
+
+	if auxiliaryRequest.TotalAmount.IsNil() || auxiliaryRequest.TotalAmount.LTE(math.ZeroInt()) {
+		return errorConstants.InvalidParameter.Wrapf("distribution amount must be positive")
+	}
+
 	return nil
 }
 

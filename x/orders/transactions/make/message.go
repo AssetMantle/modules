@@ -64,10 +64,14 @@ func (message *Message) ValidateBasic() error {
 	if err := message.MutableProperties.ValidateBasic(); err != nil {
 		return constants.InvalidMessage.Wrapf(err.Error())
 	}
-	if _, ok := math.NewIntFromString(message.MakerSplit); !ok {
+	if makerSplit, ok := math.NewIntFromString(message.MakerSplit); !ok {
 		return constants.InvalidMessage.Wrapf("maker split %s is not a valid integer", message.MakerSplit)
-	} else if _, ok := math.NewIntFromString(message.TakerSplit); !ok {
+	} else if !makerSplit.IsPositive() {
+		return constants.InvalidMessage.Wrapf("maker split %s must be positive", message.MakerSplit)
+	} else if takerSplit, ok := math.NewIntFromString(message.TakerSplit); !ok {
 		return constants.InvalidMessage.Wrapf("taker split %s is not a valid integer", message.TakerSplit)
+	} else if !takerSplit.IsPositive() {
+		return constants.InvalidMessage.Wrapf("taker split %s must be positive", message.TakerSplit)
 	}
 	return nil
 }
