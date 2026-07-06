@@ -4,156 +4,257 @@
 package take
 
 import (
-	"github.com/AssetMantle/modules/x/orders/mapper"
-	storeTypes "cosmossdk.io/store/types"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers/base/testutil"
-
-	"github.com/stretchr/testify/mock"
-
-	cosmosDB "github.com/cosmos/cosmos-db"
-	"cosmossdk.io/log"
-	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"cosmossdk.io/store"
-	storeMetrics "cosmossdk.io/store/metrics"
-	"github.com/cosmos/cosmos-sdk/types"
+	"cosmossdk.io/math"
+	storeTypes "cosmossdk.io/store/types"
+	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base/testutil"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/classifications/auxiliaries/burn"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/x/orders/constants"
+	"github.com/AssetMantle/modules/x/orders/key"
+	"github.com/AssetMantle/modules/x/orders/mappable"
+	"github.com/AssetMantle/modules/x/orders/mapper"
 	"github.com/AssetMantle/modules/x/orders/parameters"
+	"github.com/AssetMantle/modules/x/orders/record"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
-	sdkTypes "github.com/cosmos/cosmos-sdk/types"
-	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	baseData "github.com/AssetMantle/schema/data/base"
+	"github.com/AssetMantle/schema/documents"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	"github.com/AssetMantle/schema/ids"
+	baseIDs "github.com/AssetMantle/schema/ids/base"
+	baseLists "github.com/AssetMantle/schema/lists/base"
+	baseProperties "github.com/AssetMantle/schema/properties/base"
+	propertyConstants "github.com/AssetMantle/schema/properties/constants"
+	baseQualified "github.com/AssetMantle/schema/qualified/base"
+	baseTypes "github.com/AssetMantle/schema/types/base"
 )
 
 var (
-	supplementAuxiliary   helpers.Auxiliary
-	transferAuxiliary     helpers.Auxiliary
-	authenticateAuxiliary helpers.Auxiliary
-	burnAuxiliary         helpers.Auxiliary
+	testMakerAssetID = baseDocuments.NewCoinAsset("makerAsset").GetCoinAssetID()
+	testTakerAssetID = baseDocuments.NewCoinAsset("takerAsset").GetCoinAssetID()
+	// oneToOneExchangeRate is the rate the make keeper computes for equal
+	// maker and taker splits: 1/1e-18 = 1e18.
+	oneToOneExchangeRate = math.LegacyOneDec().Quo(math.LegacySmallestDec())
 )
 
-type TestKeepers struct {
-	TakeKeeper helpers.TransactionKeeper
+// newStoredTestOrder builds an order document the way the make keeper
+// persists it: maker-side identifiers and the exchange rate in the immutable
+// meta properties, splits and the bond amount in the mutable meta properties.
+// The name property keeps each order's ID distinct.
+func newStoredTestOrder(name string, makerSplitValue int64, takerID ids.IdentityID, withBondAmount bool) (documents.Order, ids.OrderID) {
+	immutables := baseQualified.NewImmutables(baseLists.NewPropertyList(
+		baseProperties.NewMetaProperty(baseIDs.NewStringID("orderName"), baseData.NewStringData(name)),
+		baseProperties.NewMetaProperty(propertyConstants.MakerIDProperty.GetKey(), baseData.NewIDData(testFromID)),
+		baseProperties.NewMetaProperty(propertyConstants.MakerAssetIDProperty.GetKey(), baseData.NewIDData(testMakerAssetID)),
+		baseProperties.NewMetaProperty(propertyConstants.TakerAssetIDProperty.GetKey(), baseData.NewIDData(testTakerAssetID)),
+		baseProperties.NewMetaProperty(propertyConstants.TakerIDProperty.GetKey(), baseData.NewIDData(takerID)),
+		baseProperties.NewMetaProperty(propertyConstants.ExchangeRateProperty.GetKey(), baseData.NewDecData(oneToOneExchangeRate)),
+	))
+
+	mutableMetaProperties := baseLists.NewPropertyList(
+		baseProperties.NewMetaProperty(propertyConstants.MakerSplitProperty.GetKey(), baseData.NewNumberData(math.NewInt(makerSplitValue))),
+		baseProperties.NewMetaProperty(propertyConstants.TakerSplitProperty.GetKey(), baseData.NewNumberData(math.NewInt(1))),
+		baseProperties.NewMetaProperty(propertyConstants.ExpiryHeightProperty.GetKey(), baseData.NewHeightData(baseTypes.NewHeight(100))),
+	)
+	if withBondAmount {
+		mutableMetaProperties = mutableMetaProperties.Add(
+			baseProperties.NewMetaProperty(propertyConstants.BondAmountProperty.GetKey(), baseData.NewNumberData(math.NewInt(1))),
+		)
+	}
+	mutables := baseQualified.NewMutables(mutableMetaProperties)
+
+	order := baseDocuments.NewOrder(testClassificationID, immutables, mutables)
+	return order, baseIDs.NewOrderID(testClassificationID, immutables)
 }
 
-func CreateTestInput(t *testing.T) (types.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
+type testSetup struct {
+	Context                     sdkTypes.Context
+	TransactionKeeper           transactionKeeper
+	authenticateAuxiliaryKeeper *testutil.MockAuxiliaryKeeper
+	burnAuxiliaryKeeper         *testutil.MockAuxiliaryKeeper
+	supplementAuxiliaryKeeper   *testutil.MockAuxiliaryKeeper
+	transferAuxiliaryKeeper     *testutil.MockAuxiliaryKeeper
+	fullOrderID                 ids.OrderID
+	partialOrderID              ids.OrderID
+	privateOrderID              ids.OrderID
+	noBondOrderID               ids.OrderID
+}
 
-	storeKey := storeTypes.NewKVStoreKey("test")
-	paramsStoreKey := storeTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := storeTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := mapper.Prototype().Initialize(storeKey)
+func setupTest(t *testing.T) *testSetup {
+	t.Helper()
 
-	parameterManager := parameters.Prototype().Initialize(storeKey)
+	moduleStoreKey := storeTypes.NewKVStoreKey(constants.ModuleName)
+	ctx := testutil.NewTestContext(t, moduleStoreKey)
 
-	memDB := cosmosDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), storeMetrics.NewNoOpMetrics())
-	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, nil)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, nil)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
+	parameterManager, err := parameters.Prototype().Initialize(moduleStoreKey).Set().Update(sdkTypes.WrapSDKContext(ctx))
+	require.NoError(t, err)
 
-	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
-	burnAuxiliary = burn.Auxiliary.Initialize(Mapper, parameterManager, bankKeeper.BaseKeeper{}, &stakingKeeper.Keeper{})
-	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, parameterManager)
-	transferAuxiliary = transfer.Auxiliary.Initialize(Mapper, parameterManager)
+	authenticateAuxiliary, authenticateAuxiliaryKeeper := testutil.NewMockAuxiliaryPair()
+	burnAuxiliary, burnAuxiliaryKeeper := testutil.NewMockAuxiliaryPair()
+	supplementAuxiliary, supplementAuxiliaryKeeper := testutil.NewMockAuxiliaryPair()
+	transferAuxiliary, transferAuxiliaryKeeper := testutil.NewMockAuxiliaryPair()
 
-	Context := types.NewContext(commitMultiStore, protoTendermintTypes.Header{
-		ChainID: "test",
-	}, false, log.NewNopLogger())
+	TransactionKeeper := transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager, authenticateAuxiliary, burnAuxiliary, supplementAuxiliary, transferAuxiliary}
 
-	parameterManager, _ = parameterManager.Set().Update(sdkTypes.WrapSDKContext(Context))
+	fullOrder, fullOrderID := newStoredTestOrder("fullOrder", 100, baseIDs.PrototypeIdentityID(), true)
+	partialOrder, partialOrderID := newStoredTestOrder("partialOrder", 100, baseIDs.PrototypeIdentityID(), true)
+	privateOrder, privateOrderID := newStoredTestOrder("privateOrder", 100, testutil.TestIdentityID(), true)
+	noBondOrder, noBondOrderID := newStoredTestOrder("noBondOrder", 100, baseIDs.PrototypeIdentityID(), false)
 
-	keepers := TestKeepers{
-		TakeKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary, burnAuxiliary, supplementAuxiliary, transferAuxiliary}).(helpers.TransactionKeeper),
+	TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(ctx)).
+		Add(record.NewRecord(fullOrder)).
+		Add(record.NewRecord(partialOrder)).
+		Add(record.NewRecord(privateOrder)).
+		Add(record.NewRecord(noBondOrder))
+
+	return &testSetup{
+		Context:                     ctx,
+		TransactionKeeper:           TransactionKeeper,
+		authenticateAuxiliaryKeeper: authenticateAuxiliaryKeeper,
+		burnAuxiliaryKeeper:         burnAuxiliaryKeeper,
+		supplementAuxiliaryKeeper:   supplementAuxiliaryKeeper,
+		transferAuxiliaryKeeper:     transferAuxiliaryKeeper,
+		fullOrderID:                 fullOrderID,
+		partialOrderID:              partialOrderID,
+		privateOrderID:              privateOrderID,
+		noBondOrderID:               noBondOrderID,
+	}
+}
+
+func TestTransactionKeeperTransact(t *testing.T) {
+	s := setupTest(t)
+
+	tests := []struct {
+		name       string
+		takerSplit int64
+		orderID    func() ids.OrderID
+		setup      func()
+		check      func(t *testing.T)
+		wantErr    helpers.Error
+	}{
+		{
+			// Taking the full maker split removes the order and settles both
+			// sides: two transfers plus the bond burn.
+			name:       "takeOrderFully",
+			takerSplit: 100,
+			orderID:    func() ids.OrderID { return s.fullOrderID },
+			setup: func() {
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.transferAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Twice()
+				s.burnAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			check: func(t *testing.T) {
+				orders := s.TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(s.Context)).Fetch(key.NewKey(s.fullOrderID))
+				assert.Nil(t, orders.GetMappable(key.NewKey(s.fullOrderID)), "fully taken order must be removed from the store")
+			},
+		},
+		{
+			// A partial take mutates the order, leaving the remaining maker
+			// split on the book.
+			name:       "takeOrderPartially",
+			takerSplit: 40,
+			orderID:    func() ids.OrderID { return s.partialOrderID },
+			setup: func() {
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.transferAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Twice()
+				s.burnAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			check: func(t *testing.T) {
+				orders := s.TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(s.Context)).Fetch(key.NewKey(s.partialOrderID))
+				Mappable := orders.GetMappable(key.NewKey(s.partialOrderID))
+				require.NotNil(t, Mappable, "partially taken order must remain in the store")
+				assert.True(t, mappable.GetOrder(Mappable).GetMakerSplit().Equal(math.NewInt(60)), "remaining maker split must be recorded")
+			},
+		},
+		{
+			name:       "orderNotFound",
+			takerSplit: 100,
+			orderID:    func() ids.OrderID { return testOrderID },
+			setup: func() {
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			wantErr: errorConstants.EntityNotFound,
+		},
+		{
+			name:       "privateOrderTakerMismatch",
+			takerSplit: 100,
+			orderID:    func() ids.OrderID { return s.privateOrderID },
+			setup: func() {
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			wantErr: errorConstants.NotAuthorized,
+		},
+		{
+			name:       "bondAmountNotRevealed",
+			takerSplit: 100,
+			orderID:    func() ids.OrderID { return s.noBondOrderID },
+			setup: func() {
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.transferAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Twice()
+			},
+			wantErr: errorConstants.MetaDataError,
+		},
+		{
+			name:       "authenticationFailure",
+			takerSplit: 100,
+			orderID:    func() ids.OrderID { return s.fullOrderID },
+			setup: func() {
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
+			},
+			wantErr: errorConstants.MockError,
+		},
 	}
 
-	return Context, keepers, Mapper, parameterManager
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.setup()
+
+			message := NewMessage(fromAccAddress, testFromID, math.NewInt(tt.takerSplit), tt.orderID()).(helpers.Message)
+			got, err := s.TransactionKeeper.Transact(sdkTypes.WrapSDKContext(s.Context), message)
+
+			if tt.wantErr != nil {
+				assert.True(t, tt.wantErr.Is(err), "Transact() error = %v, want %v", err, tt.wantErr)
+				assert.Nil(t, got)
+			} else {
+				require.NoError(t, err)
+				assert.Equal(t, newTransactionResponse(), got)
+				if tt.check != nil {
+					tt.check(t)
+				}
+			}
+		})
+	}
+
+	t.Run("nilMessagePanics", func(t *testing.T) {
+		require.Panics(t, func() {
+			_, _ = s.TransactionKeeper.Transact(sdkTypes.WrapSDKContext(s.Context), nil)
+		})
+	})
 }
 
 func Test_keeperPrototype(t *testing.T) {
-	tests := []struct {
-		name string
-		want helpers.TransactionKeeper
-	}{
-		{"valid", transactionKeeper{}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := keeperPrototype()
-			assert.Equal(t, tt.want, got, "keeperPrototype()")
-		})
-	}
+	assert.Equal(t, transactionKeeper{}, keeperPrototype())
 }
 
 func Test_transactionKeeper_Initialize(t *testing.T) {
-	_, _, Mapper, parameterManager := CreateTestInput(t)
-	type fields struct {
-		mapper                helpers.Mapper
-		parameterManager      helpers.ParameterManager
-		authenticateAuxiliary helpers.Auxiliary
-		burnAuxiliary         helpers.Auxiliary
-		supplementAuxiliary   helpers.Auxiliary
-		transferAuxiliary     helpers.Auxiliary
-	}
-	type args struct {
-		mapper           helpers.Mapper
-		parameterManager helpers.ParameterManager
-		auxiliaries      []interface{}
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.Keeper
-	}{
-		{"valid", fields{Mapper, parameterManager, authenticateAuxiliary, burnAuxiliary, supplementAuxiliary, transferAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, parameterManager, authenticateAuxiliary, burnAuxiliary, supplementAuxiliary, transferAuxiliary}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionKeeper := transactionKeeper{
-				mapper:                tt.fields.mapper,
-				parameterManager:      tt.fields.parameterManager,
-				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
-				burnAuxiliary:         tt.fields.burnAuxiliary,
-				supplementAuxiliary:   tt.fields.supplementAuxiliary,
-				transferAuxiliary:     tt.fields.transferAuxiliary,
-			}
-			got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.auxiliaries)
-			assert.NotNil(t, got)
-		})
-	}
-}
+	moduleStoreKey := storeTypes.NewKVStoreKey(constants.ModuleName)
+	Mapper := mapper.Prototype().Initialize(moduleStoreKey)
+	parameterManager := parameters.Prototype().Initialize(moduleStoreKey)
 
-func Test_transactionKeeper_Transact1(t *testing.T) {
-	Context, _, Mapper, parameterManager := CreateTestInput(t)
+	authenticateAuxiliary, _ := testutil.NewNamedMockAuxiliaryPair(authenticate.Auxiliary.GetName())
+	burnAuxiliary, _ := testutil.NewNamedMockAuxiliaryPair(burn.Auxiliary.GetName())
+	supplementAuxiliary, _ := testutil.NewNamedMockAuxiliaryPair(supplement.Auxiliary.GetName())
+	transferAuxiliary, _ := testutil.NewNamedMockAuxiliaryPair(transfer.Auxiliary.GetName())
 
-	authenticateAux, authenticateAuxKeeper := testutil.NewMockAuxiliaryPair()
-	authenticateAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-	burnAux, burnAuxKeeper := testutil.NewMockAuxiliaryPair()
-	burnAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-	supplementAux, supplementAuxKeeper := testutil.NewMockAuxiliaryPair()
-	supplementAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-	transferAux, transferAuxKeeper := testutil.NewMockAuxiliaryPair()
-	transferAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-
-	tk := transactionKeeper{mapper: Mapper, parameterManager: parameterManager, authenticateAuxiliary: authenticateAux, burnAuxiliary: burnAux, supplementAuxiliary: supplementAux, transferAuxiliary: transferAux}
-
-	// Transact test with mock auxiliaries - verifies the code path runs without panicking
-	// The specific business logic (order matching, splits, etc.) requires more elaborate setup
-	// This test ensures the keeper initializes correctly and processes messages
-	t.Run("smoke test", func(t *testing.T) {
-		// Transact panics on nil message due to type assertion
-		// The test verifies the keeper initializes correctly
-		require.Panics(t, func() {
-			_, _ = tk.Transact(sdkTypes.WrapSDKContext(Context), nil)
-		})
-	})
+	keeper := keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary, burnAuxiliary, supplementAuxiliary, transferAuxiliary})
+	require.NotNil(t, keeper)
 }

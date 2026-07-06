@@ -9,7 +9,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
 	baseHelpers "github.com/AssetMantle/modules/helpers/base"
@@ -64,7 +63,7 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ToIdentityID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMintAsset, constants.CanBurnAsset, constants.CanRenumerateAsset, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ToIdentityID, constants.ClassificationID, constants.MaintainedProperties, constants.CanIssueIdentity, constants.CanQuashIdentity, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
 
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
@@ -105,10 +104,12 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				MaintainedProperties:     tt.fields.MaintainedProperties,
 				CanIssueIdentity:         tt.fields.CanIssueIdentity,
 			}
-			// ReadBool panics on unregistered flag names (CanIssueIdentity vs CanMintAsset mismatch)
-			require.Panics(t, func() {
-				_, _ = transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
-			})
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			assert.Equal(t, tt.want, got, "FromCLI()")
 		})
 	}
 }

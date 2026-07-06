@@ -4,146 +4,208 @@
 package put
 
 import (
-	"github.com/AssetMantle/modules/x/orders/mapper"
-	storeTypes "cosmossdk.io/store/types"
 	"testing"
 
-	"github.com/AssetMantle/modules/helpers/base/testutil"
-
-	"github.com/stretchr/testify/mock"
-
-	cosmosDB "github.com/cosmos/cosmos-db"
-	"cosmossdk.io/log"
-	protoTendermintTypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	"cosmossdk.io/store"
-	storeMetrics "cosmossdk.io/store/metrics"
+	"cosmossdk.io/math"
+	storeTypes "cosmossdk.io/store/types"
 	sdkTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
 	"github.com/AssetMantle/modules/helpers"
+	"github.com/AssetMantle/modules/helpers/base/testutil"
+	errorConstants "github.com/AssetMantle/modules/helpers/constants"
 	"github.com/AssetMantle/modules/x/identities/auxiliaries/authenticate"
 	"github.com/AssetMantle/modules/x/metas/auxiliaries/supplement"
+	"github.com/AssetMantle/modules/x/orders/constants"
+	"github.com/AssetMantle/modules/x/orders/key"
+	"github.com/AssetMantle/modules/x/orders/mapper"
 	"github.com/AssetMantle/modules/x/orders/parameters"
 	"github.com/AssetMantle/modules/x/splits/auxiliaries/transfer"
+	baseData "github.com/AssetMantle/schema/data/base"
+	baseDocuments "github.com/AssetMantle/schema/documents/base"
+	baseParameters "github.com/AssetMantle/schema/parameters/base"
+	baseProperties "github.com/AssetMantle/schema/properties/base"
+	constantProperties "github.com/AssetMantle/schema/properties/constants"
+	baseTypes "github.com/AssetMantle/schema/types/base"
 )
 
-var (
-	authenticateAuxiliary helpers.Auxiliary
-	supplementAuxiliary   helpers.Auxiliary
-	transferAuxiliary     helpers.Auxiliary
-)
-
-type TestKeepers struct {
-	MakeKeeper helpers.TransactionKeeper
+type testSetup struct {
+	Context                     sdkTypes.Context
+	TransactionKeeper           transactionKeeper
+	parameterManager            helpers.ParameterManager
+	authenticateAuxiliaryKeeper *testutil.MockAuxiliaryKeeper
+	supplementAuxiliaryKeeper   *testutil.MockAuxiliaryKeeper
+	transferAuxiliaryKeeper     *testutil.MockAuxiliaryKeeper
 }
 
-func CreateTestInput(t *testing.T) (sdkTypes.Context, TestKeepers, helpers.Mapper, helpers.ParameterManager) {
+func setupTest(t *testing.T) *testSetup {
+	t.Helper()
 
-	storeKey := storeTypes.NewKVStoreKey("test")
-	paramsStoreKey := storeTypes.NewKVStoreKey("testParams")
-	paramsTransientStoreKeys := storeTypes.NewTransientStoreKey("testParamsTransient")
-	Mapper := mapper.Prototype().Initialize(storeKey)
+	moduleStoreKey := storeTypes.NewKVStoreKey(constants.ModuleName)
+	ctx := testutil.NewTestContext(t, moduleStoreKey)
 
-	parameterManager := parameters.Prototype().Initialize(storeKey)
+	parameterManager, err := parameters.Prototype().Initialize(moduleStoreKey).Set().Update(sdkTypes.WrapSDKContext(ctx))
+	require.NoError(t, err)
 
-	memDB := cosmosDB.NewMemDB()
-	commitMultiStore := store.NewCommitMultiStore(memDB, log.NewNopLogger(), storeMetrics.NewNoOpMetrics())
-	commitMultiStore.MountStoreWithDB(storeKey, storeTypes.StoreTypeIAVL, nil)
-	commitMultiStore.MountStoreWithDB(paramsStoreKey, storeTypes.StoreTypeIAVL, nil)
-	commitMultiStore.MountStoreWithDB(paramsTransientStoreKeys, storeTypes.StoreTypeTransient, memDB)
-	err := commitMultiStore.LoadLatestVersion()
-	require.Nil(t, err)
+	authenticateAuxiliary, authenticateAuxiliaryKeeper := testutil.NewMockAuxiliaryPair()
+	supplementAuxiliary, supplementAuxiliaryKeeper := testutil.NewMockAuxiliaryPair()
+	transferAuxiliary, transferAuxiliaryKeeper := testutil.NewMockAuxiliaryPair()
 
-	authenticateAuxiliary = authenticate.Auxiliary.Initialize(Mapper, parameterManager)
-	supplementAuxiliary = supplement.Auxiliary.Initialize(Mapper, parameterManager)
-	transferAuxiliary = transfer.Auxiliary.Initialize(Mapper, parameterManager)
+	TransactionKeeper := transactionKeeper{mapper.Prototype().Initialize(moduleStoreKey), parameterManager, authenticateAuxiliary, supplementAuxiliary, transferAuxiliary}
 
-	Context := sdkTypes.NewContext(commitMultiStore, protoTendermintTypes.Header{
-		ChainID: "test",
-	}, false, log.NewNopLogger())
+	return &testSetup{
+		Context:                     ctx,
+		TransactionKeeper:           TransactionKeeper,
+		parameterManager:            parameterManager,
+		authenticateAuxiliaryKeeper: authenticateAuxiliaryKeeper,
+		supplementAuxiliaryKeeper:   supplementAuxiliaryKeeper,
+		transferAuxiliaryKeeper:     transferAuxiliaryKeeper,
+	}
+}
 
-	parameterManager, _ = parameterManager.Set().Update(sdkTypes.WrapSDKContext(Context))
+func newTestPutMessage(makerSplitValue int64, takerSplitValue int64, expiryHeightValue int64) helpers.Message {
+	return NewMessage(
+		fromAccAddress,
+		testFromID,
+		makerAssetID,
+		takerAssetID,
+		math.NewInt(makerSplitValue),
+		math.NewInt(takerSplitValue),
+		baseTypes.NewHeight(expiryHeightValue),
+	).(helpers.Message)
+}
 
-	keepers := TestKeepers{
-		MakeKeeper: keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary, supplementAuxiliary, transferAuxiliary}).(helpers.TransactionKeeper),
+func TestTransactionKeeperTransact(t *testing.T) {
+	s := setupTest(t)
+
+	tests := []struct {
+		name    string
+		message helpers.Message
+		setup   func()
+		check   func(t *testing.T, got helpers.TransactionResponse)
+		wantErr helpers.Error
+	}{
+		{
+			name:    "putDisabled",
+			message: newTestPutMessage(100, 100, 100),
+			setup: func() {
+				_, err := s.parameterManager.Set(baseParameters.NewParameter(baseProperties.NewMetaProperty(constantProperties.PutEnabledProperty.GetKey(), baseData.NewBooleanData(false)))).Update(sdkTypes.WrapSDKContext(s.Context))
+				require.NoError(t, err)
+			},
+			wantErr: errorConstants.NotAuthorized,
+		},
+		{
+			name:    "putOrder",
+			message: newTestPutMessage(100, 100, 100),
+			setup: func() {
+				_, err := s.parameterManager.Set(baseParameters.NewParameter(baseProperties.NewMetaProperty(constantProperties.PutEnabledProperty.GetKey(), baseData.NewBooleanData(true)))).Update(sdkTypes.WrapSDKContext(s.Context))
+				require.NoError(t, err)
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.transferAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			check: func(t *testing.T, got helpers.TransactionResponse) {
+				expectedPutOrderID := baseDocuments.NewPutOrder(testFromID, makerAssetID, takerAssetID, math.NewInt(100), math.NewInt(100), baseTypes.NewHeight(100)).GetPutOrderID()
+				assert.Equal(t, newTransactionResponse(expectedPutOrderID), got)
+
+				orders := s.TransactionKeeper.mapper.NewCollection(sdkTypes.WrapSDKContext(s.Context)).Fetch(key.NewKey(expectedPutOrderID))
+				assert.NotNil(t, orders.GetMappable(key.NewKey(expectedPutOrderID)), "put order must be added to the store")
+			},
+		},
+		{
+			name:    "duplicateOrder",
+			message: newTestPutMessage(100, 100, 100),
+			setup: func() {
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.transferAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			wantErr: errorConstants.EntityAlreadyExists,
+		},
+		{
+			name:    "negativeMakerSplit",
+			message: newTestPutMessage(-1, 100, 100),
+			setup: func() {
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			wantErr: errorConstants.IncorrectFormat,
+		},
+		{
+			name:    "negativeTakerSplit",
+			message: newTestPutMessage(100, -1, 100),
+			setup: func() {
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.transferAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			wantErr: errorConstants.IncorrectFormat,
+		},
+		{
+			name:    "expiryInPast",
+			message: newTestPutMessage(100, 100, 0),
+			setup: func() {
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.transferAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			wantErr: errorConstants.InvalidRequest,
+		},
+		{
+			name:    "expiryExceedsMaxOrderLife",
+			message: newTestPutMessage(100, 100, 50000),
+			setup: func() {
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+				s.transferAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil).Once()
+			},
+			wantErr: errorConstants.InvalidRequest,
+		},
+		{
+			name:    "authenticationFailure",
+			message: newTestPutMessage(100, 100, 100),
+			setup: func() {
+				s.authenticateAuxiliaryKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), errorConstants.MockError).Once()
+			},
+			wantErr: errorConstants.MockError,
+		},
 	}
 
-	return Context, keepers, Mapper, parameterManager
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.setup()
+
+			got, err := s.TransactionKeeper.Transact(sdkTypes.WrapSDKContext(s.Context), tt.message)
+
+			if tt.wantErr != nil {
+				assert.True(t, tt.wantErr.Is(err), "Transact() error = %v, want %v", err, tt.wantErr)
+				assert.Nil(t, got)
+			} else {
+				require.NoError(t, err)
+				require.NotNil(t, got)
+				if tt.check != nil {
+					tt.check(t, got)
+				}
+			}
+		})
+	}
+
+	t.Run("nilMessagePanics", func(t *testing.T) {
+		require.Panics(t, func() {
+			_, _ = s.TransactionKeeper.Transact(sdkTypes.WrapSDKContext(s.Context), nil)
+		})
+	})
 }
 
 func Test_keeperPrototype(t *testing.T) {
-	tests := []struct {
-		name string
-		want helpers.TransactionKeeper
-	}{
-		{"valid", transactionKeeper{}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := keeperPrototype()
-			assert.Equal(t, tt.want, got, "keeperPrototype()")
-		})
-	}
+	assert.Equal(t, transactionKeeper{}, keeperPrototype())
 }
 
 func Test_transactionKeeper_Initialize(t *testing.T) {
-	_, _, Mapper, parameterManager := CreateTestInput(t)
-	type fields struct {
-		mapper                helpers.Mapper
-		parameterManager      helpers.ParameterManager
-		authenticateAuxiliary helpers.Auxiliary
-		supplementAuxiliary   helpers.Auxiliary
-		transferAuxiliary     helpers.Auxiliary
-	}
-	type args struct {
-		mapper           helpers.Mapper
-		parameterManager helpers.ParameterManager
-		auxiliaries      []interface{}
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   helpers.Keeper
-	}{
-		{"valid", fields{Mapper, parameterManager, authenticateAuxiliary, supplementAuxiliary, transferAuxiliary}, args{Mapper, parameterManager, []interface{}{}}, transactionKeeper{Mapper, parameterManager, authenticateAuxiliary, supplementAuxiliary, transferAuxiliary}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			transactionKeeper := transactionKeeper{
-				mapper:                tt.fields.mapper,
-				parameterManager:      tt.fields.parameterManager,
-				supplementAuxiliary:   tt.fields.supplementAuxiliary,
-				transferAuxiliary:     tt.fields.transferAuxiliary,
-				authenticateAuxiliary: tt.fields.authenticateAuxiliary,
-			}
-			got := transactionKeeper.Initialize(tt.args.mapper, tt.args.parameterManager, tt.args.auxiliaries)
-			assert.NotNil(t, got)
-		})
-	}
-}
+	moduleStoreKey := storeTypes.NewKVStoreKey(constants.ModuleName)
+	Mapper := mapper.Prototype().Initialize(moduleStoreKey)
+	parameterManager := parameters.Prototype().Initialize(moduleStoreKey)
 
-func Test_transactionKeeper_Transact(t *testing.T) {
-	Context, _, Mapper, parameterManager := CreateTestInput(t)
+	authenticateAuxiliary, _ := testutil.NewNamedMockAuxiliaryPair(authenticate.Auxiliary.GetName())
+	supplementAuxiliary, _ := testutil.NewNamedMockAuxiliaryPair(supplement.Auxiliary.GetName())
+	transferAuxiliary, _ := testutil.NewNamedMockAuxiliaryPair(transfer.Auxiliary.GetName())
 
-	authenticateAux, authenticateAuxKeeper := testutil.NewMockAuxiliaryPair()
-	authenticateAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-	supplementAux, supplementAuxKeeper := testutil.NewMockAuxiliaryPair()
-	supplementAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-	transferAux, transferAuxKeeper := testutil.NewMockAuxiliaryPair()
-	transferAuxKeeper.On("Help", mock.Anything, mock.Anything).Return(new(helpers.AuxiliaryResponse), nil)
-
-	tk := transactionKeeper{mapper: Mapper, parameterManager: parameterManager, authenticateAuxiliary: authenticateAux, supplementAuxiliary: supplementAux, transferAuxiliary: transferAux}
-
-	// Transact test with mock auxiliaries - verifies the code path runs without panicking
-	// The specific business logic (order matching, splits, etc.) requires more elaborate setup
-	// This test ensures the keeper initializes correctly and processes messages
-	t.Run("smoke test", func(t *testing.T) {
-		// Transact panics on nil message due to type assertion
-		// The test verifies the keeper initializes correctly
-		require.Panics(t, func() {
-			_, _ = tk.Transact(sdkTypes.WrapSDKContext(Context), nil)
-		})
-	})
+	keeper := keeperPrototype().Initialize(Mapper, parameterManager, []interface{}{authenticateAuxiliary, supplementAuxiliary, transferAuxiliary})
+	require.NotNil(t, keeper)
 }

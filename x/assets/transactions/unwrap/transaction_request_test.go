@@ -18,7 +18,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -74,11 +73,10 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID, constants.FromIdentityID, constants.Value})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.Coins})
 
 	viper.Set(constants.FromIdentityID.GetName(), fromID.AsString())
-	viper.Set(constants.AssetID.GetName(), assetID.AsString())
-	viper.Set(constants.Value.GetName(), testRate.String())
+	viper.Set(constants.Coins.GetName(), coins.String())
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
@@ -104,10 +102,12 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				FromID:                   tt.fields.FromID,
 				Coins:                    tt.fields.Coins,
 			}
-			// ReadString panics on unregistered Coins flag
-			require.Panics(t, func() {
-				_, _ = transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
-			})
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			assert.Equal(t, tt.want, got, "FromCLI()")
 		})
 	}
 }

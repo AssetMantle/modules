@@ -44,17 +44,16 @@ func Test_newQueryRequest(t *testing.T) {
 }
 
 func Test_queryRequest_FromCLI(t *testing.T) {
-	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.AssetID})
+	cliCommand := base.NewCLICommand("", "", "", []helpers.CLIFlag{constants.IdentityID})
 
-	viper.Set(constants.AssetID.GetName(), testIdentityID.AsString())
+	viper.Set(constants.IdentityID.GetName(), testIdentityID.AsString())
 
-	// ReadString panics on unregistered IdentityID flag (CLI registers AssetID instead)
-	require.Panics(t, func() {
-		qu := &QueryRequest{
-			IdentityID: testIdentityID.(*baseIDs.IdentityID),
-		}
-		_, _ = qu.FromCLI(cliCommand, client.Context{}.WithCodec(base.CodecPrototype()))
-	})
+	qu := &QueryRequest{
+		IdentityID: testIdentityID.(*baseIDs.IdentityID),
+	}
+	got, err := qu.FromCLI(cliCommand, client.Context{}.WithCodec(base.CodecPrototype()))
+	require.NoError(t, err, "FromCLI()")
+	assert.Equal(t, newQueryRequest(testIdentityID), got, "FromCLI()")
 }
 
 func Test_queryRequest_Validate(t *testing.T) {

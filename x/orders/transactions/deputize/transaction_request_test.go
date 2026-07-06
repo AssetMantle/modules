@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 
 	baseData "github.com/AssetMantle/schema/data/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -80,15 +79,14 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ToIdentityID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMintAsset, constants.CanBurnAsset, constants.CanRenumerateAsset, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ToIdentityID, constants.ClassificationID, constants.MaintainedProperties, constants.CanMakeOrder, constants.CanCancelOrder, constants.CanAddMaintainer, constants.CanRemoveMaintainer, constants.CanMutateMaintainer})
 
 	viper.Set(constants.FromIdentityID.GetName(), testFromID.AsString())
 	viper.Set(constants.ToIdentityID.GetName(), testFromID.AsString())
 	viper.Set(constants.ClassificationID.GetName(), testClassificationID.AsString())
 	viper.Set(constants.MaintainedProperties.GetName(), maintainedPropertyString)
-	viper.Set(constants.CanMintAsset.GetName(), true)
-	viper.Set(constants.CanBurnAsset.GetName(), true)
-	viper.Set(constants.CanRenumerateAsset.GetName(), true)
+	viper.Set(constants.CanMakeOrder.GetName(), true)
+	viper.Set(constants.CanCancelOrder.GetName(), true)
 	viper.Set(constants.CanAddMaintainer.GetName(), true)
 	viper.Set(constants.CanRemoveMaintainer.GetName(), true)
 	viper.Set(constants.CanMutateMaintainer.GetName(), true)
@@ -131,10 +129,12 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				CanRemoveMaintainer:      tt.fields.CanRemoveMaintainer,
 				CanMutateMaintainer:      tt.fields.CanMutateMaintainer,
 			}
-			// ReadBool panics on flag name mismatch (CanMakeOrder vs CanMintAsset)
-			require.Panics(t, func() {
-				_, _ = transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
-			})
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			assert.Equal(t, tt.want, got, "FromCLI()")
 		})
 	}
 }

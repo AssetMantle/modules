@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 
 	baseDocuments "github.com/AssetMantle/schema/documents/base"
 	baseIDs "github.com/AssetMantle/schema/ids/base"
@@ -88,20 +87,14 @@ func Test_requestPrototype(t *testing.T) {
 }
 
 func Test_transactionRequest_FromCLI(t *testing.T) {
-	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.ClassificationID, constants.TakerID, constants.MakerAssetID, constants.TakerAssetID, constants.ExpiresIn, constants.MakerSplit, constants.TakerSplit, constants.ImmutableMetaProperties, constants.ImmutableProperties, constants.MutableMetaProperties, constants.MutableProperties})
+	cliCommand := baseHelpers.NewCLICommand("", "", "", []helpers.CLIFlag{constants.FromIdentityID, constants.MakerAssetID, constants.TakerAssetID, constants.MakerSplit, constants.TakerSplit, constants.ExpiryHeight})
 
 	viper.Set(constants.FromIdentityID.GetName(), testFromID.AsString())
-	viper.Set(constants.ClassificationID.GetName(), testClassificationID.AsString())
-	viper.Set(constants.TakerID.GetName(), testFromID.AsString())
 	viper.Set(constants.MakerAssetID.GetName(), makerAssetID.AsString())
 	viper.Set(constants.TakerAssetID.GetName(), takerAssetID.AsString())
-	viper.Set(constants.ExpiresIn.GetName(), expiryHeight)
 	viper.Set(constants.MakerSplit.GetName(), makerSplit.String())
 	viper.Set(constants.TakerSplit.GetName(), takerSplit.String())
-	viper.Set(constants.ImmutableMetaProperties.GetName(), immutableMetaPropertiesString)
-	viper.Set(constants.ImmutableProperties.GetName(), immutablePropertiesString)
-	viper.Set(constants.MutableMetaProperties.GetName(), mutableMetaPropertiesString)
-	viper.Set(constants.MutableProperties.GetName(), mutablePropertiesString)
+	viper.Set(constants.ExpiryHeight.GetName(), expiryHeight)
 	type fields struct {
 		commonTransactionRequest helpers.CommonTransactionRequest
 		FromID                   string
@@ -130,10 +123,12 @@ func Test_transactionRequest_FromCLI(t *testing.T) {
 				CommonTransactionRequest: tt.fields.commonTransactionRequest,
 				FromID:                   tt.fields.FromID,
 			}
-			// ReadInt64 panics on flag name mismatch (ExpiryHeight vs ExpiresIn)
-			require.Panics(t, func() {
-				_, _ = transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
-			})
+			got, err := transactionRequest.FromCLI(tt.args.cliCommand, tt.args.context)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FromCLI() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			assert.Equal(t, tt.want, got, "FromCLI()")
 		})
 	}
 }
